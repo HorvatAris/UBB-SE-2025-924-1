@@ -1,0 +1,190 @@
+﻿<Page
+    x:Class="SteamStore.Pages.GamePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SteamStore.Pages"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ScrollViewer>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header with Game Title, Image, Actions -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Game Image -->
+                <Image Grid.Column="0" x:Name="GameImage" Width="300" Height="200" Stretch="UniformToFill"/>
+
+                <!-- Game Info -->
+                <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="GameTitle" Style="{StaticResource TitleTextBlockStyle}" />
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                        <TextBlock Text="Tags: " Style="{StaticResource BodyTextBlockStyle}"/>
+                        <ItemsRepeater ItemsSource="{Binding GameTags}">
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" 
+                                             Style="{StaticResource BodyTextBlockStyle}"
+                                             Margin="0,0,8,0"/>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                            <ItemsRepeater.Layout>
+                                <UniformGridLayout MinItemWidth="100" MinItemHeight="32" MinRowSpacing="8" MinColumnSpacing="8"/>
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </StackPanel>
+                    <TextBlock x:Name="GameGenre" Style="{StaticResource BodyTextBlockStyle}" Margin="0,5,0,0" />
+                    <TextBlock x:Name="GameDeveloper" Style="{StaticResource BodyTextBlockStyle}" Margin="0,5,0,0" />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <TextBlock Text="Rating: " Style="{StaticResource BodyTextBlockStyle}" />
+                        <RatingControl x:Name="GameRating" IsReadOnly="True" Value="0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="2" Margin="0,10,0,0">
+                    <TextBlock x:Name="GamePrice" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10" />
+                    <TextBlock x:Name="OwnedStatus" 
+                             Text="NOT OWNED"
+                             Foreground="#75b022" 
+                             FontWeight="Bold" 
+                             FontSize="14"
+                             HorizontalAlignment="Center"
+                             Margin="0,0,0,10"/>
+                    <Button x:Name="BuyButton" Content="Add to Cart" Click="BuyButton_Click" 
+                            Margin="0,0,0,10" Width="150"/>
+                    <Button x:Name="WishlistButton" Content="Add to Wishlist" Click="WishlistButton_Click" 
+                            Width="150"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Game Description -->
+            <StackPanel Grid.Row="1" Margin="0,20,0,0">
+                <TextBlock Text="Description" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10"/>
+                <TextBlock x:Name="GameDescription" TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- System Requirements -->
+            <StackPanel Grid.Row="2" Margin="0,20,0,0">
+                <TextBlock Text="System Requirements" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Minimum Requirements -->
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <TextBlock Text="Minimum" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="MinimumRequirements" TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <!-- Recommended Requirements -->
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <TextBlock Text="Recommended" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="RecommendedRequirements" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+
+            <!-- Media Links Section -->
+            <StackPanel Grid.Row="3" Margin="0,20,0,0">
+                <TextBlock Text="Media" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10"/>
+                <StackPanel x:Name="MediaLinksPanel" Orientation="Vertical"/>
+            </StackPanel>
+
+            <!-- User Reviews -->
+            <StackPanel Grid.Row="4" Margin="0,20,0,0">
+                <TextBlock Text="User Reviews" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10"/>
+                <ListView x:Name="ReviewsListView" Height="300" BorderThickness="1" 
+                         BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,5,0,10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="{Binding username}" FontWeight="Bold"/>
+                                <RatingControl Grid.Row="1" Value="{Binding rating}" IsReadOnly="True" Margin="0,5,0,5"/>
+                                <TextBlock Grid.Row="2" Text="{Binding comment}" TextWrapping="Wrap"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+
+            <!-- Similar Games -->
+            <StackPanel Grid.Row="5" Margin="0,20,0,0">
+                <TextBlock Text="Similar Games" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 3 similar games -->
+                    <Button x:Name="SimilarGame1" Grid.Column="0" Click="SimilarGame_Click" Margin="0,0,5,0" 
+                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <StackPanel>
+                            <Image x:Name="SimilarGame1Image" Width="180" Height="100" Stretch="UniformToFill"/>
+                            <TextBlock x:Name="SimilarGame1Title" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="SimilarGame1Rating" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="SimilarGame2" Grid.Column="1" Click="SimilarGame_Click" Margin="5,0,5,0" 
+                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <StackPanel>
+                            <Image x:Name="SimilarGame2Image" Width="180" Height="100" Stretch="UniformToFill"/>
+                            <TextBlock x:Name="SimilarGame2Title" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="SimilarGame2Rating" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="SimilarGame3" Grid.Column="2" Click="SimilarGame_Click" Margin="5,0,0,0" 
+                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <StackPanel>
+                            <Image x:Name="SimilarGame3Image" Width="180" Height="100" Stretch="UniformToFill"/>
+                            <TextBlock x:Name="SimilarGame3Title" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="SimilarGame3Rating" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </StackPanel>
+            <muxc:TeachingTip x:Name="NotificationTip"
+                              Title="Notification"
+                              Subtitle=""
+                              IsOpen="False"
+                              PreferredPlacement="TopRight"
+                              CloseButtonContent="OK">
+          
+            </muxc:TeachingTip>
+        </Grid>
+    </ScrollViewer>
+</Page>
