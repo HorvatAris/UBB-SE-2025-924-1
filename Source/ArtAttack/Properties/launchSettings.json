@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Steampunks (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Steampunks (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
