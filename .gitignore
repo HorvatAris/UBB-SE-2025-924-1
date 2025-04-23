@@ -365,3 +365,4 @@ FodyWeavers.xsd
 onnx-models
 
 .idea
+/Source/SteamHub.Api/Properties/launchSettings.json
