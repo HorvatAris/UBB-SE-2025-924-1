@@ -8,8 +8,7 @@
 			"launchUrl": "swagger",
 			"applicationUrl": "https://localhost:7241;http://localhost:5158",
 			"environmentVariables": {
-				"ASPNETCORE_ENVIRONMENT": "Development",
-				"ConnectionStrings:UserDatabase": "Server=localhost;Database=SteamHub;Trusted_Connection=True;TrustServerCertificate=True;"
+				"ASPNETCORE_ENVIRONMENT": "Development"
 			}
 		}
 	}
