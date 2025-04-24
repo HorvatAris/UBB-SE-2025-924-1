@@ -37,7 +37,7 @@ namespace SteamStore.Tests.Services
 		private const int TestTagId = 1;
 		private const int TestSecondTagId = 2;
 
-		private readonly User testUser = new User() { UserIdentifier = 42 };
+		private readonly User testUser = new User() { UserId = 42 };
 
 		public DeveloperServiceTests()
 		{
@@ -74,15 +74,15 @@ namespace SteamStore.Tests.Services
 
 			var expectedGame = new Game
 			{
-				Identifier = TestGameId,
-				Description = TestGameDescriptionText,
+				GameId = TestGameId,
+				GameDescription = TestGameDescriptionText,
 				Discount = TestGameDescription,
 				GameplayPath = TestGameGameplayInfoText,
 				ImagePath = TestGameImageInfoText,
 				TrailerPath = TestGameTrailerInfoText,
 				MinimumRequirements = TestGameMinimumRequirementText,
 				RecommendedRequirements = TestGameRecommendedRequirementText,
-				Name = TestGameNameText,
+				GameTitle = TestGameNameText,
 				Price = TestGamePrice,
 				Rating = TestRating,
 				PublisherIdentifier = TestPublisherIdentifier,
@@ -114,7 +114,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void FindGameInObservableCollectionById_WhenValid_ShouldReturnGame()
 		{
-			var gamesToSearchIn = new ObservableCollection<Game> { new Game { Identifier = TestGameId } };
+			var gamesToSearchIn = new ObservableCollection<Game> { new Game { GameId = TestGameId } };
 
 			var searchedIdentifier = TestGameId;
 
@@ -126,7 +126,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void CreateGame_WhenValid_ShouldCallRepository()
 		{
-			var gameToCreate = new Game { Identifier = TestGameId };
+			var gameToCreate = new Game { GameId = TestGameId };
 
 			service.CreateGame(gameToCreate);
 
@@ -136,7 +136,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void CreateGameWithTags_WhenValid_ShouldCallCreate()
 		{
-			var gameToCreate = new Game { Identifier = TestGameId };
+			var gameToCreate = new Game { GameId = TestGameId };
 			var tagsToAttribute = new List<Tag> { new Tag() { TagId = TestSecondTagId } };
 
 			var expectedGameIdentifier = TestGameId;
@@ -150,7 +150,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void CreateGameWithTags_WhenValid_ShouldCallInsert()
 		{
-			var gameToCreate = new Game { Identifier = TestGameId };
+			var gameToCreate = new Game { GameId = TestGameId };
 			var tagsToAttribute = new List<Tag> { new Tag() { TagId = TestSecondTagId } };
 
 			var expectedGameIdentifier = TestGameId;
@@ -164,7 +164,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void UpdateGame_WhenValid_ShouldCallUpdateWithUserId()
 		{
-			var gameToUpdate = new Game { Identifier = TestGameId };
+			var gameToUpdate = new Game { GameId = TestGameId };
 
 			var expectedGameIdentifier = TestGameId;
 
@@ -175,7 +175,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void UpdateGameWithTags_WhenValid_ShouldCallUpdate()
 		{
-			var gameToUpdate = new Game { Identifier = TestGameId };
+			var gameToUpdate = new Game { GameId = TestGameId };
 			var tagsToAttribute = new List<Tag> { new Tag() { TagId = TestSecondTagId } };
 
 			var expectedGameIdentifier = TestGameId;
@@ -189,7 +189,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void UpdateGameWithTags_WhenValid_ShouldCallDeleteTag()
 		{
-			var gameToUpdate = new Game { Identifier = TestGameId };
+			var gameToUpdate = new Game { GameId = TestGameId };
 			var tagsToAttribute = new List<Tag> { new Tag() { TagId = TestSecondTagId } };
 
 			var expectedGameIdentifier = TestGameId;
@@ -203,7 +203,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void UpdateGameWithTags_WhenValid_ShouldCallInsertTag()
 		{
-			var gameToUpdate = new Game { Identifier = TestGameId };
+			var gameToUpdate = new Game { GameId = TestGameId };
 			var tagsToAttribute = new List<Tag> { new Tag() { TagId = TestSecondTagId } };
 
 			var expectedGameIdentifier = TestGameId;
@@ -226,7 +226,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void GetDeveloperGames_WhenValid_ShouldReturnDeveloperGames()
 		{
-			gameRepositoryMock.Setup(r => r.GetDeveloperGames(testUser.UserIdentifier)).Returns(new List<Game>());
+			gameRepositoryMock.Setup(r => r.GetDeveloperGames(testUser.UserId)).Returns(new List<Game>());
 
 			var foundDeveloperGames = service.GetDeveloperGames();
 
@@ -236,7 +236,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void GetUnvalidated_WhenValid_ShouldReturnUnvalidatedGames()
 		{
-			gameRepositoryMock.Setup(r => r.GetUnvalidated(testUser.UserIdentifier)).Returns(new List<Game>());
+			gameRepositoryMock.Setup(r => r.GetUnvalidated(testUser.UserId)).Returns(new List<Game>());
 
 			var unvalidatedGames = service.GetUnvalidated();
 
@@ -379,7 +379,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void DeleteGame_WhenDeletingValidGame_ShouldRemoveFromCollection()
 		{
-			var gameList = new ObservableCollection<Game> { new Game() { Identifier = TestGameId } };
+			var gameList = new ObservableCollection<Game> { new Game() { GameId = TestGameId } };
 			var expectedIdentifier = TestGameId;
 
 			service.DeleteGame(expectedIdentifier, gameList);
@@ -390,8 +390,8 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void UpdateGameAndRefreshList_WhenUpdatingValidGame_ShouldUpdateCorrectly()
 		{
-			var existing = new Game { Identifier = TestGameId };
-			var updated = new Game { Identifier = TestGameId, Name = "Updated" };
+			var existing = new Game { GameId = TestGameId };
+			var updated = new Game { GameId = TestGameId, GameTitle = "Updated" };
 			var games = new ObservableCollection<Game> { existing };
 
 			service.UpdateGameAndRefreshList(updated, games);
@@ -402,7 +402,7 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void RejectGameAndRemoveFromUnvalidated_WhenRemovingGameFromList_ShouldHaveListEmpty()
 		{
-			var games = new ObservableCollection<Game> { new Game { Identifier = TestGameId } };
+			var games = new ObservableCollection<Game> { new Game { GameId = TestGameId } };
 			var expectedIdentifier = TestGameId;
 
 			service.RejectGameAndRemoveFromUnvalidated(expectedIdentifier, games);
@@ -413,8 +413,8 @@ namespace SteamStore.Tests.Services
 		[Fact]
 		public void IsGameIdInUse_WhenGameIdIsNotInUse_ShouldReturnFalse()
 		{
-			var devGames = new ObservableCollection<Game> { new Game { Identifier = TestGameId } };
-			var unvalidated = new ObservableCollection<Game> { new Game { Identifier = 2 } };
+			var devGames = new ObservableCollection<Game> { new Game { GameId = TestGameId } };
+			var unvalidated = new ObservableCollection<Game> { new Game { GameId = 2 } };
 
 			var expectedThirdIdentifier = 3;
 

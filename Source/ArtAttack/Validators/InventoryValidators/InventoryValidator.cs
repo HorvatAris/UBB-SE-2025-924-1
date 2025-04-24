@@ -21,7 +21,7 @@ namespace Steampunks.Validators.InventoryValidators
                 throw new ArgumentNullException(nameof(game), "Game cannot be null.");
             }
 
-            if (string.IsNullOrWhiteSpace(game.Title))
+            if (string.IsNullOrWhiteSpace(game.GameTitle))
             {
                 throw new ArgumentException("Game title cannot be null or empty.", nameof(game));
             }
@@ -66,7 +66,7 @@ namespace Steampunks.Validators.InventoryValidators
                 throw new ArgumentNullException(nameof(user), "User cannot be null.");
             }
 
-            if (string.IsNullOrWhiteSpace(user.Username))
+            if (string.IsNullOrWhiteSpace(user.UserName))
             {
                 throw new ArgumentException("User username cannot be null or empty.", nameof(user));
             }

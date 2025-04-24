@@ -37,8 +37,8 @@ public class UserGameRepository : IUserGameRepository
     {
         SqlParameter[] gamePurchasedParameters = new SqlParameter[]
         {
-            new SqlParameter(SqlConstants.GameIdParameter, game.Identifier),
-            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserIdentifier),
+            new SqlParameter(SqlConstants.GameIdParameter, game.GameId),
+            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserId),
         };
         try
         {
@@ -54,8 +54,8 @@ public class UserGameRepository : IUserGameRepository
     {
         SqlParameter[] removeGamesParameters = new SqlParameter[]
         {
-            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserIdentifier),
-            new SqlParameter(SqlConstants.GameIdParameter, game.Identifier),
+            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserId),
+            new SqlParameter(SqlConstants.GameIdParameter, game.GameId),
         };
 
         try
@@ -72,8 +72,8 @@ public class UserGameRepository : IUserGameRepository
     {
         SqlParameter[] purchaseGameParameters = new SqlParameter[]
         {
-            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserIdentifier),
-            new SqlParameter(SqlConstants.GameIdParameter, game.Identifier),
+            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserId),
+            new SqlParameter(SqlConstants.GameIdParameter, game.GameId),
         };
 
         try
@@ -99,8 +99,8 @@ public class UserGameRepository : IUserGameRepository
     {
         SqlParameter[] addGameToWishlistParameters = new SqlParameter[]
         {
-            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserIdentifier),
-            new SqlParameter(SqlConstants.GameIdParameter, game.Identifier),
+            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserId),
+            new SqlParameter(SqlConstants.GameIdParameter, game.GameId),
         };
 
         try
@@ -153,7 +153,7 @@ public class UserGameRepository : IUserGameRepository
     {
         SqlParameter[] allUsersParameters = new SqlParameter[]
         {
-            new SqlParameter(SqlConstants.UserIdentifierParameter, this.user.UserIdentifier),
+            new SqlParameter(SqlConstants.UserIdentifierParameter, this.user.UserId),
         };
 
         var allUserGames = this.dataLink.ExecuteReader(SqlConstants.GetUserGamesProcedure, allUsersParameters);
@@ -165,9 +165,9 @@ public class UserGameRepository : IUserGameRepository
             {
                 Game game = new Game
                 {
-                    Identifier = (int)row[SqlConstants.GameIdColumn],
-                    Name = (string)row[SqlConstants.GameNameColumn],
-                    Description = (string)row[SqlConstants.DescriptionIdColumnWithCapitalLetter],
+                    GameId = (int)row[SqlConstants.GameIdColumn],
+                    GameTitle = (string)row[SqlConstants.GameNameColumn],
+                    GameDescription = (string)row[SqlConstants.DescriptionIdColumnWithCapitalLetter],
                     ImagePath = (string)row[SqlConstants.ImageUrlColumn],
                     Price = Convert.ToDecimal(row[SqlConstants.GamePriceColumn]),
                     MinimumRequirements = (string)row[SqlConstants.MinimumRequirementsColumn],
@@ -196,7 +196,7 @@ public class UserGameRepository : IUserGameRepository
             // Update in database
             SqlParameter[] addingPointsParameter = new SqlParameter[]
             {
-                new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserIdentifier),
+                new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserId),
                 new SqlParameter(SqlConstants.PointBalanceParameter, this.user.PointsBalance),
             };
 
@@ -218,7 +218,7 @@ public class UserGameRepository : IUserGameRepository
     {
         SqlParameter[] wishlistGamesParameters = new SqlParameter[]
         {
-            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserIdentifier),
+            new SqlParameter(SqlConstants.UserIdParameter, this.user.UserId),
         };
 
         var wishlistGamesData = this.dataLink.ExecuteReader(SqlConstants.GetWishlistGamesProcedure, wishlistGamesParameters);
@@ -230,9 +230,9 @@ public class UserGameRepository : IUserGameRepository
             {
                 Game game = new Game
                 {
-                    Identifier = (int)row[SqlConstants.GameIdColumn],
-                    Name = (string)row[SqlConstants.GameNameColumn],
-                    Description = (string)row[SqlConstants.DescriptionIdColumnWithCapitalLetter],
+                    GameId = (int)row[SqlConstants.GameIdColumn],
+                    GameTitle = (string)row[SqlConstants.GameNameColumn],
+                    GameDescription = (string)row[SqlConstants.DescriptionIdColumnWithCapitalLetter],
                     ImagePath = (string)row[SqlConstants.ImageUrlColumn],
                     Price = Convert.ToDecimal(row[SqlConstants.GamePriceColumn]),
                     MinimumRequirements = (string)row[SqlConstants.MinimumRequirementsColumn],

@@ -247,7 +247,7 @@ namespace Steampunks.ViewModels
         private void InitializeCollections()
         {
             var allItems = this.Items.ToList();
-            this.AvailableGames = new ObservableCollection<string>(allItems.Select(item => item.Game.Title).Distinct());
+            this.AvailableGames = new ObservableCollection<string>(allItems.Select(item => item.Game.GameTitle).Distinct());
             this.AvailableTypes = new ObservableCollection<string>(allItems.Select(item => item.ItemName.Split('|').First().Trim()).Distinct());
             this.AvailableRarities = new ObservableCollection<string>(new[] { "Common", "Uncommon", "Rare", "Epic", "Legendary" });
         }
@@ -266,7 +266,7 @@ namespace Steampunks.ViewModels
 
             if (!string.IsNullOrEmpty(this.SelectedGame))
             {
-                filteredItems = filteredItems.Where(item => item.Game.Title == this.SelectedGame);
+                filteredItems = filteredItems.Where(item => item.Game.GameTitle == this.SelectedGame);
             }
 
             if (!string.IsNullOrEmpty(this.SelectedType))

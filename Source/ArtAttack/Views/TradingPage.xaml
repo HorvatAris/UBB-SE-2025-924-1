@@ -283,7 +283,7 @@
                                     Width="200">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate x:DataType="models:User">
-                                        <TextBlock Text="{x:Bind Username}"/>
+                                        <TextBlock Text="{x:Bind UserName}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
@@ -318,7 +318,7 @@
 
                                         <!-- Source User Items -->
                                         <StackPanel Grid.Row="1" Margin="0,0,0,10">
-                                            <TextBlock Text="{x:Bind SourceUser.Username}" 
+                                            <TextBlock Text="{x:Bind SourceUser.UserName}" 
                                                      Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind SourceUserItems}">
                                                 <ItemsRepeater.ItemTemplate>
@@ -332,7 +332,7 @@
 
                                         <!-- Destination User Items -->
                                         <StackPanel Grid.Row="2">
-                                            <TextBlock Text="{x:Bind DestinationUser.Username}" 
+                                            <TextBlock Text="{x:Bind DestinationUser.UserName}" 
                                                      Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind DestinationUserItems}">
                                                 <ItemsRepeater.ItemTemplate>
@@ -382,7 +382,7 @@
                                     Width="200">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate x:DataType="models:User">
-                                        <TextBlock Text="{x:Bind Username}"/>
+                                        <TextBlock Text="{x:Bind UserName}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
@@ -425,7 +425,7 @@
 
                                         <!-- Source User Items -->
                                         <StackPanel Grid.Column="1" Margin="0,0,0,10">
-                                            <TextBlock Text="{x:Bind SourceUser.Username}" 
+                                            <TextBlock Text="{x:Bind SourceUser.UserName}" 
                                                      Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind SourceUserItems}">
                                                 <ItemsRepeater.ItemTemplate>
@@ -439,7 +439,7 @@
 
                                         <!-- Destination User Items -->
                                         <StackPanel Grid.Column="2">
-                                            <TextBlock Text="{x:Bind DestinationUser.Username}" 
+                                            <TextBlock Text="{x:Bind DestinationUser.UserName}" 
                                                      Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind DestinationUserItems}">
                                                 <ItemsRepeater.ItemTemplate>

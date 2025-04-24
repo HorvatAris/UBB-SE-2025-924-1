@@ -102,7 +102,7 @@ namespace Steampunks.Repository.InventoryTests
 
         public User? GetCurrentUser()
         {
-            using (var command = new SqlCommand("SELECT TOP 1 UserId, Username FROM Users", this.GetConnection()))
+            using (var command = new SqlCommand("SELECT TOP 1 UserId, UserName FROM Users", this.GetConnection()))
             {
                 try
                 {
@@ -111,7 +111,7 @@ namespace Steampunks.Repository.InventoryTests
                     {
                         if (reader.Read())
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             return user;
                         }
@@ -131,17 +131,17 @@ namespace Steampunks.Repository.InventoryTests
             try
             {
                 // Get the game folder name based on the game title
-                string gameFolder = item.Game.Title.ToLower() switch
+                string gameFolder = item.Game.GameTitle.ToLower() switch
                 {
                     "counter-strike 2" => "cs2",
                     "dota 2" => "dota2",
                     "team fortress 2" => "tf2",
-                    _ => item.Game.Title.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
+                    _ => item.Game.GameTitle.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
                 };
 
                 // Return a path to the image based on the ItemId
                 var path = $"ms-appx:///Assets/img/games/{gameFolder}/{item.ItemId}.png";
-                System.Diagnostics.Debug.WriteLine($"Generated image path for item {item.ItemId} ({item.ItemName}) from {item.Game.Title}: {path}");
+                System.Diagnostics.Debug.WriteLine($"Generated image path for item {item.ItemId} ({item.ItemName}) from {item.Game.GameTitle}: {path}");
                 return path;
             }
             catch (Exception getItemImagePathException)
@@ -177,7 +177,7 @@ namespace Steampunks.Repository.InventoryTests
                         IF OBJECT_ID('dbo.TestUsers', 'U') IS NOT NULL DROP TABLE dbo.TestUsers;
                         CREATE TABLE dbo.TestUsers (
                             UserId INT PRIMARY KEY,
-                            Username NVARCHAR(100) NOT NULL,
+                            UserName NVARCHAR(100) NOT NULL,
                             WalletBalance MONEY NULL,
                             PointBalance INT NULL,
                             IsDeveloper BIT NULL
@@ -186,10 +186,10 @@ namespace Steampunks.Repository.InventoryTests
                         IF OBJECT_ID('dbo.TestGames', 'U') IS NOT NULL DROP TABLE dbo.TestGames;
                         CREATE TABLE dbo.TestGames (
                             GameId INT PRIMARY KEY,
-                            Title NVARCHAR(200) NOT NULL,
+                            GameTitle NVARCHAR(200) NOT NULL,
                             Price FLOAT NOT NULL,
                             Genre NVARCHAR(100) NOT NULL,
-                            Description NVARCHAR(500) NOT NULL,
+                            GameDescription NVARCHAR(500) NOT NULL,
                             Status NVARCHAR(50) NOT NULL,
                             RecommendedSpecs FLOAT NULL,
                             MinimumSpecs FLOAT NULL
@@ -201,7 +201,7 @@ namespace Steampunks.Repository.InventoryTests
                             CorrespondingGameId INT NOT NULL,
                             ItemName NVARCHAR(200) NOT NULL,
                             Price FLOAT NOT NULL,
-                            Description NVARCHAR(500) NOT NULL,
+                            GameDescription NVARCHAR(500) NOT NULL,
                             IsListed BIT NOT NULL
                         );
 
@@ -256,7 +256,7 @@ namespace Steampunks.Repository.InventoryTests
         public async Task SellItemAsync_ValidItem_CompletesSale()
         {
             // Arrange: Create a Game and an Item.
-            var game = new Game("Sell Game", 15.99f, "Action", "Some Description");
+            var game = new Game("Sell Game", 15.99f, "Action", "Some GameDescription");
             game.SetGameId(300);
             var item = new Item("Sellable Item", game, 9.99f, "To Sell");
 
@@ -268,11 +268,11 @@ namespace Steampunks.Repository.InventoryTests
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = @"
-                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, Description, IsListed)
+                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, GameDescription, IsListed)
                         OUTPUT INSERTED.ItemId
-                        VALUES (@gameId, @itemName, @price, @description, @isListed);
+                        VALUES (@GameId, @itemName, @price, @description, @isListed);
                     ";
-                    command.Parameters.Add(new SqlParameter("@gameId", game.GameId));
+                    command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
                     command.Parameters.Add(new SqlParameter("@itemName", "Sellable Item"));
                     command.Parameters.Add(new SqlParameter("@price", 9.99));
                     command.Parameters.Add(new SqlParameter("@description", "To Sell"));
@@ -315,7 +315,7 @@ namespace Steampunks.Repository.InventoryTests
         public async Task AddItemToInventoryAsync_ValidParameters_InsertsItem()
         {
             // Arrange: Create a Game, a User, and an Item.
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var user = new User("newUser");
             user.SetUserId(200);
@@ -328,14 +328,14 @@ namespace Steampunks.Repository.InventoryTests
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = @"
-                        INSERT INTO dbo.TestGames (GameId, Title, Price, Genre, Description, Status, RecommendedSpecs, MinimumSpecs)
-                        VALUES (@GameId, @Title, @Price, @Genre, @Description, @Status, NULL, NULL);
+                        INSERT INTO dbo.TestGames (GameId, GameTitle, Price, Genre, GameDescription, Status, RecommendedSpecs, MinimumSpecs)
+                        VALUES (@GameId, @GameTitle, @Price, @Genre, @GameDescription, @Status, NULL, NULL);
                     ";
                     command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
-                    command.Parameters.Add(new SqlParameter("@Title", game.Title));
+                    command.Parameters.Add(new SqlParameter("@GameTitle", game.GameTitle));
                     command.Parameters.Add(new SqlParameter("@Price", game.Price));
                     command.Parameters.Add(new SqlParameter("@Genre", game.Genre));
-                    command.Parameters.Add(new SqlParameter("@Description", game.Description));
+                    command.Parameters.Add(new SqlParameter("@GameDescription", game.GameDescription));
                     command.Parameters.Add(new SqlParameter("@Status", "Active"));
                     await command.ExecuteNonQueryAsync();
                 }
@@ -344,11 +344,11 @@ namespace Steampunks.Repository.InventoryTests
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = @"
-                        INSERT INTO dbo.TestUsers (UserId, Username, WalletBalance, PointBalance, IsDeveloper)
-                        VALUES (@UserId, @Username, 0, 0, 0);
+                        INSERT INTO dbo.TestUsers (UserId, UserName, WalletBalance, PointBalance, IsDeveloper)
+                        VALUES (@UserId, @UserName, 0, 0, 0);
                     ";
                     command.Parameters.Add(new SqlParameter("@UserId", user.UserId));
-                    command.Parameters.Add(new SqlParameter("@Username", user.Username));
+                    command.Parameters.Add(new SqlParameter("@UserName", user.UserName));
                     await command.ExecuteNonQueryAsync();
                 }
                 connection.Close();
@@ -383,7 +383,7 @@ namespace Steampunks.Repository.InventoryTests
         public async Task GetItemsFromInventoryAsync_ValidGame_ReturnsCorrectItems()
         {
             // Arrange: Create a Game instance.
-            var game = new Game("Test Game", 9.99f, "Adventure", "Test Description");
+            var game = new Game("Test Game", 9.99f, "Adventure", "Test GameDescription");
             game.SetGameId(100);
 
             // Insert a dummy user into dbo.TestUsers so that GetCurrentUser returns a valid user.
@@ -395,11 +395,11 @@ namespace Steampunks.Repository.InventoryTests
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = @"
-                INSERT INTO dbo.TestUsers (UserId, Username, WalletBalance, PointBalance, IsDeveloper)
-                VALUES (@UserId, @Username, 0, 0, 0);
+                INSERT INTO dbo.TestUsers (UserId, UserName, WalletBalance, PointBalance, IsDeveloper)
+                VALUES (@UserId, @UserName, 0, 0, 0);
             ";
                     command.Parameters.Add(new SqlParameter("@UserId", testUser.UserId));
-                    command.Parameters.Add(new SqlParameter("@Username", testUser.Username));
+                    command.Parameters.Add(new SqlParameter("@UserName", testUser.UserName));
                     await command.ExecuteNonQueryAsync();
                 }
                 connection.Close();
@@ -413,14 +413,14 @@ namespace Steampunks.Repository.InventoryTests
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = @"
-                INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, Description, IsListed)
+                INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, GameDescription, IsListed)
                 OUTPUT INSERTED.ItemId
-                VALUES (@gameId, @itemName, @price, @description, @isListed);
+                VALUES (@GameId, @itemName, @price, @description, @isListed);
             ";
-                    command.Parameters.Add(new SqlParameter("@gameId", game.GameId));
+                    command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
                     command.Parameters.Add(new SqlParameter("@itemName", "Test Item"));
                     command.Parameters.Add(new SqlParameter("@price", 19.99));
-                    command.Parameters.Add(new SqlParameter("@description", "Item Description"));
+                    command.Parameters.Add(new SqlParameter("@description", "Item GameDescription"));
                     command.Parameters.Add(new SqlParameter("@isListed", false));
                     insertedItemId = (int)await command.ExecuteScalarAsync();
                 }
@@ -435,10 +435,10 @@ namespace Steampunks.Repository.InventoryTests
                 {
                     command.CommandText = @"
                 INSERT INTO dbo.TestUserInventory (UserId, GameId, ItemId)
-                VALUES (@UserId, @gameId, @ItemId);
+                VALUES (@UserId, @GameId, @ItemId);
             ";
                     command.Parameters.Add(new SqlParameter("@UserId", testUser.UserId));
-                    command.Parameters.Add(new SqlParameter("@gameId", game.GameId));
+                    command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
                     command.Parameters.Add(new SqlParameter("@ItemId", insertedItemId));
                     await command.ExecuteNonQueryAsync();
                 }
@@ -455,7 +455,7 @@ namespace Steampunks.Repository.InventoryTests
             var item = items[0];
             Assert.AreEqual("Test Item", item.ItemName, "ItemName should match");
             Assert.AreEqual(19.99f, item.Price, "Price should match");
-            Assert.AreEqual("Item Description", item.Description, "Description should match");
+            Assert.AreEqual("Item GameDescription", item.Description, "GameDescription should match");
             Assert.IsFalse(item.IsListed, "IsListed should be false as per inserted data");
         }
 
@@ -477,14 +477,14 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestGames (GameId, Title, Price, Genre, Description, Status, RecommendedSpecs, MinimumSpecs)
-                        VALUES (@GameId, @Title, @Price, @Genre, @Description, @Status, NULL, NULL);
+                        INSERT INTO dbo.TestGames (GameId, GameTitle, Price, Genre, GameDescription, Status, RecommendedSpecs, MinimumSpecs)
+                        VALUES (@GameId, @GameTitle, @Price, @Genre, @GameDescription, @Status, NULL, NULL);
                     ";
                         command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
-                        command.Parameters.Add(new SqlParameter("@Title", game.Title));
+                        command.Parameters.Add(new SqlParameter("@GameTitle", game.GameTitle));
                         command.Parameters.Add(new SqlParameter("@Price", game.Price));
                         command.Parameters.Add(new SqlParameter("@Genre", game.Genre));
-                        command.Parameters.Add(new SqlParameter("@Description", game.Description));
+                        command.Parameters.Add(new SqlParameter("@GameDescription", game.GameDescription));
                         command.Parameters.Add(new SqlParameter("@Status", "Active"));
                         await command.ExecuteNonQueryAsync();
                     }
@@ -499,14 +499,14 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, Description, IsListed)
+                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, GameDescription, IsListed)
                         OUTPUT INSERTED.ItemId
-                        VALUES (@GameId, @ItemName, @Price, @Description, @IsListed);
+                        VALUES (@GameId, @ItemName, @Price, @GameDescription, @IsListed);
                     ";
                         command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
                         command.Parameters.Add(new SqlParameter("@ItemName", "InventoryItem"));
                         command.Parameters.Add(new SqlParameter("@Price", 20.0));
-                        command.Parameters.Add(new SqlParameter("@Description", "Item Desc"));
+                        command.Parameters.Add(new SqlParameter("@GameDescription", "Item Desc"));
                         command.Parameters.Add(new SqlParameter("@IsListed", false));
                         insertedItemId = (int)await command.ExecuteScalarAsync();
                     }
@@ -560,14 +560,14 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestGames (GameId, Title, Price, Genre, Description, Status, RecommendedSpecs, MinimumSpecs)
-                        VALUES (@GameId, @Title, @Price, @Genre, @Description, @Status, NULL, NULL);
+                        INSERT INTO dbo.TestGames (GameId, GameTitle, Price, Genre, GameDescription, Status, RecommendedSpecs, MinimumSpecs)
+                        VALUES (@GameId, @GameTitle, @Price, @Genre, @GameDescription, @Status, NULL, NULL);
                     ";
                         command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
-                        command.Parameters.Add(new SqlParameter("@Title", game.Title));
+                        command.Parameters.Add(new SqlParameter("@GameTitle", game.GameTitle));
                         command.Parameters.Add(new SqlParameter("@Price", game.Price));
                         command.Parameters.Add(new SqlParameter("@Genre", game.Genre));
-                        command.Parameters.Add(new SqlParameter("@Description", game.Description));
+                        command.Parameters.Add(new SqlParameter("@GameDescription", game.GameDescription));
                         command.Parameters.Add(new SqlParameter("@Status", "Active"));
                         await command.ExecuteNonQueryAsync();
                     }
@@ -577,14 +577,14 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, Description, IsListed)
+                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, GameDescription, IsListed)
                         OUTPUT INSERTED.ItemId
-                        VALUES (@GameId, @ItemName, @Price, @Description, @IsListed);
+                        VALUES (@GameId, @ItemName, @Price, @GameDescription, @IsListed);
                     ";
                         command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
                         command.Parameters.Add(new SqlParameter("@ItemName", "AllItemsItem"));
                         command.Parameters.Add(new SqlParameter("@Price", 25.5));
-                        command.Parameters.Add(new SqlParameter("@Description", "Item Desc"));
+                        command.Parameters.Add(new SqlParameter("@GameDescription", "Item Desc"));
                         command.Parameters.Add(new SqlParameter("@IsListed", false));
                         insertedItemId = (int)await command.ExecuteScalarAsync();
                     }
@@ -635,14 +635,14 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestGames (GameId, Title, Price, Genre, Description, Status, RecommendedSpecs, MinimumSpecs)
-                        VALUES (@GameId, @Title, @Price, @Genre, @Description, @Status, NULL, NULL);
+                        INSERT INTO dbo.TestGames (GameId, GameTitle, Price, Genre, GameDescription, Status, RecommendedSpecs, MinimumSpecs)
+                        VALUES (@GameId, @GameTitle, @Price, @Genre, @GameDescription, @Status, NULL, NULL);
                     ";
                         command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
-                        command.Parameters.Add(new SqlParameter("@Title", game.Title));
+                        command.Parameters.Add(new SqlParameter("@GameTitle", game.GameTitle));
                         command.Parameters.Add(new SqlParameter("@Price", game.Price));
                         command.Parameters.Add(new SqlParameter("@Genre", game.Genre));
-                        command.Parameters.Add(new SqlParameter("@Description", game.Description));
+                        command.Parameters.Add(new SqlParameter("@GameDescription", game.GameDescription));
                         command.Parameters.Add(new SqlParameter("@Status", "Active"));
                         await command.ExecuteNonQueryAsync();
                     }
@@ -651,14 +651,14 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, Description, IsListed)
+                        INSERT INTO dbo.TestItems (CorrespondingGameId, ItemName, Price, GameDescription, IsListed)
                         OUTPUT INSERTED.ItemId
-                        VALUES (@GameId, @ItemName, @Price, @Description, @IsListed);
+                        VALUES (@GameId, @ItemName, @Price, @GameDescription, @IsListed);
                     ";
                         command.Parameters.Add(new SqlParameter("@GameId", game.GameId));
                         command.Parameters.Add(new SqlParameter("@ItemName", "RemoveItem"));
                         command.Parameters.Add(new SqlParameter("@Price", 10.0));
-                        command.Parameters.Add(new SqlParameter("@Description", "Item Desc"));
+                        command.Parameters.Add(new SqlParameter("@GameDescription", "Item Desc"));
                         command.Parameters.Add(new SqlParameter("@IsListed", false));
                         insertedItemId = (int)await command.ExecuteScalarAsync();
                     }
@@ -668,11 +668,11 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestUsers (UserId, Username, WalletBalance, PointBalance, IsDeveloper)
-                        VALUES (@UserId, @Username, 0, 0, 0);
+                        INSERT INTO dbo.TestUsers (UserId, UserName, WalletBalance, PointBalance, IsDeveloper)
+                        VALUES (@UserId, @UserName, 0, 0, 0);
                     ";
                         command.Parameters.Add(new SqlParameter("@UserId", user.UserId));
-                        command.Parameters.Add(new SqlParameter("@Username", user.Username));
+                        command.Parameters.Add(new SqlParameter("@UserName", user.UserName));
                         await command.ExecuteNonQueryAsync();
                     }
 
@@ -729,9 +729,9 @@ namespace Steampunks.Repository.InventoryTests
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = @"
-                        INSERT INTO dbo.TestUsers (UserId, Username, WalletBalance, PointBalance, IsDeveloper)
+                        INSERT INTO dbo.TestUsers (UserId, UserName, WalletBalance, PointBalance, IsDeveloper)
                         VALUES (@UserId1, @Username1, 0, 0, 0);
-                        INSERT INTO dbo.TestUsers (UserId, Username, WalletBalance, PointBalance, IsDeveloper)
+                        INSERT INTO dbo.TestUsers (UserId, UserName, WalletBalance, PointBalance, IsDeveloper)
                         VALUES (@UserId2, @Username2, 0, 0, 0);
                     ";
                         command.Parameters.Add(new SqlParameter("@UserId1", 101));

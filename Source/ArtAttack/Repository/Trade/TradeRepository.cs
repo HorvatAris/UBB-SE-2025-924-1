@@ -43,9 +43,9 @@ namespace Steampunks.Repository.Trade
             var trades = new List<ItemTrade>();
             const string tradesQuery = @"
                 SELECT t.*, 
-                       su.UserId as SourceUserId, su.Username as SourceUsername,
-                       du.UserId as DestUserId, du.Username as DestUsername,
-                       g.GameId, g.Title as GameTitle, g.Price as GamePrice, g.Genre, g.Description as GameDescription
+                       su.UserId as SourceUserId, su.UserName as SourceUsername,
+                       du.UserId as DestUserId, du.UserName as DestUsername,
+                       g.GameId, g.GameTitle as GameTitle, g.Price as GamePrice, g.Genre, g.GameDescription as GameDescription
                 FROM ItemTrades t
                 JOIN Users su ON t.SourceUserId = su.UserId
                 JOIN Users du ON t.DestinationUserId = du.UserId
@@ -55,7 +55,7 @@ namespace Steampunks.Repository.Trade
 
             const string itemsQuery = @"
                 SELECT i.*, td.IsSourceUserItem,
-                       g.GameId, g.Title as GameTitle, g.Price as GamePrice, g.Genre, g.Description as GameDescription
+                       g.GameId, g.GameTitle as GameTitle, g.Price as GamePrice, g.Genre, g.GameDescription as GameDescription
                 FROM ItemTradeDetails td
                 JOIN Items i ON td.ItemId = i.ItemId
                 JOIN Games g ON i.CorrespondingGameId = g.GameId
@@ -133,7 +133,7 @@ namespace Steampunks.Repository.Trade
                                     reader.GetString(reader.GetOrdinal("ItemName")),
                                     game,
                                     (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                    reader.GetString(reader.GetOrdinal("Description")));
+                                    reader.GetString(reader.GetOrdinal("GameDescription")));
                                 item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                                 item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
@@ -161,9 +161,9 @@ namespace Steampunks.Repository.Trade
             var trades = new List<ItemTrade>();
             const string tradesQuery = @"
                 SELECT t.*, 
-                       su.UserId as SourceUserId, su.Username as SourceUsername,
-                       du.UserId as DestUserId, du.Username as DestUsername,
-                       g.GameId, g.Title as GameTitle, g.Price as GamePrice, g.Genre, g.Description as GameDescription
+                       su.UserId as SourceUserId, su.UserName as SourceUsername,
+                       du.UserId as DestUserId, du.UserName as DestUsername,
+                       g.GameId, g.GameTitle as GameTitle, g.Price as GamePrice, g.Genre, g.GameDescription as GameDescription
                 FROM ItemTrades t
                 JOIN Users su ON t.SourceUserId = su.UserId
                 JOIN Users du ON t.DestinationUserId = du.UserId
@@ -173,7 +173,7 @@ namespace Steampunks.Repository.Trade
 
             const string itemsQuery = @"
                 SELECT i.*, td.IsSourceUserItem,
-                       g.GameId, g.Title as GameTitle, g.Price as GamePrice, g.Genre, g.Description as GameDescription
+                       g.GameId, g.GameTitle as GameTitle, g.Price as GamePrice, g.Genre, g.GameDescription as GameDescription
                 FROM ItemTradeDetails td
                 JOIN Items i ON td.ItemId = i.ItemId
                 JOIN Games g ON i.CorrespondingGameId = g.GameId
@@ -251,7 +251,7 @@ namespace Steampunks.Repository.Trade
                                     reader.GetString(reader.GetOrdinal("ItemName")),
                                     game,
                                     (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                    reader.GetString(reader.GetOrdinal("Description")));
+                                    reader.GetString(reader.GetOrdinal("GameDescription")));
 
                                 item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                                 item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
@@ -480,13 +480,13 @@ namespace Steampunks.Repository.Trade
             using (var connection = this.dataBaseConnector.GetNewConnection())
             {
                 await connection.OpenAsync();
-                using (var command = new SqlCommand("SELECT TOP 1 UserId, Username FROM Users", connection))
+                using (var command = new SqlCommand("SELECT TOP 1 UserId, UserName FROM Users", connection))
                 {
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             return user;
                         }
@@ -506,19 +506,19 @@ namespace Steampunks.Repository.Trade
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.Description,
+                    i.GameDescription,
                     i.IsListed,
                     g.GameId,
-                    g.Title as GameTitle,
+                    g.GameTitle as GameTitle,
                     g.Genre,
-                    g.Description as GameDescription,
+                    g.GameDescription as GameDescription,
                     g.Price as GamePrice,
                     g.Status as GameStatus
                 FROM Items i
                 JOIN Games g ON i.CorrespondingGameId = g.GameId
                 JOIN UserInventory ui ON i.ItemId = ui.ItemId AND g.GameId = ui.GameId
                 WHERE ui.UserId = @UserId
-                ORDER BY g.Title, i.Price";
+                ORDER BY g.GameTitle, i.Price";
 
             try
             {
@@ -549,7 +549,7 @@ namespace Steampunks.Repository.Trade
                                     reader.GetString(reader.GetOrdinal("ItemName")),
                                     game,
                                     (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                    reader.GetString(reader.GetOrdinal("Description")));
+                                    reader.GetString(reader.GetOrdinal("GameDescription")));
                                 item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                                 item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
@@ -585,17 +585,17 @@ namespace Steampunks.Repository.Trade
             try
             {
                 // Get the game folder name based on the game title
-                string gameFolder = item.Game.Title.ToLower() switch
+                string gameFolder = item.Game.GameTitle.ToLower() switch
                 {
                     "counter-strike 2" => "cs2",
                     "dota 2" => "dota2",
                     "team fortress 2" => "tf2",
-                    _ => item.Game.Title.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
+                    _ => item.Game.GameTitle.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
                 };
 
                 // Return a path to the image based on the ItemId
                 var path = $"ms-appx:///Assets/img/games/{gameFolder}/{item.ItemId}.png";
-                System.Diagnostics.Debug.WriteLine($"Generated image path for item {item.ItemId} ({item.ItemName}) from {item.Game.Title}: {path}");
+                System.Diagnostics.Debug.WriteLine($"Generated image path for item {item.ItemId} ({item.ItemName}) from {item.Game.GameTitle}: {path}");
                 return path;
             }
             catch (Exception getItemImagePathException)

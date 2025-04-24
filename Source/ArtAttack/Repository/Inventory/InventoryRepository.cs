@@ -50,7 +50,7 @@ namespace Steampunks.Repository.Inventory
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.Description,
+                    i.GameDescription,
                     i.IsListed
                 FROM Items i
                 JOIN UserInventory ui ON i.ItemId = ui.ItemId
@@ -77,7 +77,7 @@ namespace Steampunks.Repository.Inventory
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("Description")));
+                                reader.GetString(reader.GetOrdinal("GameDescription")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
                             items.Add(item);
@@ -117,19 +117,19 @@ namespace Steampunks.Repository.Inventory
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.Description,
+                    i.GameDescription,
                     i.IsListed,
                     g.GameId,
-                    g.Title as GameTitle,
+                    g.GameTitle as GameTitle,
                     g.Genre,
-                    g.Description as GameDescription,
+                    g.GameDescription as GameDescription,
                     g.Price as GamePrice,
                     g.Status as GameStatus
                 FROM Items i
                 JOIN Games g ON i.CorrespondingGameId = g.GameId
                 JOIN UserInventory ui ON i.ItemId = ui.ItemId AND g.GameId = ui.GameId
                 WHERE ui.UserId = @UserId
-                ORDER BY g.Title, i.Price";
+                ORDER BY g.GameTitle, i.Price";
 
             try
             {
@@ -158,7 +158,7 @@ namespace Steampunks.Repository.Inventory
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("Description")));
+                                reader.GetString(reader.GetOrdinal("GameDescription")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
@@ -211,12 +211,12 @@ namespace Steampunks.Repository.Inventory
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.Description,
+                    i.GameDescription,
                     i.IsListed,
                     g.GameId,
-                    g.Title as GameTitle,
+                    g.GameTitle as GameTitle,
                     g.Genre,
-                    g.Description as GameDescription,
+                    g.GameDescription as GameDescription,
                     g.Price as GamePrice,
                     g.Status as GameStatus
                 FROM Items i
@@ -246,7 +246,7 @@ namespace Steampunks.Repository.Inventory
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("Description")));
+                                reader.GetString(reader.GetOrdinal("GameDescription")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
                             items.Add(item);
@@ -404,7 +404,7 @@ namespace Steampunks.Repository.Inventory
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
-            using (var command = new SqlCommand("SELECT UserId, Username FROM Users", this.dataBaseConnector.GetConnection()))
+            using (var command = new SqlCommand("SELECT UserId, UserName FROM Users", this.dataBaseConnector.GetConnection()))
             {
                 try
                 {
@@ -413,7 +413,7 @@ namespace Steampunks.Repository.Inventory
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             users.Add(user);
                         }

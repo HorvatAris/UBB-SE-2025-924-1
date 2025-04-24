@@ -20,7 +20,7 @@ public class CartRepositoryTests
 		dataLinkMock = new Mock<IDataLink>();
 		testUser = new User
 		{
-			UserIdentifier = TestUserIdentifier,
+			UserId = TestUserIdentifier,
 			WalletBalance = TestWalletBallance
 		};
 		cartRepository = new CartRepository(dataLinkMock.Object, testUser);
@@ -40,7 +40,7 @@ public class CartRepositoryTests
 		var row = table.NewRow();
 		row[SqlConstants.GAMEIDCOLUMN] = 1;
 		row[SqlConstants.NAMECOLUMN] = "GameName";
-		row[SqlConstants.DESCRIPTIONCOLUMN] = "Description";
+		row[SqlConstants.DESCRIPTIONCOLUMN] = "GameDescription";
 		row[SqlConstants.IMAGEURLCOLUMN] = "image.png";
 		row[SqlConstants.PRICECOLUMN] = 19.99m;
 		table.Rows.Add(row);
@@ -78,7 +78,7 @@ public class CartRepositoryTests
 	[Fact]
 	public void AddGameToCart_WhenCalledValidIdentifier_ShouldExecuteQuery()
 	{
-		var game = new Game { Identifier = TestUserIdentifier };
+		var game = new Game { GameId = TestUserIdentifier };
 
 		cartRepository.AddGameToCart(game);
 
@@ -89,7 +89,7 @@ public class CartRepositoryTests
 	[Fact]
 	public void AddGameToCart_WhenDataLinkFails_ShouldThrowWrappedException()
 	{
-		var game = new Game { Identifier = TestUserIdentifier };
+		var game = new Game { GameId = TestUserIdentifier };
 		var expectedExceptionErrorMessage = "SQL error";
 
 		dataLinkMock
@@ -104,7 +104,7 @@ public class CartRepositoryTests
 	[Fact]
 	public void RemoveGameFromCart_WhenCalledWithValidIdentifier_ShouldExecuteQuery()
 	{
-		var game = new Game { Identifier = TestUserIdentifier };
+		var game = new Game { GameId = TestUserIdentifier };
 
 		cartRepository.RemoveGameFromCart(game);
 
@@ -115,7 +115,7 @@ public class CartRepositoryTests
 	[Fact]
 	public void RemoveGameFromCart_WhenExceptionIsThrownByDataLink_ShouldCatchExceptionAndNotThrow()
 	{
-		var game = new Game { Identifier = TestUserIdentifier };
+		var game = new Game { GameId = TestUserIdentifier };
 		var expectedExceptionErrorMessage = "Something went wrong";
 
 		dataLinkMock

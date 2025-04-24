@@ -58,12 +58,12 @@ namespace SteamStore.Pages
                     return;
                 }
 
-                this.GameTitle.Text = this.viewModel.Game.Name;
+                this.GameTitle.Text = this.viewModel.Game.GameTitle;
                 this.GamePrice.Text = this.GamePrice.Text = this.viewModel.FormattedPrice;
 
-                this.GameDescription.Text = this.viewModel.Game.Description;
+                this.GameDescription.Text = this.viewModel.Game.GameDescription;
 
-                this.GameDeveloper.Text = LabelStrings.DEVELOPERPREFIX + this.viewModel.Game.Name;
+                this.GameDeveloper.Text = LabelStrings.DEVELOPERPREFIX + this.viewModel.Game.GameTitle;
 
                 if (!string.IsNullOrEmpty(this.viewModel.Game.ImagePath))
                 {
@@ -175,7 +175,7 @@ namespace SteamStore.Pages
                 }
             }
 
-            title.Text = game.Name;
+            title.Text = game.GameTitle;
             rating.Text = string.Format(LabelStrings.RATINGFORMAT, game.Rating);
         }
 
@@ -189,7 +189,7 @@ namespace SteamStore.Pages
             catch (Exception exception)
             {
                 this.NotificationTip.Title = NotificationStrings.AddToCartErrorTitle;
-                this.NotificationTip.Subtitle = string.Format(NotificationStrings.AddToCartErrorMessage, this.viewModel.Game.Name) + SpaceString + exception.Message;
+                this.NotificationTip.Subtitle = string.Format(NotificationStrings.AddToCartErrorMessage, this.viewModel.Game.GameTitle) + SpaceString + exception.Message;
                 this.NotificationTip.IsOpen = true;
             }
         }
@@ -197,7 +197,7 @@ namespace SteamStore.Pages
         private void ShowSuccessNotificationForBuy()
         {
             this.NotificationTip.Title = NotificationStrings.AddToCartSuccessTitle;
-            this.NotificationTip.Subtitle = string.Format(NotificationStrings.AddToCartSuccessMessage, this.viewModel.Game.Name);
+            this.NotificationTip.Subtitle = string.Format(NotificationStrings.AddToCartSuccessMessage, this.viewModel.Game.GameTitle);
             this.NotificationTip.IsOpen = true;
         }
 
@@ -207,7 +207,7 @@ namespace SteamStore.Pages
             {
                 this.viewModel.AddToWishlist();
                 this.NotificationTip.Title = NotificationStrings.AddToWishlistSuccessTitle;
-                this.NotificationTip.Subtitle = string.Format(NotificationStrings.AddToWishlistSuccessMessage, this.viewModel.Game.Name);
+                this.NotificationTip.Subtitle = string.Format(NotificationStrings.AddToWishlistSuccessMessage, this.viewModel.Game.GameTitle);
                 this.NotificationTip.IsOpen = true;
             }
             catch (Exception exception)
@@ -216,7 +216,7 @@ namespace SteamStore.Pages
                 string errorMessage = exception.Message;
                 if (errorMessage.Contains(ErrorStrings.SQLNONQUERYFAILUREINDICATOR))
                 {
-                    errorMessage = string.Format(ErrorStrings.ADDTOWISHLISTALREADYEXISTSMESSAGE, this.viewModel.Game.Name);
+                    errorMessage = string.Format(ErrorStrings.ADDTOWISHLISTALREADYEXISTSMESSAGE, this.viewModel.Game.GameTitle);
                 }
 
                 this.NotificationTip.Subtitle = errorMessage;

@@ -237,7 +237,7 @@ namespace Steampunks.Tests.InventoryTests
             var availableGames = service.GetAvailableGames(items);
 
             // Assert: One assert checking that the first game's title is the special "All Games" option.
-            Assert.AreEqual("All Games", availableGames[0].Title);
+            Assert.AreEqual("All Games", availableGames[0].GameTitle);
         }
 
         // 10. GetUserFilteredInventoryAsync tests

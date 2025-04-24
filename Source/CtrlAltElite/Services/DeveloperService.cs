@@ -62,13 +62,13 @@ public class DeveloperService : IDeveloperService
             throw new Exception(ExceptionMessages.NoTagsSelected);
         }
 
-       // var game = new Game(gameId, name,price, description, imageUrl, gameplayUrl, trailerUrl, minReq, recReq, "Pending", discount);
+       // var game = new Game(GameId, name,price, description, imageUrl, gameplayUrl, trailerUrl, minReq, recReq, "Pending", discount);
         var game = new Game
         {
-            Identifier = gameId,
-            Name = name,
+            GameId = gameId,
+            GameTitle = name,
             Price = price,
-            Description = description,
+            GameDescription = description,
             ImagePath = imageUrl,
             GameplayPath = gameplayUrl,
             TrailerPath = trailerUrl,
@@ -84,7 +84,7 @@ public class DeveloperService : IDeveloperService
     {
         foreach (Game game in gameList)
         {
-            if (game.Identifier == gameId)
+            if (game.GameId == gameId)
             {
                 return game;
             }
@@ -95,7 +95,7 @@ public class DeveloperService : IDeveloperService
 
     public void CreateGame(Game game)
     {
-        game.PublisherIdentifier = this.User.UserIdentifier;
+        game.PublisherIdentifier = this.User.UserId;
         this.GameRepository.CreateGame(game);
     }
 
@@ -107,29 +107,29 @@ public class DeveloperService : IDeveloperService
         {
             foreach (var tag in selectedTags)
             {
-                this.InsertGameTag(game.Identifier, tag.TagId);
+                this.InsertGameTag(game.GameId, tag.TagId);
             }
         }
     }
 
     public void UpdateGame(Game game)
     {
-        game.PublisherIdentifier = this.User.UserIdentifier;
-        this.GameRepository.UpdateGame(game.Identifier, game);
+        game.PublisherIdentifier = this.User.UserId;
+        this.GameRepository.UpdateGame(game.GameId, game);
     }
 
     public void UpdateGameWithTags(Game game, IList<Tag> selectedTags)
     {
-        game.PublisherIdentifier = this.User.UserIdentifier;
-        this.GameRepository.UpdateGame(game.Identifier, game);
+        game.PublisherIdentifier = this.User.UserId;
+        this.GameRepository.UpdateGame(game.GameId, game);
         try
         {
-            this.DeleteGameTags(game.Identifier);
+            this.DeleteGameTags(game.GameId);
             if (selectedTags != null && selectedTags.Count > EmptyListLength)
             {
                 foreach (var tag in selectedTags)
                 {
-                    this.InsertGameTag(game.Identifier, tag.TagId);
+                    this.InsertGameTag(game.GameId, tag.TagId);
                 }
             }
         }
@@ -153,12 +153,12 @@ public class DeveloperService : IDeveloperService
 
     public List<Game> GetDeveloperGames()
     {
-        return this.GameRepository.GetDeveloperGames(this.User.UserIdentifier);
+        return this.GameRepository.GetDeveloperGames(this.User.UserId);
     }
 
     public List<Game> GetUnvalidated()
     {
-        return this.GameRepository.GetUnvalidated(this.User.UserIdentifier);
+        return this.GameRepository.GetUnvalidated(this.User.UserId);
     }
 
     public void RejectGame(int gameId)
@@ -215,7 +215,7 @@ public class DeveloperService : IDeveloperService
     {
         var game = this.ValidateInputForAddingAGame(gameIdText, name, priceText, description, imageUrl, trailerUrl, gameplayUrl, minimumRequirement, reccommendedRequirement, discountText, selectedTags);
 
-        if (this.IsGameIdInUse(game.Identifier))
+        if (this.IsGameIdInUse(game.GameId))
         {
             throw new Exception(ExceptionMessages.IdAlreadyInUse);
         }
@@ -230,7 +230,7 @@ public class DeveloperService : IDeveloperService
         Game gameToRemove = null;
         foreach (var game in developerGames)
         {
-            if (game.Identifier == gameId)
+            if (game.GameId == gameId)
             {
                 gameToRemove = game;
                 break;
@@ -251,7 +251,7 @@ public class DeveloperService : IDeveloperService
         Game existing = null;
         foreach (var gameInDeveloperGames in developerGames)
         {
-            if (gameInDeveloperGames.Identifier == game.Identifier)
+            if (gameInDeveloperGames.GameId == game.GameId)
             {
                 existing = gameInDeveloperGames;
                 break;
@@ -274,7 +274,7 @@ public class DeveloperService : IDeveloperService
         Game gameToRemove = null;
         foreach (var game in unvalidatedGames)
         {
-            if (game.Identifier == gameId)
+            if (game.GameId == gameId)
             {
                 gameToRemove = game;
                 break;
@@ -291,7 +291,7 @@ public class DeveloperService : IDeveloperService
     {
         foreach (var game in developerGames)
         {
-            if (game.Identifier == gameId)
+            if (game.GameId == gameId)
             {
                 return true;
             }
@@ -299,7 +299,7 @@ public class DeveloperService : IDeveloperService
 
         foreach (var game in unvalidatedGames)
         {
-            if (game.Identifier == gameId)
+            if (game.GameId == gameId)
             {
                 return true;
             }

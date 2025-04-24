@@ -35,7 +35,7 @@ namespace Steampunks_Tests
             var result = await service.GetAllGamesAsync();
 
             Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result[0].Title, Is.EqualTo("Test Game1"));
+            Assert.That(result[0].GameTitle, Is.EqualTo("Test Game1"));
             mockRepository.Verify(r => r.GetGamesAsync(), Times.Once);
         }
 
@@ -48,7 +48,7 @@ namespace Steampunks_Tests
             var result = await service.GetGameByIdAsync(42);
 
             Assert.IsNotNull(result);
-            Assert.That(result.Title, Is.EqualTo("Test Game1"));
+            Assert.That(result.GameTitle, Is.EqualTo("Test Game1"));
             mockRepository.Verify(r => r.GetGameByIdAsync(42), Times.Once);
         }
 

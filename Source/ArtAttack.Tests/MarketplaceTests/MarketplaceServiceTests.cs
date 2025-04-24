@@ -67,7 +67,7 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public async Task GetAllListingsAsync_ReturnsItemList()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var items = new List<Item> {
                 new Item("New Item1", game, 5.99f, "Item Desc"),
@@ -88,7 +88,7 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public async Task GetListingsByGameAsync_ReturnsListings()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var listings = new List<Item> { new Item("New Item", game, 5.99f, "Item Desc") };
             mockRepository.Setup(r => r.GetListedItemsByGameAsync(game)).ReturnsAsync(listings);
@@ -100,7 +100,7 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public void AddListingAsync_NullGame_ThrowsArgumentNullException()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             Assert.ThrowsAsync<ArgumentNullException>(() => service.AddListingAsync(null, new Item("New Item", game, 5.99f, "Item Desc")));
         }
@@ -108,14 +108,14 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public void AddListingAsync_NullItem_ThrowsArgumentNullException()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             Assert.ThrowsAsync<ArgumentNullException>(() => service.AddListingAsync(game, null));
         }
 
         [Test]
         public async Task AddListingAsync_ValidInputs_CallsRepository()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var item = new Item("New Item", game, 5.99f, "Item Desc") { IsListed = false };
             mockRepository.Setup(r => r.MakeItemListableAsync(game, item)).Returns(Task.CompletedTask);
@@ -127,7 +127,7 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public void RemoveListingAsync_NullGame_ThrowsArgumentNullException()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             var item = new Item("New Item", game, 5.99f, "Item Desc");
             Assert.ThrowsAsync<ArgumentNullException>(() => service.RemoveListingAsync(null, item));
         }
@@ -135,14 +135,14 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public void RemoveListingAsync_NullItem_ThrowsArgumentNullException()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             Assert.ThrowsAsync<ArgumentNullException>(() => service.RemoveListingAsync(game, null));
         }
 
         [Test]
         public async Task RemoveListingAsync_Valid_CallsRepository()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var item = new Item("New Item", game, 5.99f, "Item Desc");
             mockRepository.Setup(r => r.MakeItemListableAsync(game, item)).Returns(Task.CompletedTask);
@@ -154,7 +154,7 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public void UpdateListingAsync_NullGame_ThrowsArgumentNullException()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             Assert.ThrowsAsync<ArgumentNullException>(() => service.UpdateListingAsync(null, new Item("New Item", game, 5.99f, "Item Desc")));
         }
@@ -162,14 +162,14 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public void UpdateListingAsync_NullItem_ThrowsArgumentNullException()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             Assert.ThrowsAsync<ArgumentNullException>(() => service.UpdateListingAsync(game, null));
         }
 
         [Test]
         public async Task UpdateListingAsync_Valid_CallsRepository()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var item = new Item("New Item", game, 5.99f, "Item Desc");
             mockRepository.Setup(r => r.UpdateItemPriceAsync(game, item)).Returns(Task.CompletedTask);
@@ -187,7 +187,7 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public void BuyItemAsync_UnlistedItem_ThrowsInvalidOperationException()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var item = new Item("New Item", game, 5.99f, "Item Desc") { IsListed = false };
             Assert.ThrowsAsync<InvalidOperationException>(() => service.BuyItemAsync(item));
@@ -196,7 +196,7 @@ namespace Steampunks_Tests.MarketplaceTests
         [Test]
         public async Task BuyItemAsync_Valid_ReturnsTrue()
         {
-            var game = new Game("Test Game", 9.99f, "RPG", "Game Description");
+            var game = new Game("Test Game", 9.99f, "RPG", "Game GameDescription");
             game.SetGameId(101);
             var item = new Item("New Item", game, 5.99f, "Item Desc") { IsListed = true };
             mockRepository.Setup(r => r.BuyItemAsync(item, testUser)).ReturnsAsync(true);

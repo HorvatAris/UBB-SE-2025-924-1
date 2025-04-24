@@ -28,9 +28,9 @@ public static class GameTestUtils
     {
         return new Game
         {
-            Identifier = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-            Name = CommonTestUtils.RandomName(NAME_SIZE),
-            Description = CommonTestUtils.RandomName(DESCRIPTION_SIZE),
+            GameId = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            GameTitle = CommonTestUtils.RandomName(NAME_SIZE),
+            GameDescription = CommonTestUtils.RandomName(DESCRIPTION_SIZE),
             ImagePath = CommonTestUtils.RandomPath(),
             Price = CommonTestUtils.RandomNumber(STARTING_PRICE, MAX_PRICE, PRICE_DECIMAL_COUNT),
             TrailerPath = CommonTestUtils.RandomPath(),

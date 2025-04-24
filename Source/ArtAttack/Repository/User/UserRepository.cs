@@ -44,7 +44,7 @@ namespace Steampunks.Repository.UserRepository
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
-            const string query = "SELECT UserId, Username FROM Users";
+            const string query = "SELECT UserId, UserName FROM Users";
 
             try
             {
@@ -57,7 +57,7 @@ namespace Steampunks.Repository.UserRepository
                     {
                         while (await reader.ReadAsync())
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             users.Add(user);
                         }
@@ -90,7 +90,7 @@ namespace Steampunks.Repository.UserRepository
         public async Task<User?> GetUserByIdAsync(int userId)
         {
             const string query = @"
-        SELECT UserId, Username, WalletBalance, PointBalance, IsDeveloper
+        SELECT UserId, UserName, WalletBalance, PointBalance, IsDeveloper
         FROM Users
         WHERE UserId = @UserId";
 
@@ -106,7 +106,7 @@ namespace Steampunks.Repository.UserRepository
                     {
                         if (await reader.ReadAsync())
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             return user;
                         }
@@ -132,7 +132,7 @@ namespace Steampunks.Repository.UserRepository
         {
             const string query = @"
         UPDATE Users
-        SET Username = @Username,
+        SET UserName = @UserName,
             WalletBalance = @WalletBalance,
             PointBalance = @PointBalance,
             IsDeveloper = @IsDeveloper
@@ -144,7 +144,7 @@ namespace Steampunks.Repository.UserRepository
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@UserId", user.UserId);
-                    command.Parameters.AddWithValue("@Username", user.Username);
+                    command.Parameters.AddWithValue("@UserName", user.UserName);
                     command.Parameters.AddWithValue("@WalletBalance", user.WalletBalance);
                     command.Parameters.AddWithValue("@PointBalance", user.PointBalance);
                     command.Parameters.AddWithValue("@IsDeveloper", user.IsDeveloper);
@@ -174,8 +174,8 @@ namespace Steampunks.Repository.UserRepository
                 "TestUser3",
             };
 
-            const string query = @"INSERT INTO Users (Username, WalletBalance, PointBalance, IsDeveloper) 
-                  VALUES (@Username, 1000, 100, 0)";
+            const string query = @"INSERT INTO Users (UserName, WalletBalance, PointBalance, IsDeveloper) 
+                  VALUES (@UserName, 1000, 100, 0)";
 
             try
             {
@@ -187,7 +187,7 @@ namespace Steampunks.Repository.UserRepository
                     foreach (var username in testUsers)
                     {
                         command.Parameters.Clear();
-                        command.Parameters.AddWithValue("@Username", username);
+                        command.Parameters.AddWithValue("@UserName", username);
                         await command.ExecuteNonQueryAsync();
                     }
                 }

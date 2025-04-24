@@ -14,11 +14,11 @@ public class Game
     {
     }
 
-    public int Identifier { get; set; }
+    public int GameId { get; set; }
 
-    public string Name { get; set; }
+    public string GameTitle { get; set; }
 
-    public string Description { get; set; }
+    public string GameDescription { get; set; }
 
     public string ImagePath { get; set; }
 

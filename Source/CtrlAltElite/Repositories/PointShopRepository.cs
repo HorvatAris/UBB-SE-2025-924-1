@@ -67,7 +67,7 @@ namespace SteamStore.Repositories
             {
                 SqlParameter[] userParameters = new SqlParameter[]
                 {
-                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserIdentifier),
+                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserId),
                 };
 
                 DataTable result = this.data.ExecuteReader(SqlConstants.GetUserPointShopItemsProcedure, userParameters);
@@ -116,7 +116,7 @@ namespace SteamStore.Repositories
             {
                 SqlParameter[] pointShopPurchaseParameters = new SqlParameter[]
                 {
-                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserIdentifier),
+                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserId),
                     new SqlParameter(SqlConstants.ItemIdParameter, item.ItemIdentifier),
                 };
 
@@ -148,7 +148,7 @@ namespace SteamStore.Repositories
             {
                 SqlParameter[] activateItemParameters = new SqlParameter[]
                 {
-                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserIdentifier),
+                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserId),
                     new SqlParameter(SqlConstants.ItemIdParameter, item.ItemIdentifier),
                 };
 
@@ -176,7 +176,7 @@ namespace SteamStore.Repositories
             {
                 SqlParameter[] deactivateItemParameters = new SqlParameter[]
                 {
-                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserIdentifier),
+                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserId),
                     new SqlParameter(SqlConstants.ItemIdParameter, item.ItemIdentifier),
                 };
 
@@ -194,7 +194,7 @@ namespace SteamStore.Repositories
             {
                 SqlParameter[] userPointBalanceParametrs = new SqlParameter[]
                 {
-                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserIdentifier),
+                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserId),
                     new SqlParameter(SqlConstants.PointBalanceParameter, this.user.PointsBalance),
                 };
 
@@ -217,7 +217,7 @@ namespace SteamStore.Repositories
             {
                 SqlParameter[] parameters = new SqlParameter[]
                 {
-                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserIdentifier),
+                    new SqlParameter(SqlConstants.UserIdParameterWithCapitalLetter, this.user.UserId),
                 };
                 this.data.ExecuteNonQuery(SqlConstants.ResetUserInventoryToDefault, parameters);
             }

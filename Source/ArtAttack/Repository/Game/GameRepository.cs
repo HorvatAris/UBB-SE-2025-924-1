@@ -23,38 +23,38 @@ namespace Steampunks.Repository.GameRepo
         private const string GetAllGamesQuery = @"
     SELECT 
         GameId,
-        Title,
+        GameTitle,
         Price,
         Genre,
-        Description,
+        GameDescription,
         Status
     FROM Games
-    ORDER BY Title";
+    ORDER BY GameTitle";
 
         private const string GetGameByIdQuery = @"
     SELECT 
         GameId,
-        Title,
+        GameTitle,
         Price,
         Genre,
-        Description,
+        GameDescription,
         Status
     FROM Games
     WHERE GameId = @GameId";
 
         private const string UpdateGameQuery = @"
     UPDATE Games
-    SET Title = @Title,
+    SET GameTitle = @GameTitle,
         Price = @Price,
         Genre = @Genre,
-        Description = @Description
+        GameDescription = @GameDescription
     WHERE GameId = @GameId";
 
         private const string ColumnGameId = "GameId";
-        private const string ColumnTitle = "Title";
+        private const string ColumnTitle = "GameTitle";
         private const string ColumnPrice = "Price";
         private const string ColumnGenre = "Genre";
-        private const string ColumnDescription = "Description";
+        private const string ColumnDescription = "GameDescription";
         private const string ColumnStatus = "Status";
 
         /// <summary>
@@ -205,10 +205,10 @@ namespace Steampunks.Repository.GameRepo
                 using (var command = new SqlCommand(UpdateGameQuery, this.databaseConnector.GetConnection()))
                 {
                     command.Parameters.AddWithValue(ColumnGameId, game.GameId);
-                    command.Parameters.AddWithValue(ColumnTitle, game.Title);
+                    command.Parameters.AddWithValue(ColumnTitle, game.GameTitle);
                     command.Parameters.AddWithValue(ColumnPrice, game.Price);
                     command.Parameters.AddWithValue(ColumnGenre, game.Genre);
-                    command.Parameters.AddWithValue(ColumnDescription, game.Description);
+                    command.Parameters.AddWithValue(ColumnDescription, game.GameDescription);
 
                     await this.databaseConnector.OpenConnectionAsync();
                     int rowsAffected = await command.ExecuteNonQueryAsync();

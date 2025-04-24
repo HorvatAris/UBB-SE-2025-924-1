@@ -32,14 +32,14 @@ namespace Steampunks.Views
     public sealed partial class TradingPage : Page
     {
         // Constants (avoid magic strings)
-        private const string DisplayMemberUsername = "Username";
+        private const string DisplayMemberUsername = "UserName";
         private const string LoadUsersErrorMessage = "Error loading users. Please try again later.";
         private const string LoadUsersDebugMessagePrefix = "Error loading users: ";
         private const string LoadUserItemsErrorMessage = "Error loading your items. Please try again later.";
         private const string LoadUserItemsDebugMessagePrefix = "Error loading user items: ";
         private const string LoadRecipientItemsErrorMessage = "Error loading recipient's items. Please try again later.";
         private const string LoadRecipientItemsDebugMessagePrefix = "Error loading recipient items: ";
-        private const string GameDisplayMemberPath = "Title";
+        private const string GameDisplayMemberPath = "GameTitle";
         private const string LoadGamesErrorPrefix = "Error loading games: ";
         private const string LoadGamesInnerErrorPrefix = "Inner error: ";
         private const string LoadGamesSuccessMessagePrefix = "Successfully loaded ";
@@ -344,7 +344,7 @@ namespace Steampunks.Views
                     this.TradeHistory.Add(new TradeHistoryViewModel
                     {
                         TradeId = trade.TradeId,
-                        PartnerName = tradePartner.Username,
+                        PartnerName = tradePartner.UserName,
                         TradeItems = trade.SourceUserItems.Concat(trade.DestinationUserItems).ToList(),
                         TradeDescription = trade.TradeDescription,
                         TradeStatus = trade.TradeStatus,

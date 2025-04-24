@@ -68,7 +68,7 @@ public class UserServiceTests
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual("TestUser", result?.Username);
+        Assert.AreEqual("TestUser", result?.UserName);
         Assert.AreEqual(1, result?.UserId);
         Assert.AreEqual(150.5f, result?.WalletBalance);
         Assert.AreEqual(75.25f, result?.PointBalance);

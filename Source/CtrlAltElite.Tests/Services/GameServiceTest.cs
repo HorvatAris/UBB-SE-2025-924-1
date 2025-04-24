@@ -96,9 +96,9 @@ public class GameServiceTest
     [Fact]
     public void SearchGames_WhenCalledWithSearchQuery_ReturnsOnlyMatchingItems()
     {
-        var expectedGame1 = new Game { Name = TEST_GAME_1 };
-        var expectedGame2 = new Game { Name = TEST_GAME_2 };
-        var excludedGame = new Game { Name = TEST_GAME_3 };
+        var expectedGame1 = new Game { GameTitle = TEST_GAME_1 };
+        var expectedGame2 = new Game { GameTitle = TEST_GAME_2 };
+        var excludedGame = new Game { GameTitle = TEST_GAME_3 };
         repoMock.Setup(gameRepository => gameRepository.GetAllGames())
             .Returns(new Collection<Game> { expectedGame1, expectedGame2, excludedGame });
 
@@ -110,9 +110,9 @@ public class GameServiceTest
     [Fact]
     public void SearchGames_WhenCalledWithSearchQueryThatDoesNotMatchAnyItem_ShouldReturnEmptyResult()
     {
-        var excludedGame1 = new Game { Name = TEST_GAME_1 };
-        var excludedGame2 = new Game { Name = TEST_GAME_2 };
-        var excludedGame3 = new Game { Name = TEST_GAME_3 };
+        var excludedGame1 = new Game { GameTitle = TEST_GAME_1 };
+        var excludedGame2 = new Game { GameTitle = TEST_GAME_2 };
+        var excludedGame3 = new Game { GameTitle = TEST_GAME_3 };
         repoMock.Setup(gameRepository => gameRepository.GetAllGames())
             .Returns(new Collection<Game> { excludedGame1, excludedGame2, excludedGame3 });
 
@@ -267,7 +267,7 @@ public class GameServiceTest
     {
         var similarGames = GetSimilarGamesSetUp();
 
-        Assert.DoesNotContain(similarGames, game => game.Identifier == IDENTIFIER_1);
+        Assert.DoesNotContain(similarGames, game => game.GameId == IDENTIFIER_1);
     }
 
     [Fact]
@@ -275,7 +275,7 @@ public class GameServiceTest
     {
         var similarGames = GetSimilarGamesSetUp();
 
-        var identifiers = similarGames.Select(game => game.Identifier).ToList();
+        var identifiers = similarGames.Select(game => game.GameId).ToList();
         Assert.True(identifiers.Count == identifiers.Distinct().Count());
     }
 
@@ -284,11 +284,11 @@ public class GameServiceTest
     {
         var allGames = new Collection<Game>
         {
-            new Game() { Identifier = IDENTIFIER_1, Name = TEST_GAME_1 },
-            new Game() { Identifier = IDENTIFIER_2, Name = TEST_GAME_2 },
-            new Game() { Identifier = IDENTIFIER_3, Name = TEST_GAME_3 },
-            new Game() { Identifier = IDENTIFIER_4, Name = TEST_GAME_4 },
-            new Game() { Identifier = IDENTIFIER_5, Name = TEST_GAME_5 }
+            new Game() { GameId = IDENTIFIER_1, GameTitle = TEST_GAME_1 },
+            new Game() { GameId = IDENTIFIER_2, GameTitle = TEST_GAME_2 },
+            new Game() { GameId = IDENTIFIER_3, GameTitle = TEST_GAME_3 },
+            new Game() { GameId = IDENTIFIER_4, GameTitle = TEST_GAME_4 },
+            new Game() { GameId = IDENTIFIER_5, GameTitle = TEST_GAME_5 }
         };
         repoMock.Setup(r => r.GetAllGames())
             .Returns(allGames);
@@ -309,11 +309,11 @@ public class GameServiceTest
     {
         var allGames = new Collection<Game>
         {
-            new Game() { Identifier = IDENTIFIER_1, Name = TEST_GAME_1 },
-            new Game() { Identifier = IDENTIFIER_2, Name = TEST_GAME_2 },
-            new Game() { Identifier = IDENTIFIER_3, Name = TEST_GAME_3 },
-            new Game() { Identifier = IDENTIFIER_4, Name = TEST_GAME_4 },
-            new Game() { Identifier = IDENTIFIER_5, Name = TEST_GAME_5 }
+            new Game() { GameId = IDENTIFIER_1, GameTitle = TEST_GAME_1 },
+            new Game() { GameId = IDENTIFIER_2, GameTitle = TEST_GAME_2 },
+            new Game() { GameId = IDENTIFIER_3, GameTitle = TEST_GAME_3 },
+            new Game() { GameId = IDENTIFIER_4, GameTitle = TEST_GAME_4 },
+            new Game() { GameId = IDENTIFIER_5, GameTitle = TEST_GAME_5 }
         };
 
         repoMock.Setup(r => r.GetAllGames())

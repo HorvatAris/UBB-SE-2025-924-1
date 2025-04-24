@@ -26,7 +26,7 @@ namespace SteamStore.Tests.Repositories
         public UserGameRepositoryTest()
         {
             mockDataLink = new Mock<IDataLink>();
-            mockUser = new User { UserIdentifier = TestUserIdentifier, WalletBalance = InitialWalletBalance, PointsBalance = InitialPointsBalance };
+            mockUser = new User { UserId = TestUserIdentifier, WalletBalance = InitialWalletBalance, PointsBalance = InitialPointsBalance };
             userGameRepository = new UserGameRepository(mockDataLink.Object, mockUser);
         }
 
@@ -34,7 +34,7 @@ namespace SteamStore.Tests.Repositories
         public void IsGamePurchased_WhenGameIsPurchased_ShouldReturnTrue()
         {
             const int ItemWasPurchased = 1;
-            var purchasedGame = new Game { Identifier = TestGameIdentifier };
+            var purchasedGame = new Game { GameId = TestGameIdentifier };
             mockDataLink.Setup(dataLink => dataLink.ExecuteScalar<int>(SqlConstants.IsGamePurchasedProcedure, It.IsAny<SqlParameter[]>()))
                         .Returns(ItemWasPurchased);
 
@@ -47,7 +47,7 @@ namespace SteamStore.Tests.Repositories
         public void IsGamePurchased_WhenGameIsNotPurchased_ShouldReturnFalse()
         {
             const int ItemWasNotPurchased = 0;
-            var unpurchasedGame = new Game { Identifier = TestGameIdentifier };
+            var unpurchasedGame = new Game { GameId = TestGameIdentifier };
             mockDataLink.Setup(dataLink => dataLink.ExecuteScalar<int>(SqlConstants.IsGamePurchasedProcedure, It.IsAny<SqlParameter[]>()))
                         .Returns(ItemWasNotPurchased);
 
@@ -59,7 +59,7 @@ namespace SteamStore.Tests.Repositories
         [Fact]
         public void RemoveGameFromWishlist_WhenGameIsValid_CallsExecuteNonQuery()
         {
-            var gameToRemove = new Game { Identifier = TestGameIdentifier };
+            var gameToRemove = new Game { GameId = TestGameIdentifier };
             mockDataLink.Setup(dataLink => dataLink.ExecuteNonQuery(SqlConstants.RemoveGameFromWishlistProcedure, It.IsAny<SqlParameter[]>()))
                         .Verifiable();
 
@@ -71,7 +71,7 @@ namespace SteamStore.Tests.Repositories
         [Fact]
         public void RemoveGameFromWishlist_WhenDatabaseErrorOccurs_ThrowsException()
         {
-            var gameToRemove = new Game { Identifier = TestGameIdentifier };
+            var gameToRemove = new Game { GameId = TestGameIdentifier };
             mockDataLink.Setup(dataLink => dataLink.ExecuteNonQuery(SqlConstants.RemoveGameFromWishlistProcedure, It.IsAny<SqlParameter[]>()))
                         .Throws(new Exception(ExceptionMessageDatabaseError));
 
@@ -85,7 +85,7 @@ namespace SteamStore.Tests.Repositories
             const decimal TestGamePriceExpensive = 200.0m;
             const string ExceptionMessageInsufficientFunds = "Insufficient funds";
 
-            var expensiveGame = new Game { Identifier = TestGameIdentifier, Price = TestGamePriceExpensive };
+            var expensiveGame = new Game { GameId = TestGameIdentifier, Price = TestGamePriceExpensive };
             var exceptionAddGameToPurchased = Assert.Throws<Exception>(() => userGameRepository.AddGameToPurchased(expensiveGame));
 
             Assert.Equal(ExceptionMessageInsufficientFunds, exceptionAddGameToPurchased.Message);
@@ -97,7 +97,7 @@ namespace SteamStore.Tests.Repositories
             const decimal TestGamePriceAffordable = 10.0m;
             const float TestGameCheckPrice = 90.0f;
 
-            var affordableGame = new Game { Identifier = TestGameIdentifier, Price = TestGamePriceAffordable };
+            var affordableGame = new Game { GameId = TestGameIdentifier, Price = TestGamePriceAffordable };
             mockDataLink.Setup(dataLink => dataLink.ExecuteNonQuery(SqlConstants.AddGameToPurchasedGamesProcedure, It.IsAny<SqlParameter[]>()))
                         .Verifiable();
 
@@ -110,7 +110,7 @@ namespace SteamStore.Tests.Repositories
         [Fact]
         public void AddGameToWishlist_WhenGameIsValid_CallsExecuteNonQuery()
         {
-            var gameToAdd = new Game { Identifier = TestGameIdentifier };
+            var gameToAdd = new Game { GameId = TestGameIdentifier };
             mockDataLink.Setup(dataLink => dataLink.ExecuteNonQuery(SqlConstants.AddGameToWishlistProcedure, It.IsAny<SqlParameter[]>()))
                         .Verifiable();
 
@@ -122,7 +122,7 @@ namespace SteamStore.Tests.Repositories
         [Fact]
         public void AddGameToWishlist_WhenDatabaseFails_ThrowsException()
         {
-            var gameToAdd = new Game { Identifier = TestGameIdentifier };
+            var gameToAdd = new Game { GameId = TestGameIdentifier };
 
             mockDataLink.Setup(dataLink => dataLink.ExecuteNonQuery(SqlConstants.AddGameToWishlistProcedure, It.IsAny<SqlParameter[]>()))
                         .Throws(new Exception(ExceptionMessageDatabaseError));
@@ -246,7 +246,7 @@ namespace SteamStore.Tests.Repositories
             const int FirstGameIdentifier = 1;
             const string FirstGameName = "FirstGame";
             const decimal FirstGamePrice = 19.99m;
-            const string FirstGameDescription = "FirstGame Description";
+            const string FirstGameDescription = "FirstGame GameDescription";
             const string FirstGameImage = "FirstGame Image";
             const string FirstGameMinimumRequirement = "FirstGame Min";
             const string FirstGameRecommendedRequirement = "FirstGame Recommended";
@@ -257,7 +257,7 @@ namespace SteamStore.Tests.Repositories
             const int SecondGameIdentifier = 2;
             const string SecondGameName = "SecondGame";
             const decimal SecondGamePrice = 29.99m;
-            const string SecondGameDescription = "SecondGame Description";
+            const string SecondGameDescription = "SecondGame GameDescription";
             const string SecondGameImage = "SecondGame Image";
             const string SecondGameMinimumRequirement = "SecondGame Min";
             const string SecondGameRecommendedRequirement = "SecondGame Recommended";

@@ -193,7 +193,7 @@ namespace SteamStore.ViewModels
                 var dialog = new ContentDialog
                 {
                     Title = ConfirmationDialogStrings.CONFIRMREMOVALTITLE,
-                    Content = string.Format(ConfirmationDialogStrings.CONFIRMREMOVALMESSAGE, game.Name),
+                    Content = string.Format(ConfirmationDialogStrings.CONFIRMREMOVALMESSAGE, game.GameTitle),
                     PrimaryButtonText = ConfirmationDialogStrings.YESBUTTONTEXT,
                     CloseButtonText = ConfirmationDialogStrings.NOBUTTONTEXT,
                     DefaultButton = ContentDialogButton.Primary,

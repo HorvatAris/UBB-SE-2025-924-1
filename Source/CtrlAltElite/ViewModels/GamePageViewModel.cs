@@ -207,7 +207,7 @@ public class GamePageViewModel : INotifyPropertyChanged
             return;
         }
 
-        var similarGames = this.gameService.GetSimilarGames(this.Game.Identifier);
+        var similarGames = this.gameService.GetSimilarGames(this.Game.GameId);
         this.SimilarGames = new ObservableCollection<Game>(similarGames.Take(MaxSimilarGamesToDisplay));
     }
 }

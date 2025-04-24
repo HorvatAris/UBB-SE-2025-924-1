@@ -34,8 +34,8 @@ namespace SteamStore.Tests.Repositories
         {
             testUser = new User
             {
-                UserIdentifier = ValidUserId,
-                Name = ValidUserName,
+                UserId = ValidUserId,
+                UserName = ValidUserName,
                 PointsBalance = InitialUserPoints
             };
 

@@ -105,7 +105,7 @@ namespace Steampunks.Services.InventoryService.InventoryService
             var filteredItems = items.Where(item => !item.IsListed);
 
             // If a specific game is selected (not the "All Games" option), filter by that game.
-            if (selectedGame != null && selectedGame.Title != "All Games")
+            if (selectedGame != null && selectedGame.GameTitle != "All Games")
             {
                 filteredItems = filteredItems.Where(item =>
                     item.Game != null && item.Game.GameId == selectedGame.GameId);

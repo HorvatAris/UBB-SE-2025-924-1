@@ -203,16 +203,16 @@ namespace Steampunks.Domain.Entities
         private string GetDefaultImagePath(string itemName)
         {
             // Get the game folder name based on the game title
-            string gameFolder = this.associatedGame.Title.ToLower() switch
+            string gameFolder = this.associatedGame.GameTitle.ToLower() switch
             {
                 GameTitleCounterStrike => GameFolderCounterStrike,
                 GameTitleDota => GameFolderDota,
                 GameTitleTeamFortress => GameFolderTeamFortress,
-                _ => this.associatedGame.Title.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
+                _ => this.associatedGame.GameTitle.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
             };
 
             var path = $"{ImageBasePath}{gameFolder}/{this.itemId}.png";
-            Debug.WriteLine($"Generated image path for item {this.itemId} ({itemName}) from {this.associatedGame.Title}: {path}");
+            Debug.WriteLine($"Generated image path for item {this.itemId} ({itemName}) from {this.associatedGame.GameTitle}: {path}");
             return path;
         }
     }

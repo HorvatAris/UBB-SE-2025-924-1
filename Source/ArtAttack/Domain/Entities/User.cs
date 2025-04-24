@@ -20,7 +20,7 @@ namespace Steampunks.Domain.Entities
         /// <param name="username">The username of the user.</param>
         public User(string username)
         {
-            this.Username = username;
+            this.UserName = username;
             this.WalletBalance = InitialWalletBalance;
             this.PointBalance = InitialPointBalance;
             this.IsDeveloper = false;
@@ -41,7 +41,7 @@ namespace Steampunks.Domain.Entities
         /// <summary>
         /// Gets the username of the user.
         /// </summary>
-        public string Username { get; private set; }
+        public string UserName { get; private set; }
 
         /// <summary>
         /// Gets the wallet balance of the user.
@@ -73,7 +73,7 @@ namespace Steampunks.Domain.Entities
         /// <param name="username">The new username.</param>
         public void SetUsername(string username)
         {
-            this.Username = username;
+            this.UserName = username;
         }
 
         /// <summary>
