@@ -9,15 +9,19 @@ CREATE TABLE users (
 );
 
 CREATE TABLE games (
-    game_id INT PRIMARY KEY,
-    name NVARCHAR(255),
-    price DECIMAL(10,2),
-    publisher_id INT FOREIGN KEY REFERENCES users(user_id),
-    description NVARCHAR(MAX),
-    image_url NVARCHAR(MAX),
-	minimum_requirements NVARCHAR(MAX),
-	recommended_requirements NVARCHAR(MAX),
-	status NVARCHAR(MAX)
+game_id INT PRIMARY KEY,
+name NVARCHAR(255),
+price DECIMAL(10,2),
+publisher_id INT FOREIGN KEY REFERENCES users(user_id),
+description NVARCHAR(MAX),
+image_url NVARCHAR(MAX),
+trailer_url NVARCHAR(MAX),
+gameplay_url NVARCHAR(MAX),
+minimum_requirements NVARCHAR(MAX),
+recommended_requirements NVARCHAR(MAX),
+status NVARCHAR(MAX),
+discount INT,
+reject_message NVARCHAR(MAX) NULL
 );
 
 CREATE TABLE tags (
