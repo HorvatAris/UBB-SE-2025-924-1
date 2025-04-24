@@ -48,19 +48,6 @@ CREATE TABLE store_transaction (
     withMoney BIT
 );
 
-CREATE TABLE point_items (
-    point_item_id INT PRIMARY KEY,
-    name NVARCHAR(255),
-    description NVARCHAR(MAX),
-    price DECIMAL(10, 2),
-    image_url NVARCHAR(MAX)
-);
-
-CREATE TABLE users_items (
-    user_id INT FOREIGN KEY REFERENCES users(user_id),
-    item_id INT FOREIGN KEY REFERENCES point_items(point_item_id)
-);
-
 CREATE TABLE Items (
     ItemId INT PRIMARY KEY IDENTITY(1,1),
     ItemName NVARCHAR(100) NOT NULL,
