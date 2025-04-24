@@ -4,7 +4,8 @@ CREATE TABLE users (
 	username NVARCHAR(255),
     balance DECIMAL(10,2),
     point_balance DECIMAL(10,2),
-    is_developer BIT
+    is_developer BIT,
+    email NVARCHAR(255)
 );
 
 CREATE TABLE games (
@@ -93,3 +94,23 @@ CREATE TABLE ItemTradeDetails (
         IsSourceUserItem BIT NOT NULL, -- True if item is from source user, False if from destination user
         PRIMARY KEY (TradeId, ItemId)
     );
+go
+
+CREATE TABLE PointShopItems (
+    ItemId INT PRIMARY KEY,
+    Name NVARCHAR(255) NOT NULL,
+    Description NVARCHAR(MAX),
+    ImagePath NVARCHAR(MAX),
+    PointPrice DECIMAL(10, 2) NOT NULL,
+    ItemType NVARCHAR(50) NOT NULL -- E.g., "ProfileBackground", "Avatar", "Emoticon", etc.
+);
+
+CREATE TABLE UserInventoryItems (
+    UserId INT,
+    ItemId INT,
+    PurchaseDate DATETIME DEFAULT GETDATE(),
+    IsActive BIT DEFAULT 0,
+    PRIMARY KEY (UserId, ItemId),
+    FOREIGN KEY (ItemId) REFERENCES PointShopItems(ItemId)
+);
+GO
