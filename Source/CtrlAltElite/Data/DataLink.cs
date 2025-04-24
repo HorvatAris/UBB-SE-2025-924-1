@@ -14,8 +14,8 @@ public class DataLink : SteamStore.Data.IDataLink
 
 
     public DataLink(IConfiguration configuration)
-    { 
-        this.connectionString = configuration.GetConnectionString("ConnectionString");
+    {
+        connectionString = "Data Source=DESKTOP-618UFK0\\SQLEXPRESS;Initial Catalog=Steam;Integrated Security=True;TrustServerCertificate=True";
         try
         {
             this.sqlConnection = new SqlConnection(this.connectionString);

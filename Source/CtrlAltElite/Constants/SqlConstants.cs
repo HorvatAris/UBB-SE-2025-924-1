@@ -82,7 +82,7 @@ namespace SteamStore.Constants
         public const string GameIdColumn = "game_id";
         public const string PublisherIdColumn = "publisher_id";
         public const string GameNameColumn = "name";
-        public const string GameDescriptionColumn = "description";
+        public const string GameDescriptionColumn = "GameDescription";
         public const string ImageUrlColumn = "image_url";
         public const string TrailerUrlColumn = "trailer_url";
         public const string GameplayUrlColumn = "gameplay_url";

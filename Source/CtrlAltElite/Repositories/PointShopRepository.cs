@@ -41,8 +41,8 @@ namespace SteamStore.Repositories
                     var item = new PointShopItem
                     {
                         ItemIdentifier = Convert.ToInt32(row[SqlConstants.ItemIdColumnWithCapitalLetter]),
-                        Name = row[SqlConstants.NameIdColumnWithCapitalLetter].ToString(),
-                        Description = row[SqlConstants.DescriptionIdColumnWithCapitalLetter].ToString(),
+                        Name = row["Name"].ToString(),
+                        Description = row["Description"].ToString(),
                         ImagePath = row[SqlConstants.ImagePathColumnWithCapitalLetter].ToString(),
                         PointPrice = Convert.ToDouble(row[SqlConstants.PointPriceColumnWithCapitalLeter]),
                         ItemType = row[SqlConstants.ItemTypeColumnWithCapitalLetter].ToString(),
@@ -77,8 +77,9 @@ namespace SteamStore.Repositories
                     var currentItem = new PointShopItem
                     {
                         ItemIdentifier = Convert.ToInt32(row[SqlConstants.ItemIdColumnWithCapitalLetter]),
-                        Name = row[SqlConstants.NameIdColumnWithCapitalLetter].ToString(),
-                        Description = row[SqlConstants.DescriptionIdColumnWithCapitalLetter].ToString(),
+                        Name = row["Name"].ToString(),
+                       // Name = row[SqlConstants.NameIdColumnWithCapitalLetter].ToString(),
+                        Description = row["Description"].ToString(),
                         ImagePath = row[SqlConstants.ImagePathColumnWithCapitalLetter].ToString(),
                         PointPrice = Convert.ToDouble(row[SqlConstants.PointPriceColumnWithCapitalLeter]),
                         ItemType = row[SqlConstants.ItemTypeColumnWithCapitalLetter].ToString(),
@@ -91,7 +92,7 @@ namespace SteamStore.Repositories
             {
                 throw new Exception($"Failed to retrieve user's point shop items: {exception.Message}");
             }
-
+            System.Diagnostics.Debug.WriteLine("User point shop items are"+userPointShopItems);
             return userPointShopItems;
         }
 

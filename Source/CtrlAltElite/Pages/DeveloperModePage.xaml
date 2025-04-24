@@ -40,7 +40,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{Binding Name}" 
+                        <TextBlock Text="{Binding GameTitle}" 
                                  Grid.Column="0" 
                                  VerticalAlignment="Center" 
                                  FontSize="16" 
@@ -54,18 +54,18 @@
                                 Margin="10,0"
                                 Click="EditButton_Click"
                                 Background="DarkGray"
-                                CommandParameter="{Binding Identifier}"/>
+                                CommandParameter="{Binding GameId}"/>
                         <Button Content="Remove" 
                                 Grid.Column="3"
                                 Margin="10,0"
                                 Click="RemoveButton_Click"
                                 Background="Red"
-                                CommandParameter="{Binding Identifier}"/>
+                                CommandParameter="{Binding GameId}"/>
                         <Button Content="Reject Message" 
                                 Grid.Column="4"
                                 Background="Orange"
                                 Click="RejectionButton_Click"
-                                CommandParameter="{Binding Identifier}"/>
+                                CommandParameter="{Binding GameId}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -87,7 +87,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{Binding Name}" 
+                        <TextBlock Text="{Binding GameTitle}" 
                                  Grid.Column="0" 
                                  VerticalAlignment="Center" 
                                  FontSize="16" 
