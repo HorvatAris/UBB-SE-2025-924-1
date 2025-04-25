@@ -56,10 +56,10 @@ namespace Steampunks.Domain.Entities
         /// <param name="description">The description of the game.</param>
         public Game(string title, float price, string genre, string description)
         {
-            this.Title = title;
+            this.GameTitle = title;
             this.Price = price;
             this.Genre = genre;
-            this.Description = description;
+            this.GameDescription = description;
             this.GameReviews = new List<Review>();
             this.Status = DefaultStatus;
         }
@@ -69,9 +69,9 @@ namespace Steampunks.Domain.Entities
         /// </summary>
         private Game()
         {
-            this.Title = string.Empty;
+            this.GameTitle = string.Empty;
             this.Genre = string.Empty;
-            this.Description = string.Empty;
+            this.GameDescription = string.Empty;
             this.GameReviews = new List<Review>();
         }
 
@@ -93,7 +93,7 @@ namespace Steampunks.Domain.Entities
         /// <summary>
         /// Gets the title of the game.
         /// </summary>
-        public string Title { get; private set; }
+        public string GameTitle { get; private set; }
 
         /// <summary>
         /// Gets the price of the game.
@@ -108,7 +108,7 @@ namespace Steampunks.Domain.Entities
         /// <summary>
         /// Gets the description of the game.
         /// </summary>
-        public string Description { get; private set; }
+        public string GameDescription { get; private set; }
 
         /// <summary>
         /// Gets the list of reviews associated with the game.
@@ -145,7 +145,7 @@ namespace Steampunks.Domain.Entities
         /// <returns>The title of the game.</returns>
         public string GetTitle()
         {
-            return this.Title;
+            return this.GameTitle;
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Steampunks.Domain.Entities
         /// <param name="title">The title of the game.</param>
         public void SetTitle(string title)
         {
-            this.Title = title;
+            this.GameTitle = title;
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Steampunks.Domain.Entities
         /// <returns>The description of the game.</returns>
         public string GetDescription()
         {
-            return this.Description;
+            return this.GameDescription;
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Steampunks.Domain.Entities
         /// <param name="description">The description of the game.</param>
         public void SetDescription(string description)
         {
-            this.Description = description;
+            this.GameDescription = description;
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace Steampunks.Domain.Entities
         /// <inheritdoc/>
         public override string ToString()
         {
-            return this.Price > MinimumDisplayPrice ? $"{this.Title} (${this.Price:F2})" : this.Title;
+            return this.Price > MinimumDisplayPrice ? $"{this.GameTitle} (${this.Price:F2})" : this.GameTitle;
         }
     }
 }

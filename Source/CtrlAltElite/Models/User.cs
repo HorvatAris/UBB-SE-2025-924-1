@@ -10,8 +10,8 @@ public class User
 
     public User(int userIdentifier, string name, string email, float walletBalance, float pointsBalance, Role userRole)
     {
-        this.UserIdentifier = userIdentifier;
-        this.Name = name;
+        this.UserId = userIdentifier;
+        this.UserName = name;
         this.Email = email;
         this.WalletBalance = walletBalance;
         this.PointsBalance = pointsBalance;
@@ -24,9 +24,9 @@ public class User
         User,
     }
 
-    public int UserIdentifier { get; set; }
+    public int UserId { get; set; }
 
-    public string Name { get; set; }
+    public string UserName { get; set; }
 
     public string Email { get; set; }
 

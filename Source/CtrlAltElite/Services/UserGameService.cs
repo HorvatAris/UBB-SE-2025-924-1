@@ -50,7 +50,7 @@ public class UserGameService : IUserGameService
             // Check if game is already purchased
             if (this.IsGamePurchased(game))
             {
-                throw new Exception(string.Format(ExceptionMessages.GameAlreadyOwned, game.Name));
+                throw new Exception(string.Format(ExceptionMessages.GameAlreadyOwned, game.GameTitle));
             }
 
             this.UserGameRepository.AddGameToWishlist(game);
@@ -61,7 +61,7 @@ public class UserGameService : IUserGameService
             string message = exception.Message;
             if (message.Contains("ExecuteNonQuery"))
             {
-                message = string.Format(ExceptionMessages.GameAlreadyInWishlist, game.Name);
+                message = string.Format(ExceptionMessages.GameAlreadyInWishlist, game.GameTitle);
             }
 
             throw new Exception(message);
@@ -223,7 +223,7 @@ public class UserGameService : IUserGameService
 
         foreach (Game game in allWishListGames)
         {
-            if (game.Name != null && game.Name.ToLower().Contains(searchText.ToLower()))
+            if (game.GameTitle != null && game.GameTitle.ToLower().Contains(searchText.ToLower()))
             {
                 matchingGames.Add(game);
             }
@@ -371,11 +371,11 @@ public class UserGameService : IUserGameService
 
     private int CompareByNameAscending(Game firstGame, Game secondGame)
     {
-        return string.Compare(firstGame.Name, secondGame.Name, StringComparison.OrdinalIgnoreCase);
+        return string.Compare(firstGame.GameTitle, secondGame.GameTitle, StringComparison.OrdinalIgnoreCase);
     }
 
     private int CompareByNameDescending(Game firstGame, Game secondGame)
     {
-        return string.Compare(secondGame.Name, firstGame.Name, StringComparison.OrdinalIgnoreCase);
+        return string.Compare(secondGame.GameTitle, firstGame.GameTitle, StringComparison.OrdinalIgnoreCase);
     }
 }

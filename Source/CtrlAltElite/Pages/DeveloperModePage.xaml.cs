@@ -318,10 +318,10 @@ namespace SteamStore.Pages
 
         private void PopulateEditForm(Game game)
         {
-            this.EditGameId.Text = game.Identifier.ToString();
+            this.EditGameId.Text = game.GameId.ToString();
             this.EditGameId.IsEnabled = false;
-            this.EditGameName.Text = game.Name;
-            this.EditGameDescription.Text = game.Description;
+            this.EditGameName.Text = game.GameTitle;
+            this.EditGameDescription.Text = game.GameDescription;
             this.EditGamePrice.Text = game.Price.ToString();
             this.EditGameImageUrl.Text = game.ImagePath;
             this.EditGameplayUrl.Text = game.GameplayPath ?? string.Empty;
@@ -339,7 +339,7 @@ namespace SteamStore.Pages
             try
             {
                 var availableTags = this.EditGameTagList.Items.Cast<object>().OfType<Tag>().ToList(); // Safe cast
-                var matchingTags = this.viewModel.GetMatchingTags(game.Identifier, availableTags);
+                var matchingTags = this.viewModel.GetMatchingTags(game.GameId, availableTags);
 
                 foreach (Tag tag in matchingTags)
                 {

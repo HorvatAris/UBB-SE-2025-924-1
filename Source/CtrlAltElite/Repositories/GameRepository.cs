@@ -47,10 +47,10 @@ public class GameRepository : IGameRepository
         {
             var game = new Game
             {
-                Identifier = (int)row[SqlConstants.GameIdColumn],
-                Name = (string)row[SqlConstants.GameNameColumn],
+                GameId = (int)row[SqlConstants.GameIdColumn],
+                GameTitle = (string)row[SqlConstants.GameNameColumn],
                 Price = Convert.ToDecimal(row[SqlConstants.GamePriceColumn]),
-                Description = (string)row[SqlConstants.GameDescriptionColumn],
+                GameDescription = (string)row[SqlConstants.GameDescriptionColumn],
                 ImagePath = (string)row[SqlConstants.ImageUrlColumn],
                 TrailerPath = (string)row[SqlConstants.TrailerUrlColumn],
                 GameplayPath = (string)row[SqlConstants.GameplayUrlColumn],
@@ -104,10 +104,10 @@ public class GameRepository : IGameRepository
         return (from DataRow row in gamesForCurrentDeveloper.Rows
             select new Game
             {
-                Identifier = (int)row[SqlConstants.GameIdColumn],
-                Name = (string)row[SqlConstants.GameNameColumn],
+                GameId = (int)row[SqlConstants.GameIdColumn],
+                GameTitle = (string)row[SqlConstants.GameNameColumn],
                 Price = Convert.ToDecimal(row[SqlConstants.GamePriceColumn]),
-                Description = (string)row[SqlConstants.GameDescriptionColumn],
+                GameDescription = (string)row[SqlConstants.GameDescriptionColumn],
                 ImagePath = (string)row[SqlConstants.ImageUrlColumn],
                 TrailerPath = (string)row[SqlConstants.TrailerUrlColumn],
                 GameplayPath = (string)row[SqlConstants.GameplayUrlColumn],
@@ -124,9 +124,9 @@ public class GameRepository : IGameRepository
         SqlParameter[] updateGameParameters =
         {
             new (SqlConstants.GameIdParameter, gameId),
-            new (SqlConstants.NameParameter, game.Name),
+            new (SqlConstants.NameParameter, game.GameTitle),
             new (SqlConstants.PriceParameter, game.Price),
-            new (SqlConstants.DescriptionParameter, game.Description),
+            new (SqlConstants.DescriptionParameter, game.GameDescription),
             new (SqlConstants.ImageUrlParameter, game.ImagePath),
             new (SqlConstants.TrailerUrlParameter, game.TrailerPath),
             new (SqlConstants.GameplayUrlParameter, game.GameplayPath),
@@ -213,11 +213,11 @@ public class GameRepository : IGameRepository
     {
         var gameParameters = new SqlParameter[]
         {
-            new (SqlConstants.GameIdParameter, game.Identifier),
-            new (SqlConstants.NameParameter, game.Name),
+            new (SqlConstants.GameIdParameter, game.GameId),
+            new (SqlConstants.NameParameter, game.GameTitle),
             new (SqlConstants.PriceParameter, game.Price),
             new (SqlConstants.PublisherIdParameter, game.PublisherIdentifier),
-            new (SqlConstants.DescriptionParameter, game.Description),
+            new (SqlConstants.DescriptionParameter, game.GameDescription),
             new (SqlConstants.ImageUrlParameter, game.ImagePath),
             new (SqlConstants.TrailerUrlParameter, game.TrailerPath ?? string.Empty),
             new (SqlConstants.GameplayUrlParameter, game.GameplayPath ?? string.Empty),
@@ -262,10 +262,10 @@ public class GameRepository : IGameRepository
 
             var game = new Game
             {
-                Identifier = gameId,
+                GameId = gameId,
                 PublisherIdentifier = (int)row[SqlConstants.PublisherIdColumn],
-                Name = (string)row[SqlConstants.GameNameColumn],
-                Description = (string)row[SqlConstants.GameDescriptionColumn],
+                GameTitle = (string)row[SqlConstants.GameNameColumn],
+                GameDescription = (string)row[SqlConstants.GameDescriptionColumn],
                 ImagePath = (string)row[SqlConstants.ImageUrlColumn],
                 TrailerPath = (string)row[SqlConstants.TrailerUrlColumn],
                 GameplayPath = (string)row[SqlConstants.GameplayUrlColumn],

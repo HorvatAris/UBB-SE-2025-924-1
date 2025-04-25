@@ -71,7 +71,7 @@ namespace SteamStore.Tests.Services
         [Fact]
         public void AddGameToWishlist_WhenGameIsAlreadyOwned_ThrowsException()
         {
-            var gameToAdd = new Game { Name = FirstGame };
+            var gameToAdd = new Game { GameTitle = FirstGame };
             mockUserGameRepository.Setup(repository => repository.IsGamePurchased(gameToAdd)).Returns(true);
 
             var exceptionAddGameToWishList = Assert.Throws<Exception>(() => userGameService.AddGameToWishlist(gameToAdd));
@@ -82,7 +82,7 @@ namespace SteamStore.Tests.Services
         [Fact]
         public void AddGameToWishlist_WhenGameIsNotOwned_CallsRepository()
         {
-            var gameToAdd = new Game { Name = SecondGame };
+            var gameToAdd = new Game { GameTitle = SecondGame };
 
             mockUserGameRepository.Setup(repository => repository.IsGamePurchased(gameToAdd)).Returns(false);
 
@@ -94,7 +94,7 @@ namespace SteamStore.Tests.Services
         public void AddGameToWishlist_WhenSqlException_ThrowsException()
         {
             const string ThirdGame = "ThirdGame";
-            var gameToAdd = new Game { Name = ThirdGame };
+            var gameToAdd = new Game { GameTitle = ThirdGame };
 
             mockUserGameRepository.Setup(repository => repository.IsGamePurchased(gameToAdd)).Returns(false);
             mockUserGameRepository.Setup(repository => repository.AddGameToWishlist(gameToAdd)).Throws(new Exception(ErrorStrings.SQLNONQUERYFAILUREINDICATOR));
@@ -106,7 +106,7 @@ namespace SteamStore.Tests.Services
         [Fact]
         public void PurchaseGames_WhenGameIsPurchasedSuccesful_CallsRepository()
         {
-            var gameToPurchase = new Game { Name = FirstGame };
+            var gameToPurchase = new Game { GameTitle = FirstGame };
             var gamesToPurchase = new List<Game> { gameToPurchase };
 
             mockUserGameRepository.SetupSequence(repository => repository.GetUserPointsBalance())
@@ -122,7 +122,7 @@ namespace SteamStore.Tests.Services
         [Fact]
         public void PurchaseGames_WhenGameIsPurchasedSuccesfull_CalculatesPointsCorrectly()
         {
-            var gameToPurchase = new Game { Name = FirstGame };
+            var gameToPurchase = new Game { GameTitle = FirstGame };
             var gamesToPurchase = new List<Game> { gameToPurchase };
 
             mockUserGameRepository.SetupSequence(repository => repository.GetUserPointsBalance())
@@ -138,7 +138,7 @@ namespace SteamStore.Tests.Services
         public void ComputeNumberOfUserGamesForEachTag_WhenTagIsUsedInOneGame_CountIsSetToOne()
         {
             var tagUsed = new Tag { Tag_name = FirstTagName };
-            var gameWithTag = new Game { Name = FirstGame, Tags = new[] { FirstTagName } };
+            var gameWithTag = new Game { GameTitle = FirstGame, Tags = new[] { FirstTagName } };
 
             mockUserGameRepository.Setup(repository => repository.GetAllUserGames()).Returns(new Collection<Game> { gameWithTag });
 
@@ -155,7 +155,7 @@ namespace SteamStore.Tests.Services
             const int NumberOfUsersGamesWithTagNeverUsed = 0;
 
             var tagNotUsed = new Tag { Tag_name = SecondTagName };
-            var gameWithoutTag = new Game { Name = FirstGame, Tags = new[] { FirstTagName } };
+            var gameWithoutTag = new Game { GameTitle = FirstGame, Tags = new[] { FirstTagName } };
 
             mockUserGameRepository.Setup(repository => repository.GetAllUserGames()).Returns(new Collection<Game> { gameWithoutTag });
 
@@ -172,8 +172,8 @@ namespace SteamStore.Tests.Services
             const int NumberOfUsersGamesWithTagUsedMultiple = 2;
 
             var tagUsed = new Tag { Tag_name = FirstTagName };
-            var gameUsingTag1 = new Game { Name = FirstGame, Tags = new[] { FirstTagName } };
-            var gameUsingTag2 = new Game { Name = SecondGame, Tags = new[] { FirstTagName, SecondTagName } };
+            var gameUsingTag1 = new Game { GameTitle = FirstGame, Tags = new[] { FirstTagName } };
+            var gameUsingTag2 = new Game { GameTitle = SecondGame, Tags = new[] { FirstTagName, SecondTagName } };
 
             mockUserGameRepository.Setup(repository => repository.GetAllUserGames()).Returns(new Collection<Game> { gameUsingTag1, gameUsingTag2 });
 
@@ -190,7 +190,7 @@ namespace SteamStore.Tests.Services
             var tagUsed1 = new Tag { Tag_name = FirstTagName };
             var tagUsed2 = new Tag { Tag_name = SecondTagName };
 
-            var multipleTagGame = new Game { Name = FirstGame, Tags = new[] { FirstTagName, SecondTagName } };
+            var multipleTagGame = new Game { GameTitle = FirstGame, Tags = new[] { FirstTagName, SecondTagName } };
 
             mockUserGameRepository.Setup(repository => repository.GetAllUserGames()).Returns(new Collection<Game> { multipleTagGame });
 
@@ -448,8 +448,8 @@ namespace SteamStore.Tests.Services
             const decimal TrendingScoreExpected2 = 1.0m;
             var trendingGames = new Collection<Game>
             {
-                new Game { Name = FirstGame, NumberOfRecentPurchases = RecentPurchasesFirstGame },
-                new Game { Name = SecondGame, NumberOfRecentPurchases = RecentPurchasesSecondGame }
+                new Game { GameTitle = FirstGame, NumberOfRecentPurchases = RecentPurchasesFirstGame },
+                new Game { GameTitle = SecondGame, NumberOfRecentPurchases = RecentPurchasesSecondGame }
             };
 
             userGameService.ComputeTrendingScores(trendingGames);
@@ -465,7 +465,7 @@ namespace SteamStore.Tests.Services
             const decimal TrendingScoreExpected = 1.0m;
             var singleGame = new Collection<Game>
             {
-                new Game { Name = FirstGame, NumberOfRecentPurchases = RecentPurchasesFirstGame }
+                new Game { GameTitle = FirstGame, NumberOfRecentPurchases = RecentPurchasesFirstGame }
             };
 
             userGameService.ComputeTrendingScores(singleGame);
@@ -510,7 +510,7 @@ namespace SteamStore.Tests.Services
 
             var allGames = Enumerable.Range(NumberGenerateGamesNumberMinimum, NumberGenerateGamesNumberMaximum).Select(gameIndex => new Game
             {
-                Name = $"Game{gameIndex}",
+                GameTitle = $"Game{gameIndex}",
                 NumberOfRecentPurchases = gameIndex,
                 Tags = new[] { FirstTagName }
             }).ToList();
@@ -530,15 +530,15 @@ namespace SteamStore.Tests.Services
             const int First = 0;
             var wishlistGames = new Collection<Game>
             {
-                new Game { Name = FirstGame },
-                new Game { Name = SecondGame }
+                new Game { GameTitle = FirstGame },
+                new Game { GameTitle = SecondGame }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(wishlistGames);
 
             var matchedGames = userGameService.SearchWishListByName(FirstGame);
             Assert.Single(matchedGames);
-            Assert.Equal(FirstGame, matchedGames[First].Name);
+            Assert.Equal(FirstGame, matchedGames[First].GameTitle);
         }
 
         [Fact]
@@ -547,8 +547,8 @@ namespace SteamStore.Tests.Services
             const string SearchWishListString = "Game";
             var wishlistGames = new Collection<Game>
             {
-                new Game { Name = FirstGame },
-                new Game { Name = SecondGame }
+                new Game { GameTitle = FirstGame },
+                new Game { GameTitle = SecondGame }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(wishlistGames);
@@ -648,8 +648,8 @@ namespace SteamStore.Tests.Services
             const int Second = 1;
             var gamesList = new Collection<Game>
             {
-                new Game { Name = FirstGame, Rating = RatingMedium },
-                new Game { Name = SecondGame, Rating = RatingHigh }
+                new Game { GameTitle = FirstGame, Rating = RatingMedium },
+                new Game { GameTitle = SecondGame, Rating = RatingHigh }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(gamesList);
@@ -666,8 +666,8 @@ namespace SteamStore.Tests.Services
             const int Second = 1;
             var gamesList = new Collection<Game>
             {
-                new Game { Name = FirstGame, Rating = RatingMedium },
-                new Game { Name = SecondGame, Rating = RatingHigh }
+                new Game { GameTitle = FirstGame, Rating = RatingMedium },
+                new Game { GameTitle = SecondGame, Rating = RatingHigh }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(gamesList);
@@ -684,8 +684,8 @@ namespace SteamStore.Tests.Services
             const int Second = 1;
             var gamesList = new Collection<Game>
             {
-                new Game { Name = FirstGame, Price = PriceHigh },
-                new Game { Name = SecondGame, Price = PriceLow }
+                new Game { GameTitle = FirstGame, Price = PriceHigh },
+                new Game { GameTitle = SecondGame, Price = PriceLow }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(gamesList);
@@ -700,8 +700,8 @@ namespace SteamStore.Tests.Services
         {
             var gamesList = new Collection<Game>
             {
-                new Game { Name = FirstGame, Price = PriceHigh },
-                new Game { Name = SecondGame, Price = PriceLow }
+                new Game { GameTitle = FirstGame, Price = PriceHigh },
+                new Game { GameTitle = SecondGame, Price = PriceLow }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(gamesList);
@@ -716,8 +716,8 @@ namespace SteamStore.Tests.Services
         {
             var gamesList = new Collection<Game>
             {
-                new Game { Name = FirstGame, Discount = DiscountHigh },
-                new Game { Name = SecondGame, Discount = DiscountLow }
+                new Game { GameTitle = FirstGame, Discount = DiscountHigh },
+                new Game { GameTitle = SecondGame, Discount = DiscountLow }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(gamesList);
@@ -732,8 +732,8 @@ namespace SteamStore.Tests.Services
         {
             var gamesList = new Collection<Game>
             {
-                new Game { Name = FirstGame, Discount = DiscountHigh },
-                new Game { Name = SecondGame, Discount = DiscountLow }
+                new Game { GameTitle = FirstGame, Discount = DiscountHigh },
+                new Game { GameTitle = SecondGame, Discount = DiscountLow }
             };
 
             mockUserGameRepository.Setup(repository => repository.GetWishlistGames()).Returns(gamesList);

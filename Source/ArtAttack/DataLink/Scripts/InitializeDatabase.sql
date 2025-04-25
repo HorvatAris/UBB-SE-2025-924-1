@@ -238,7 +238,7 @@ BEGIN
     DBCC CHECKIDENT ('Items', RESEED, 0);
     DBCC CHECKIDENT ('Games', RESEED, 0);
     DBCC CHECKIDENT ('Users', RESEED, 0);
-    GO
+    
 
     -- Insert test users
     INSERT INTO Users (Username, WalletBalance, PointBalance, IsDeveloper)
@@ -246,7 +246,7 @@ BEGIN
     ('TestUser1', 1000, 100, 0),
     ('TestUser2', 1000, 100, 0),
     ('TestUser3', 1000, 100, 0);
-    GO
+    
 
     -- Insert games
     INSERT INTO Games (Title, Price, Genre, Description, Status)
@@ -254,7 +254,7 @@ BEGIN
     ('Counter-Strike 2', 0.00, 'FPS', 'The latest version of Counter-Strike', 'Available'),
     ('Dota 2', 0.00, 'MOBA', 'A competitive multiplayer game', 'Available'),
     ('Team Fortress 2', 0.00, 'FPS', 'A team-based multiplayer game', 'Available');
-    GO
+    
 
     -- Insert items
     INSERT INTO Items (ItemName, CorrespondingGameId, Price, Description, IsListed)
@@ -279,7 +279,7 @@ BEGIN
     ('Earbuds', 3, 400.00, 'A classic TF2 cosmetic item', 0),
     ('Unusual Burning Flames Team Captain', 3, 3000.00, 'A combination of two rare items', 0),
     ('Unusual Scorching Flames Team Captain', 3, 2500.00, 'Another rare variant of the Team Captain', 0);
-    GO
+    
 
     -- Insert mock items into UserInventory
     INSERT INTO UserInventory (UserId, ItemId, GameId, AcquiredDate)
@@ -305,4 +305,3 @@ BEGIN
     (3, 4, 1, GETDATE()),   -- Karambit | Fade
     (3, 5, 1, GETDATE());   -- M4A1-S | Knight
 END
-GO 

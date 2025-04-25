@@ -52,7 +52,7 @@ public class CartServiceTests
 	{
 		var game = new Game
 		{
-			Identifier = TestGameIdentifier
+			GameId = TestGameIdentifier
 		};
 
 		repositoryMock.Setup(repositoryMock => repositoryMock.RemoveGameFromCart(It.IsAny<Game>()))
@@ -68,7 +68,7 @@ public class CartServiceTests
 	{
 		var game = new Game
 		{
-			Identifier = TestGameIdentifier
+			GameId = TestGameIdentifier
 		};
 
 		repositoryMock.Setup(repositoryMock => repositoryMock.AddGameToCart(It.IsAny<Game>()))
@@ -86,11 +86,11 @@ public class CartServiceTests
 		{
 			new Game
 			{
-				Identifier = TestGameIdentifier
+				GameId = TestGameIdentifier
 			},
 			new Game
 			{
-				Identifier = TestSecondGameIdentifier
+				GameId = TestSecondGameIdentifier
 			}
 		};
 
@@ -122,12 +122,12 @@ public class CartServiceTests
 		{
 			new Game
 			{
-				Identifier = TestGameIdentifier,
+				GameId = TestGameIdentifier,
 				Price = TestGamePrice
 			},
 			new Game
 			{
-				Identifier = TestSecondGameIdentifier,
+				GameId = TestSecondGameIdentifier,
 				Price = TestSecondGamePrice
 			}
 		};
@@ -147,12 +147,12 @@ public class CartServiceTests
 		{
 			new Game
 			{
-				Identifier = TestGameIdentifier,
+				GameId = TestGameIdentifier,
 				Price = TestGamePrice
 			},
 			new Game
 			{
-				Identifier = TestSecondGameIdentifier,
+				GameId = TestSecondGameIdentifier,
 				Price = TestSecondGamePrice
 			}
 		};

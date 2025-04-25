@@ -60,7 +60,7 @@ public class GameService : IGameService
 
         foreach (var game in allGames)
         {
-            if (game.Name.ToLower().Contains(searchQuery.ToLower()))
+            if (game.GameTitle.ToLower().Contains(searchQuery.ToLower()))
             {
                 foundGames.Add(game);
             }
@@ -156,7 +156,7 @@ public class GameService : IGameService
         // Filter games with different identifiers
         foreach (var game in allGames)
         {
-            if (game.Identifier != gameId)
+            if (game.GameId != gameId)
             {
                 similarGames.Add(game);
             }
@@ -180,7 +180,7 @@ public class GameService : IGameService
         var allGames = this.GetAllGames();
         for (int currentIndexOfGAmeInList = startingValueOfIndex; currentIndexOfGAmeInList < allGames.Count; currentIndexOfGAmeInList++)
         {
-            if (allGames[currentIndexOfGAmeInList].Identifier == gameId)
+            if (allGames[currentIndexOfGAmeInList].GameId == gameId)
             {
                 return allGames[currentIndexOfGAmeInList];
             }

@@ -47,7 +47,7 @@ namespace Steampunks.Tests
             {
                 await connection.OpenAsync();
 
-                using var cmd = new SqlCommand("DELETE FROM Users WHERE Username = '!@#Special_User_测试_🚀'", connection);
+                using var cmd = new SqlCommand("DELETE FROM Users WHERE UserName = '!@#Special_User_测试_🚀'", connection);
                 await cmd.ExecuteNonQueryAsync();
             }
             finally
@@ -86,11 +86,11 @@ namespace Steampunks.Tests
             try
             {
                 var insertCommand = new SqlCommand(
-                    "INSERT INTO Users (Username, WalletBalance, PointBalance, IsDeveloper) " +
+                    "INSERT INTO Users (UserName, WalletBalance, PointBalance, IsDeveloper) " +
                     "OUTPUT INSERTED.UserId " +
-                    "VALUES (@Username, 0, 0, 0)",
+                    "VALUES (@UserName, 0, 0, 0)",
                     connection);
-                insertCommand.Parameters.AddWithValue("@Username", specialUser.Username);
+                insertCommand.Parameters.AddWithValue("@UserName", specialUser.UserName);
 
                 // await insertCommand.ExecuteNonQueryAsync();
                 var insertedId = (int)await insertCommand.ExecuteScalarAsync();
@@ -104,7 +104,7 @@ namespace Steampunks.Tests
             var fetched = await userRepository.GetUserByIdAsync(specialUser.UserId);
 
             Assert.That(fetched, Is.Not.Null);
-            Assert.That(fetched.Username, Does.Contain("Special"));
+            Assert.That(fetched.UserName, Does.Contain("Special"));
         }
 
     }

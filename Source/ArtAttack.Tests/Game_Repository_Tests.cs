@@ -76,7 +76,7 @@ namespace Steampunks.Tests
         [Test]
         public async Task UpdateGameAsync_ValidGame_UpdatesGame()
         {
-            var game = new Game("Test Game", 10.0f, "RPG", "Description");
+            var game = new Game("Test Game", 10.0f, "RPG", "GameDescription");
             game.SetGameId(1);
             mockDatabaseConnector.Setup(x => x.GetNewConnection())
                 .Returns(new DatabaseConnector().GetNewConnection());

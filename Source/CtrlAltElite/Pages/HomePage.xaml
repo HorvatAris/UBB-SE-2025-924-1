@@ -44,7 +44,7 @@
                             <DataTemplate>
                                 <Border Width="160" Padding="8" Margin="4">
                                     <StackPanel Orientation="Vertical" Spacing="4">
-                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13"/>
+                                        <TextBlock Text="{Binding GameTitle}" FontWeight="Bold" FontSize="13"/>
                                         <TextBlock Text="{Binding Price}" FontSize="10"/>
                                         <Image Source="{Binding ImagePath}"
                                         Width="144" Height="144" 
@@ -79,7 +79,7 @@
                             <DataTemplate>
                                 <Border Width="160" Padding="8" Margin="4">
                                     <StackPanel Orientation="Vertical" Spacing="4">
-                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13"/>
+                                        <TextBlock Text="{Binding GameTitle}" FontWeight="Bold" FontSize="13"/>
                                         <TextBlock Text="{Binding Price}" FontSize="10"/>
                                         <Image Source="{Binding ImagePath}"
                                             Width="144" Height="144" 
@@ -114,7 +114,7 @@
                             <DataTemplate>
                                 <Border Width="160" Padding="8" Margin="4">
                                     <StackPanel Orientation="Vertical" Spacing="4">
-                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13"/>
+                                        <TextBlock Text="{Binding GameTitle}" FontWeight="Bold" FontSize="13"/>
                                         <TextBlock Text="{Binding Price}" FontSize="10"/>
                                         <Image Source="{Binding ImagePath}"
                                          Width="144" Height="144" 
@@ -149,7 +149,7 @@
                             <DataTemplate>
                                 <Border Width="160" Padding="8" Margin="4">
                                     <StackPanel Orientation="Vertical" Spacing="4">
-                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13"/>
+                                        <TextBlock Text="{Binding GameTitle}" FontWeight="Bold" FontSize="13"/>
                                         <TextBlock Text="{Binding Price}" FontSize="10"/>
                                         <Image Source="{Binding ImagePath}"
                  Width="144" Height="144" 

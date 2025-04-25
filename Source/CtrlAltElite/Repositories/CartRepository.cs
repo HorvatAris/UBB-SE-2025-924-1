@@ -30,7 +30,7 @@ public class CartRepository : ICartRepository
     {
         SqlParameter[] userIdParameters = new SqlParameter[]
         {
-            new SqlParameter(UserIdColumn, this.user.UserIdentifier),
+            new SqlParameter(UserIdColumn, this.user.UserId),
         };
 
         var allCartGames = this.dataLink.ExecuteReader(SqlConstants.GetAllCartGamesProcedure, userIdParameters);
@@ -42,9 +42,9 @@ public class CartRepository : ICartRepository
             {
                 Game game = new Game
                 {
-                    Identifier = (int)row[SqlConstants.GAMEIDCOLUMN],
-                    Name = (string)row[SqlConstants.NAMECOLUMN],
-                    Description = (string)row[SqlConstants.DESCRIPTIONCOLUMN],
+                    GameId = (int)row[SqlConstants.GAMEIDCOLUMN],
+                    GameTitle = (string)row[SqlConstants.NAMECOLUMN],
+                    GameDescription = (string)row[SqlConstants.DESCRIPTIONCOLUMN],
                     ImagePath = (string)row[SqlConstants.IMAGEURLCOLUMN],
                     Price = Convert.ToDecimal(row[SqlConstants.PRICECOLUMN]),
                     Status = ApprovedStatus,
@@ -60,8 +60,8 @@ public class CartRepository : ICartRepository
     {
         SqlParameter[] cartParameters = new SqlParameter[]
         {
-            new SqlParameter(UserIdColumn, this.user.UserIdentifier),
-            new SqlParameter(GameIdColumn, game.Identifier),
+            new SqlParameter(UserIdColumn, this.user.UserId),
+            new SqlParameter(GameIdColumn, game.GameId),
         };
 
         try
@@ -78,8 +78,8 @@ public class CartRepository : ICartRepository
     {
         SqlParameter[] cartRemovalParameters = new SqlParameter[]
         {
-            new SqlParameter(UserIdColumn, this.user.UserIdentifier),
-            new SqlParameter(GameIdColumn, game.Identifier),
+            new SqlParameter(UserIdColumn, this.user.UserId),
+            new SqlParameter(GameIdColumn, game.GameId),
         };
 
         try

@@ -1,8 +1,10 @@
 ﻿USE Steam
-GO
+drop table if exists UserInventory;
 
 
+drop table if exists ItemTradeDetails;
 DROP TABLE IF EXISTS users_items;
+drop table if exists ItemTrades;
 DROP TABLE IF EXISTS point_items;
 DROP TABLE IF EXISTS store_transaction;
 DROP TABLE IF EXISTS games_users;
@@ -13,8 +15,10 @@ DROP TABLE IF EXISTS Specifications;
 DROP TABLE IF EXISTS specifications;
 DROP TABLE IF EXISTS game_reviews;
 DROP TABLE IF EXISTS games;
+DROP TaBLE If exists Items;
 DROP TABLE IF EXISTS Games;
 DROP TABLE IF EXISTS users;
+
 GO
 
 CREATE TABLE users (
@@ -22,7 +26,8 @@ CREATE TABLE users (
 	username NVARCHAR(255),
     balance DECIMAL(10,2),
     point_balance DECIMAL(10,2),
-    is_developer BIT
+    is_developer BIT,
+	email NVARCHAR(255)
 );
 
 -- Check if users already exist before inserting new ones
@@ -110,18 +115,6 @@ CREATE TABLE users_items (
 GO
 
 -- Stored Procedures
-go
-DROP PROCEDURE IF EXISTS GetUserById;
-go
-CREATE PROCEDURE GetUserById
-    @UserId INT
-AS
-BEGIN
-    SELECT * FROM users WHERE user_id = @UserId;
-END;
-go
-
-
 go
 DROP PROCEDURE IF EXISTS getUserGames;
 go
@@ -1146,36 +1139,46 @@ END
 
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'ResetUserInventoryToDefault')
-    DROP PROCEDURE ResetUserInventoryToDefault;
-Go
+------------TABELE NOI--------
+CREATE TABLE Items (
+    ItemId INT PRIMARY KEY IDENTITY(1,1),
+    ItemName NVARCHAR(100) NOT NULL,
+    CorrespondingGameId INT FOREIGN KEY REFERENCES Games(game_id),
+    Price FLOAT NOT NULL,
+    Description NVARCHAR(MAX),
+    IsListed BIT NOT NULL DEFAULT 0
+);
+go
+CREATE TABLE UserInventory (
+        UserId INT FOREIGN KEY REFERENCES Users(user_id),
+        ItemId INT FOREIGN KEY REFERENCES Items(ItemId),
+        GameId INT FOREIGN KEY REFERENCES Games(game_id),
+        AcquiredDate DATETIME NOT NULL DEFAULT GETUTCDATE(),
+        PRIMARY KEY (UserId, ItemId, GameId)
+    );
 
-CREATE PROCEDURE ResetUserInventoryToDefault
-    @UserId INT
-AS
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM UserInventoryItems 
-        WHERE UserId = @UserId AND ItemId = 1
-    )
-    BEGIN
-        INSERT INTO UserInventoryItems (UserId, ItemId, PurchaseDate, IsActive)
-        VALUES
-            (@UserId, 1, GETDATE(), 1),  -- Blue background
-            (@UserId, 3, GETDATE(), 0),  -- Golden frame
-            (@UserId, 5, GETDATE(), 1);  -- Happy emoticon
-    END
-    ELSE
-    BEGIN
-        DELETE FROM UserInventoryItems 
-        WHERE UserId = @UserId AND ItemId NOT IN (1, 3, 5);
 
-        UPDATE UserInventoryItems SET IsActive = 1 WHERE UserId = @UserId AND ItemId = 1;
-        UPDATE UserInventoryItems SET IsActive = 0 WHERE UserId = @UserId AND ItemId = 3;
-        UPDATE UserInventoryItems SET IsActive = 1 WHERE UserId = @UserId AND ItemId = 5;
-    END
-END
+go
+CREATE TABLE ItemTrades (
+        TradeId INT PRIMARY KEY IDENTITY(1,1),
+        SourceUserId INT FOREIGN KEY REFERENCES Users(user_id),
+        DestinationUserId INT FOREIGN KEY REFERENCES Users(user_id),
+        GameOfTradeId INT FOREIGN KEY REFERENCES Games(game_id),
+        TradeDate DATETIME NOT NULL DEFAULT GETUTCDATE(),
+        TradeDescription NVARCHAR(MAX),
+        TradeStatus NVARCHAR(20) NOT NULL DEFAULT 'Pending',
+        AcceptedBySourceUser BIT NOT NULL DEFAULT 0,
+        AcceptedByDestinationUser BIT NOT NULL DEFAULT 0
+    );
 
+go
+CREATE TABLE ItemTradeDetails (
+        TradeId INT FOREIGN KEY REFERENCES ItemTrades(TradeId),
+        ItemId INT FOREIGN KEY REFERENCES Items(ItemId),
+        IsSourceUserItem BIT NOT NULL, -- True if item is from source user, False if from destination user
+        PRIMARY KEY (TradeId, ItemId)
+    );
+go
 --EXEC GetAllUnvalidated @publisher_id = "1";
 
 --EXEC ValidateGame @game_id = "7";

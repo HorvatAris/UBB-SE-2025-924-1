@@ -8,9 +8,9 @@ public class GameRepositoryTest : IDisposable
 {
     private Game templateTestGame = new Game()
     {
-        Identifier = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-        Name = "TestName",
-        Description = "TestDescription",
+        GameId = (int)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        GameTitle = "TestName",
+        GameDescription = "TestDescription",
         ImagePath = "TestImagePath",
         Price = 1.99m,
         TrailerPath = "TestTrailerPath",
@@ -41,7 +41,7 @@ public class GameRepositoryTest : IDisposable
 
         // Assert
         var foundGame = subject.GetDeveloperGames(testGame.PublisherIdentifier)
-            .FirstOrDefault(game => game.Name == testGame.Name);
+            .FirstOrDefault(game => game.GameTitle == testGame.GameTitle);
         AssertUtils.AssertAllPropertiesEqual(testGame, foundGame);
     }
 
@@ -52,9 +52,9 @@ public class GameRepositoryTest : IDisposable
         var insertedGame = CreateTestGame();
         var updatedGame = new Game()
         {
-            Identifier = insertedGame.Identifier,
-            Name = "TestNameUpdated",
-            Description = "TestDescriptionUpdated",
+            GameId = insertedGame.GameId,
+            GameTitle = "TestNameUpdated",
+            GameDescription = "TestDescriptionUpdated",
             ImagePath = "TestImagePathUpdated",
             Price = 9.99m,
             TrailerPath = "TestTrailerPathUpdated",
@@ -67,14 +67,14 @@ public class GameRepositoryTest : IDisposable
             PublisherIdentifier = 1
         };
         updatedGame.Rating = UPDATED_GAME_RATING;
-        updatedGame.Identifier = insertedGame.Identifier;
+        updatedGame.GameId = insertedGame.GameId;
 
         // Act
-        subject.UpdateGame(updatedGame.Identifier, updatedGame);
+        subject.UpdateGame(updatedGame.GameId, updatedGame);
 
         // Assert
         var foundGame = subject.GetDeveloperGames(updatedGame.PublisherIdentifier)
-            .FirstOrDefault(game => game.Name == updatedGame.Name);
+            .FirstOrDefault(game => game.GameTitle == updatedGame.GameTitle);
         AssertUtils.AssertAllPropertiesEqual(updatedGame, foundGame);
     }
 
@@ -85,11 +85,11 @@ public class GameRepositoryTest : IDisposable
         var testGame = CreateTestGame(PENDING_STATUS);
 
         // Act
-        subject.ValidateGame(testGame.Identifier);
+        subject.ValidateGame(testGame.GameId);
 
         // Assert
         var foundGame = subject.GetDeveloperGames(testGame.PublisherIdentifier)
-            .FirstOrDefault(game => game.Name == testGame.Name);
+            .FirstOrDefault(game => game.GameTitle == testGame.GameTitle);
         Assert.Equal(APPROVED_STATUS, foundGame!.Status);
     }
 
@@ -100,11 +100,11 @@ public class GameRepositoryTest : IDisposable
         var testGame = CreateTestGame(PENDING_STATUS);
 
         // Act
-        subject.RejectGame(testGame.Identifier);
+        subject.RejectGame(testGame.GameId);
 
         // Assert
         var foundGame = subject.GetDeveloperGames(testGame.PublisherIdentifier)
-            .FirstOrDefault(game => game.Name == testGame.Name);
+            .FirstOrDefault(game => game.GameTitle == testGame.GameTitle);
         Assert.Equal(REJECTED_STATUS, foundGame!.Status);
     }
 
@@ -115,10 +115,10 @@ public class GameRepositoryTest : IDisposable
         var testGame = CreateTestGame(PENDING_STATUS);
 
         // Act
-        subject.RejectGame(testGame.Identifier);
+        subject.RejectGame(testGame.GameId);
 
         // Assert
-        Assert.Equal(string.Empty, subject.GetRejectionMessage(testGame.Identifier));
+        Assert.Equal(string.Empty, subject.GetRejectionMessage(testGame.GameId));
     }
 
     [Fact]
@@ -138,11 +138,11 @@ public class GameRepositoryTest : IDisposable
         var testGame = CreateTestGame(PENDING_STATUS);
 
         // Act
-        subject.RejectGameWithMessage(testGame.Identifier, TEST_MESSAGE);
+        subject.RejectGameWithMessage(testGame.GameId, TEST_MESSAGE);
 
         // Assert
         var foundGame = subject.GetDeveloperGames(testGame.PublisherIdentifier)
-            .FirstOrDefault(game => game.Name == testGame.Name);
+            .FirstOrDefault(game => game.GameTitle == testGame.GameTitle);
         Assert.Equal(REJECTED_STATUS, foundGame!.Status);
     }
 
@@ -153,10 +153,10 @@ public class GameRepositoryTest : IDisposable
         var testGame = CreateTestGame(PENDING_STATUS);
 
         // Act
-        subject.RejectGameWithMessage(testGame.Identifier, TEST_MESSAGE);
+        subject.RejectGameWithMessage(testGame.GameId, TEST_MESSAGE);
 
         // Assert
-        Assert.Equal(TEST_MESSAGE, subject.GetRejectionMessage(testGame.Identifier));
+        Assert.Equal(TEST_MESSAGE, subject.GetRejectionMessage(testGame.GameId));
     }
 
     [Fact]
@@ -170,7 +170,7 @@ public class GameRepositoryTest : IDisposable
         testGame.TagScore = Game.NOTCOMPUTED;
 
         // Act
-        var foundGame = subject.GetAllGames().FirstOrDefault(game => game.Name == testGame.Name);
+        var foundGame = subject.GetAllGames().FirstOrDefault(game => game.GameTitle == testGame.GameTitle);
 
         // Assert
         AssertUtils.AssertAllPropertiesEqual(testGame, foundGame);
@@ -184,7 +184,7 @@ public class GameRepositoryTest : IDisposable
 
         // Act
         var foundGame = subject.GetUnvalidated(TEST_UNVALIDATED_USER_ID)
-            .FirstOrDefault(game => game.Name == testGame.Name);
+            .FirstOrDefault(game => game.GameTitle == testGame.GameTitle);
 
         // Assert
         AssertUtils.AssertAllPropertiesEqual(testGame, foundGame);
@@ -198,11 +198,11 @@ public class GameRepositoryTest : IDisposable
         CreateTagsForGame(testGame);
 
         // Act
-        subject.DeleteGame(testGame.Identifier);
+        subject.DeleteGame(testGame.GameId);
 
         // Assert
         var notFound = subject.GetDeveloperGames(testGame.PublisherIdentifier)
-            .FirstOrDefault(game => game.Name == testGame.Name);
+            .FirstOrDefault(game => game.GameTitle == testGame.GameTitle);
         Assert.Null(notFound);
     }
 
@@ -213,7 +213,7 @@ public class GameRepositoryTest : IDisposable
         var testGame = CreateTestGame();
 
         // Act
-        var isGameIdInUse = subject.IsGameIdInUse(testGame.Identifier);
+        var isGameIdInUse = subject.IsGameIdInUse(testGame.GameId);
 
         // Assert
         Assert.True(isGameIdInUse);
@@ -234,7 +234,7 @@ public class GameRepositoryTest : IDisposable
         var tags = TagsConstants.ALL_TAGS.OrderBy(tag => tag.Tag_name).ToArray();
         foreach (var tag in tags)
         {
-            subject.InsertGameTag(testGame.Identifier, tag.TagId);
+            subject.InsertGameTag(testGame.GameId, tag.TagId);
         }
 
         return tags;
@@ -254,6 +254,6 @@ public class GameRepositoryTest : IDisposable
 
     public void Dispose()
     {
-        subject.DeleteGame(templateTestGame.Identifier);
+        subject.DeleteGame(templateTestGame.GameId);
     }
 }

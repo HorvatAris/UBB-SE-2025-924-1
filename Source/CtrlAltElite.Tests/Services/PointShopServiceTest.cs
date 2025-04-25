@@ -33,8 +33,8 @@ namespace SteamStore.Tests.Services
             const float InitialPointsBalance = 999999.99f;
             testUser = new User
             {
-                UserIdentifier = UserID,
-                Name = UserName,
+                UserId = UserID,
+                UserName = UserName,
                 PointsBalance = InitialPointsBalance
             };
 
@@ -45,7 +45,7 @@ namespace SteamStore.Tests.Services
         public void GetCurrentUser_Always_ShouldReturnCurrentUser()
         {
             var user = service.GetCurrentUser();
-            Assert.Equal(testUser.UserIdentifier, user.UserIdentifier);
+            Assert.Equal(testUser.UserId, user.UserId);
         }
 
         [Fact]

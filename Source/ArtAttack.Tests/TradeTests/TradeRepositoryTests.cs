@@ -32,7 +32,7 @@ namespace Steampunks.Tests.Trade
                 new ItemTrade(
                     new User("sourceUser"),
                     new User("destUser"),
-                    new Game("Test Game", 10.0f, "Action", "Description"),
+                    new Game("Test Game", 10.0f, "Action", "GameDescription"),
                     "Test trade")
             };
 
@@ -57,7 +57,7 @@ namespace Steampunks.Tests.Trade
                 new ItemTrade(
                     new User("sourceUser"),
                     new User("destUser"),
-                    new Game("Test Game", 10.0f, "Action", "Description"),
+                    new Game("Test Game", 10.0f, "Action", "GameDescription"),
                     "Test trade")
             };
 
@@ -78,7 +78,7 @@ namespace Steampunks.Tests.Trade
             var trade = new ItemTrade(
                 new User("sourceUser"),
                 new User("destUser"),
-                new Game("Test Game", 10.0f, "Action", "Description"),
+                new Game("Test Game", 10.0f, "Action", "GameDescription"),
                 "Test trade");
             trade.SetTradeId(1);
             trade.AcceptBySourceUser();

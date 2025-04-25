@@ -153,8 +153,8 @@ namespace Steampunks.Repository.Marketplace
         {
             var items = new List<Item>();
             using (var command = new SqlCommand(
-                @"SELECT i.ItemId, i.ItemName, i.Description, i.Price, i.IsListed,
-                g.GameId, g.Title as GameTitle, g.Price as GamePrice, g.Genre, g.Description as GameDescription
+                @"SELECT i.ItemId, i.ItemName, i.GameDescription, i.Price, i.IsListed,
+                g.GameId, g.GameTitle as GameTitle, g.Price as GamePrice, g.Genre, g.GameDescription as GameDescription
                 FROM Items i
                 JOIN Games g ON i.CorrespondingGameId = g.GameId
                 WHERE i.IsListed = 1",
@@ -178,7 +178,7 @@ namespace Steampunks.Repository.Marketplace
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("Description")));
+                                reader.GetString(reader.GetOrdinal("GameDescription")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
@@ -214,8 +214,8 @@ namespace Steampunks.Repository.Marketplace
         {
             var items = new List<Item>();
             const string query = @"
-                    SELECT i.ItemId, i.ItemName, i.Price, i.Description, i.IsListed,
-                        g.GameId, g.Title as GameTitle, g.Genre, g.Description as GameDescription,
+                    SELECT i.ItemId, i.ItemName, i.Price, i.GameDescription, i.IsListed,
+                        g.GameId, g.GameTitle as GameTitle, g.Genre, g.GameDescription as GameDescription,
                         g.Price as GamePrice, g.Status as GameStatus
                     FROM Items i
                     JOIN UserInventory ui ON i.ItemId = ui.ItemId
@@ -244,7 +244,7 @@ namespace Steampunks.Repository.Marketplace
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 gameObject,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("Description")));
+                                reader.GetString(reader.GetOrdinal("GameDescription")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
                             items.Add(item);

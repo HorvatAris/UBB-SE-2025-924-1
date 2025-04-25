@@ -154,17 +154,17 @@ namespace Steampunks.DataLink
                     {
                         // Add the game first
                         const string gameQuery = @"
-                            INSERT INTO Games (Title, Price, Genre, Description, Status)
-                            VALUES (@Title, @Price, @Genre, @Description, 'Available');
+                            INSERT INTO Games (GameTitle, Price, Genre, GameDescription, Status)
+                            VALUES (@GameTitle, @Price, @Genre, @GameDescription, 'Available');
                             SELECT SCOPE_IDENTITY();";
 
                         int gameId;
                         using (var command = new SqlCommand(gameQuery, this.GetConnection(), transaction))
                         {
-                            command.Parameters.AddWithValue("@Title", gameTitle);
+                            command.Parameters.AddWithValue("@GameTitle", gameTitle);
                             command.Parameters.AddWithValue("@Price", gamePrice);
                             command.Parameters.AddWithValue("@Genre", genre);
-                            command.Parameters.AddWithValue("@Description", description);
+                            command.Parameters.AddWithValue("@GameDescription", description);
                             gameId = Convert.ToInt32(command.ExecuteScalar());
                         }
 
@@ -174,8 +174,8 @@ namespace Steampunks.DataLink
 
                         // Add each item
                         const string itemQuery = @"
-                            INSERT INTO Items (ItemName, GameId, Price, Description, IsListed)
-                            VALUES (@ItemName, @GameId, @Price, @Description, 0);";
+                            INSERT INTO Items (ItemName, GameId, Price, GameDescription, IsListed)
+                            VALUES (@ItemName, @GameId, @Price, @GameDescription, 0);";
 
                         foreach (var item in itemsToBeAdded)
                         {
@@ -184,7 +184,7 @@ namespace Steampunks.DataLink
                                 command.Parameters.AddWithValue("@ItemName", item.Name);
                                 command.Parameters.AddWithValue("@GameId", gameId);
                                 command.Parameters.AddWithValue("@Price", item.Price);
-                                command.Parameters.AddWithValue("@Description", item.Description);
+                                command.Parameters.AddWithValue("@GameDescription", item.Description);
                                 command.ExecuteNonQuery();
                             }
                         }
@@ -229,7 +229,7 @@ namespace Steampunks.DataLink
         public List<User> GetAllUsers()
         {
             var users = new List<User>();
-            using (var command = new SqlCommand("SELECT UserId, Username FROM Users", this.GetConnection()))
+            using (var command = new SqlCommand("SELECT UserId, UserName FROM Users", this.GetConnection()))
             {
                 try
                 {
@@ -238,7 +238,7 @@ namespace Steampunks.DataLink
                     {
                         while (reader.Read())
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             users.Add(user);
                         }
@@ -268,7 +268,7 @@ namespace Steampunks.DataLink
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
-            using (var command = new SqlCommand("SELECT UserId, Username FROM Users", this.GetConnection()))
+            using (var command = new SqlCommand("SELECT UserId, UserName FROM Users", this.GetConnection()))
             {
                 try
                 {
@@ -277,7 +277,7 @@ namespace Steampunks.DataLink
                     {
                         while (reader.Read())
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             users.Add(user);
                         }
@@ -306,7 +306,7 @@ namespace Steampunks.DataLink
         /// <returns> Current user. </returns>
         public User? GetCurrentUser()
         {
-            using (var command = new SqlCommand("SELECT TOP 1 UserId, Username FROM Users", this.GetConnection()))
+            using (var command = new SqlCommand("SELECT TOP 1 UserId, UserName FROM Users", this.GetConnection()))
             {
                 try
                 {
@@ -315,7 +315,7 @@ namespace Steampunks.DataLink
                     {
                         if (reader.Read())
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("Username")));
+                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
                             user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
                             return user;
                         }
@@ -342,7 +342,7 @@ namespace Steampunks.DataLink
                 "TestUser3",
             };
 
-            using (var command = new SqlCommand(@" INSERT INTO Users (Username, WalletBalance, PointBalance, IsDeveloper) VALUES (@Username, 1000, 100, 0)", this.GetConnection()))
+            using (var command = new SqlCommand(@" INSERT INTO Users (UserName, WalletBalance, PointBalance, IsDeveloper) VALUES (@UserName, 1000, 100, 0)", this.GetConnection()))
             {
                 try
                 {
@@ -350,7 +350,7 @@ namespace Steampunks.DataLink
                     foreach (var username in testUsers)
                     {
                         command.Parameters.Clear();
-                        command.Parameters.AddWithValue("@Username", username);
+                        command.Parameters.AddWithValue("@UserName", username);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -371,17 +371,17 @@ namespace Steampunks.DataLink
             try
             {
                 // Get the game folder name based on the game title
-                string gameFolder = item.Game.Title.ToLower() switch
+                string gameFolder = item.Game.GameTitle.ToLower() switch
                 {
                     "counter-strike 2" => "cs2",
                     "dota 2" => "dota2",
                     "team fortress 2" => "tf2",
-                    _ => item.Game.Title.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
+                    _ => item.Game.GameTitle.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty)
                 };
 
                 // Return a path to the image based on the ItemId
                 var path = $"ms-appx:///Assets/img/games/{gameFolder}/{item.ItemId}.png";
-                System.Diagnostics.Debug.WriteLine($"Generated image path for item {item.ItemId} ({item.ItemName}) from {item.Game.Title}: {path}");
+                System.Diagnostics.Debug.WriteLine($"Generated image path for item {item.ItemId} ({item.ItemName}) from {item.Game.GameTitle}: {path}");
                 return path;
             }
             catch (Exception getItemImagePathException)
