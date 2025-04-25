@@ -1,24 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SteamHub.Api.Context;
-using SteamHub.Api.Models;
+﻿namespace SteamHub.Api.Controllers;
 
-namespace SteamHub.Api.Controllers;
+using Context;
+using Microsoft.AspNetCore.Mvc;
+using Models;
 
 [ApiController]
 [Route("api/[controller]")]
 public class TagsController : ControllerBase
 {
-	private readonly ITagRepository _tagRepository;
+	private readonly ITagRepository tagRepository;
 
 	public TagsController(ITagRepository tagRepository)
 	{
-		_tagRepository = tagRepository;
+		this.tagRepository = tagRepository;
 	}
 
 	[HttpGet]
 	public async Task<ActionResult<GetTagsResponse>> GetAll()
 	{
-		var result = await _tagRepository.GetAllTagsAsync();
+		var result = await tagRepository.GetAllTagsAsync();
 
 		return Ok(result);
 	}
@@ -26,7 +26,7 @@ public class TagsController : ControllerBase
 	[HttpGet("{id}")]
 	public async Task<ActionResult<TagNameOnlyResponse>> GetById([FromRoute] int id)
 	{
-		var result = await _tagRepository.GetTagByIdAsync(id);
+		var result = await tagRepository.GetTagByIdAsync(id);
 
 		if (result is null)
 		{
@@ -41,7 +41,7 @@ public class TagsController : ControllerBase
 	{
 		try
 		{
-			var createdTag = await _tagRepository.CreateTagAsync(request);
+			var createdTag = await tagRepository.CreateTagAsync(request);
 
 			return Ok(createdTag);
 		}
@@ -51,13 +51,12 @@ public class TagsController : ControllerBase
 		}
 	}
 
-
 	[HttpPatch("{id}")]
 	public async Task<IActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest request)
 	{
 		try
 		{
-			await _tagRepository.UpdateTagAsync(id, request);
+			await tagRepository.UpdateTagAsync(id, request);
 		}
 		catch (ArgumentException ex)
 		{
@@ -67,13 +66,12 @@ public class TagsController : ControllerBase
 		return NoContent();
 	}
 
-
 	[HttpDelete("{id}")]
 	public async Task<IActionResult> DeleteTag([FromRoute] int id)
 	{
 		try
 		{
-			await _tagRepository.DeleteTagAsync(id);
+			await tagRepository.DeleteTagAsync(id);
 		}
 		catch (ArgumentException ex)
 		{

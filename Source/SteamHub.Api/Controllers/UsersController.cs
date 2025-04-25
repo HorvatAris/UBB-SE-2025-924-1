@@ -1,25 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SteamHub.Api.Context;
-using SteamHub.Api.Entities;
-using SteamHub.Api.Models;
-
-namespace SteamHub.Api.Controllers
+﻿namespace SteamHub.Api.Controllers
 {
+    using Context;
+    using Microsoft.AspNetCore.Mvc;
+    using Models;
+
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository userRepository;
 
         public UsersController(IUserRepository userRepository)
         {
-            _userRepository = userRepository;
+            this.userRepository = userRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _userRepository.GetUsersAsync();
+            var result = await userRepository.GetUsersAsync();
 
             return Ok(result);
         }
@@ -27,7 +26,7 @@ namespace SteamHub.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var result = await _userRepository.GetUserByIdAsync(id);
+            var result = await userRepository.GetUserByIdAsync(id);
 
             if (result is null)
             {
@@ -42,7 +41,7 @@ namespace SteamHub.Api.Controllers
         {
             try
             {
-                await _userRepository.UpdateUserAsync(id, request);
+                await userRepository.UpdateUserAsync(id, request);
             }
             catch (Exception ex)
             {
@@ -57,7 +56,7 @@ namespace SteamHub.Api.Controllers
         {
             try
             {
-                var existingUser = await _userRepository.CreateUserAsync(request);
+                var existingUser = await userRepository.CreateUserAsync(request);
                 return Ok(existingUser);
             }
             catch (Exception ex)
@@ -71,7 +70,7 @@ namespace SteamHub.Api.Controllers
         {
             try
             {
-                await _userRepository.DeleteUserAsync(id);
+                await userRepository.DeleteUserAsync(id);
             }
             catch (Exception ex)
             {

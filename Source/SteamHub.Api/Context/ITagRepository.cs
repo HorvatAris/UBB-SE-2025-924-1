@@ -1,6 +1,6 @@
-﻿using SteamHub.Api.Models;
+﻿namespace SteamHub.Api.Context;
 
-namespace SteamHub.Api.Context;
+using Models;
 
 public interface ITagRepository
 {
