@@ -14,7 +14,7 @@ namespace SteamStore.Constants
         // Column Names
         public const string GAMEIDCOLUMN = "game_id";
         public const string NAMECOLUMN = "name";
-        public const string DESCRIPTIONCOLUMN = "GameDescription";
+        public const string DESCRIPTIONCOLUMN = "description";
         public const string IMAGEURLCOLUMN = "image_url";
         public const string PRICECOLUMN = "price";
         public const string RatingColumn = "rating";
@@ -82,7 +82,7 @@ namespace SteamStore.Constants
         public const string GameIdColumn = "game_id";
         public const string PublisherIdColumn = "publisher_id";
         public const string GameNameColumn = "name";
-        public const string GameDescriptionColumn = "GameDescription";
+        public const string GameDescriptionColumn = "description";
         public const string ImageUrlColumn = "image_url";
         public const string TrailerUrlColumn = "trailer_url";
         public const string GameplayUrlColumn = "gameplay_url";
@@ -98,7 +98,7 @@ namespace SteamStore.Constants
 
         public const string ItemIdColumnWithCapitalLetter = "ItemId";
         public const string NameIdColumnWithCapitalLetter = "GameTitle";
-        public const string DescriptionIdColumnWithCapitalLetter = "GameDescription";
+        public const string DescriptionIdColumnWithCapitalLetter = "description";
         public const string ImagePathColumnWithCapitalLetter = "ImagePath";
         public const string PointPriceColumnWithCapitalLeter = "PointPrice";
         public const string ItemTypeColumnWithCapitalLetter = "ItemType";

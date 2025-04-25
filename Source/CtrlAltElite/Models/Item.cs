@@ -1,7 +1,8 @@
-﻿namespace SteamHub.Models
+﻿namespace CtrlAltElite.Models
 {
     using System;
     using System.Diagnostics;
+
     public class Item
     {
         private const string ImageBasePath = "ms-appx:///Assets/img/games/";
@@ -20,6 +21,7 @@
         private string description = default!;
         private bool isItemListed;
         private string imagePath = default!;
+
         public Item(string itemName, Game game, float price, string description)
         {
             itemName = itemName ?? throw new ArgumentNullException(nameof(itemName));
@@ -37,6 +39,7 @@
         private Item()
         {
         }
+
         public int ItemId
         {
             get => this.itemId;
@@ -48,49 +51,47 @@
             get => this.itemName;
             set => this.itemName = value;
         }
+
         public Game Game
         {
             get => this.associatedGame;
             set => this.associatedGame = value;
         }
+
         public float Price
         {
             get => this.price;
             set => this.price = value;
         }
 
-       
         public string Description
         {
             get => this.description;
             set => this.description = value;
         }
 
-        
         public bool IsListed
         {
             get => this.isItemListed;
             set => this.isItemListed = value;
         }
 
-        
         public string ImagePath
         {
             get => this.imagePath;
             set => this.imagePath = value;
         }
 
-        
         public string GetItemName()
         {
             return this.itemName;
         }
+
         public Game GetCorrespondingGame()
         {
             return this.associatedGame;
         }
 
-        
         public void SetItemDescription(string description)
         {
             this.description = description;
@@ -124,4 +125,5 @@
         }
 
     }
+
 }
