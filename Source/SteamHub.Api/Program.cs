@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using SteamHub.Api.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>();
 
-builder.Services.AddScoped<ITestGameRepository, TestGameRepository>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
+
+builder.Services.AddControllersWithViews()
+	.AddJsonOptions(options =>
+	{
+		options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+	});
 
 var app = builder.Build();
 

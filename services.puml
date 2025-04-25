@@ -1,0 +1,92 @@
+﻿@startuml
+interface ICartService {
+    + GetCartGames(): List<Game>
+    + RemoveGameFromCart(game: Game): void
+    + AddGameToCart(game: Game): void;
+    + RemoveGamesFromCart(games: List<Game> ): void;
+    + GetUserFunds(): float;
+    + GetTotalSumToBePaid(): decimal;
+    + GetTheTotalSumOfItemsInCart(cartGames: List<Game>): float;
+}
+interface IDeveloperService {
+    +ValidateGame(game_id: int): void
+    +ValidateInputForAddingAGame(gameIdText: string, name: string, priceText: string, description: string, imageUrl: string, trailerUrl: string, gameplayUrl: string, minimumRequirement: string, reccommendedRequirement: string, discountText: string, selectedTags: IList<Tag>): Game
+    +CreateValidatedGame(gameIdText: string, name: string, priceText: string, description: string, imageUrl: string, trailerUrl: string, gameplayUrl: string, minimumRequirement: string, reccommendedRequirement: string, discountText: string, selectedTags: IList<Tag>): Game
+    +FindGameInObservableCollectionById(gameId: int, gameList: ObservableCollection<Game>): Game
+    +CreateGame(game: Game): void
+    +CreateGameWithTags(game: Game, selectedTags: IList<Tag>): void
+    +UpdateGame(game: Game): void
+    +UpdateGameWithTags(game: Game, selectedTags: IList<Tag>): void
+    +DeleteGame(game_id: int): void
+    +GetDeveloperGames(): List<Game>
+    +GetUnvalidated(): List<Game>
+    +RejectGame(game_id: int): void
+    +RejectGameWithMessage(game_id: int, message: string): void
+    +GetRejectionMessage(game_id: int): string
+    +InsertGameTag(gameId: int, tagId: int): void
+    +GetAllTags(): Collection<Tag>
+    +IsGameIdInUse(gameId: int): bool
+    +GetGameTags(gameId: int): List<Tag>
+    +DeleteGameTags(gameId: int): void
+    +GetGameOwnerCount(game_id: int): int
+    +GetCurrentUser(): User
+    +DeleteGame(gameId: int, developerGames: ObservableCollection<Game>): void
+    +UpdateGameAndRefreshList(game: Game, developerGames: ObservableCollection<Game>): void
+    +RejectGameAndRemoveFromUnvalidated(gameId: int, unvalidatedGames: ObservableCollection<Game>): void
+    +IsGameIdInUse(gameId: int, developerGames: ObservableCollection<Game>, unvalidatedGames: ObservableCollection<Game>): bool
+    +GetMatchingTagsForGame(gameId: int, allAvailableTags: IList<Tag>): IList<Tag>
+}
+
+interface IGameService {
+    +GetAllGames(): Collection<Game>
+    +GetAllTags(): Collection<Tag>
+    +GetAllGameTags(game: Game): Collection<Tag>
+    +SearchGames(search_query: string): Collection<Game>
+    +FilterGames(minimumRating: int, minimumPrice: int, maximumPrice: int, tags: string[]): Collection<Game>
+    +ComputeTrendingScores(games: Collection<Game>): void
+    +GetTrendingGames(): Collection<Game>
+    +GetDiscountedGames(): Collection<Game>
+    +GetSimilarGames(gameId: int): List<Game>
+    +GetGameById(gameId: int): Game
+}
+
+interface IPointShopService {
+    +GetCurrentUser(): User
+    +GetAllItems(): List<PointShopItem>
+    +GetUserItems(): List<PointShopItem>
+    +PurchaseItem(item: PointShopItem): void
+    +ActivateItem(item: PointShopItem): void
+    +DeactivateItem(item: PointShopItem): void
+    +GetFilteredItems(filterType: string, searchText: string, minimumPrice: double, maximumPrice: double): List<PointShopItem>
+    +CanUserPurchaseItem(user: User, selectedItem: PointShopItem, userItems: IEnumerable<PointShopItem>): bool
+    +GetAvailableItems(user: User): List<PointShopItem>
+    +TryPurchaseItem(selectedItem: PointShopItem, transactionHistory: ObservableCollection<PointShopTransaction>, user: User, newTransaction: PointShopTransaction): bool
+    +ToggleActivationForItem(itemId: int, userItems: ObservableCollection<PointShopItem>): PointShopItem
+}
+
+interface IUserGameService {
+    + LastEarnedPoints(): int
+    + RemoveGameFromWishlist(game: Game): void
+    + AddGameToWishlist(game: Game): void
+    + PurchaseGames(games: List<Game>): void
+    + ComputeNoOfUserGamesForEachTag(all_tags: Collection<Tag>): void
+    + GetFavoriteUserTags(): Collection<Tag>
+    + ComputeTagScoreForGames(games: Collection<Game>): void
+    + ComputeTrendingScores(games: Collection<Game>): void
+    + GetRecommendedGames(): Collection<Game>
+    + GetWishListGames(): Collection<Game>
+    + SearchWishListByName(searchText: string): Collection<Game>
+    + FilterWishListGames(criteria: string): Collection<Game>
+    + IsGamePurchased(game: Game): bool
+    + SortWishListGames(criteria: string, ascending: bool): Collection<Game>
+}
+
+User *- Role: +UserRole
+Item o-- Game: +Game
+ItemTrade o-- Game: +GameOfTrade
+ItemTrade o-- User: +SourceUser
+ItemTrade o-- User: +DestinationUser
+ItemTrade "*..1" o-- Item: +SourceUserItem
+ItemTrade "*..1" o-- Item: +DestinationUserItem
+
+@enduml

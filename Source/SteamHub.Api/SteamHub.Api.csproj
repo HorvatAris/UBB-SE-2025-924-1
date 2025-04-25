@@ -20,4 +20,9 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	  <Folder Include="Models\" />
+	</ItemGroup>
+
 </Project>
