@@ -13,6 +13,8 @@ builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddScoped<ITestGameRepository, TestGameRepository>();
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

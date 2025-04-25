@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SteamHub.Api.Context;
 
@@ -10,9 +11,11 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250425172202_AddUserEntity")]
+    partial class AddUserEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,7 +94,7 @@ namespace SteamHub.Api.Migrations
                             Email = "user1@gmail.com",
                             PointsBalance = 100f,
                             UserName = "User1",
-                            UserRole = 0,
+                            UserRole = 1,
                             WalletBalance = 56f
                         },
                         new
@@ -100,7 +103,7 @@ namespace SteamHub.Api.Migrations
                             Email = "user2@gmail.com",
                             PointsBalance = 45f,
                             UserName = "User2",
-                            UserRole = 0,
+                            UserRole = 1,
                             WalletBalance = 78f
                         },
                         new
@@ -109,7 +112,7 @@ namespace SteamHub.Api.Migrations
                             Email = "user3@gmail.com",
                             PointsBalance = 234f,
                             UserName = "User3",
-                            UserRole = 0,
+                            UserRole = 1,
                             WalletBalance = 21f
                         });
                 });
