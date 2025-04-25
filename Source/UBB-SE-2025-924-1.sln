@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtrlAltElite.Tests", "CtrlA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamHub", "SteamHub\SteamHub.csproj", "{619B64B2-3AB2-3016-0AC5-846CAC982029}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamHub.Api", "SteamHub.Api\SteamHub.Api.csproj", "{9EA4E498-B878-4D13-9141-8573EA9D9669}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -101,6 +103,18 @@ Global
 		{619B64B2-3AB2-3016-0AC5-846CAC982029}.Release|x86.ActiveCfg = Release|x86
 		{619B64B2-3AB2-3016-0AC5-846CAC982029}.Release|x86.Build.0 = Release|x86
 		{619B64B2-3AB2-3016-0AC5-846CAC982029}.Release|x86.Deploy.0 = Release|x86
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Debug|x64.Build.0 = Debug|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Debug|x86.Build.0 = Debug|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Release|ARM64.Build.0 = Release|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Release|x64.ActiveCfg = Release|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Release|x64.Build.0 = Release|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Release|x86.ActiveCfg = Release|Any CPU
+		{9EA4E498-B878-4D13-9141-8573EA9D9669}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
