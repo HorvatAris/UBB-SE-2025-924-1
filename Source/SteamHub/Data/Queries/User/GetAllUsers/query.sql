@@ -6,6 +6,7 @@ BEGIN
         username AS UserName,
         balance AS WalletBalance,
         point_balance AS PointBalance,
-        is_developer AS IsDeveloper
+        is_developer AS IsDeveloper,
+        email as useremail
     FROM users;
 END

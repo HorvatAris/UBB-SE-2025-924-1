@@ -3,7 +3,8 @@
     @UserName NVARCHAR(255),
     @WalletBalance DECIMAL(10,2),
     @PointBalance DECIMAL(10,2),
-    @IsDeveloper BIT
+    @IsDeveloper BIT,
+    @useremail NVARCHAR(255)
 AS
 BEGIN
     UPDATE users
@@ -11,6 +12,7 @@ BEGIN
         username = @UserName,
         balance = @WalletBalance,
         point_balance = @PointBalance,
-        is_developer = @IsDeveloper
+        is_developer = @IsDeveloper,
+        email=@useremail
     WHERE user_id = @UserId;
 END
