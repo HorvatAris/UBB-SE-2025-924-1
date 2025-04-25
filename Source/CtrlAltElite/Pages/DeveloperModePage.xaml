@@ -101,12 +101,12 @@
                                 Margin="10,0"
                                 Background="Green"
                                 Click="AcceptButton_Click"
-                                CommandParameter="{Binding Identifier}"/>
+                                CommandParameter="{Binding GameId}"/>
                         <Button Content="Reject" 
                                 Grid.Column="3"
                                 Background="Red"
                                 Click="RejectButton_Click"
-                                CommandParameter="{Binding Identifier}"/>
+                                CommandParameter="{Binding GameId}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
