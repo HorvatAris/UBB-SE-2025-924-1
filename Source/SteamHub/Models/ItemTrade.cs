@@ -30,7 +30,7 @@
         /// <param name="sourceUser">The user initiating the trade.</param>
         /// <param name="destinationUser">The user receiving the trade.</param>
         /// <param name="gameOfTrade">The game the items belong to.</param>
-        /// <param name="description">The description of the trade.</param>
+        /// <param name="description">The Description of the trade.</param>
         public ItemTrade(User sourceUser, User destinationUser, Game gameOfTrade, string description)
         {
             sourceUser = sourceUser ?? throw new ArgumentNullException(nameof(sourceUser));
@@ -74,7 +74,7 @@
         public DateTime TradeDate => this.tradeDate;
 
         /// <summary>
-        /// Gets the description of the trade.
+        /// Gets the Description of the trade.
         /// </summary>
         public string TradeDescription => this.tradeDescription;
 
