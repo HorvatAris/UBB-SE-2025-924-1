@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamHub.Api.Entities;
 using SteamHub.Api.Models;
+using System.Runtime.CompilerServices;
 
 namespace SteamHub.Api.Context;
 
@@ -13,7 +14,7 @@ public class TagRepository : ITagRepository
 		_context = context;
 	}
 
-	public async Task CreateTagAsync(CreateTagRequest request)
+	public async Task<CreateTagResponse> CreateTagAsync(CreateTagRequest request)
 	{
 		var isDuplicate = await _context.Tags
 			.AnyAsync(tag => tag.TagName == request.TagName);
@@ -23,12 +24,19 @@ public class TagRepository : ITagRepository
 			throw new ArgumentException($"Tag with name {request.TagName} already exists");
 		}
 
-		_context.Add(new Tag
+		var newTag = new Tag
 		{
 			TagName = request.TagName
-		});
+		};
+
+		_context.Add(newTag);
 
 		await _context.SaveChangesAsync();
+
+		return new CreateTagResponse
+		{
+			TagId = newTag.TagId
+		};
 	}
 
 	public async Task<TagResponse?> GetTagByIdAsync(int tagId)
@@ -44,7 +52,7 @@ public class TagRepository : ITagRepository
 		return foundTag;
 	}
 
-	public async Task<List<TagDetailedResponse>> GetAllTagsAsync()
+	public async Task<GetTagsResponse> GetAllTagsAsync()
 	{
 		var tags = await _context.Tags
 			.Select(tag => new TagDetailedResponse
@@ -54,7 +62,10 @@ public class TagRepository : ITagRepository
 			})
 			.ToListAsync();
 
-		return tags;
+		return new GetTagsResponse
+		{
+			Tags = tags
+		};
 	}
 
 	public async Task UpdateTagAsync(int tagId, UpdateTagRequest request)
