@@ -39,11 +39,11 @@ public class TagRepository : ITagRepository
 		};
 	}
 
-	public async Task<TagResponse?> GetTagByIdAsync(int tagId)
+	public async Task<TagNameOnlyResponse?> GetTagByIdAsync(int tagId)
 	{
 		var foundTag = await _context.Tags
 			.Where(tag => tag.TagId == tagId)
-			.Select(tag => new TagResponse
+			.Select(tag => new TagNameOnlyResponse
 			{
 				TagName = tag.TagName
 			})
@@ -55,7 +55,7 @@ public class TagRepository : ITagRepository
 	public async Task<GetTagsResponse> GetAllTagsAsync()
 	{
 		var tags = await _context.Tags
-			.Select(tag => new TagDetailedResponse
+			.Select(tag => new TagSummaryResponse
 			{
 				TagId = tag.TagId,
 				TagName = tag.TagName

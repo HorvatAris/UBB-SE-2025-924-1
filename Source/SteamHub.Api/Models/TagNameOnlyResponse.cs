@@ -1,7 +1,6 @@
 ﻿namespace SteamHub.Api.Models;
 
-public class TagDetailedResponse
+public class TagNameOnlyResponse
 {
-	public int TagId { get; set; }
 	public string TagName { get; set; }
 }

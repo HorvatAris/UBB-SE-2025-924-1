@@ -2,5 +2,5 @@
 
 public class GetTagsResponse
 {
-	public List<TagDetailedResponse> Tags { get; set; }
+	public List<TagSummaryResponse> Tags { get; set; }
 }
