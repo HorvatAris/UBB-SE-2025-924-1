@@ -15,11 +15,13 @@ public class UserRepository : IUserRepository
     public async Task<GetUsersResponse?> GetUsersAsync()
     {
         var users = await _context.Users
+            .Include(user => user.UserRole)
             .Select(user => new UserResponse
             {
+                UserId = user.UserId,
                 UserName = user.UserName,
                 Email = user.Email,
-                UserRole = user.UserRole,
+                Role = user.RoleId,
                 WalletBalance = user.WalletBalance,
                 PointsBalance = user.PointsBalance
             })
@@ -37,9 +39,10 @@ public class UserRepository : IUserRepository
             .Where(user => user.UserId == id)
             .Select(user => new UserResponse
             {
+                UserId = user.UserId,
                 UserName = user.UserName,
                 Email = user.Email,
-                UserRole = user.UserRole,
+                Role = user.RoleId,
                 WalletBalance = user.WalletBalance,
                 PointsBalance = user.PointsBalance
             })
@@ -48,37 +51,53 @@ public class UserRepository : IUserRepository
         return result;
     }
 
-    public async Task<bool> UpdateUserAsync(User user)
+    public async Task UpdateUserAsync(int userId, UpdateUserRequest request)
     {
-        var existingUser = await _context.Users.FindAsync(user.UserId);
+        var existingUser = await _context.Users.FindAsync(userId);
         if (existingUser == null)
-            return false;
+        {
+            throw new Exception("User not found");
+        }
 
-        existingUser.UserName = user.UserName;
-        existingUser.Email = user.Email;
-        existingUser.UserRole = user.UserRole;
-        existingUser.WalletBalance = user.WalletBalance;
-        existingUser.PointsBalance = user.PointsBalance;
+        existingUser.UserName = request.UserName;
+        existingUser.Email = request.Email;
+        existingUser.RoleId = request.Role;
+        existingUser.WalletBalance = request.WalletBalance;
+        existingUser.PointsBalance = request.PointsBalance;
 
         await _context.SaveChangesAsync();
-        return true;
     }
 
-    public async Task<bool> CreateUserAsync(User user)
+    public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)
     {
-        await _context.Users.AddAsync(user);
+        User newUser = new User
+        {
+            UserName = request.UserName,
+            Email = request.Email,
+            RoleId = request.Role,
+            WalletBalance = request.WalletBalance,
+            PointsBalance = request.PointsBalance
+        };
+
+        await _context.Users.AddAsync(newUser);
+
         await _context.SaveChangesAsync();
-        return true;
+
+        return new CreateUserResponse
+        {
+            UserId = newUser.UserId
+        };
     }
 
-    public async Task<bool> DeleteUserAsync(int id)
+    public async Task DeleteUserAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)
-            return false;
+        {
+            throw new Exception("User not found");
+        }
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
-        return true;
     }
 
 }

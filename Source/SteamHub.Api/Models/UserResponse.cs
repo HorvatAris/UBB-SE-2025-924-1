@@ -1,7 +1,11 @@
-﻿namespace SteamHub.Api.Models;
+﻿using SteamHub.Api.Entities;
+
+namespace SteamHub.Api.Models;
 
 public class UserResponse
 {
+    public int UserId { get; set; }
+
     public string UserName { get; set; }
 
     public string Email { get; set; }
@@ -10,5 +14,5 @@ public class UserResponse
 
     public float PointsBalance { get; set; }
 
-    public Role UserRole { get; set; }
+    public RoleEnum Role { get; set; }
 }

@@ -11,8 +11,8 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250426164148_AddUserEntity2")]
-    partial class AddUserEntity2
+    [Migration("20250426201126_AddTableForRoleEnum")]
+    partial class AddTableForRoleEnum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,32 @@ namespace SteamHub.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("SteamHub.Api.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Name = "Developer"
+                        });
+                });
 
             modelBuilder.Entity("SteamHub.Api.Entities.TestGame", b =>
                 {
@@ -73,17 +99,19 @@ namespace SteamHub.Api.Migrations
                     b.Property<float>("PointsBalance")
                         .HasColumnType("real");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserRole")
-                        .HasColumnType("int");
 
                     b.Property<float>("WalletBalance")
                         .HasColumnType("real");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
 
@@ -93,8 +121,8 @@ namespace SteamHub.Api.Migrations
                             UserId = 1,
                             Email = "user1@gmail.com",
                             PointsBalance = 100f,
+                            RoleId = 0,
                             UserName = "User1",
-                            UserRole = 0,
                             WalletBalance = 56f
                         },
                         new
@@ -102,8 +130,8 @@ namespace SteamHub.Api.Migrations
                             UserId = 2,
                             Email = "user2@gmail.com",
                             PointsBalance = 45f,
+                            RoleId = 0,
                             UserName = "User2",
-                            UserRole = 0,
                             WalletBalance = 78f
                         },
                         new
@@ -111,10 +139,30 @@ namespace SteamHub.Api.Migrations
                             UserId = 3,
                             Email = "user3@gmail.com",
                             PointsBalance = 234f,
+                            RoleId = 1,
                             UserName = "User3",
-                            UserRole = 0,
                             WalletBalance = 21f
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            Email = "user4@gmail.com",
+                            PointsBalance = 34f,
+                            RoleId = 1,
+                            UserName = "User4",
+                            WalletBalance = 455f
                         });
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.User", b =>
+                {
+                    b.HasOne("SteamHub.Api.Entities.Role", "UserRole")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserRole");
                 });
 #pragma warning restore 612, 618
         }

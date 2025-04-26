@@ -1,9 +1,9 @@
-namespace SteamHub.Api.Entities;
+﻿using SteamHub.Api.Entities;
 
-public class User
+namespace SteamHub.Api.Models;
+
+public class UpdateUserRequest
 {
-    public int UserId { get; set; }
-
     public string UserName { get; set; }
 
     public string Email { get; set; }
@@ -12,6 +12,5 @@ public class User
 
     public float PointsBalance { get; set; }
 
-    public RoleEnum RoleId { get; set; }
-    public Role UserRole { get; set; }
+    public RoleEnum Role { get; set; }
 }

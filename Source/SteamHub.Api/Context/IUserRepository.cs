@@ -1,14 +1,13 @@
-﻿using SteamHub.Api.Entities;
-using SteamHub.Api.Models;
+﻿using SteamHub.Api.Models;
 
 namespace SteamHub.Api.Context
 {
     public interface IUserRepository
     {
-        Task<bool> CreateUserAsync(User user);
-        Task<bool> DeleteUserAsync(int id);
+        Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request);
+        Task DeleteUserAsync(int id);
         Task<UserResponse?> GetUserByIdAsync(int id);
         Task<GetUsersResponse?> GetUsersAsync();
-        Task<bool> UpdateUserAsync(User user);
+        Task UpdateUserAsync(int userId, UpdateUserRequest request);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace SteamHub.Api.Models;
+﻿using SteamHub.Api.Entities;
+
+namespace SteamHub.Api.Models;
 
 public class GetUsersResponse
 {

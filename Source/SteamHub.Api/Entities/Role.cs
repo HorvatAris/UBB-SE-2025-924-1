@@ -1,5 +1,7 @@
-public enum Role
+namespace SteamHub.Api.Entities;
+
+public class Role
 {
-    Developer = 1,
-    User = 0,
+    public RoleEnum Id { get; set; }
+    public string Name { get; set; }
 }

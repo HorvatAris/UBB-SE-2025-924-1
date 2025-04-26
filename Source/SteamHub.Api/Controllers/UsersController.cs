@@ -37,59 +37,48 @@ namespace SteamHub.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UserResponse updatedUserResponse)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
-            User updatedUser = new User
+            try
             {
-                UserId = id,
-                UserName = updatedUserResponse.UserName,
-                Email = updatedUserResponse.Email,
-                UserRole = updatedUserResponse.UserRole,
-                WalletBalance = updatedUserResponse.WalletBalance,
-                PointsBalance = updatedUserResponse.PointsBalance
-            };
-
-            var success = await _userRepository.UpdateUserAsync(updatedUser);
-
-            if (!success)
+                await _userRepository.UpdateUserAsync(id, request);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest($"An error occurred: {ex.Message}");
             }
 
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserAsync([FromBody] UserResponse newUser)
+        public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserRequest request)
         {
-            if (newUser == null)
+            try
             {
-                return BadRequest("User data is required.");
+                var existingUser = await _userRepository.CreateUserAsync(request);
+                return Ok(existingUser);
             }
-            User user = new User
+            catch (Exception ex)
             {
-                UserName = newUser.UserName,
-                Email = newUser.Email,
-                UserRole = newUser.UserRole,
-                WalletBalance = newUser.WalletBalance,
-                PointsBalance = newUser.PointsBalance
-            };
-            await _userRepository.CreateUserAsync(user);
-            return NoContent();
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserAsync([FromRoute] int id)
         {
-            var user = await _userRepository.GetUserByIdAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                await _userRepository.DeleteUserAsync(id);
             }
-            await _userRepository.DeleteUserAsync(id);
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
 
+            return NoContent();
         }
     }
 }
