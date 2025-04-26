@@ -5,7 +5,7 @@ namespace SteamHub.Api.Context;
 
 public class DataContext : DbContext
 {
-	public DbSet<TestGame> TestGames { get; set; }
+	public DbSet<Tag> Tags { get; set; }
 
 	private readonly IConfiguration _configuration;
 	public DataContext(DbContextOptions options, IConfiguration configuration) : base(options)
@@ -26,13 +26,26 @@ public class DataContext : DbContext
 	}
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		var testGamesSeed = new List<TestGame>
+		var testTagSeed = new List<Tag>
 		{
-			new TestGame { Id = 1, Name = "Roblox"},
-			new TestGame { Id = 2, Name = "Minecraft"},
-			new TestGame { Id = 3, Name = "Metin2"}
+			new Tag { TagId = 1, TagName = "Tag1" },
+			new Tag { TagId = 2, TagName = "Rogue-Like" },
+			new Tag { TagId = 3, TagName = "Third-Person Shooter" },
+			new Tag { TagId = 4, TagName = "Multiplayer" },
+			new Tag { TagId = 5, TagName = "Horror" },
+			new Tag { TagId = 6, TagName = "First-Person Shooter" },
+			new Tag { TagId = 7, TagName = "Action" },
+			new Tag { TagId = 8, TagName = "Platformer" },
+			new Tag { TagId = 9, TagName = "Adventure" },
+			new Tag { TagId = 10, TagName = "Puzzle" },
+			new Tag { TagId = 11, TagName = "Exploration" },
+			new Tag { TagId = 12, TagName = "Sandbox" },
+			new Tag { TagId = 13, TagName = "Survival" },
+			new Tag { TagId = 14, TagName = "Arcade" },
+			new Tag { TagId = 15, TagName = "RPG" },
+			new Tag { TagId = 16, TagName = "Racing" }
 		};
 
-		builder.Entity<TestGame>().HasData(testGamesSeed);
+		builder.Entity<Tag>().HasData(testTagSeed);
 	}
 }
