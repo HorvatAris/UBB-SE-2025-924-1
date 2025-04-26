@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SteamHub.Api.Context;
 
@@ -10,9 +11,11 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250426201126_AddTableForRoleEnum")]
+    partial class AddTableForRoleEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,102 +50,37 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SteamHub.Api.Entities.Tag", b =>
+            modelBuilder.Entity("SteamHub.Api.Entities.TestGame", b =>
                 {
-                    b.Property<int>("TagId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TagId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("TagName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("TagId");
+                    b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("TestGames");
 
                     b.HasData(
                         new
                         {
-                            TagId = 1,
-                            TagName = "Tag1"
+                            Id = 1,
+                            Name = "Roblox"
                         },
                         new
                         {
-                            TagId = 2,
-                            TagName = "Rogue-Like"
+                            Id = 2,
+                            Name = "Minecraft"
                         },
                         new
                         {
-                            TagId = 3,
-                            TagName = "Third-Person Shooter"
-                        },
-                        new
-                        {
-                            TagId = 4,
-                            TagName = "Multiplayer"
-                        },
-                        new
-                        {
-                            TagId = 5,
-                            TagName = "Horror"
-                        },
-                        new
-                        {
-                            TagId = 6,
-                            TagName = "First-Person Shooter"
-                        },
-                        new
-                        {
-                            TagId = 7,
-                            TagName = "Action"
-                        },
-                        new
-                        {
-                            TagId = 8,
-                            TagName = "Platformer"
-                        },
-                        new
-                        {
-                            TagId = 9,
-                            TagName = "Adventure"
-                        },
-                        new
-                        {
-                            TagId = 10,
-                            TagName = "Puzzle"
-                        },
-                        new
-                        {
-                            TagId = 11,
-                            TagName = "Exploration"
-                        },
-                        new
-                        {
-                            TagId = 12,
-                            TagName = "Sandbox"
-                        },
-                        new
-                        {
-                            TagId = 13,
-                            TagName = "Survival"
-                        },
-                        new
-                        {
-                            TagId = 14,
-                            TagName = "Arcade"
-                        },
-                        new
-                        {
-                            TagId = 15,
-                            TagName = "RPG"
-                        },
-                        new
-                        {
-                            TagId = 16,
-                            TagName = "Racing"
+                            Id = 3,
+                            Name = "Metin2"
                         });
                 });
 
