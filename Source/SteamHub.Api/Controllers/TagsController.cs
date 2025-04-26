@@ -16,7 +16,7 @@ public class TagsController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> GetAll()
+	public async Task<ActionResult<GetTagsResponse>> GetAll()
 	{
 		var result = await _tagRepository.GetAllTagsAsync();
 
@@ -24,7 +24,7 @@ public class TagsController : ControllerBase
 	}
 
 	[HttpGet("{id}")]
-	public async Task<IActionResult> GetById([FromRoute] int id)
+	public async Task<ActionResult<TagNameOnlyResponse>> GetById([FromRoute] int id)
 	{
 		var result = await _tagRepository.GetTagByIdAsync(id);
 
@@ -37,7 +37,7 @@ public class TagsController : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> CreateTag([FromBody] CreateTagRequest request)
+	public async Task<ActionResult<CreateTagResponse>> CreateTag([FromBody] CreateTagRequest request)
 	{
 		try
 		{
@@ -53,7 +53,7 @@ public class TagsController : ControllerBase
 
 
 	[HttpPatch("{id}")]
-	public async Task<IActionResult> CreateTag([FromRoute] int id, [FromBody] UpdateTagRequest request)
+	public async Task<IActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest request)
 	{
 		try
 		{
@@ -69,7 +69,7 @@ public class TagsController : ControllerBase
 
 
 	[HttpDelete("{id}")]
-	public async Task<IActionResult> CreateTag([FromRoute] int id)
+	public async Task<IActionResult> DeleteTag([FromRoute] int id)
 	{
 		try
 		{
