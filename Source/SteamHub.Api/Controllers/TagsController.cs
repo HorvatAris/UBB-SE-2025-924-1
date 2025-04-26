@@ -41,14 +41,14 @@ public class TagsController : ControllerBase
 	{
 		try
 		{
-			await _tagRepository.CreateTagAsync(request);
+			var createdTag = await _tagRepository.CreateTagAsync(request);
+
+			return Ok(createdTag);
 		}
 		catch (ArgumentException ex)
 		{
 			return BadRequest(ex.Message);
 		}
-
-		return NoContent();
 	}
 
 
