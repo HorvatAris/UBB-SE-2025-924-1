@@ -153,7 +153,7 @@ namespace Steampunks.Repository.Marketplace
         {
             var items = new List<Item>();
             using (var command = new SqlCommand(
-                @"SELECT i.ItemId, i.ItemName, i.GameDescription, i.Price, i.IsListed,
+                @"SELECT i.ItemId, i.ItemName, i.Description, i.Price, i.IsListed,
                 g.GameId, g.GameTitle as GameTitle, g.Price as GamePrice, g.Genre, g.GameDescription as GameDescription
                 FROM Items i
                 JOIN Games g ON i.CorrespondingGameId = g.GameId
@@ -178,7 +178,7 @@ namespace Steampunks.Repository.Marketplace
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("GameDescription")));
+                                reader.GetString(reader.GetOrdinal("Description")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
@@ -214,7 +214,7 @@ namespace Steampunks.Repository.Marketplace
         {
             var items = new List<Item>();
             const string query = @"
-                    SELECT i.ItemId, i.ItemName, i.Price, i.GameDescription, i.IsListed,
+                    SELECT i.ItemId, i.ItemName, i.Price, i.Description, i.IsListed,
                         g.GameId, g.GameTitle as GameTitle, g.Genre, g.GameDescription as GameDescription,
                         g.Price as GamePrice, g.Status as GameStatus
                     FROM Items i
@@ -244,7 +244,7 @@ namespace Steampunks.Repository.Marketplace
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 gameObject,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("GameDescription")));
+                                reader.GetString(reader.GetOrdinal("Description")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
                             items.Add(item);

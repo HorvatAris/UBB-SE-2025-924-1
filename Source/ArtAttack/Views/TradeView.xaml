@@ -41,14 +41,14 @@
                 <ComboBox Header="Current User" 
                           ItemsSource="{x:Bind ViewModel.Users}" 
                           SelectedItem="{x:Bind ViewModel.CurrentUser, Mode=TwoWay}"
-                          DisplayMemberPath="Username"
+                          DisplayMemberPath="UserName"
                           HorizontalAlignment="Stretch"/>
 
                 <ComboBox Header="Trade With" 
                           Grid.Column="2"
                           ItemsSource="{x:Bind ViewModel.AvailableUsers, Mode=OneWay}" 
                           SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay}"
-                          DisplayMemberPath="Username"
+                          DisplayMemberPath="UserName"
                           PlaceholderText="Select user to trade with"
                           HorizontalAlignment="Stretch"/>
             </Grid>
@@ -58,7 +58,7 @@
                       Grid.Row="1"
                       ItemsSource="{x:Bind ViewModel.Games}" 
                       SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
-                      DisplayMemberPath="Title"
+                      DisplayMemberPath="GameTitle"
                       PlaceholderText="All Games"
                       HorizontalAlignment="Stretch"/>
         </Grid>

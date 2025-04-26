@@ -1,19 +1,19 @@
 USE SteampunksDB;
 GO
 
--- Clean up existing data
 DELETE FROM UserInventory;
 DELETE FROM Items;
 DELETE FROM Games;
 DELETE FROM Users;
-DBCC CHECKIDENT ('UserInventory', RESEED, 0);
+GO
+
 DBCC CHECKIDENT ('Items', RESEED, 0);
 DBCC CHECKIDENT ('Games', RESEED, 0);
 DBCC CHECKIDENT ('Users', RESEED, 0);
 GO
 
 -- Insert test users
-INSERT INTO Users (Username, WalletBalance, PointBalance, IsDeveloper)
+INSERT INTO Users (UserName, WalletBalance, PointBalance, IsDeveloper)
 VALUES 
 ('TestUser1', 1000, 100, 0),
 ('TestUser2', 1000, 100, 0),
@@ -21,7 +21,7 @@ VALUES
 GO
 
 -- Insert games
-INSERT INTO Games (Title, Price, Genre, Description, Status)
+INSERT INTO Games (GameTitle, Price, Genre, GameDescription, Status)
 VALUES 
 ('Counter-Strike 2', 0.00, 'FPS', 'The latest version of Counter-Strike', 'Available'),
 ('Dota 2', 0.00, 'MOBA', 'A competitive multiplayer game', 'Available'),
@@ -75,4 +75,5 @@ VALUES
 (3, 6, 2, GETDATE()),   -- Dragonclaw Hook
 (3, 11, 3, GETDATE()),  -- Unusual Team Captain
 (3, 4, 1, GETDATE()),   -- Karambit | Fade
-(3, 5, 1, GETDATE());   -- M4A1-S | Knight 
+(3, 5, 1, GETDATE());   -- M4A1-S | Knight
+GO

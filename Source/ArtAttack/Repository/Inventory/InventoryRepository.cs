@@ -50,7 +50,7 @@ namespace Steampunks.Repository.Inventory
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.GameDescription,
+                    i.Description,
                     i.IsListed
                 FROM Items i
                 JOIN UserInventory ui ON i.ItemId = ui.ItemId
@@ -77,7 +77,7 @@ namespace Steampunks.Repository.Inventory
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("GameDescription")));
+                                reader.GetString(reader.GetOrdinal("Description")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
                             items.Add(item);
@@ -117,7 +117,7 @@ namespace Steampunks.Repository.Inventory
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.GameDescription,
+                    i.Description,
                     i.IsListed,
                     g.GameId,
                     g.GameTitle as GameTitle,
@@ -158,7 +158,7 @@ namespace Steampunks.Repository.Inventory
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("GameDescription")));
+                                reader.GetString(reader.GetOrdinal("Description")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
@@ -211,7 +211,7 @@ namespace Steampunks.Repository.Inventory
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.GameDescription,
+                    i.Description,
                     i.IsListed,
                     g.GameId,
                     g.GameTitle as GameTitle,
@@ -246,7 +246,7 @@ namespace Steampunks.Repository.Inventory
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
                                 (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                reader.GetString(reader.GetOrdinal("GameDescription")));
+                                reader.GetString(reader.GetOrdinal("Description")));
                             item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
                             items.Add(item);
