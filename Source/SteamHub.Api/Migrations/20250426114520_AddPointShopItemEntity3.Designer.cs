@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SteamHub.Api.Context;
 
@@ -11,9 +12,11 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250426114520_AddPointShopItemEntity3")]
+    partial class AddPointShopItemEntity3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -215,28 +218,28 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 1,
                             ItemIdentifier = 1,
-                            PurchaseDate = new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PurchaseDate = new DateTime(2025, 4, 26, 14, 45, 20, 141, DateTimeKind.Local).AddTicks(7878),
                             isActive = true
                         },
                         new
                         {
                             UserId = 2,
                             ItemIdentifier = 2,
-                            PurchaseDate = new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PurchaseDate = new DateTime(2025, 4, 26, 14, 45, 20, 141, DateTimeKind.Local).AddTicks(7878),
                             isActive = false
                         },
                         new
                         {
                             UserId = 3,
                             ItemIdentifier = 3,
-                            PurchaseDate = new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PurchaseDate = new DateTime(2025, 4, 26, 14, 45, 20, 141, DateTimeKind.Local).AddTicks(7878),
                             isActive = true
                         },
                         new
                         {
                             UserId = 1,
                             ItemIdentifier = 4,
-                            PurchaseDate = new DateTime(2025, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PurchaseDate = new DateTime(2025, 4, 26, 14, 45, 20, 141, DateTimeKind.Local).AddTicks(7878),
                             isActive = true
                         });
                 });

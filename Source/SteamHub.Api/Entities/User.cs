@@ -5,6 +5,10 @@ namespace SteamHub.Api.Entities;
 public class User
 {
 
+    public User()
+    {
+    }
+
     public enum Role
     {
         Developer = 1,
@@ -25,4 +29,6 @@ public class User
 
     [Required]
     public Role UserRole { get; set; }
+
+    public ICollection<UserInventoryItem> UserInventoryItems { get; set; }
 }
