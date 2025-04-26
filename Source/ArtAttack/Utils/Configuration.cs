@@ -55,5 +55,10 @@ namespace Steampunks.Utils
         /// Connection string for Nikole.
         /// </summary>
         public const string CONNECTIONSTRINGARIS = "Data Source=LAPTOP-MHT5DVFO\\SQLEXPRESS01;Initial Catalog=SteamPunksDB;Integrated Security=True;TrustServerCertificate=True";
+
+        /// <summary>
+        /// Connection string for Iustin.
+        /// </summary>
+        public const string CONNECTIONSTRINGIUSTIN = "Data Source=IUSTINS_LAPTOP\\SQLEXPRESS;Initial Catalog=SteamPunksDB;Integrated Security=True;TrustServerCertificate=True";
     }
 }
