@@ -133,7 +133,7 @@ namespace Steampunks.Repository.Trade
                                     reader.GetString(reader.GetOrdinal("ItemName")),
                                     game,
                                     (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                    reader.GetString(reader.GetOrdinal("GameDescription")));
+                                    reader.GetString(reader.GetOrdinal("Description")));
                                 item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                                 item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
@@ -251,7 +251,7 @@ namespace Steampunks.Repository.Trade
                                     reader.GetString(reader.GetOrdinal("ItemName")),
                                     game,
                                     (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                    reader.GetString(reader.GetOrdinal("GameDescription")));
+                                    reader.GetString(reader.GetOrdinal("Description")));
 
                                 item.SetItemId(reader.GetInt32(reader.GetOrdinal("ItemId")));
                                 item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
@@ -506,7 +506,7 @@ namespace Steampunks.Repository.Trade
                     i.ItemId,
                     i.ItemName,
                     i.Price,
-                    i.GameDescription,
+                    i.Description,
                     i.IsListed,
                     g.GameId,
                     g.GameTitle as GameTitle,

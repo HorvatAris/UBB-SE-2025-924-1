@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SteamHub.Api.Context;
 
@@ -10,9 +11,11 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250426161120_AddTagsAndRemoveTestGamesTable")]
+    partial class AddTagsAndRemoveTestGamesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,32 +23,6 @@ namespace SteamHub.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("SteamHub.Api.Entities.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Role");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 0,
-                            Name = "User"
-                        },
-                        new
-                        {
-                            Id = 1,
-                            Name = "Developer"
-                        });
-                });
 
             modelBuilder.Entity("SteamHub.Api.Entities.Tag", b =>
                 {
@@ -144,87 +121,6 @@ namespace SteamHub.Api.Migrations
                             TagId = 16,
                             TagName = "Racing"
                         });
-                });
-
-            modelBuilder.Entity("SteamHub.Api.Entities.User", b =>
-                {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("PointsBalance")
-                        .HasColumnType("real");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("WalletBalance")
-                        .HasColumnType("real");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            Email = "user1@gmail.com",
-                            PointsBalance = 100f,
-                            RoleId = 0,
-                            UserName = "User1",
-                            WalletBalance = 56f
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            Email = "user2@gmail.com",
-                            PointsBalance = 45f,
-                            RoleId = 0,
-                            UserName = "User2",
-                            WalletBalance = 78f
-                        },
-                        new
-                        {
-                            UserId = 3,
-                            Email = "user3@gmail.com",
-                            PointsBalance = 234f,
-                            RoleId = 1,
-                            UserName = "User3",
-                            WalletBalance = 21f
-                        },
-                        new
-                        {
-                            UserId = 4,
-                            Email = "user4@gmail.com",
-                            PointsBalance = 34f,
-                            RoleId = 1,
-                            UserName = "User4",
-                            WalletBalance = 455f
-                        });
-                });
-
-            modelBuilder.Entity("SteamHub.Api.Entities.User", b =>
-                {
-                    b.HasOne("SteamHub.Api.Entities.Role", "UserRole")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserRole");
                 });
 #pragma warning restore 612, 618
         }
