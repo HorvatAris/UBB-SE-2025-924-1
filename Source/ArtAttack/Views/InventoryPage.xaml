@@ -25,13 +25,13 @@
             <ComboBox x:Name="UserComboBox" 
                       ItemsSource="{x:Bind ViewModel.AvailableUsers, Mode=OneWay}"
                       SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay}"
-                      DisplayMemberPath="Username"
+                      DisplayMemberPath="UserName"
                       Width="200"/>
             
             <ComboBox x:Name="GameComboBox"
                       ItemsSource="{x:Bind ViewModel.AvailableGames, Mode=OneWay}"
                       SelectedItem="{x:Bind ViewModel.SelectedGame, Mode=TwoWay}"
-                      DisplayMemberPath="Title"
+                      DisplayMemberPath="GameTitle"
                       Width="200"/>
 
             <TextBox x:Name="SearchBox"

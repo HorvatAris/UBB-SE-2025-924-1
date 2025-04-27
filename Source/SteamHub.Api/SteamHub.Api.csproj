@@ -6,6 +6,17 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>0e9ca207-f589-41e1-8f8c-e7b3f2a6ae7a</UserSecretsId>
 	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<CodeAnalysisRuleSet>../CtrlAltElite/SE924.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Update="Migrations\**\*.cs">
+			<ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+		</None>
+	</ItemGroup>
+	
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">

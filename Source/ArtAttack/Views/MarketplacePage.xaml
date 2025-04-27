@@ -36,7 +36,7 @@
                      Width="200"
                      ItemsSource="{Binding AvailableUsers}"
                      SelectedItem="{Binding CurrentUser, Mode=TwoWay}"
-                     DisplayMemberPath="Username"/>
+                     DisplayMemberPath="UserName"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" 
@@ -87,7 +87,7 @@
                             <TextBlock Text="{Binding ItemName}" 
                                      Style="{StaticResource BodyTextBlockStyle}"
                                      TextWrapping="Wrap"/>
-                            <TextBlock Text="{Binding Game.Title}" 
+                            <TextBlock Text="{Binding Game.GameTitle}" 
                                      Style="{StaticResource CaptionTextBlockStyle}"
                                      Foreground="Gray"/>
                         </StackPanel>
@@ -129,7 +129,7 @@
                 <StackPanel Grid.Row="1" Margin="0,0,0,10">
                     <TextBlock Text="Game:"
                              Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                    <TextBlock Text="{Binding SelectedItem.Game.Title}"
+                    <TextBlock Text="{Binding SelectedItem.Game.GameTitle}"
                              Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>
 
