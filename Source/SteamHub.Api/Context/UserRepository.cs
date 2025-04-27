@@ -1,20 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SteamHub.Api.Entities;
-using SteamHub.Api.Models;
+﻿namespace SteamHub.Api.Context;
 
-namespace SteamHub.Api.Context;
+using Entities;
+using Microsoft.EntityFrameworkCore;
+using Models;
 
 public class UserRepository : IUserRepository
 {
-    private readonly DataContext _context;
+    private readonly DataContext context;
 
     public UserRepository(DataContext context)
     {
-        this._context = context;
+        this.context = context;
     }
+
     public async Task<GetUsersResponse?> GetUsersAsync()
     {
-        var users = await _context.Users
+        var users = await context.Users
             .Include(user => user.UserRole)
             .Select(user => new UserResponse
             {
@@ -35,7 +36,7 @@ public class UserRepository : IUserRepository
 
     public async Task<UserResponse?> GetUserByIdAsync(int id)
     {
-        var result = await _context.Users
+        var result = await context.Users
             .Where(user => user.UserId == id)
             .Select(user => new UserResponse
             {
@@ -53,7 +54,7 @@ public class UserRepository : IUserRepository
 
     public async Task UpdateUserAsync(int userId, UpdateUserRequest request)
     {
-        var existingUser = await _context.Users.FindAsync(userId);
+        var existingUser = await context.Users.FindAsync(userId);
         if (existingUser == null)
         {
             throw new Exception("User not found");
@@ -65,7 +66,7 @@ public class UserRepository : IUserRepository
         existingUser.WalletBalance = request.WalletBalance;
         existingUser.PointsBalance = request.PointsBalance;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)
@@ -79,9 +80,9 @@ public class UserRepository : IUserRepository
             PointsBalance = request.PointsBalance
         };
 
-        await _context.Users.AddAsync(newUser);
+        await context.Users.AddAsync(newUser);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         return new CreateUserResponse
         {
@@ -91,13 +92,13 @@ public class UserRepository : IUserRepository
 
     public async Task DeleteUserAsync(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
         if (user == null)
         {
             throw new Exception("User not found");
         }
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-    }
 
+        context.Users.Remove(user);
+        await context.SaveChangesAsync();
+    }
 }

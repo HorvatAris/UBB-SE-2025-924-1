@@ -1,0 +1,96 @@
+﻿@startuml
+class Tag {
+    + TagId: int
+    + TagName: string
+    + <color:red>NumberOfUserGamesWithTag: int</color>
+}
+
+class User {
+    + UserId: int
+    + UserName: string
+    + Email: string
+    + WalletBalance: float
+    + PointsBalance: float
+    + UserRole: Role
+}
+
+class PointShopTransaction {
+    + Identifier: int
+    + ItemName: string
+    + PointsSpent: double
+    + PurchaseDate: DateTime
+    + ItemType: string
+}
+
+enum Role {
+    + Developer
+    + User
+}
+
+class Game {
+    + GameId: int
+    + GameTitle: int
+    + GameDescription: string
+    + ImagePath: string
+    + Price: decimal
+    + MinimumRequirements: string
+    + RecommendedRequirements: string
+    + <color:red>Tags: string[]</color>
+    + Rating: decimal
+    + NumberOfRecentPurchases: int
+    + TrendingScore: decimal
+    + TrailerPath: string
+    + GameplayPath: string
+    + Discount: decimal
+    + TagScore: decimal
+    + PublisherIdentifier: int
+}
+
+class ItemTrade {
+    + TradeId: int
+    + SourceUser: User
+    + DestinationUser: User
+    + GameOfTrade: Game
+    + TradeDate: DateTime
+    + TradeDescription: string
+    + TradeStatus: string
+    + AcceptedBySourceUser: bool
+    + AcceptedByDestinationUser: bool
+    + SourceUserItems: IReadOnlyList<Item>
+    + DestinationUserItems:  IReadOnlyList<Item>    
+    + DeclineTradeRequest(): void    
+    + MarkTradeAsCompleted(): void    
+    + AcceptByDestinationUser(): void    
+    + AcceptBySourceUser(): void    
+    + AddDestinationUserItem(item: Item): void    
+    + AddSourceUserItem(item: Item): void    
+}
+class Item {
+    + ItemId: int
+    + ItemName: string
+    + Game: Game
+    + Price: float
+    + Description: string
+    + IsListed: bool
+    + ImagePath: string
+}
+class Item {
+    + ItemIdentifier: int
+    + Name: string
+    + Description: string
+    + ImagePath: string
+    + PointPrice: double
+    + ItemType: string
+    + IsActive: bool
+}
+
+
+User *- Role: +UserRole
+Item o-- Game: +Game
+ItemTrade o-- Game: +GameOfTrade
+ItemTrade o-- User: +SourceUser
+ItemTrade o-- User: +DestinationUser
+ItemTrade "*..1" o-- Item: +SourceUserItem
+ItemTrade "*..1" o-- Item: +DestinationUserItem
+
+@enduml

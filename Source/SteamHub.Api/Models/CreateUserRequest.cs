@@ -1,6 +1,6 @@
-﻿using SteamHub.Api.Entities;
+﻿namespace SteamHub.Api.Models;
 
-namespace SteamHub.Api.Models;
+using Entities;
 
 public class CreateUserRequest
 {
