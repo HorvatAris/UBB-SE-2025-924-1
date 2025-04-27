@@ -20,8 +20,8 @@ namespace SteamHub.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("GameTag", b =>
+            
+                        modelBuilder.Entity("GameTag", b =>
                 {
                     b.Property<int>("GamesGameId")
                         .HasColumnType("int");
@@ -466,6 +466,128 @@ namespace SteamHub.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("UserRole");
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.PointShopItem", b =>
+                {
+                    b.Property<int>("PointShopItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PointShopItemId"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("PointPrice")
+                        .HasColumnType("float");
+
+                    b.HasKey("PointShopItemId");
+
+                    b.ToTable("PointShopItems");
+
+                    b.HasData(
+                        new
+                        {
+                            PointShopItemId = 1,
+                            Description = "A cool blue background for your profile",
+                            ImagePath = "https://picsum.photos/id/1/200/200",
+                            ItemType = "ProfileBackground",
+                            Name = "Blue Profile Background",
+                            PointPrice = 1000.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 2,
+                            Description = "A vibrant red background for your profile",
+                            ImagePath = "https://picsum.photos/id/20/200/200",
+                            ItemType = "ProfileBackground",
+                            Name = "Red Profile Background",
+                            PointPrice = 1000.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 3,
+                            Description = "A golden frame for your avatar image",
+                            ImagePath = "https://picsum.photos/id/30/200/200",
+                            ItemType = "AvatarFrame",
+                            Name = "Golden Avatar Frame",
+                            PointPrice = 2000.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 4,
+                            Description = "A silver frame for your avatar image",
+                            ImagePath = "https://picsum.photos/id/40/200/200",
+                            ItemType = "AvatarFrame",
+                            Name = "Silver Avatar Frame",
+                            PointPrice = 1500.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 5,
+                            Description = "Express yourself with this happy emoticon",
+                            ImagePath = "https://picsum.photos/id/50/200/200",
+                            ItemType = "Emoticon",
+                            Name = "Happy Emoticon",
+                            PointPrice = 500.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 6,
+                            Description = "Express yourself with this sad emoticon",
+                            ImagePath = "https://picsum.photos/id/60/200/200",
+                            ItemType = "Emoticon",
+                            Name = "Sad Emoticon",
+                            PointPrice = 500.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 7,
+                            Description = "Cool gamer avatar for your profile",
+                            ImagePath = "https://picsum.photos/id/70/200/200",
+                            ItemType = "Avatar",
+                            Name = "Gamer Avatar",
+                            PointPrice = 1200.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 8,
+                            Description = "Stealthy ninja avatar for your profile",
+                            ImagePath = "https://picsum.photos/id/80/200/200",
+                            ItemType = "Avatar",
+                            Name = "Ninja Avatar",
+                            PointPrice = 1200.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 9,
+                            Description = "Space-themed mini profile",
+                            ImagePath = "https://picsum.photos/id/90/200/200",
+                            ItemType = "MiniProfile",
+                            Name = "Space Mini-Profile",
+                            PointPrice = 3000.0
+                        },
+                        new
+                        {
+                            PointShopItemId = 10,
+                            Description = "Fantasy-themed mini profile",
+                            ImagePath = "https://picsum.photos/id/100/200/200",
+                            ItemType = "MiniProfile",
+                            Name = "Fantasy Mini-Profile",
+                            PointPrice = 3000.0
+                        });
                 });
 #pragma warning restore 612, 618
         }
