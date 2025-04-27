@@ -6,6 +6,7 @@ namespace SteamHub.Api.Context
 
 public class DataContext : DbContext
 {
+        private readonly IConfiguration configuration;
 
         public DataContext(DbContextOptions options, IConfiguration configuration) : base(options)
         {
