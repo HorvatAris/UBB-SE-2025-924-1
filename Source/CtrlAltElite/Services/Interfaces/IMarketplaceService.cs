@@ -1,12 +1,28 @@
-﻿using System;
+﻿using SteamStore.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CtrlAltElite.Services.Interfaces
 {
-    class IMarketplaceService
+    public interface IMarketplaceService
     {
+
+        Task AddListingAsync(Game game, Item item);
+
+        Task<bool> BuyItemAsync(Item item);
+
+        Task<List<Item>> GetAllListingsAsync();
+
+        Task<List<User>> GetAllUsersAsync();
+
+        User GetCurrentUser();
+
+        Task<List<Item>> GetListingsByGameAsync(Game game);
+
+        Task RemoveListingAsync(Game game, Item item);
+
+        void SetCurrentUser(User user);
+
+        Task UpdateListingAsync(Game game, Item item);
     }
 }
