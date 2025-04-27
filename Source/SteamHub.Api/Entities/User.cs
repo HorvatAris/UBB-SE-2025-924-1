@@ -14,4 +14,6 @@ public class User
 
     public RoleEnum RoleId { get; set; }
     public Role UserRole { get; set; }
+
+    public IList<UserPointShopItemInventory> UserPointShopItemsInventory { get; set; }
 }

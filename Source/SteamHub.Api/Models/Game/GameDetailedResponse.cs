@@ -1,11 +1,11 @@
-﻿namespace SteamHub.Api.Entities;
+﻿namespace SteamHub.Api.Models.Game;
 
-using Models;
-using SteamHub.Api.Models.Game;
+using Entities;
+using SteamHub.Api.Models.Tag;
 
-public class Game
+public class GameDetailedResponse
 {
-    public int GameId { get; set; }
+    public int Identifier { get; set; }
 
     public string Name { get; set; }
 
@@ -19,13 +19,9 @@ public class Game
 
     public string? RecommendedRequirements { get; set; }
 
-    public GameStatusEnum StatusId { get; set; }
-
-    public virtual GameStatus Status { get; set; }
+    public GameStatusEnum Status { get; set; }
 
     public string? RejectMessage { get; set; }
-
-    public ISet<Tag> Tags { get; set; } = new HashSet<Tag>();
 
     public decimal Rating { get; set; }
 
@@ -37,7 +33,7 @@ public class Game
 
     public decimal Discount { get; set; }
 
-    public virtual User Publisher { get; set; }
+    public int PublisherUserIdentifier { get; set; }
 
-    public int PublisherUserId { get; set; }
+    public List<TagDetailedResponse> Tags { get; set; }
 }

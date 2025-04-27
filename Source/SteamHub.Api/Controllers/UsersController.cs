@@ -1,24 +1,25 @@
-﻿namespace SteamHub.Api.Controllers
-{
-    using Context;
-    using Microsoft.AspNetCore.Mvc;
-    using Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using SteamHub.Api.Context.Repositories;
+using SteamHub.Api.Entities;
+using SteamHub.Api.Models.User;
 
+namespace SteamHub.Api.Controllers
+{
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository userRepository;
+        private readonly IUserRepository _userRepository;
 
         public UsersController(IUserRepository userRepository)
         {
-            this.userRepository = userRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await userRepository.GetUsersAsync();
+            var result = await _userRepository.GetUsersAsync();
 
             return Ok(result);
         }
@@ -26,7 +27,7 @@
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var result = await userRepository.GetUserByIdAsync(id);
+            var result = await _userRepository.GetUserByIdAsync(id);
 
             if (result is null)
             {
@@ -41,7 +42,7 @@
         {
             try
             {
-                await userRepository.UpdateUserAsync(id, request);
+                await _userRepository.UpdateUserAsync(id, request);
             }
             catch (Exception ex)
             {
@@ -56,7 +57,7 @@
         {
             try
             {
-                var existingUser = await userRepository.CreateUserAsync(request);
+                var existingUser = await _userRepository.CreateUserAsync(request);
                 return Ok(existingUser);
             }
             catch (Exception ex)
@@ -70,7 +71,7 @@
         {
             try
             {
-                await userRepository.DeleteUserAsync(id);
+                await _userRepository.DeleteUserAsync(id);
             }
             catch (Exception ex)
             {
