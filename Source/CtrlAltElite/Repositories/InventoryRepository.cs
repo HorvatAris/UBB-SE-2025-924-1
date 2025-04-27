@@ -103,6 +103,7 @@ namespace SteamStore.Repositories
                     i.Price,
                     i.Description,
                     i.IsListed,
+                    i.ImagePath,   
                     g.game_id,
                     g.name as GameTitle,
                    
@@ -156,7 +157,7 @@ namespace SteamStore.Repositories
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
                             // Set image path based on game and item name
-                            string imagePath = string.Empty;
+                            string imagePath = reader.GetString(reader.GetOrdinal("ImagePath"));
                             item.SetImagePath(imagePath);
 
                             items.Add(item);
