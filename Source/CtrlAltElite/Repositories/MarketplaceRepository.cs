@@ -269,7 +269,6 @@ namespace CtrlAltElite.Repositories
                 }
             }
         }
-
         public User? GetCurrentUser()
         {
             return this.user;
