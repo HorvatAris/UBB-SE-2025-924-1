@@ -26,6 +26,16 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
+    public SqlConnection GetConnection()
+    {
+        if (this.sqlConnection == null)
+        {
+            this.sqlConnection = new SqlConnection(this.connectionString);
+        }
+
+        return this.sqlConnection;
+    }
+
     public void OpenConnection()
     {
         if (this.sqlConnection.State != ConnectionState.Open)

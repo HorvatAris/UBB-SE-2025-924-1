@@ -90,6 +90,15 @@ namespace SteamStore
                     case "DeveloperModePage":
                         ContentFrame.Content = new DeveloperModePage(developerService);
                         break;
+                    case "marketplace":
+                        ContentFrame.Content = new MarketplacePage();
+                        break;
+                    case "inventory":
+                        ContentFrame.Content = new InventoryPage();
+                        break;
+                    case "trading":
+                        ContentFrame.Content = new TradingPage();
+                        break;
                 }
             }
 

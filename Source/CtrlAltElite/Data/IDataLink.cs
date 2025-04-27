@@ -23,5 +23,7 @@ namespace SteamStore.Data
         DataTable ExecuteReader(string storedProcedure, SqlParameter[] ? sqlParameters = null);
 
         int ExecuteNonQuery(string storedProcedure, SqlParameter[] ? sqlParameters = null);
+
+        SqlConnection GetConnection();
     }
 }
