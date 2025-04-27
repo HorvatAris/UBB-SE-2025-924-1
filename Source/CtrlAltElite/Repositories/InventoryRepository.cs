@@ -1,4 +1,5 @@
-﻿using CtrlAltElite.Models;
+﻿using SteamStore.Models;
+using SteamStore.Repositories.Interfaces;
 using SteamStore.Data;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CtrlAltElite.Repositories
+namespace SteamStore.Repositories
 {
-    public class InventoryRepository
+    public class InventoryRepository : IInventoryRepository
     {
         private readonly IDataLink dataLink;
         private User user;
@@ -102,17 +103,17 @@ namespace CtrlAltElite.Repositories
                     i.Price,
                     i.Description,
                     i.IsListed,
-                    g.GameId,
-                    g.GameTitle as GameTitle,
-                    g.Genre,
-                    g.GameDescription as GameDescription,
-                    g.Price as GamePrice,
-                    g.Status as GameStatus
+                    g.game_id,
+                    g.name as GameTitle,
+                   
+                    g.description as GameDescription,
+                    g.price as GamePrice,
+                    g.status as GameStatus
                 FROM Items i
-                JOIN Games g ON i.CorrespondingGameId = g.GameId
-                JOIN UserInventory ui ON i.ItemId = ui.ItemId AND g.GameId = ui.GameId
+                JOIN Games g ON i.CorrespondingGameId = g.game_id
+                JOIN UserInventory ui ON i.ItemId = ui.ItemId AND g.game_id = ui.GameId
                 WHERE ui.UserId = @UserId
-                ORDER BY g.GameTitle, i.Price";
+                ORDER BY g.name, i.Price";
 
             try
             {
@@ -129,13 +130,22 @@ namespace CtrlAltElite.Repositories
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
                             System.Diagnostics.Debug.WriteLine($"Found item: {reader.GetString(reader.GetOrdinal("ItemName"))}");
-                            var game = new Game(
-                                reader.GetString(reader.GetOrdinal("GameTitle")),
-                                (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
-                                reader.GetString(reader.GetOrdinal("Genre")),
-                                reader.GetString(reader.GetOrdinal("GameDescription")));
-                            game.SetGameId(reader.GetInt32(reader.GetOrdinal("GameId")));
-                            game.SetStatus(reader.GetString(reader.GetOrdinal("GameStatus")));
+                            //var game = new Game(
+                            //    reader.GetString(reader.GetOrdinal("GameTitle")),
+                            //    (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
+                            //    reader.GetString(reader.GetOrdinal("Genre")),
+                            //    reader.GetString(reader.GetOrdinal("GameDescription")));
+
+                            var game = new Game
+                            {
+                                GameId = reader.GetInt32(reader.GetOrdinal("game_id")),
+                                GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
+                                //Genre = reader.GetString(reader.GetOrdinal("Genre")),
+                                GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
+                                Price = (decimal)reader.GetDecimal(reader.GetOrdinal("GamePrice")),
+                                Status = reader.GetString(reader.GetOrdinal("GameStatus")),
+                            };
+
 
                             var item = new Item(
                                 reader.GetString(reader.GetOrdinal("ItemName")),
@@ -146,7 +156,7 @@ namespace CtrlAltElite.Repositories
                             item.SetIsListed(reader.GetBoolean(reader.GetOrdinal("IsListed")));
 
                             // Set image path based on game and item name
-                            string imagePath = this.dataBaseConnector.GetItemImagePath(item);
+                            string imagePath = string.Empty;
                             item.SetImagePath(imagePath);
 
                             items.Add(item);
@@ -169,7 +179,7 @@ namespace CtrlAltElite.Repositories
             }
             finally
             {
-                this.dataBaseConnector.CloseConnection();
+                this.dataLink.CloseConnection();
             }
 
             return items;
@@ -196,34 +206,44 @@ namespace CtrlAltElite.Repositories
                     i.Price,
                     i.Description,
                     i.IsListed,
-                    g.GameId,
-                    g.GameTitle as GameTitle,
-                    g.Genre,
-                    g.GameDescription as GameDescription,
-                    g.Price as GamePrice,
-                    g.Status as GameStatus
+                    g.game_id,
+                    g.name as GameTitle,
+                    
+                    g.description as GameDescription,
+                    g.price as GamePrice,
+                    g.status as GameStatus
                 FROM Items i
                 JOIN UserInventory ui ON i.ItemId = ui.ItemId
-                JOIN Games g ON ui.GameId = g.GameId
+                JOIN Games g ON ui.GameId = g.game_id
                 WHERE ui.UserId = @UserId";
 
             try
             {
-                using (var command = new SqlCommand(query, this.dataBaseConnector.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@UserId", user.UserId);
-                    await this.dataBaseConnector.OpenConnectionAsync();
+                    this.dataLink.OpenConnection();
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
-                            var game = new Game(
-                                reader.GetString(reader.GetOrdinal("GameTitle")),
-                                (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
-                                reader.GetString(reader.GetOrdinal("Genre")),
-                                reader.GetString(reader.GetOrdinal("GameDescription")));
-                            game.SetGameId(reader.GetInt32(reader.GetOrdinal("GameId")));
-                            game.SetStatus(reader.GetString(reader.GetOrdinal("GameStatus")));
+                            //var game = new Game(
+                            //    reader.GetString(reader.GetOrdinal("GameTitle")),
+                            //    (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
+                            //    reader.GetString(reader.GetOrdinal("Genre")),
+                            //    reader.GetString(reader.GetOrdinal("GameDescription")));
+                            //game.SetGameId(reader.GetInt32(reader.GetOrdinal("GameId")));
+                            //game.SetStatus(reader.GetString(reader.GetOrdinal("GameStatus")));
+
+                            var game = new Game
+                            {
+                                GameId = reader.GetInt32(reader.GetOrdinal("game_id")),
+                                GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
+                                //Genre = reader.GetString(reader.GetOrdinal("Genre")),
+                                GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
+                                Price = (decimal)reader.GetDouble(reader.GetOrdinal("GamePrice")),
+                                Status = reader.GetString(reader.GetOrdinal("GameStatus")),
+                            };
 
                             var item = new Item(
                                 reader.GetString(reader.GetOrdinal("ItemName")),
@@ -239,7 +259,7 @@ namespace CtrlAltElite.Repositories
             }
             finally
             {
-                this.dataBaseConnector.CloseConnection();
+                this.dataLink.CloseConnection();
             }
 
             return items;
@@ -269,18 +289,18 @@ namespace CtrlAltElite.Repositories
 
             try
             {
-                using (var command = new SqlCommand(query, this.dataBaseConnector.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@UserId", user.UserId);
                     command.Parameters.AddWithValue("@GameId", game.GameId);
                     command.Parameters.AddWithValue("@ItemId", item.ItemId);
-                    await this.dataBaseConnector.OpenConnectionAsync();
+                    this.dataLink.OpenConnection();
                     await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
             }
             finally
             {
-                this.dataBaseConnector.CloseConnection();
+                this.dataLink.CloseConnection();
             }
         }
 
@@ -308,27 +328,21 @@ namespace CtrlAltElite.Repositories
 
             try
             {
-                using (var command = new SqlCommand(query, this.dataBaseConnector.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@UserId", user.UserId);
                     command.Parameters.AddWithValue("@GameId", game.GameId);
                     command.Parameters.AddWithValue("@ItemId", item.ItemId);
-                    await this.dataBaseConnector.OpenConnectionAsync();
+                    this.dataLink.OpenConnection();
                     await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
             }
             finally
             {
-                this.dataBaseConnector.CloseConnection();
+                this.dataLink.CloseConnection();
             }
         }
 
-        /// <summary>
-        /// Asynchronously sells the specified item by updating its listed status.
-        /// </summary>
-        /// <param name="item">The item to be sold.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a value indicating whether the operation succeeded.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
         public async Task<bool> SellItemAsync(Item item)
         {
             if (item == null)
@@ -338,9 +352,10 @@ namespace CtrlAltElite.Repositories
 
             try
             {
+                // await this.dataBaseConnector.OpenConnectionAsync().ConfigureAwait(false);
+                this.dataLink.OpenConnection();
                 // Start transaction.
-                await this.dataBaseConnector.OpenConnectionAsync().ConfigureAwait(false);
-                using (var transaction = this.dataBaseConnector.GetConnection().BeginTransaction())
+                using (var transaction = this.dataLink.GetConnection().BeginTransaction())
                 {
                     try
                     {
@@ -349,7 +364,7 @@ namespace CtrlAltElite.Repositories
                             @"
                             UPDATE Items 
                             SET IsListed = 1
-                            WHERE ItemId = @ItemId", this.dataBaseConnector.GetConnection(),
+                            WHERE ItemId = @ItemId", this.dataLink.GetConnection(),
                             transaction))
                         {
                             command.Parameters.AddWithValue("@ItemId", item.ItemId);
@@ -379,7 +394,7 @@ namespace CtrlAltElite.Repositories
             }
             finally
             {
-                this.dataBaseConnector.CloseConnection();
+                this.dataLink.CloseConnection();
             }
         }
 
@@ -387,24 +402,28 @@ namespace CtrlAltElite.Repositories
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
-            using (var command = new SqlCommand("SELECT UserId, UserName FROM Users", this.dataBaseConnector.GetConnection()))
+            using (var command = new SqlCommand("SELECT user_id, UserName FROM Users", this.dataLink.GetConnection()))
             {
                 try
                 {
-                    await this.dataBaseConnector.OpenConnectionAsync();
+                    this.dataLink.OpenConnection();
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
-                            var user = new User(reader.GetString(reader.GetOrdinal("UserName")));
-                            user.SetUserId(reader.GetInt32(reader.GetOrdinal("UserId")));
+                            var user = new User
+                            {
+                                UserName = reader.GetString(reader.GetOrdinal("UserName")),
+                                UserId = reader.GetInt32(reader.GetOrdinal("user_id")),
+                            };
+
                             users.Add(user);
                         }
                     }
                 }
                 finally
                 {
-                    this.dataBaseConnector.CloseConnection();
+                    this.dataLink.CloseConnection();
                 }
             }
 

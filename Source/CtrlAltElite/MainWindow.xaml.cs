@@ -1,6 +1,7 @@
 namespace SteamStore
 {
     using System;
+    using SteamStore.Pages;
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -90,15 +91,15 @@ namespace SteamStore
                     case "DeveloperModePage":
                         ContentFrame.Content = new DeveloperModePage(developerService);
                         break;
-                    case "marketplace":
-                        ContentFrame.Content = new MarketplacePage();
-                        break;
+                    //case "marketplace":
+                    //    ContentFrame.Content = new MarketplacePage();
+                    //    break;
                     case "inventory":
-                        ContentFrame.Content = new InventoryPage();
+                        ContentFrame.Content = new InventoryPage(this.user);
                         break;
-                    case "trading":
-                        ContentFrame.Content = new TradingPage();
-                        break;
+                    //case "trading":
+                    //    ContentFrame.Content = new TradingPage();
+                    //    break;
                 }
             }
 

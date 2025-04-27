@@ -83,6 +83,7 @@
     <None Remove="Pages\CreditCardPaymentPage.xaml" />
     <None Remove="Pages\DeveloperModePage.xaml" />
     <None Remove="Pages\HomePage.xaml" />
+    <None Remove="Pages\InventoryPage.xaml" />
     <None Remove="Pages\PaypalPaymentPage.xaml" />
     <None Remove="Pages\PointsShopPage.xaml" />
   </ItemGroup>
@@ -92,6 +93,23 @@
   <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Assets\img\games\cs2\1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\img\games\cs2\2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\img\games\cs2\3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\img\games\cs2\awp-neo-noir.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\img\games\cs2\usp-neo-noir.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +148,9 @@
     <None Update="Pages\GamePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <Page Update="Pages\InventoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\PaypalPaymentPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

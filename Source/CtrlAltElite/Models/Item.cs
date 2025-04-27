@@ -1,4 +1,4 @@
-﻿namespace CtrlAltElite.Models
+﻿namespace SteamStore.Models
 {
     using System;
     using System.Diagnostics;

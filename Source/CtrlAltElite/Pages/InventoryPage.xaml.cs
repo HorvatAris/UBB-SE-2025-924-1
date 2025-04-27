@@ -1,19 +1,34 @@
-// <copyright file="InventoryPage.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Extensions.Configuration;
+using SteamStore.Data;
+using SteamStore.Repositories;
+using SteamStore.Repositories.Interfaces;
+using SteamStore.Services;
+using SteamStore.ViewModels;
+using SteamStore.Models;
+
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SteamStore.Pages
 {
-    using System;
-    using System.Linq;
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Navigation;
-
     /// <summary>
-    /// Page responsible for displaying and managing a user's inventory.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class InventoryPage : Page
+    public sealed partial class InventoryPage : Microsoft.UI.Xaml.Controls.Page
     {
         private const string ConfirmSaleTitle = "Confirm Sale";
         private const string ConfirmSaleMessageFormat = "Are you sure you want to sell {0}?";
@@ -24,30 +39,21 @@ namespace SteamStore.Pages
         private const string OkButtonText = "OK";
         private const string YesButtonText = "Yes";
         private const string NoButtonText = "No";
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InventoryPage"/> class.
-        /// </summary>
-        public InventoryPage()
+        public InventoryPage(User user)
         {
             this.InitializeComponent();
+            IDataLink databaseConnector = new DataLink(new ConfigurationBuilder()
+               .SetBasePath(AppContext.BaseDirectory)
+               .AddJsonFile("appsettings.json")
+               .Build());
 
-            // Ideally, use a dependency injection container to resolve these services.
-            IDatabaseConnector databaseConnector = new DatabaseConnector();
-            IInventoryRepository inventoryRepository = new InventoryRepository(databaseConnector);
+            IInventoryRepository inventoryRepository = new InventoryRepository(databaseConnector, user);
             var inventoryService = new InventoryService(inventoryRepository);
             this.ViewModel = new InventoryViewModel(inventoryService);
             this.DataContext = this;
 
             this.Loaded += this.InventoryPage_Loaded;
-
-            // Subscribe to user selection changes.
-            this.UserComboBox.SelectionChanged += this.OnUserSelectionChanged;
         }
-
-        /// <summary>
-        /// Gets the view model for this page.
-        /// </summary>
         public InventoryViewModel? ViewModel { get; private set; }
 
         private async void InventoryPage_Loaded(object sender, RoutedEventArgs e)
@@ -67,17 +73,11 @@ namespace SteamStore.Pages
             }
         }
 
-        /// <summary>
-        /// Navigates to the trading page when the "Create Trade Offer" button is clicked.
-        /// </summary>
         private void OnCreateTradeOfferButtonClicked(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(TradingPage));
+            //this.Frame.Navigate(typeof(TradingPage));
         }
 
-        /// <summary>
-        /// Updates the view model with the selected inventory item.
-        /// </summary>
         private void OnInventoryItemClicked(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is Item selectedItem && this.ViewModel != null)
@@ -86,9 +86,6 @@ namespace SteamStore.Pages
             }
         }
 
-        /// <summary>
-        /// Replaces a failed image load with a default image.
-        /// </summary>
         private void OnItemImageLoadFailed(object sender, ExceptionRoutedEventArgs e)
         {
             if (sender is Image itemImage && itemImage.Parent is Grid parentGrid)
