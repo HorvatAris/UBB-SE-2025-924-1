@@ -2,13 +2,13 @@
 
 public class CreditCardProcessorTest
 {
-    private readonly CreditCardProcessor cardProcessor = new CreditCardProcessor();
-
     private const string CorrectCardNumber = "1234567891012";
     private const string CorrectExpirationDate = "12/30";
     private const string Whitespace = " ";
     private const string CorrectCvv = "999";
     private const string CorrectName = "TEST";
+
+    private readonly CreditCardProcessor cardProcessor = new CreditCardProcessor();
 
     [Fact]
     public async Task ProcessPaymentAsync_WithAllValidInputs_ReturnsTrue()

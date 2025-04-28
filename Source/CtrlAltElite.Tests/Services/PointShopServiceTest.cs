@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Data.SqlClient;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Moq;
-using SteamStore.Data;
-using SteamStore.Models;
-using SteamStore.Repositories;
-using SteamStore.Services;
-using SteamStore.Tests.TestUtils;
-using Xunit;
-
-namespace SteamStore.Tests.Services
+﻿namespace SteamStore.Tests.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Data;
+    using System.Data.SqlClient;
+    using Microsoft.UI.Xaml.Controls.Primitives;
+    using Moq;
+    using SteamStore.Data;
+    using SteamStore.Models;
+    using SteamStore.Repositories;
+    using SteamStore.Services;
+    using SteamStore.Tests.TestUtils;
+    using Xunit;
+
     public class PointShopServiceTest
     {
         private const int PurchaseItemIdentifier = 7;

@@ -1,139 +1,140 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using global::SteamStore.Constants;
-using global::SteamStore.Data;
-using Moq;
-
-namespace SteamStore.Tests.Repositories;
-
-public class CartRepositoryTests
+﻿namespace SteamStore.Tests.Repositories
 {
-	private readonly Mock<IDataLink> dataLinkMock;
-	private readonly User testUser;
-	private readonly CartRepository cartRepository;
+    using System.Data;
+    using System.Data.SqlClient;
+    using global::SteamStore.Constants;
+    using global::SteamStore.Data;
+    using Moq;
 
-	private const int TestUserIdentifier = 1;
-	private const float TestWalletBallance = 100.5f;
+    public class CartRepositoryTests
+    {
+        private const int TestUserIdentifier = 1;
+        private const float TestWalletBallance = 100.5f;
 
-	public CartRepositoryTests()
-	{
-		dataLinkMock = new Mock<IDataLink>();
-		testUser = new User
-		{
-			UserId = TestUserIdentifier,
-			WalletBalance = TestWalletBallance
-		};
-		cartRepository = new CartRepository(dataLinkMock.Object, testUser);
-	}
+        private readonly Mock<IDataLink> dataLinkMock;
+        private readonly User testUser;
+        private readonly CartRepository cartRepository;
 
-	[Fact]
-	public void GetCartGames_WhenDataExists_ShouldReturnAsMuchData()
-	{
-		var table = new DataTable();
-		var expectedGamesCount = 2;
-		table.Columns.Add(SqlConstants.GAMEIDCOLUMN, typeof(int));
-		table.Columns.Add(SqlConstants.NAMECOLUMN, typeof(string));
-		table.Columns.Add(SqlConstants.DESCRIPTIONCOLUMN, typeof(string));
-		table.Columns.Add(SqlConstants.IMAGEURLCOLUMN, typeof(string));
-		table.Columns.Add(SqlConstants.PRICECOLUMN, typeof(decimal));
+        public CartRepositoryTests()
+        {
+            dataLinkMock = new Mock<IDataLink>();
+            testUser = new User
+            {
+                UserId = TestUserIdentifier,
+                WalletBalance = TestWalletBallance
+            };
+            cartRepository = new CartRepository(dataLinkMock.Object, testUser);
+        }
 
-		var row = table.NewRow();
-		row[SqlConstants.GAMEIDCOLUMN] = 1;
-		row[SqlConstants.NAMECOLUMN] = "GameName";
-		row[SqlConstants.DESCRIPTIONCOLUMN] = "GameDescription";
-		row[SqlConstants.IMAGEURLCOLUMN] = "image.png";
-		row[SqlConstants.PRICECOLUMN] = 19.99m;
-		table.Rows.Add(row);
+        [Fact]
+        public void GetCartGames_WhenDataExists_ShouldReturnAsMuchData()
+        {
+            var table = new DataTable();
+            var expectedGamesCount = 2;
+            table.Columns.Add(SqlConstants.GAMEIDCOLUMN, typeof(int));
+            table.Columns.Add(SqlConstants.NAMECOLUMN, typeof(string));
+            table.Columns.Add(SqlConstants.DESCRIPTIONCOLUMN, typeof(string));
+            table.Columns.Add(SqlConstants.IMAGEURLCOLUMN, typeof(string));
+            table.Columns.Add(SqlConstants.PRICECOLUMN, typeof(decimal));
 
-		row = table.NewRow();
-		row[SqlConstants.GAMEIDCOLUMN] = 2;
-		row[SqlConstants.NAMECOLUMN] = "GameName2";
-		row[SqlConstants.DESCRIPTIONCOLUMN] = "Description2";
-		row[SqlConstants.IMAGEURLCOLUMN] = "image2.png";
-		row[SqlConstants.PRICECOLUMN] = 20.99m;
-		table.Rows.Add(row);
+            var row = table.NewRow();
+            row[SqlConstants.GAMEIDCOLUMN] = 1;
+            row[SqlConstants.NAMECOLUMN] = "GameName";
+            row[SqlConstants.DESCRIPTIONCOLUMN] = "GameDescription";
+            row[SqlConstants.IMAGEURLCOLUMN] = "image.png";
+            row[SqlConstants.PRICECOLUMN] = 19.99m;
+            table.Rows.Add(row);
 
-		dataLinkMock
-			.Setup(dataLinkMock => dataLinkMock.ExecuteReader(SqlConstants.GetAllCartGamesProcedure, It.IsAny<SqlParameter[]>()))
-			.Returns(table);
+            row = table.NewRow();
+            row[SqlConstants.GAMEIDCOLUMN] = 2;
+            row[SqlConstants.NAMECOLUMN] = "GameName2";
+            row[SqlConstants.DESCRIPTIONCOLUMN] = "Description2";
+            row[SqlConstants.IMAGEURLCOLUMN] = "image2.png";
+            row[SqlConstants.PRICECOLUMN] = 20.99m;
+            table.Rows.Add(row);
 
-		var result = cartRepository.GetCartGames();
-		var actualGamesCount = result.Count;
+            dataLinkMock
+                .Setup(dataLinkMock => dataLinkMock.ExecuteReader(SqlConstants.GetAllCartGamesProcedure, It.IsAny<SqlParameter[]>()))
+                .Returns(table);
 
-		Assert.Equal(expectedGamesCount, actualGamesCount);
-	}
+            var result = cartRepository.GetCartGames();
+            var actualGamesCount = result.Count;
 
-	[Fact]
-	public void GetCartGames_WhenNoData_ShouldReturnEmptyList()
-	{
-		dataLinkMock
-			.Setup(dataLinkMock => dataLinkMock.ExecuteReader(SqlConstants.GetAllCartGamesProcedure, It.IsAny<SqlParameter[]>()))
-			.Returns((DataTable)null);
+            Assert.Equal(expectedGamesCount, actualGamesCount);
+        }
 
-		var result = cartRepository.GetCartGames();
+        [Fact]
+        public void GetCartGames_WhenNoData_ShouldReturnEmptyList()
+        {
+            dataLinkMock
+                .Setup(dataLinkMock => dataLinkMock.ExecuteReader(SqlConstants.GetAllCartGamesProcedure, It.IsAny<SqlParameter[]>()))
+                .Returns((DataTable)null);
 
-		Assert.Empty(result);
-	}
+            var result = cartRepository.GetCartGames();
 
-	[Fact]
-	public void AddGameToCart_WhenCalledValidIdentifier_ShouldExecuteQuery()
-	{
-		var game = new Game { GameId = TestUserIdentifier };
+            Assert.Empty(result);
+        }
 
-		cartRepository.AddGameToCart(game);
+        [Fact]
+        public void AddGameToCart_WhenCalledValidIdentifier_ShouldExecuteQuery()
+        {
+            var game = new Game { GameId = TestUserIdentifier };
 
-		dataLinkMock.Verify(dataLinkMock => dataLinkMock.ExecuteNonQuery(SqlConstants.AddGameToCartProcedure,
-			It.IsAny<SqlParameter[]>()), Times.Once);
-	}
+            cartRepository.AddGameToCart(game);
 
-	[Fact]
-	public void AddGameToCart_WhenDataLinkFails_ShouldThrowWrappedException()
-	{
-		var game = new Game { GameId = TestUserIdentifier };
-		var expectedExceptionErrorMessage = "SQL error";
+            dataLinkMock.Verify(dataLinkMock => dataLinkMock.ExecuteNonQuery(SqlConstants.AddGameToCartProcedure,
+                It.IsAny<SqlParameter[]>()), Times.Once);
+        }
 
-		dataLinkMock
-			.Setup(dataLinkMock => dataLinkMock.ExecuteNonQuery(It.IsAny<string>(), It.IsAny<SqlParameter[]>()))
-			.Throws(new Exception(expectedExceptionErrorMessage));
+        [Fact]
+        public void AddGameToCart_WhenDataLinkFails_ShouldThrowWrappedException()
+        {
+            var game = new Game { GameId = TestUserIdentifier };
+            var expectedExceptionErrorMessage = "SQL error";
 
-		var exception = Assert.Throws<Exception>(() => cartRepository.AddGameToCart(game));
+            dataLinkMock
+                .Setup(dataLinkMock => dataLinkMock.ExecuteNonQuery(It.IsAny<string>(), It.IsAny<SqlParameter[]>()))
+                .Throws(new Exception(expectedExceptionErrorMessage));
 
-		Assert.Equal(expectedExceptionErrorMessage, exception.Message);
-	}
+            var exception = Assert.Throws<Exception>(() => cartRepository.AddGameToCart(game));
 
-	[Fact]
-	public void RemoveGameFromCart_WhenCalledWithValidIdentifier_ShouldExecuteQuery()
-	{
-		var game = new Game { GameId = TestUserIdentifier };
+            Assert.Equal(expectedExceptionErrorMessage, exception.Message);
+        }
 
-		cartRepository.RemoveGameFromCart(game);
+        [Fact]
+        public void RemoveGameFromCart_WhenCalledWithValidIdentifier_ShouldExecuteQuery()
+        {
+            var game = new Game { GameId = TestUserIdentifier };
 
-		dataLinkMock.Verify(dataLinkMock => dataLinkMock.ExecuteNonQuery(SqlConstants.REMOVEGAMEFROMCART,
-			It.IsAny<SqlParameter[]>()), Times.Once);
-	}
+            cartRepository.RemoveGameFromCart(game);
 
-	[Fact]
-	public void RemoveGameFromCart_WhenExceptionIsThrownByDataLink_ShouldCatchExceptionAndNotThrow()
-	{
-		var game = new Game { GameId = TestUserIdentifier };
-		var expectedExceptionErrorMessage = "Something went wrong";
+            dataLinkMock.Verify(dataLinkMock => dataLinkMock.ExecuteNonQuery(SqlConstants.REMOVEGAMEFROMCART,
+                It.IsAny<SqlParameter[]>()), Times.Once);
+        }
 
-		dataLinkMock
-			.Setup(dataLinkMock => dataLinkMock.ExecuteNonQuery(It.IsAny<string>(), It.IsAny<SqlParameter[]>()))
-			.Throws(new Exception(expectedExceptionErrorMessage));
+        [Fact]
+        public void RemoveGameFromCart_WhenExceptionIsThrownByDataLink_ShouldCatchExceptionAndNotThrow()
+        {
+            var game = new Game { GameId = TestUserIdentifier };
+            var expectedExceptionErrorMessage = "Something went wrong";
 
-		var exception = Record.Exception(() => cartRepository.RemoveGameFromCart(game));
+            dataLinkMock
+                .Setup(dataLinkMock => dataLinkMock.ExecuteNonQuery(It.IsAny<string>(), It.IsAny<SqlParameter[]>()))
+                .Throws(new Exception(expectedExceptionErrorMessage));
 
-		Assert.Null(exception);
-	}
+            var exception = Record.Exception(() => cartRepository.RemoveGameFromCart(game));
 
-	[Fact]
-	public void GetUserFunds_WhenValid_ShouldReturnUserWalletBalance()
-	{
-		var expectedFunds = TestWalletBallance;
+            Assert.Null(exception);
+        }
 
-		var funds = cartRepository.GetUserFunds();
+        [Fact]
+        public void GetUserFunds_WhenValid_ShouldReturnUserWalletBalance()
+        {
+            var expectedFunds = TestWalletBallance;
 
-		Assert.Equal(expectedFunds, funds);
-	}
+            var funds = cartRepository.GetUserFunds();
+
+            Assert.Equal(expectedFunds, funds);
+        }
+    }
 }
