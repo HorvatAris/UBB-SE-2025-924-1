@@ -16,4 +16,7 @@ public class User
     public Role UserRole { get; set; }
 
     public IList<UserPointShopItemInventory> UserPointShopItemsInventory { get; set; }
+
+    public IList<StoreTransaction> StoreTransactions { get; set; }
+
 }
