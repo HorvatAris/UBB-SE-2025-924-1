@@ -38,11 +38,7 @@ namespace SteamHub.Api.Context.Repositories
             var item = await context.PointShopItems.FindAsync(request.PointShopItemId);
             if (item == null) throw new Exception("Item not found");
 
-            if (user.PointsBalance < item.PointPrice)
-                throw new Exception("Insufficient points to purchase item");
-
-            // Deduct points
-            user.PointsBalance -= (float)item.PointPrice;
+            // if somebody calls this method, make sure that the UpdateUser is called with the deducted amount of points !!!!!
 
             // Add to inventory
             var inventoryItem = new UserPointShopItemInventory
