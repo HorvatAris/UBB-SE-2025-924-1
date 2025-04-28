@@ -26,6 +26,8 @@ namespace SteamHub.Api.Context
 
         public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }
 
+        public DbSet<UsersGames> UsersGames { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -327,6 +329,53 @@ namespace SteamHub.Api.Context
             };
 
             builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
+
+
+            var usersGamesSeed = new List<UsersGames>
+            {
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 1,
+                    IsInWishlist = true,
+                    IsPurchased = false,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 2,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 1,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+            };
+
+            builder.Entity<UsersGames>().HasData(usersGamesSeed);
         }
     }
 }
