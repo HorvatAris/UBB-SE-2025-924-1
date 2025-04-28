@@ -12,8 +12,8 @@ namespace SteamHub.Api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "TestGames");
+            //migrationBuilder.DropTable(
+            //    name: "TestGames");
 
             migrationBuilder.CreateTable(
                 name: "PointShopItems",
@@ -56,28 +56,28 @@ namespace SteamHub.Api.Migrations
             migrationBuilder.DropTable(
                 name: "PointShopItems");
 
-            migrationBuilder.CreateTable(
-                name: "TestGames",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestGames", x => x.Id);
-                });
+            //migrationBuilder.CreateTable(
+            //    name: "TestGames",
+            //    columns: table => new
+            //    {
+            //        Id = table.Column<int>(type: "int", nullable: false)
+            //            .Annotation("SqlServer:Identity", "1, 1"),
+            //        Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+            //    },
+            //    constraints: table =>
+            //    {
+            //        table.PrimaryKey("PK_TestGames", x => x.Id);
+            //    });
 
-            migrationBuilder.InsertData(
-                table: "TestGames",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Roblox" },
-                    { 2, "Minecraft" },
-                    { 3, "Metin2" }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "TestGames",
+            //    columns: new[] { "Id", "Name" },
+            //    values: new object[,]
+            //    {
+            //        { 1, "Roblox" },
+            //        { 2, "Minecraft" },
+            //        { 3, "Metin2" }
+            //    });
         }
     }
 }

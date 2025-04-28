@@ -3,6 +3,8 @@
 using Context;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using SteamHub.Api.Context.Repositories;
+using SteamHub.Api.Models.Game;
 
 [Route("api/[controller]")]
 [ApiController]

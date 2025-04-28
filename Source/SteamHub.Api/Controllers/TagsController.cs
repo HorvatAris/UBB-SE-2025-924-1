@@ -1,24 +1,24 @@
-﻿namespace SteamHub.Api.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using SteamHub.Api.Context.Repositories;
+using SteamHub.Api.Models.Tag;
 
-using Context;
-using Microsoft.AspNetCore.Mvc;
-using Models;
+namespace SteamHub.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class TagsController : ControllerBase
 {
-	private readonly ITagRepository tagRepository;
+	private readonly ITagRepository _tagRepository;
 
 	public TagsController(ITagRepository tagRepository)
 	{
-		this.tagRepository = tagRepository;
+		_tagRepository = tagRepository;
 	}
 
 	[HttpGet]
 	public async Task<ActionResult<GetTagsResponse>> GetAll()
 	{
-		var result = await tagRepository.GetAllTagsAsync();
+		var result = await _tagRepository.GetAllTagsAsync();
 
 		return Ok(result);
 	}
@@ -26,7 +26,7 @@ public class TagsController : ControllerBase
 	[HttpGet("{id}")]
 	public async Task<ActionResult<TagNameOnlyResponse>> GetById([FromRoute] int id)
 	{
-		var result = await tagRepository.GetTagByIdAsync(id);
+		var result = await _tagRepository.GetTagByIdAsync(id);
 
 		if (result is null)
 		{
@@ -41,7 +41,7 @@ public class TagsController : ControllerBase
 	{
 		try
 		{
-			var createdTag = await tagRepository.CreateTagAsync(request);
+			var createdTag = await _tagRepository.CreateTagAsync(request);
 
 			return Ok(createdTag);
 		}
@@ -51,12 +51,13 @@ public class TagsController : ControllerBase
 		}
 	}
 
+
 	[HttpPatch("{id}")]
 	public async Task<IActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest request)
 	{
 		try
 		{
-			await tagRepository.UpdateTagAsync(id, request);
+			await _tagRepository.UpdateTagAsync(id, request);
 		}
 		catch (ArgumentException ex)
 		{
@@ -66,12 +67,13 @@ public class TagsController : ControllerBase
 		return NoContent();
 	}
 
+
 	[HttpDelete("{id}")]
 	public async Task<IActionResult> DeleteTag([FromRoute] int id)
 	{
 		try
 		{
-			await tagRepository.DeleteTagAsync(id);
+			await _tagRepository.DeleteTagAsync(id);
 		}
 		catch (ArgumentException ex)
 		{
