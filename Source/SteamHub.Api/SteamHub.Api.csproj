@@ -10,12 +10,6 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<CodeAnalysisRuleSet>../CtrlAltElite/SE924.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Update="Migrations\**\*.cs">
-			<ExcludeFromStyleCop>true</ExcludeFromStyleCop>
-		</None>
-	</ItemGroup>
 	
 
 	<ItemGroup>
