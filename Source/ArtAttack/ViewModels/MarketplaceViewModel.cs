@@ -8,6 +8,7 @@ namespace Steampunks.ViewModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
@@ -20,15 +21,15 @@ namespace Steampunks.ViewModels
     public partial class MarketplaceViewModel : INotifyPropertyChanged
     {
         private readonly IMarketplaceService marketplaceService;
-        private ObservableCollection<Item> items;
-        private string searchText;
-        private string selectedGame;
-        private string selectedType;
-        private string selectedRarity;
-        private List<Item> allCurrentItems;
-        private Item selectedItem;
-        private User currentUser;
-        private ObservableCollection<User> availableUsers;
+        private ObservableCollection<Item>? items;
+        private string? searchText;
+        private string? selectedGame;
+        private string? selectedType;
+        private string? selectedRarity;
+        private List<Item>? allCurrentItems;
+        private Item? selectedItem;
+        private User? currentUser;
+        private ObservableCollection<User>? availableUsers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MarketplaceViewModel"/> class.
@@ -39,28 +40,55 @@ namespace Steampunks.ViewModels
             this.marketplaceService = marketplaceService;
         }
 
+        public enum PurchaseResult
+        {
+            Success,
+            MissingUser,
+            Error,
+        }
+
+        public async Task<PurchaseResult> RequestPurchaseSelectedItemAsync()
+        {
+            if (this.CurrentUser == null)
+            {
+                return PurchaseResult.MissingUser;
+            }
+
+            try
+            {
+                bool success = await this.BuyItemAsync();
+                return success ? PurchaseResult.Success : PurchaseResult.Error;
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"Error: {exception.Message}");
+                return PurchaseResult.Error;
+            }
+        }
+
+
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Gets or sets the AvailableGames ObservableCollection.
         /// </summary>
-        public ObservableCollection<string> AvailableGames { get; set; }
+        public ObservableCollection<string>? AvailableGames { get; set; }
 
         /// <summary>
         /// Gets or sets the AvailableTypes ObservableCollection.
         /// </summary>
-        public ObservableCollection<string> AvailableTypes { get; set; }
+        public ObservableCollection<string>? AvailableTypes { get; set; }
 
         /// <summary>
         /// Gets or sets the AvailableRarities ObservableCollection.
         /// </summary>
-        public ObservableCollection<string> AvailableRarities { get; set; }
+        public ObservableCollection<string>? AvailableRarities { get; set; }
 
         /// <summary>
         /// Gets or sets the Items ObservableCollection.
         /// </summary>
-        public ObservableCollection<Item> Items
+        public ObservableCollection<Item>? Items
         {
             get => this.items;
             set
@@ -73,7 +101,7 @@ namespace Steampunks.ViewModels
         /// <summary>
         /// Gets or sets the SearchText.
         /// </summary>
-        public string SearchText
+        public string? SearchText
         {
             get => this.searchText;
             set
@@ -87,7 +115,7 @@ namespace Steampunks.ViewModels
         /// <summary>
         /// Gets or sets the SelectedGame.
         /// </summary>
-        public string SelectedGame
+        public string? SelectedGame
         {
             get => this.selectedGame;
             set
@@ -101,7 +129,7 @@ namespace Steampunks.ViewModels
         /// <summary>
         /// Gets or sets the SelectedType.
         /// </summary>
-        public string SelectedType
+        public string? SelectedType
         {
             get => this.selectedType;
             set
@@ -115,7 +143,7 @@ namespace Steampunks.ViewModels
         /// <summary>
         /// Gets or sets the SelectedRarity.
         /// </summary>
-        public string SelectedRarity
+        public string? SelectedRarity
         {
             get => this.selectedRarity;
             set
@@ -129,7 +157,7 @@ namespace Steampunks.ViewModels
         /// <summary>
         /// Gets or sets the SelectedItem.
         /// </summary>
-        public Item SelectedItem
+        public Item? SelectedItem
         {
             get => this.selectedItem;
             set
@@ -146,7 +174,7 @@ namespace Steampunks.ViewModels
         /// <summary>
         /// Gets or sets the CurrentUser.
         /// </summary>
-        public User CurrentUser
+        public User? CurrentUser
         {
             get => this.currentUser;
             set
@@ -164,7 +192,7 @@ namespace Steampunks.ViewModels
         /// <summary>
         /// Gets or sets the AvailableUsers ObservableCollection.
         /// </summary>
-        public ObservableCollection<User> AvailableUsers
+        public ObservableCollection<User>? AvailableUsers
         {
             get => this.availableUsers;
             set
