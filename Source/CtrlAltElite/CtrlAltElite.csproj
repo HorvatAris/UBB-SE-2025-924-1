@@ -84,6 +84,7 @@
     <None Remove="Pages\DeveloperModePage.xaml" />
     <None Remove="Pages\HomePage.xaml" />
     <None Remove="Pages\InventoryPage.xaml" />
+    <None Remove="Pages\MarketplacePage.xaml" />
     <None Remove="Pages\PaypalPaymentPage.xaml" />
     <None Remove="Pages\PointsShopPage.xaml" />
   </ItemGroup>
@@ -149,6 +150,9 @@
       <Generator>MSBuild:Compile</Generator>
     </None>
     <Page Update="Pages\InventoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\MarketplacePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Pages\PaypalPaymentPage.xaml">

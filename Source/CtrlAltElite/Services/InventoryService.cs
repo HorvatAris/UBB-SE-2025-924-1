@@ -21,9 +21,9 @@ namespace SteamStore.Services
         private readonly IInventoryRepository inventoryRepository;
         private readonly InventoryValidator inventoryValidator;
 
-        public InventoryService(IInventoryRepository inventoryRepository)
+        public InventoryService(IInventoryRepository inventoryRepo)
         {
-            this.inventoryRepository = inventoryRepository ?? throw new ArgumentNullException(nameof(inventoryRepository));
+            this.inventoryRepository = inventoryRepo;
 
             // Instantiate the validator with enriched logic.
             this.inventoryValidator = new InventoryValidator();
@@ -89,7 +89,7 @@ namespace SteamStore.Services
 
             // Exclude items that are already listed.
             // var filteredItems = items.Where(item => !item.IsListed);
-            var filteredItems = items.Where(item => item.IsListed);
+            var filteredItems = items.Where(item => !item.IsListed);
             // If a specific game is selected (not the "All Games" option), filter by that game.
             if (selectedGame != null && selectedGame.GameTitle != "All Games")
             {

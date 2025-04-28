@@ -1,5 +1,6 @@
 ﻿using SteamStore.Models;
 using SteamStore.Services;
+using SteamStore.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +14,7 @@ namespace SteamStore.ViewModels
 {
     public class InventoryViewModel : INotifyPropertyChanged
     {
-        private readonly InventoryService inventoryService;
+        private readonly IInventoryService inventoryService;
         private ObservableCollection<Item> inventoryItems;
         private ObservableCollection<Game> availableGames;
         private ObservableCollection<User> availableUsers;
@@ -23,13 +24,11 @@ namespace SteamStore.ViewModels
         private bool isUpdating;
         private Item selectedItem;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InventoryViewModel"/> class using the specified inventory service.
-        /// </summary>
-        /// <param name="inventoryService">The inventory service to use for data access and business logic.</param>
-        public InventoryViewModel(InventoryService inventoryService)
+        public InventoryViewModel(IInventoryService inventoryS)
         {
-            this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            //this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            System.Diagnostics.Debug.WriteLine(inventoryS.ToString());
+            this.inventoryService = inventoryS;
             this.inventoryItems = new ObservableCollection<Item>();
             this.availableGames = new ObservableCollection<Game>();
             this.availableUsers = new ObservableCollection<User>();

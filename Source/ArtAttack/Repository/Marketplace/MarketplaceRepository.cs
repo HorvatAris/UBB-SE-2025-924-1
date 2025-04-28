@@ -12,34 +12,15 @@ namespace Steampunks.Repository.Marketplace
     using Steampunks.DataLink;
     using Steampunks.Domain.Entities;
 
-    /// <summary>
-    /// Provides repository methods for interacting with marketplace items.
-    /// Allows listing, unlisting, updating, and retrieving item listings associated with games.
-    /// </summary>
     public class MarketplaceRepository : IMarketplaceRepository
     {
-        /// <summary>
-        /// Connector used to interact with the underlying database.
-        /// </summary>
         private readonly DatabaseConnector databaseConnector;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MarketplaceRepository"/> class.
-        /// Sets up the database connector used for marketplace operations.
-        /// </summary>
+        
         public MarketplaceRepository()
         {
             this.databaseConnector = new DatabaseConnector();
         }
 
-        /// <summary>
-        /// Handles the purchase of an item by removing former ownership, adding the item to the new owner's inventory,
-        /// and marking the item as unlisted.
-        /// </summary>
-        /// <param name="item"> Item to be purchased. </param>
-        /// <param name="currentUser"> User that makes the item purchase. </param>
-        /// <returns> True upon successful completion. </returns>
-        /// <exception cref="InvalidOperationException"> Thrown in case of errors in transaction. </exception>
         public async Task<bool> BuyItemAsync(Item item, User currentUser)
         {
             try
@@ -76,12 +57,6 @@ namespace Steampunks.Repository.Marketplace
             }
         }
 
-        /// <summary>
-        /// Retrieves the ID of the current owner of an item.
-        /// </summary>
-        /// <param name="item"> Item from which the owner ID is retrieved. </param>
-        /// <param name="transaction"> SQL Transaction. </param>
-        /// <returns> The ID of the current owner of the item. </returns>
         public async Task<int> GetCurrentOwnerIDAsync(Item item, SqlTransaction transaction)
         {
             int currentOwnerId;
@@ -110,13 +85,6 @@ namespace Steampunks.Repository.Marketplace
             }
         }
 
-        /// <summary>
-        /// Adds an item to the user's inventory.
-        /// </summary>
-        /// <param name="item"> Item to be added to the user inventory. </param>
-        /// <param name="user"> User that has the inventory to which the item will be added. </param>
-        /// <param name="transaction"> SQL Transaction. </param>
-        /// <returns> A <see cref="Task"/> representing the asynchronous operation. </returns>
         public async Task AddItemToUserInventoryAsync(Item item, User user, SqlTransaction transaction)
         {
             using (var command = new SqlCommand(@"INSERT INTO UserInventory (UserId, GameId, ItemId) VALUES (@UserId, @GameId, @ItemId)", this.databaseConnector.GetConnection(), transaction))
@@ -128,12 +96,6 @@ namespace Steampunks.Repository.Marketplace
             }
         }
 
-        /// <summary>
-        /// Updates the listed item status to not listed.
-        /// </summary>
-        /// <param name="item"> Item for which the listed status will be updated. </param>
-        /// <param name="transaction"> SQL Transaction. </param>
-        /// <returns> A <see cref="Task"/> representing the asynchronous operation. </returns>
         public async Task UpdateItemListedStatusAsync(Item item, SqlTransaction transaction)
         {
             using (var command = new SqlCommand(@"UPDATE Items SET IsListed = 0 WHERE ItemId = @ItemId", this.databaseConnector.GetConnection(), transaction))
@@ -143,12 +105,6 @@ namespace Steampunks.Repository.Marketplace
             }
         }
 
-        /// <summary>
-        /// Retrieves all listed items available for sale from the database.
-        /// </summary>
-        /// <returns>
-        /// A list of Item objects that are currently listed for sale.
-        /// </returns>
         public async Task<List<Item>> GetAllListedItemsAsync()
         {
             var items = new List<Item>();
@@ -200,16 +156,6 @@ namespace Steampunks.Repository.Marketplace
             return items;
         }
 
-        /// <summary>
-        /// Retrieves all currently listed items associated with a specific game.
-        /// </summary>
-        /// <param name="game">The Game entity for which to retrieve listed items.</param>
-        /// <returns>
-        /// A list of Item objects linked to the specified game and currently marked as listed.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when the provided <paramref name="game"/> is null.
-        /// </exception>
         public async Task<List<Item>> GetListedItemsByGameAsync(Game game)
         {
             var items = new List<Item>();
@@ -260,15 +206,6 @@ namespace Steampunks.Repository.Marketplace
             return items;
         }
 
-        /// <summary>
-        /// Marks an existing item as listed for the specified game.
-        /// </summary>
-        /// <param name="game">The Game associated with the item to be listed.</param>
-        /// <param name="item">The Item to be marked as listed and updated with a new price.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="game"/> or <paramref name="item"/> is null.
-        /// </exception>
-        /// <returns> A <see cref="Task"/> representing the asynchronous operation. </returns>
         public async Task MakeItemListableAsync(Game game, Item item)
         {
             // AddListingAsync(Item item)
@@ -292,15 +229,6 @@ namespace Steampunks.Repository.Marketplace
             }
         }
 
-        /// <summary>
-        /// Marks an item as not listable in the specified game by updating its listing status.
-        /// </summary>
-        /// <param name="game">The game in which the item exists.</param>
-        /// <param name="item">The item to be marked as not listable.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="game"/> or <paramref name="item"/> is null.
-        /// </exception>
-        /// <returns> A <see cref="Task"/> representing the asynchronous operation. </returns>
         public async Task MakeItemNotListableAsync(Game game, Item item)
         {
             // await this.databaseConnector.RemoveListingAsync(item);
@@ -323,15 +251,6 @@ namespace Steampunks.Repository.Marketplace
             }
         }
 
-        /// <summary>
-        /// Updates the price of an item in the specified game.
-        /// </summary>
-        /// <param name="game">The game in which the item exists.</param>
-        /// <param name="item">The item whose price are being updated.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when <paramref name="game"/> or <paramref name="item"/> is null.
-        /// </exception>
-        /// <returns> A <see cref="Task"/> representing the asynchronous operation. </returns>
         public async Task UpdateItemPriceAsync(Game game, Item item)
         {
             using (var command = new SqlCommand(

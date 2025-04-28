@@ -8,6 +8,9 @@ namespace SteamStore
     using SteamStore.Pages;
     using SteamStore.Repositories;
     using SteamStore.Services;
+    using CtrlAltElite.Repositories;
+    using CtrlAltElite.Services;
+    using CtrlAltElite.Pages;
 
     public sealed partial class MainWindow : Window
     {
@@ -16,6 +19,8 @@ namespace SteamStore
         private UserGameService userGameService;
         private DeveloperService developerService;
         private PointShopService pointShopService;
+        private MarketplaceService marketplaceService;
+        private InventoryService inventoryService;
         public User user;
 
         public MainWindow()
@@ -33,6 +38,13 @@ namespace SteamStore
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build());
+            var marketplaceRepository= new MarketplaceRepository(dataLink,loggedInUser);
+            marketplaceService = new MarketplaceService(marketplaceRepository);
+
+
+            var inventoryRepository = new InventoryRepository(dataLink,loggedInUser);
+
+            inventoryService = new InventoryService(inventoryRepository);
 
             var tagRepository = new TagRepository(dataLink);
             var gameRepository = new GameRepository(dataLink);
@@ -91,11 +103,11 @@ namespace SteamStore
                     case "DeveloperModePage":
                         ContentFrame.Content = new DeveloperModePage(developerService);
                         break;
-                    //case "marketplace":
-                    //    ContentFrame.Content = new MarketplacePage();
-                    //    break;
+                    case "marketplace":
+                        ContentFrame.Content = new MarketplacePage(marketplaceService);
+                        break;
                     case "inventory":
-                        ContentFrame.Content = new InventoryPage(this.user);
+                        ContentFrame.Content = new InventoryPage(inventoryService);
                         break;
                     //case "trading":
                     //    ContentFrame.Content = new TradingPage();

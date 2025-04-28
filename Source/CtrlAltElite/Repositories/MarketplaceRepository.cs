@@ -39,6 +39,7 @@ namespace CtrlAltElite.Repositories
                         int currentOwnerID = await this.GetCurrentOwnerIDAsync(item, transaction);
 
                         await this.RemoveItemFromUserInventoryAsync(item, transaction);
+                        Debug.WriteLine("Is item listes" + item.IsListed);
 
                         await this.AddItemToUserInventoryAsync(item, currentUser, transaction);
 
@@ -65,14 +66,26 @@ namespace CtrlAltElite.Repositories
         public async Task<int> GetCurrentOwnerIDAsync(Item item, SqlTransaction transaction)
         {
             int currentOwnerId;
+
             using (var command = new SqlCommand(@"SELECT UserId FROM UserInventory WHERE ItemId = @ItemId", this.dataLink.GetConnection(), transaction))
             {
                 command.Parameters.AddWithValue("@ItemId", item.ItemId);
-                object? currentOwnerIDResult = await command.ExecuteScalarAsync();
-                currentOwnerId = (int)currentOwnerIDResult;
+                try
+                {
+                    System.Diagnostics.Debug.WriteLine(item.ItemId);
+
+                    object? currentOwnerIDResult = await command.ExecuteScalarAsync();
+                    currentOwnerId = (int)currentOwnerIDResult;
+                    return currentOwnerId;
+                }
+                catch(Exception exception)
+                {
+                    System.Diagnostics.Debug.WriteLine(exception);
+                    throw new Exception(exception.Message);
+                }
             }
 
-            return currentOwnerId;
+            
         }
 
         public async Task RemoveItemFromUserInventoryAsync(Item item, SqlTransaction transaction)
@@ -278,7 +291,7 @@ namespace CtrlAltElite.Repositories
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
-            using (var command = new SqlCommand("SELECT UserId, UserName FROM Users", this.dataLink.GetConnection()))
+            using (var command = new SqlCommand("SELECT user_id as UserId, username as UserName FROM Users", this.dataLink.GetConnection()))
             {
                 try
                 {

@@ -1,19 +1,31 @@
-// <copyright file="MarketplacePage.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 
-namespace Steampunks.Views
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
+
+namespace CtrlAltElite.Pages
 {
+
     using System;
+    using CtrlAltElite.Services.Interfaces;
+    using CtrlAltElite.ViewModels;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Steampunks.Domain.Entities;
-    using Steampunks.Services.MarketplaceService;
-    using Steampunks.ViewModels;
+    using SteamStore.Models;
 
-    /// <summary>
-    /// Represents the page that displays items available in the marketplace.
-    /// </summary>
     public sealed partial class MarketplacePage : Page
     {
         private const string ErrorDialogTitle = "Error";
@@ -28,8 +40,8 @@ namespace Steampunks.Views
         {
             this.InitializeComponent();
 
-            var marketplaceServiceInstance = new MarketplaceService(new Repository.Marketplace.MarketplaceRepository());
-            this.marketplaceViewModel = new MarketplaceViewModel(marketplaceServiceInstance);
+           // var marketplaceServiceInstance = new MarketplaceService(new Repository.Marketplace.MarketplaceRepository());
+            this.marketplaceViewModel = new MarketplaceViewModel(marketplaceService);
             this.DataContext = this.marketplaceViewModel;
             this.Loaded += this.OnMarketplacePageLoaded;
         }
@@ -39,6 +51,11 @@ namespace Steampunks.Views
             await this.marketplaceViewModel.InitializeViewModelAsync();
         }
 
+        /// <summary>
+        /// Handles item click events in the GridView, opening a dialog and processing item purchase.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="eventArgs">The item click event arguments.</param>
         private void OnMarketplaceGridViewItemClicked(object sender, ItemClickEventArgs eventArgs)
         {
             if (eventArgs.ClickedItem is Item clickedMarketplaceItem)
