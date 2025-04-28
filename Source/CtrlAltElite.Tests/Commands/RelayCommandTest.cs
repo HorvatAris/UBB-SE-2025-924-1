@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SteamStore.ViewModels;
-
-namespace SteamStore.Tests.Commands
+﻿namespace SteamStore.Tests.Commands
 {
-    public class RelayCommandTests : IDisposable
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using SteamStore.ViewModels;
+
+    public class RelayCommandTest : IDisposable
     {
         private bool executeCalled;
         private bool canExecuteCalled;
         private string capturedParameter;
         private RelayCommand<string> stringRelayCommand;
 
-        public RelayCommandTests()
+        public RelayCommandTest()
         {
             this.executeCalled = false;
             this.canExecuteCalled = false;

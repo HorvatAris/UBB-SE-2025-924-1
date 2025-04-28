@@ -2,19 +2,19 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System;
-using SteamStore.ViewModels;
-using Xunit;
-
 namespace SteamStore.Tests.Commands
 {
-    public class RelayCommandWithoutParameterTests : IDisposable
+    using System;
+    using SteamStore.ViewModels;
+    using Xunit;
+
+    public class RelayCommandWithoutParameterTest : IDisposable
     {
         private bool wasExecuteActionCalled;
         private bool wasCanExecuteFunctionCalled;
         private RelayCommandWithoutParameter relayCommand;
 
-        public RelayCommandWithoutParameterTests()
+        public RelayCommandWithoutParameterTest()
         {
             this.wasExecuteActionCalled = false;
             this.wasCanExecuteFunctionCalled = false;

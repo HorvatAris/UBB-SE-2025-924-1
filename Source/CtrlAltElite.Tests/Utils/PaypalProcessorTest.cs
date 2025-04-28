@@ -2,12 +2,12 @@
 
 public class PaypalProcessorTest
 {
-    private readonly PaypalProcessor paypalProcessor = new PaypalProcessor();
-
     private const string ValidEmail = "test@test.com";
     private const string ValidPassword = "123456789";
     private const string Whitespace = " ";
     private const decimal PaymentAmount = 1m;
+
+    private readonly PaypalProcessor paypalProcessor = new PaypalProcessor();
 
     [Fact]
     public async Task ProcessPaymentAsync_WithValidEmailAndPassword_ReturnsTrue()

@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using Moq;
-using SteamStore.Constants;
-using SteamStore.Data;
-using SteamStore.Repositories.Interfaces;
-using Xunit;
-
-namespace SteamStore.Tests.Repositories
+﻿namespace SteamStore.Tests.Repositories
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    using Moq;
+    using SteamStore.Constants;
+    using SteamStore.Data;
+    using SteamStore.Repositories.Interfaces;
+    using Xunit;
+
     public class UserGameRepositoryTest
     {
-        private readonly Mock<IDataLink> mockDataLink;
-        private readonly User mockUser;
-        private readonly UserGameRepository userGameRepository;
-
         private const int TestUserIdentifier = 100;
         private const float InitialWalletBalance = 100.0f;
         private const float InitialPointsBalance = 100.0f;
         private const int TestGameIdentifier = 1;
         private const float TestPurchaseAmount = 10.0f;
         private const string ExceptionMessageDatabaseError = "Database error";
+
+        private readonly Mock<IDataLink> mockDataLink;
+        private readonly User mockUser;
+        private readonly UserGameRepository userGameRepository;
 
         public UserGameRepositoryTest()
         {

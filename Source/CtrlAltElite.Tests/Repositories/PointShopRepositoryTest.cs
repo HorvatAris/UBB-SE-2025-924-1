@@ -2,19 +2,19 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using SteamStore.Data;
-using SteamStore.Models;
-using SteamStore.Repositories;
-using SteamStore.Tests.TestUtils;
-using Xunit;
-
 namespace SteamStore.Tests.Repositories
 {
-    public class PointShopRepositoryTests
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using SteamStore.Data;
+    using SteamStore.Models;
+    using SteamStore.Repositories;
+    using SteamStore.Tests.TestUtils;
+    using Xunit;
+
+    public class PointShopRepositoryTest
     {
         private const string ValidUserName = "John Doe";
         private const int ValidUserId = 1;
@@ -30,7 +30,7 @@ namespace SteamStore.Tests.Repositories
         private readonly PointShopRepository repositoryWithNullUser;
         private readonly User testUser;
 
-        public PointShopRepositoryTests()
+        public PointShopRepositoryTest()
         {
             testUser = new User
             {
