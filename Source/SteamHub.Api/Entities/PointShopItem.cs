@@ -13,4 +13,6 @@ public class PointShopItem
     public double PointPrice { get; set; }
 
     public string ItemType { get; set; }
+
+    public IList<UserPointShopItemInventory> UserPointShopItemsInventory { get; set; }
 }

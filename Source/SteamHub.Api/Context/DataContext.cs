@@ -3,8 +3,9 @@ namespace SteamHub.Api.Context
     using Entities;
     using Microsoft.EntityFrameworkCore;
     using Models;
+    using SteamHub.Api.Models.Game;
 
-public class DataContext : DbContext
+    public class DataContext : DbContext
 {
         private readonly IConfiguration configuration;
 
@@ -22,6 +23,8 @@ public class DataContext : DbContext
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<PointShopItem> PointShopItems { get; set; }
+
+        public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -269,6 +272,61 @@ public class DataContext : DbContext
             };
 
             builder.Entity<PointShopItem>().HasData(pointShopItemsSeed);
+
+            var userInventorySeed = new List<UserPointShopItemInventory>
+            {
+                new UserPointShopItemInventory
+                {
+                    UserId = 1,
+                    PointShopItemId = 1,
+                    PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false
+                },
+                new UserPointShopItemInventory
+                {
+                    UserId = 1,
+                    PointShopItemId = 2,
+                    PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = true
+                },
+                new UserPointShopItemInventory
+                {
+                    UserId = 1,
+                    PointShopItemId = 5,
+                    PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false
+                },
+                new UserPointShopItemInventory
+                {
+                    UserId = 2,
+                    PointShopItemId = 2,
+                    PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = true
+                },
+                new UserPointShopItemInventory
+                {
+                    UserId = 2,
+                    PointShopItemId = 6,
+                    PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false
+                },
+                new UserPointShopItemInventory
+                {
+                    UserId = 3,
+                    PointShopItemId = 3,
+                    PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false
+                },
+                new UserPointShopItemInventory
+                {
+                    UserId = 3,
+                    PointShopItemId = 4,
+                    PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = true
+                }
+            };
+
+            builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
         }
     }
 }

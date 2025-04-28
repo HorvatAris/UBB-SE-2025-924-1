@@ -5,11 +5,13 @@
 namespace Steampunks.Views
 {
     using System;
+    using System.Threading.Tasks;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Steampunks.Domain.Entities;
     using Steampunks.Services.MarketplaceService;
     using Steampunks.ViewModels;
+    using static Steampunks.ViewModels.MarketplaceViewModel;
 
     /// <summary>
     /// Represents the page that displays items available in the marketplace.
@@ -47,7 +49,7 @@ namespace Steampunks.Views
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="eventArgs">The item click event arguments.</param>
-        private void OnMarketplaceGridViewItemClicked(object sender, ItemClickEventArgs eventArgs)
+        private async void OnMarketplaceGridViewItemClicked(object sender, ItemClickEventArgs eventArgs)
         {
             if (eventArgs.ClickedItem is Item clickedMarketplaceItem)
             {
@@ -55,68 +57,41 @@ namespace Steampunks.Views
                 marketplaceViewModel.SelectedItem = clickedMarketplaceItem;
 
                 this.ItemDetailsDialog.XamlRoot = this.XamlRoot;
+                var dialogResult = await this.ItemDetailsDialog.ShowAsync();
 
-                this.ItemDetailsDialog.ShowAsync().Completed = async (asyncOperation, asyncStatus) =>
+                if (dialogResult == ContentDialogResult.Secondary)
                 {
-                    var dialogResult = (ContentDialogResult)asyncOperation.GetResults();
-                    if (dialogResult == ContentDialogResult.Secondary)
+                    var purchaseResult = await marketplaceViewModel.RequestPurchaseSelectedItemAsync();
+
+                    switch (purchaseResult)
                     {
-                        try
-                        {
-                            if (marketplaceViewModel.CurrentUser == null)
-                            {
-                                var missingUserDialog = new ContentDialog
-                                {
-                                    Title = ErrorDialogTitle,
-                                    Content = SelectUserErrorMessage,
-                                    CloseButtonText = OkButtonText,
-                                    XamlRoot = this.XamlRoot,
-                                };
-                                await missingUserDialog.ShowAsync();
-                                return;
-                            }
+                        case PurchaseResult.MissingUser:
+                            await this.ShowSimpleDialogAsync(ErrorDialogTitle, SelectUserErrorMessage);
+                            break;
 
-                            bool purchaseSuccess = await marketplaceViewModel.BuyItemAsync();
-                            if (purchaseSuccess)
-                            {
-                                var purchaseSuccessDialog = new ContentDialog
-                                {
-                                    Title = SuccessDialogTitle,
-                                    Content = ItemPurchasedMessage,
-                                    CloseButtonText = OkButtonText,
-                                    XamlRoot = this.XamlRoot,
-                                };
-                                await purchaseSuccessDialog.ShowAsync();
-                            }
-                        }
-                        catch (InvalidOperationException operationException)
-                        {
-                            var operationErrorDialog = new ContentDialog
-                            {
-                                Title = ErrorDialogTitle,
-                                Content = operationException.Message,
-                                CloseButtonText = OkButtonText,
-                                XamlRoot = this.XamlRoot,
-                            };
-                            await operationErrorDialog.ShowAsync();
-                        }
-                        catch (Exception generalException)
-                        {
-                            var generalErrorDialog = new ContentDialog
-                            {
-                                Title = ErrorDialogTitle,
-                                Content = UnexpectedErrorMessage,
-                                CloseButtonText = OkButtonText,
-                                XamlRoot = this.XamlRoot,
-                            };
-                            await generalErrorDialog.ShowAsync();
+                        case PurchaseResult.Success:
+                            await this.ShowSimpleDialogAsync(SuccessDialogTitle, ItemPurchasedMessage);
+                            break;
 
-                            System.Diagnostics.Debug.WriteLine($"Error in OnMarketplaceGridViewItemClicked: {generalException.Message}");
-                            System.Diagnostics.Debug.WriteLine($"Stack trace: {generalException.StackTrace}");
-                        }
+                        case PurchaseResult.Error:
+                            await this.ShowSimpleDialogAsync(ErrorDialogTitle, UnexpectedErrorMessage);
+                            break;
                     }
-                };
+                }
             }
+        }
+
+        private async Task ShowSimpleDialogAsync(string title, string content)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = title,
+                Content = content,
+                CloseButtonText = OkButtonText,
+                XamlRoot = this.XamlRoot,
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace SteamHub.Api.Entities;
 
 using Models;
+using SteamHub.Api.Models.Game;
 
 public class Game
 {
