@@ -50,9 +50,10 @@ namespace SteamStore.Pages
                 // Check for earned points
                 if (this.ViewModel.ShouldShowPointsEarnedNotification())
                 {
-                    this.ShowPointsEarnedNotification(this.ViewModel.GetPointsEarnedMessage());
+                    this.ViewModel.ShowNotification(this.ViewModel.GetPointsEarnedMessage());
                     this.ViewModel.ResetEarnedPoints();
                 }
+
             }
             catch (Exception exception)
             {
@@ -62,39 +63,21 @@ namespace SteamStore.Pages
 
         private PointShopViewModel ViewModel { get; set; }
 
-        public void ShowPointsEarnedNotification(string message)
-        {
-            this.NotificationText.Text = message;
-            this.NotificationBar.Visibility = Visibility.Visible;
-        }
-
         private void ItemsGridView_SelectionChanged(object itemsGridView, SelectionChangedEventArgs itemGridViewArguments)
         {
             if (this.ViewModel.HandleItemSelection())
             {
-                this.ItemDetailPanel.Visibility = Visibility.Visible;
+                this.ViewModel.ItemDetailVisibility = Visibility.Visible;
                 var details = this.ViewModel.GetSelectedItemDetails();
-
-                this.SelectedItemName.Text = details.Name;
-                this.SelectedItemType.Text = details.Type;
-                this.SelectedItemDescription.Text = details.Description;
-                this.SelectedItemPrice.Text = details.Price;
-
-                try
-                {
-                    if (!string.IsNullOrEmpty(details.ImageUri))
-                    {
-                        this.SelectedItemImage.Source = new BitmapImage(new Uri(details.ImageUri));
-                    }
-                }
-                catch (Exception exception)
-                {
-                    Debug.WriteLine($"Error loading image: {exception.Message}");
-                }
+                this.ViewModel.SelectedItemName = details.Name;
+                this.ViewModel.SelectedItemType = details.Type;
+                this.ViewModel.SelectedItemDescription = details.Description;
+                this.ViewModel.SelectedItemPrice = details.Price;
+                this.ViewModel.SelectedItemImageUri = details.ImageUri;
             }
             else
             {
-                this.ItemDetailPanel.Visibility = Visibility.Collapsed;
+                this.ViewModel.ItemDetailVisibility = Visibility.Collapsed;
             }
         }
 
@@ -104,25 +87,20 @@ namespace SteamStore.Pages
             this.ViewModel.ClearSelection();
         }
 
-        private async void PurchaseButton_Click(object purchaseButton, RoutedEventArgs purchaseClickEventArgument)
+        private async void PurchaseButton_Click(object sender, RoutedEventArgs e)
         {
-            bool success = await this.ViewModel.TryPurchaseSelectedItemAsync();
-
-            if (success)
-            {
-                this.ViewModel.ClearSelection();
-                this.ItemDetailPanel.Visibility = Visibility.Collapsed;
-            }
+            await this.ViewModel.TryPurchaseSelectedItemAsync();
         }
+
 
         private void ViewInventoryButton_Click(object viewInventoryButton, RoutedEventArgs viewInventoryClickEventArgument)
         {
-            this.InventoryPanel.Visibility = Visibility.Visible;
+            this.ViewModel.InventoryPanelVisibility = Visibility.Visible;
         }
 
         private void CloseInventoryButton_Click(object closeInventoryButton, RoutedEventArgs closeInventoryClickEventArgument)
         {
-            this.InventoryPanel.Visibility = Visibility.Collapsed;
+            this.ViewModel.InventoryPanelVisibility = Visibility.Collapsed;
         }
 
         private async void RemoveButtons_Click(object removeButton, RoutedEventArgs removeClickEventArgument)
@@ -152,23 +130,25 @@ namespace SteamStore.Pages
                 if (this.ViewModel != null)
                 {
                     this.ViewModel.FilterType = filterType;
+                    this.ViewModel.ApplyItemTypeFilter(filterType);
                 }
             }
         }
 
         private void CloseNotification_Click(object closeNotificationButton, RoutedEventArgs closeNotificationEventArgument)
         {
-            this.NotificationBar.Visibility = Visibility.Collapsed;
+            this.ViewModel.HideNotification();
+
         }
 
         private void ViewTransactionHistoryButton_Click(object viewTransactionHistoryButton, RoutedEventArgs viewTransactionHistoryClickEventArgument)
         {
-            this.TransactionHistoryPanel.Visibility = Visibility.Visible;
+            this.ViewModel.TransactionHistoryPanelVisibility = Visibility.Visible;
         }
 
         private void CloseTransactionHistoryButton_Click(object closeTransactionHistoryButton, RoutedEventArgs closeTransactionHistoryEventArgument)
         {
-            this.TransactionHistoryPanel.Visibility = Visibility.Collapsed;
+            this.ViewModel.TransactionHistoryPanelVisibility = Visibility.Collapsed;
         }
     }
 }
