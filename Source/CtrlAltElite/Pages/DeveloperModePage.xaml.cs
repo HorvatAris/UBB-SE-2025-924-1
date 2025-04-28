@@ -2,27 +2,18 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using SteamStore.Constants;
+using SteamStore.Models;
+using SteamStore.Services.Interfaces;
+
 namespace SteamStore.Pages
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.InteropServices.WindowsRuntime;
-    using System.Threading.Tasks;
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Controls.Primitives;
-    using Microsoft.UI.Xaml.Data;
-    using Microsoft.UI.Xaml.Input;
-    using Microsoft.UI.Xaml.Media;
-    using Microsoft.UI.Xaml.Navigation;
-    using SteamStore.Constants;
-    using SteamStore.Models;
-    using SteamStore.Services.Interfaces;
-    using Windows.Foundation;
-    using Windows.Foundation.Collections;
-
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -55,8 +46,9 @@ namespace SteamStore.Pages
             this.ReviewGamesList.IsEnabled = false;
         }
 
-        private void DeveloperModePage_Loaded(object developerModePage, RoutedEventArgs developerPageLoadedArguments)
+        private async void DeveloperModePage_Loaded(object developerModePage, RoutedEventArgs developerPageLoadedArguments)
         {
+            await this.viewModel.InitAsync();
             // Check if user is a developer
             if (!this.viewModel.CheckIfUserIsADeveloper())
             {
@@ -68,28 +60,28 @@ namespace SteamStore.Pages
             }
         }
 
-        private void ReviewGamesButton_Click(object reviewGamesButton, RoutedEventArgs reviewGamesEventArgument)
+        private async void ReviewGamesButton_Click(object reviewGamesButton, RoutedEventArgs reviewGamesEventArgument)
         {
-            this.viewModel.LoadUnvalidated();
+            await this.viewModel.LoadUnvalidated();
             this.DeveloperGamesList.Visibility = Visibility.Collapsed;
             this.ReviewGamesList.Visibility = Visibility.Visible;
             this.PageTitle.Text = DeveloperPageTitles.REVIEWGAMES;
         }
 
-        private void MyGamesButton_Click(object myGamesButton, RoutedEventArgs myGamesClickEventArgument)
+        private async void MyGamesButton_Click(object myGamesButton, RoutedEventArgs myGamesClickEventArgument)
         {
-            this.viewModel.LoadGames();
+            await this.viewModel.LoadGames();
             this.DeveloperGamesList.Visibility = Visibility.Visible;
             this.ReviewGamesList.Visibility = Visibility.Collapsed;
             this.PageTitle.Text = DeveloperPageTitles.MYGAMES;
         }
 
-        private void AcceptButton_Click(object acceptButton, RoutedEventArgs acceptClickEventArgument)
+        private async void AcceptButton_Click(object acceptButton, RoutedEventArgs acceptClickEventArgument)
         {
             if (acceptButton is Button button && button.CommandParameter is int gameId)
             {
-                this.viewModel.ValidateGame(gameId);
-                this.viewModel.LoadUnvalidated();
+                await this.viewModel.ValidateGame(gameId);
+                await this.viewModel.LoadUnvalidated();
             }
         }
 
@@ -170,7 +162,7 @@ namespace SteamStore.Pages
         {
             if (this.Content == null || this.Content.XamlRoot == null)
             {
-                System.Diagnostics.Debug.WriteLine("Cannot show developer access dialog: XamlRoot is null");
+                Debug.WriteLine("Cannot show developer access dialog: XamlRoot is null");
                 return;
             }
 
@@ -188,7 +180,7 @@ namespace SteamStore.Pages
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine($"Error showing developer access dialog: {exception.Message}");
+                Debug.WriteLine($"Error showing developer access dialog: {exception.Message}");
             }
         }
 
@@ -198,7 +190,7 @@ namespace SteamStore.Pages
             {
                 try
                 {
-                    string rejectionMessage = this.viewModel.GetRejectionMessage(gameId);
+                    string rejectionMessage = await this.viewModel.GetRejectionMessage(gameId);
                     if (!string.IsNullOrWhiteSpace(rejectionMessage))
                     {
                         this.RejectionMessageText.Text = rejectionMessage;
@@ -247,7 +239,7 @@ namespace SteamStore.Pages
                         this.viewModel.DeleteGame(gameId);
 
                         // Refresh the games list
-                        this.viewModel.LoadGames();
+                        await this.viewModel.LoadGames();
                     }
                 }
                 catch (Exception exception)
@@ -274,7 +266,7 @@ namespace SteamStore.Pages
                     // System.Diagnostics.Debug.WriteLine("Im in edit");
                     try
                     {
-                        this.PopulateEditForm(gameToEdit);
+                        await this.PopulateEditForm(gameToEdit);
                         this.EditGameDialog.XamlRoot = this.Content.XamlRoot;
                         var result = await this.EditGameDialog.ShowAsync();
                         if (result == ContentDialogResult.Primary)
@@ -282,7 +274,7 @@ namespace SteamStore.Pages
                             await this.SaveUpdatedGameAsync();
 
                             // Reload games after the update
-                            this.viewModel.LoadGames();
+                            await this.viewModel.LoadGames();
                         }
                     }
                     catch (Exception exception)
@@ -316,7 +308,7 @@ namespace SteamStore.Pages
             }
         }
 
-        private void PopulateEditForm(Game game)
+        private async Task PopulateEditForm(Game game)
         {
             this.EditGameId.Text = game.GameId.ToString();
             this.EditGameId.IsEnabled = false;
@@ -329,17 +321,17 @@ namespace SteamStore.Pages
             this.EditGameMinReq.Text = game.MinimumRequirements;
             this.EditGameRecReq.Text = game.RecommendedRequirements;
             this.EditGameDiscount.Text = game.Discount.ToString();
-            this.LoadGameTags(game);
+            await this.LoadGameTags(game);
         }
 
-        private void LoadGameTags(Game game)
+        private async Task LoadGameTags(Game game)
         {
             this.EditGameTagList.SelectedItems.Clear();
 
             try
             {
                 var availableTags = this.EditGameTagList.Items.Cast<object>().OfType<Tag>().ToList(); // Safe cast
-                var matchingTags = this.viewModel.GetMatchingTags(game.GameId, availableTags);
+                var matchingTags = await this.viewModel.GetMatchingTags(game.GameId, availableTags);
 
                 foreach (Tag tag in matchingTags)
                 {
@@ -348,7 +340,7 @@ namespace SteamStore.Pages
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debug.WriteLine($"Error loading game tags: {exception.Message}");
+                Debug.WriteLine($"Error loading game tags: {exception.Message}");
             }
         }
     }

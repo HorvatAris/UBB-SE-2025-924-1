@@ -5,6 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using CtrlAltElite.ServiceProxies;
+using CtrlAltElite.Services;
+using Refit;
+using SteamHub.ApiContract.Models.Game;
 using SteamStore.Constants;
 using SteamStore.Models;
 using SteamStore.Repositories;
@@ -20,7 +26,7 @@ public class DeveloperService : IDeveloperService
     private const int EmptyListLength = 0;
     private const string PendingState = "Pending";
 
-    public IGameRepository GameRepository { get; set; }
+    public IGameServiceProxy GameServiceProxy { get; set; }
 
     public ITagRepository TagRepository { get; set; }
 
@@ -28,15 +34,33 @@ public class DeveloperService : IDeveloperService
 
     public User User { get; set; }
 
-    public void ValidateGame(int game_id)
+    public async Task ValidateGame(int game_id)
     {
-        this.GameRepository.ValidateGame(game_id);
+        await this.GameServiceProxy.UpdateGameAsync(
+            game_id,
+            new UpdateGameRequest
+            {
+                Status = GameStatusEnum.Approved
+            });
     }
 
-    public Game ValidateInputForAddingAGame(string gameIdText, string name, string priceText, string description, string imageUrl, string trailerUrl, string gameplayUrl, string minimumRequirement, string reccommendedRequirement, string discountText, IList<Tag> selectedTags)
+    public Game ValidateInputForAddingAGame(
+        string gameIdText,
+        string name,
+        string priceText,
+        string description,
+        string imageUrl,
+        string trailerUrl,
+        string gameplayUrl,
+        string minimumRequirement,
+        string reccommendedRequirement,
+        string discountText,
+        IList<Tag> selectedTags)
     {
-        if (string.IsNullOrWhiteSpace(gameIdText) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(priceText) ||
-            string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(imageUrl) || string.IsNullOrWhiteSpace(minimumRequirement) ||
+        if (string.IsNullOrWhiteSpace(gameIdText) || string.IsNullOrWhiteSpace(name) ||
+            string.IsNullOrWhiteSpace(priceText) ||
+            string.IsNullOrWhiteSpace(description) || string.IsNullOrWhiteSpace(imageUrl) ||
+            string.IsNullOrWhiteSpace(minimumRequirement) ||
             string.IsNullOrWhiteSpace(reccommendedRequirement) || string.IsNullOrWhiteSpace(discountText))
         {
             throw new Exception(ExceptionMessages.AllFieldsRequired);
@@ -52,7 +76,8 @@ public class DeveloperService : IDeveloperService
             throw new Exception(ExceptionMessages.InvalidPrice);
         }
 
-        if (!decimal.TryParse(discountText, out var discount) || discount < ComparingValueForMinimumDicount || discount > ComparingValueForMaximumDicount)
+        if (!decimal.TryParse(discountText, out var discount) || discount < ComparingValueForMinimumDicount ||
+            discount > ComparingValueForMaximumDicount)
         {
             throw new Exception(ExceptionMessages.InvalidDiscount);
         }
@@ -62,7 +87,6 @@ public class DeveloperService : IDeveloperService
             throw new Exception(ExceptionMessages.NoTagsSelected);
         }
 
-       // var game = new Game(GameId, name,price, description, imageUrl, gameplayUrl, trailerUrl, minReq, recReq, "Pending", discount);
         var game = new Game
         {
             GameId = gameId,
@@ -93,92 +117,153 @@ public class DeveloperService : IDeveloperService
         return null;
     }
 
-    public void CreateGame(Game game)
+    public async Task CreateGame(Game game)
     {
         game.PublisherIdentifier = this.User.UserId;
-        this.GameRepository.CreateGame(game);
+
+        await this.GameServiceProxy.CreateGameAsync(
+            new CreateGameRequest
+            {
+                Description = game.GameDescription,
+                ImagePath = game.ImagePath,
+                Name = game.GameTitle,
+                Price = game.Price,
+                RecommendedRequirements = game.RecommendedRequirements,
+                MinimumRequirements = game.MinimumRequirements,
+                Discount = game.Discount,
+                NumberOfRecentPurchases = game.NumberOfRecentPurchases,
+                Rating = game.Rating,
+                PublisherUserIdentifier = game.PublisherIdentifier,
+                TrailerPath = game.TrailerPath,
+                GameplayPath = game.GameplayPath,
+            });
     }
 
-    public void CreateGameWithTags(Game game, IList<Tag> selectedTags)
+    public async Task CreateGameWithTags(Game game, IList<Tag> selectedTags)
     {
-        this.CreateGame(game);
+        await this.CreateGame(game);
 
         if (selectedTags != null && selectedTags.Count > EmptyListLength)
         {
             foreach (var tag in selectedTags)
             {
-                this.InsertGameTag(game.GameId, tag.TagId);
+                await this.InsertGameTag(game.GameId, tag.TagId);
             }
         }
     }
 
-    public void UpdateGame(Game game)
+    public async Task UpdateGame(Game game)
     {
         game.PublisherIdentifier = this.User.UserId;
-        this.GameRepository.UpdateGame(game.GameId, game);
-    }
 
-    public void UpdateGameWithTags(Game game, IList<Tag> selectedTags)
-    {
-        game.PublisherIdentifier = this.User.UserId;
-        this.GameRepository.UpdateGame(game.GameId, game);
-        try
-        {
-            this.DeleteGameTags(game.GameId);
-            if (selectedTags != null && selectedTags.Count > EmptyListLength)
+        await this.GameServiceProxy.UpdateGameAsync(
+            game.GameId,
+            new UpdateGameRequest
             {
-                foreach (var tag in selectedTags)
-                {
-                    this.InsertGameTag(game.GameId, tag.TagId);
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(exception.Message);
-        }
+                Description = game.GameDescription,
+                ImagePath = game.ImagePath,
+                Name = game.GameTitle,
+                Price = game.Price,
+                RecommendedRequirements = game.RecommendedRequirements,
+                MinimumRequirements = game.MinimumRequirements,
+                Discount = game.Discount,
+                NumberOfRecentPurchases = game.NumberOfRecentPurchases,
+                Rating = game.Rating,
+                TrailerPath = game.TrailerPath,
+                GameplayPath = game.GameplayPath,
+            });
     }
 
-    public void DeleteGame(int game_id)
+    public async Task UpdateGameWithTags(Game game, IList<Tag> selectedTags)
     {
-        try
-        {
-            this.GameRepository.DeleteGame(game_id);
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(exception.Message);
-        }
+        game.PublisherIdentifier = this.User.UserId;
+        await this.GameServiceProxy.UpdateGameAsync(
+            game.GameId,
+            new UpdateGameRequest
+            {
+                Description = game.GameDescription,
+                ImagePath = game.ImagePath,
+                Name = game.GameTitle,
+                Price = game.Price,
+                RecommendedRequirements = game.RecommendedRequirements,
+                MinimumRequirements = game.MinimumRequirements,
+                Discount = game.Discount,
+                NumberOfRecentPurchases = game.NumberOfRecentPurchases,
+                Rating = game.Rating,
+                TrailerPath = game.TrailerPath,
+                GameplayPath = game.GameplayPath,
+            });
+
+        await this.GameServiceProxy.PatchGameTagsAsync(
+            game.GameId,
+            new PatchGameTagsRequest
+            {
+                TagIds = new HashSet<int>(selectedTags.Select(tag => tag.TagId)),
+                Type = GameTagsPatchType.Replace,
+            });
     }
 
-    public List<Game> GetDeveloperGames()
+    public async Task DeleteGame(int game_id)
     {
-        return this.GameRepository.GetDeveloperGames(this.User.UserId);
+        await this.GameServiceProxy.DeleteGameAsync(game_id);
     }
 
-    public List<Game> GetUnvalidated()
+    public async Task<List<Game>> GetDeveloperGames()
     {
-        return this.GameRepository.GetUnvalidated(this.User.UserId);
+        var games = await this.GameServiceProxy.GetGamesAsync(
+            new GetGamesRequest
+            {
+                PublisherIdentifierIs = this.User.UserId,
+            });
+        return games.Select(GameMapper.MapToGame).ToList();
     }
 
-    public void RejectGame(int gameId)
+    public async Task<List<Game>> GetUnvalidated()
     {
-        this.GameRepository.RejectGame(gameId);
+        var games = await this.GameServiceProxy.GetGamesAsync(
+            new GetGamesRequest
+            {
+                StatusIs = GameStatusEnum.Pending,
+                PublisherIdentifierIsnt = this.User.UserId,
+            });
+        return games.Select(GameMapper.MapToGame).ToList();
     }
 
-    public void RejectGameWithMessage(int gameId, string message)
+    public async Task RejectGame(int gameId)
     {
-        this.GameRepository.RejectGameWithMessage(gameId, message);
+        await this.GameServiceProxy.UpdateGameAsync(
+            gameId,
+            new UpdateGameRequest
+            {
+                Status = GameStatusEnum.Rejected,
+            });
     }
 
-    public string GetRejectionMessage(int gameId)
+    public async Task RejectGameWithMessage(int gameId, string message)
     {
-        return this.GameRepository.GetRejectionMessage(gameId);
+        await this.GameServiceProxy.UpdateGameAsync(
+            gameId,
+            new UpdateGameRequest
+            {
+                Status = GameStatusEnum.Rejected,
+                RejectMessage = message,
+            });
     }
 
-    public void InsertGameTag(int gameId, int tagId)
+    public async Task<string> GetRejectionMessage(int gameId)
     {
-        this.GameRepository.InsertGameTag(gameId, tagId);
+        return (await this.GameServiceProxy.GetGameByIdAsync(gameId)) !.RejectMessage;
+    }
+
+    public async Task InsertGameTag(int gameId, int tagId)
+    {
+        await this.GameServiceProxy.PatchGameTagsAsync(
+            gameId,
+            new PatchGameTagsRequest
+            {
+                TagIds = new HashSet<int>(tagId),
+                Type = GameTagsPatchType.Insert,
+            });
     }
 
     public Collection<Tag> GetAllTags()
@@ -186,19 +271,40 @@ public class DeveloperService : IDeveloperService
         return this.TagRepository.GetAllTags();
     }
 
-    public bool IsGameIdInUse(int gameId)
+    public async Task<List<Tag>> GetGameTags(int gameId)
     {
-        return this.GameRepository.IsGameIdInUse(gameId);
+        var game = (await this.GameServiceProxy.GetGameByIdAsync(gameId)) !;
+        return game.Tags.Select(
+            tag => new Tag
+            {
+                TagId = tag.TagId,
+                Tag_name = tag.TagName,
+                NumberOfUserGamesWithTag = 0,
+            }).ToList();
     }
 
-    public List<Tag> GetGameTags(int gameId)
+    public async Task<bool> IsGameIdInUse(int gameId)
     {
-        return this.GameRepository.GetGameTags(gameId);
+        try
+        {
+            await this.GameServiceProxy.GetGameByIdAsync(gameId);
+            return true;
+        }
+        catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return false;
+        }
     }
 
-    public void DeleteGameTags(int gameId)
+    public async Task DeleteGameTags(int gameId)
     {
-        this.GameRepository.DeleteGameTags(gameId);
+        await this.GameServiceProxy.PatchGameTagsAsync(
+            gameId,
+            new PatchGameTagsRequest
+            {
+                TagIds = new HashSet<int>(),
+                Type = GameTagsPatchType.Delete,
+            });
     }
 
     public int GetGameOwnerCount(int gameId)
@@ -211,22 +317,43 @@ public class DeveloperService : IDeveloperService
         return this.User;
     }
 
-    public Game CreateValidatedGame(string gameIdText, string name, string priceText, string description, string imageUrl, string trailerUrl, string gameplayUrl, string minimumRequirement, string reccommendedRequirement, string discountText, IList<Tag> selectedTags)
+    public async Task<Game> CreateValidatedGame(
+        string gameIdText,
+        string name,
+        string priceText,
+        string description,
+        string imageUrl,
+        string trailerUrl,
+        string gameplayUrl,
+        string minimumRequirement,
+        string reccommendedRequirement,
+        string discountText,
+        IList<Tag> selectedTags)
     {
-        var game = this.ValidateInputForAddingAGame(gameIdText, name, priceText, description, imageUrl, trailerUrl, gameplayUrl, minimumRequirement, reccommendedRequirement, discountText, selectedTags);
+        var game = this.ValidateInputForAddingAGame(
+            gameIdText,
+            name,
+            priceText,
+            description,
+            imageUrl,
+            trailerUrl,
+            gameplayUrl,
+            minimumRequirement,
+            reccommendedRequirement,
+            discountText,
+            selectedTags);
 
-        if (this.IsGameIdInUse(game.GameId))
+        if (await this.IsGameIdInUse(game.GameId))
         {
             throw new Exception(ExceptionMessages.IdAlreadyInUse);
         }
 
-        this.CreateGameWithTags(game, selectedTags);
+        await this.CreateGameWithTags(game, selectedTags);
         return game;
     }
 
-    public void DeleteGame(int gameId, ObservableCollection<Game> developerGames)
+    public async Task DeleteGame(int gameId, ObservableCollection<Game> developerGames)
     {
-        // Find and remove the game manually (no lambda)
         Game gameToRemove = null;
         foreach (var game in developerGames)
         {
@@ -243,10 +370,10 @@ public class DeveloperService : IDeveloperService
         }
 
         // Perform the actual deletion logic (e.g. from DB)
-        this.DeleteGame(gameId);
+        await this.DeleteGame(gameId);
     }
 
-    public void UpdateGameAndRefreshList(Game game, ObservableCollection<Game> developerGames)
+    public async Task UpdateGameAndRefreshList(Game game, ObservableCollection<Game> developerGames)
     {
         Game existing = null;
         foreach (var gameInDeveloperGames in developerGames)
@@ -263,13 +390,13 @@ public class DeveloperService : IDeveloperService
             developerGames.Remove(existing);
         }
 
-        this.UpdateGame(game); // this should be your existing logic that updates in DB/repo
+        await this.UpdateGame(game); // this should be your existing logic that updates in DB/repo
         developerGames.Add(game);
     }
 
-    public void RejectGameAndRemoveFromUnvalidated(int gameId, ObservableCollection<Game> unvalidatedGames)
+    public async Task RejectGameAndRemoveFromUnvalidated(int gameId, ObservableCollection<Game> unvalidatedGames)
     {
-        this.RejectGame(gameId);
+        await this.RejectGame(gameId);
 
         Game gameToRemove = null;
         foreach (var game in unvalidatedGames)
@@ -287,7 +414,10 @@ public class DeveloperService : IDeveloperService
         }
     }
 
-    public bool IsGameIdInUse(int gameId, ObservableCollection<Game> developerGames, ObservableCollection<Game> unvalidatedGames)
+    public async Task<bool> IsGameIdInUse(
+        int gameId,
+        ObservableCollection<Game> developerGames,
+        ObservableCollection<Game> unvalidatedGames)
     {
         foreach (var game in developerGames)
         {
@@ -305,13 +435,13 @@ public class DeveloperService : IDeveloperService
             }
         }
 
-        return this.IsGameIdInUse(gameId); // Call the existing database check or logic
+        return await this.IsGameIdInUse(gameId); // Call the existing database check or logic
     }
 
-    public IList<Tag> GetMatchingTagsForGame(int gameId, IList<Tag> allAvailableTags)
+    public async Task<IList<Tag>> GetMatchingTagsForGame(int gameId, IList<Tag> allAvailableTags)
     {
         List<Tag> matchedTags = new List<Tag>();
-        IList<Tag> gameTags = this.GetGameTags(gameId); // Assuming this is already implemented
+        IList<Tag> gameTags = await this.GetGameTags(gameId); // Assuming this is already implemented
 
         foreach (Tag tag in allAvailableTags)
         {

@@ -1,5 +1,4 @@
-﻿namespace SteamHub.Api.Models.Game;
-
+﻿namespace SteamHub.ApiContract.Models.Game;
 public class UpdateGameRequest
 {
     public string? Name { get; set; }

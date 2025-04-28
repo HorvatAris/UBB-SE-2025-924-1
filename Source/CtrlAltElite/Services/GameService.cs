@@ -2,15 +2,20 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace SteamStore.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using CtrlAltElite.ServiceProxies;
+using CtrlAltElite.Services;
+using SteamHub.ApiContract.Models.Game;
 using SteamStore.Models;
 using SteamStore.Repositories;
-using SteamStore.Repositories.Interfaces;
 using SteamStore.Services.Interfaces;
+
+namespace SteamStore.Services;
+
 public class GameService : IGameService
 {
     private const int MinimumTrendingDivider = 1;
@@ -23,13 +28,14 @@ public class GameService : IGameService
     private static int incrementingValue = 1;
     private static int numberOfGamesToTake = 10;
 
-    public IGameRepository GameRepository { get; set; }
+    public IGameServiceProxy GameServiceProxy { get; set; }
 
     public ITagRepository TagRepository { get; set; }
 
-    public Collection<Game> GetAllGames()
+    public async Task<Collection<Game>> GetAllGames()
     {
-        return this.GameRepository.GetAllGames();
+        var games = await this.GameServiceProxy.GetGamesAsync(new GetGamesRequest());
+        return new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
     }
 
     public Collection<Tag> GetAllTags()
@@ -53,9 +59,9 @@ public class GameService : IGameService
         return new Collection<Tag>(tagsForCurrentGame);
     }
 
-    public Collection<Game> SearchGames(string searchQuery)
+    public async Task<Collection<Game>> SearchGames(string searchQuery)
     {
-        var allGames = this.GameRepository.GetAllGames();
+        var allGames = await GetAllGames();
         var foundGames = new List<Game>();
 
         foreach (var game in allGames)
@@ -69,7 +75,11 @@ public class GameService : IGameService
         return new Collection<Game>(foundGames);
     }
 
-    public Collection<Game> FilterGames(int minimumRating, int minimumPrice, int maximumPrice, string[] tags)
+    public async Task<Collection<Game>> FilterGames(
+        int minimumRating,
+        int minimumPrice,
+        int maximumPrice,
+        string[] tags)
     {
         if (tags == null)
         {
@@ -78,7 +88,8 @@ public class GameService : IGameService
 
         var filteredGames = new List<Game>();
 
-        foreach (var game in this.GameRepository.GetAllGames())
+        var allGames = await this.GetAllGames();
+        foreach (var game in allGames)
         {
             if (game.Rating >= minimumRating && game.Price >= minimumPrice && game.Price <= maximumPrice)
             {
@@ -122,18 +133,21 @@ public class GameService : IGameService
 
         foreach (var game in games)
         {
-            game.TrendingScore = maximumRecentSales < MinimumTrendingDivider ? NoTrendingScore : Convert.ToDecimal(game.NumberOfRecentPurchases) / maximumRecentSales;
+            game.TrendingScore = maximumRecentSales < MinimumTrendingDivider
+                ? NoTrendingScore
+                : Convert.ToDecimal(game.NumberOfRecentPurchases) / maximumRecentSales;
         }
     }
 
-    public Collection<Game> GetTrendingGames()
+    public async Task<Collection<Game>> GetTrendingGames()
     {
-        return this.GetSortedAndFilteredVideoGames(this.GameRepository.GetAllGames());
+        var allGames = await this.GetAllGames();
+        return this.GetSortedAndFilteredVideoGames(allGames);
     }
 
-    public Collection<Game> GetDiscountedGames()
+    public async Task<Collection<Game>> GetDiscountedGames()
     {
-        var allGames = this.GameRepository.GetAllGames();
+        var allGames = await this.GetAllGames();
         var discountedGames = new List<Game>();
 
         foreach (var game in allGames)
@@ -147,10 +161,10 @@ public class GameService : IGameService
         return this.GetSortedAndFilteredVideoGames(new Collection<Game>(discountedGames));
     }
 
-    public List<Game> GetSimilarGames(int gameId)
+    public async Task<List<Game>> GetSimilarGames(int gameId)
     {
         var randomGenerator = new Random(DateTime.Now.Millisecond);
-        var allGames = this.GameRepository.GetAllGames();
+        var allGames = await GetAllGames();
         var similarGames = new List<Game>();
 
         // Filter games with different identifiers
@@ -165,7 +179,9 @@ public class GameService : IGameService
         // Shuffle the list
         for (int currentIndex = startingValueOfIndex; currentIndex < similarGames.Count; currentIndex++)
         {
-            var randomIndex = randomGenerator.Next(currentIndex, similarGames.Count);  // Get a random index from currentIndex to the end of the list
+            var randomIndex = randomGenerator.Next(
+                currentIndex,
+                similarGames.Count); // Get a random index from currentIndex to the end of the list
             var temporaryGame = similarGames[currentIndex];
             similarGames[currentIndex] = similarGames[randomIndex];
             similarGames[randomIndex] = temporaryGame;
@@ -175,18 +191,9 @@ public class GameService : IGameService
         return similarGames.Take(NumberOfSimilarGamesToTake).ToList();
     }
 
-    public Game GetGameById(int gameId)
+    public async Task<Game> GetGameById(int gameId)
     {
-        var allGames = this.GetAllGames();
-        for (int currentIndexOfGAmeInList = startingValueOfIndex; currentIndexOfGAmeInList < allGames.Count; currentIndexOfGAmeInList++)
-        {
-            if (allGames[currentIndexOfGAmeInList].GameId == gameId)
-            {
-                return allGames[currentIndexOfGAmeInList];
-            }
-        }
-
-        return null;
+        return GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
     }
 
     private Collection<Game> GetSortedAndFilteredVideoGames(Collection<Game> games)
@@ -200,7 +207,9 @@ public class GameService : IGameService
         // Manually sort the games by descending trending score
         for (int currentIndex = startingValueOfIndex; currentIndex < games.Count; currentIndex++)
         {
-            for (int comparisonIndex = currentIndex + incrementingValue; comparisonIndex < games.Count; comparisonIndex++)
+            for (int comparisonIndex = currentIndex + incrementingValue;
+                 comparisonIndex < games.Count;
+                 comparisonIndex++)
             {
                 if (games[currentIndex].TrendingScore < games[comparisonIndex].TrendingScore)
                 {
@@ -213,7 +222,9 @@ public class GameService : IGameService
         }
 
         // Take the top 10 games after sorting
-        for (int topGamesIndex = startingValueOfIndex; topGamesIndex < numberOfGamesToTake && topGamesIndex < games.Count; topGamesIndex++)
+        for (int topGamesIndex = startingValueOfIndex;
+             topGamesIndex < numberOfGamesToTake && topGamesIndex < games.Count;
+             topGamesIndex++)
         {
             sortedGames.Add(games[topGamesIndex]);
         }

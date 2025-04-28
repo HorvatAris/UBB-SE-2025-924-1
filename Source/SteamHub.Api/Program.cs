@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using SteamHub.Api.Context;
 using SteamHub.Api.Context.Repositories;
+using SteamHub.ApiContract.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
