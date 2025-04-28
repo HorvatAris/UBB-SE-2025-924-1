@@ -2,8 +2,10 @@ namespace SteamHub.Api.Context
 {
     using Entities;
     using Microsoft.EntityFrameworkCore;
-    using SteamHub.Api.Models.Game;
+    using Models;
+    using SteamHub.ApiContract.Models.Game;
     using System.Reflection.Emit;
+
 
     public class DataContext : DbContext
     {

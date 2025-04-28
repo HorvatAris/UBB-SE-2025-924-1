@@ -30,7 +30,7 @@ namespace SteamStore.Services.Interfaces
 
         void ComputeTrendingScores(Collection<Game> games);
 
-        Collection<Game> GetRecommendedGames();
+        Task<Collection<Game>> GetRecommendedGames();
 
         Collection<Game> GetWishListGames();
 

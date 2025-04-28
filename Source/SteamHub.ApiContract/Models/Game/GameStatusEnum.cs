@@ -1,5 +1,4 @@
-﻿namespace SteamHub.Api.Models.Game;
-
+﻿namespace SteamHub.ApiContract.Models.Game;
 public enum GameStatusEnum
 {
     Pending = 0,

@@ -6,6 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using CtrlAltElite.ServiceProxies;
+using CtrlAltElite.Services;
+using SteamHub.ApiContract.Models.Game;
 using SteamStore.Constants;
 using SteamStore.Models;
 using SteamStore.Repositories;
@@ -31,7 +35,7 @@ public class UserGameService : IUserGameService
 
     public IUserGameRepository UserGameRepository { get; set; }
 
-    public IGameRepository GameRepository { get; set; }
+    public IGameServiceProxy GameServiceProxy { get; set; }
 
     public ITagRepository TagRepository { get; set; }
 
@@ -175,12 +179,14 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public Collection<Game> GetRecommendedGames()
+    public async Task<Collection<Game>> GetRecommendedGames()
     {
-        var allGames = this.GameRepository.GetAllGames();
+        var games = await this.GameServiceProxy.GetGamesAsync(
+            new GetGamesRequest());
+        var allGames = new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
         this.ComputeTrendingScores(allGames);
         this.ComputeTagScoreForGames(allGames);
-
+        
         List<Game> sortedGames = new List<Game>(allGames);
 
         // Manual sorting based on weighted score

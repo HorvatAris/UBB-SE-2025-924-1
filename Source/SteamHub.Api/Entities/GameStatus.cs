@@ -1,7 +1,6 @@
-﻿namespace SteamHub.Api.Entities;
+﻿using SteamHub.ApiContract.Models.Game;
 
-using Models;
-using SteamHub.Api.Models.Game;
+namespace SteamHub.Api.Entities;
 
 public class GameStatus
 {

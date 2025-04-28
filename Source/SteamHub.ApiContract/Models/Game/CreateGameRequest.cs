@@ -1,12 +1,7 @@
-﻿namespace SteamHub.Api.Models.Game;
+﻿namespace SteamHub.ApiContract.Models.Game;
 
-using Entities;
-using SteamHub.Api.Models.Tag;
-
-public class GameDetailedResponse
+public class CreateGameRequest
 {
-    public int Identifier { get; set; }
-
     public string Name { get; set; }
 
     public string? Description { get; set; }
@@ -19,10 +14,6 @@ public class GameDetailedResponse
 
     public string? RecommendedRequirements { get; set; }
 
-    public GameStatusEnum Status { get; set; }
-
-    public string? RejectMessage { get; set; }
-
     public decimal Rating { get; set; }
 
     public int NumberOfRecentPurchases { get; set; }
@@ -34,6 +25,4 @@ public class GameDetailedResponse
     public decimal Discount { get; set; }
 
     public int PublisherUserIdentifier { get; set; }
-
-    public List<TagDetailedResponse> Tags { get; set; }
 }
