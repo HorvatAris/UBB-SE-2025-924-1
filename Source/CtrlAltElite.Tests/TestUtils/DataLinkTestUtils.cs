@@ -1,18 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
-using SteamStore.Data;
-
-namespace SteamStore.Tests.TestUtils;
-
-public static class DataLinkTestUtils
+﻿namespace SteamStore.Tests.TestUtils
 {
-    private const string TESTSETTINGS_JSON = "testsettings.json";
+    using Microsoft.Extensions.Configuration;
+    using SteamStore.Data;
 
-    public static IDataLink GetDataLink()
+    public static class DataLinkTestUtils
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile(TESTSETTINGS_JSON)
-            .Build();
+        private const string TESTSETTINGS_JSON = "testsettings.json";
 
-        return new DataLink(configuration);
+        public static IDataLink GetDataLink()
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile(TESTSETTINGS_JSON)
+                .Build();
+
+            return new DataLink(configuration);
+        }
     }
 }

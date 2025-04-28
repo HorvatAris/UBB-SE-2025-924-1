@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using SteamStore.Constants;
-using SteamStore.Models;
-using SteamStore.Repositories;
-using SteamStore.Repositories.Interfaces;
-using Windows.UI.WebUI;
-
-namespace SteamStore.Tests.Services
+﻿namespace SteamStore.Tests.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Moq;
+    using SteamStore.Constants;
+    using SteamStore.Models;
+    using SteamStore.Repositories;
+    using SteamStore.Repositories.Interfaces;
+    using Windows.UI.WebUI;
+
     public class UserGameServiceTest
     {
-        private readonly Mock<IUserGameRepository> mockUserGameRepository;
-        private readonly Mock<IGameRepository> mockGameRepository;
-        private readonly Mock<ITagRepository> mockTagRepository;
-        private readonly UserGameService userGameService;
-
         private const string FirstGame = "FirstGame";
         private const string SecondGame = "SecondGame";
         private const string FirstTagName = "RPG";
@@ -44,6 +39,10 @@ namespace SteamStore.Tests.Services
         private const int RecentPurchasesFirstGame = 5;
         private const int RecentPurchasesSecondGame = 10;
 
+        private readonly Mock<IUserGameRepository> mockUserGameRepository;
+        private readonly Mock<IGameRepository> mockGameRepository;
+        private readonly Mock<ITagRepository> mockTagRepository;
+        private readonly UserGameService userGameService;
         public UserGameServiceTest()
         {
             mockUserGameRepository = new Mock<IUserGameRepository>();

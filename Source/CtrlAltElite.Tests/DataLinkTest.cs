@@ -2,20 +2,18 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using SteamStore.Data;
-using SteamStore.Constants;
-using SteamStore.Tests.TestUtils;
-using Xunit;
-
 namespace SteamStore.Tests.Data
 {
-    public class DataLinkTests
-    {
-        private readonly IDataLink dataLink;
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using SteamStore.Constants;
+    using SteamStore.Data;
+    using SteamStore.Tests.TestUtils;
+    using Xunit;
 
+    public class DataLinkTest
+    {
         private const string UnsupportedProcedureName = "UnsupportedProcedure";
         private const string ValidProcedureWithScalarResult = "GetGameOwnerCount";
         private const string ArbitraryProcedure = "AnyProcedure";
@@ -31,7 +29,8 @@ namespace SteamStore.Tests.Data
         private const int ExistingUserId = 1;
         private const int ExistingGameId = 1;
 
-        public DataLinkTests()
+        private readonly IDataLink dataLink;
+        public DataLinkTest()
         {
             this.dataLink = DataLinkTestUtils.GetDataLink();
         }

@@ -1,41 +1,41 @@
-﻿using System.Collections.ObjectModel;
-using System.Globalization;
-using Moq;
-using SteamStore.Models;
-using SteamStore.Repositories;
-using SteamStore.Repositories.Interfaces;
-
-namespace SteamStore.Tests.Services
+﻿namespace SteamStore.Tests.Services
 {
+    using System.Collections.ObjectModel;
+    using System.Globalization;
+    using Moq;
+    using SteamStore.Models;
+    using SteamStore.Repositories;
+    using SteamStore.Repositories.Interfaces;
+
 	public class DeveloperServiceTests
 	{
-		private readonly DeveloperService service;
-		private readonly Mock<IGameRepository> gameRepositoryMock = new Mock<IGameRepository>();
-		private readonly Mock<ITagRepository> tagRepositoryMock = new Mock<ITagRepository>();
-		private readonly Mock<IUserGameRepository> userGameRepositoryMock = new Mock<IUserGameRepository>();
-
-		private const int TestGameId = 1;
-		private const int TestGamePrice = 10;
-		private const int TestGameDescription = 5;
-		private const string TestGameIdText = "1";
-		private const string TestGameNameText = "Test";
-		private const string TestGamePriceText = "10";
-		private const string TestGameDescriptionText = "Desc";
-		private const string TestGameImageInfoText = "img.png";
+        private const int TestGameId = 1;
+        private const int TestGamePrice = 10;
+        private const int TestGameDescription = 5;
+        private const string TestGameIdText = "1";
+        private const string TestGameNameText = "Test";
+        private const string TestGamePriceText = "10";
+        private const string TestGameDescriptionText = "Desc";
+        private const string TestGameImageInfoText = "img.png";
         private const string TestGameTrailerInfoText = "trailer";
         private const string TestGameGameplayInfoText = "gameplay";
         private const string TestGameMinimumRequirementText = "min";
         private const string TestGameRecommendedRequirementText = "rec";
         private const string TestGameDiscountText = "5";
-		private const string TestGameNoDiscountText = "0";
-		private const string TestPendingGameStatusText = "Pending";
-		private const int TestRating = 0;
-		private const int TestPublisherIdentifier = 0;
-		private const int TestTrendingScore = 0;
-		private const int TestTagScore = 0;
-		private const int TestNumberOfRecentPurchases = 0;
-		private const int TestTagId = 1;
-		private const int TestSecondTagId = 2;
+        private const string TestGameNoDiscountText = "0";
+        private const string TestPendingGameStatusText = "Pending";
+        private const int TestRating = 0;
+        private const int TestPublisherIdentifier = 0;
+        private const int TestTrendingScore = 0;
+        private const int TestTagScore = 0;
+        private const int TestNumberOfRecentPurchases = 0;
+        private const int TestTagId = 1;
+        private const int TestSecondTagId = 2;
+
+        private readonly DeveloperService service;
+		private readonly Mock<IGameRepository> gameRepositoryMock = new Mock<IGameRepository>();
+		private readonly Mock<ITagRepository> tagRepositoryMock = new Mock<ITagRepository>();
+		private readonly Mock<IUserGameRepository> userGameRepositoryMock = new Mock<IUserGameRepository>();
 
 		private readonly User testUser = new User() { UserId = 42 };
 
