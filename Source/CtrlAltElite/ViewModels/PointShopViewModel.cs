@@ -11,6 +11,7 @@ namespace SteamStore.ViewModels
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using SteamStore.Constants;
     using SteamStore.Data;
@@ -41,9 +42,171 @@ namespace SteamStore.ViewModels
         private CancellationTokenSource searchCancellationTokenSource;
         private int nextTransactionId = PointShopConstants.TRANSACTIONIDENTIFIER;
         private bool isDetailPanelVisible;
+        private string notificationMessage;
+        private Visibility notificationVisibility = Visibility.Collapsed;
+        private Visibility inventoryPanelVisibility = Visibility.Collapsed;
+        private Visibility itemDetailVisibility = Visibility.Collapsed;
+        private Visibility transactionHistoryPanelVisibility = Visibility.Collapsed;
+        private string selectedItemName;
+        private string selectedItemType;
+        private string selectedItemDescription;
+        private string selectedItemPrice;
+        private string selectedItemImageUri;
+        private ObservableCollection<PointShopItem> filteredUserItems;
+        public string SelectedItemName
+        {
+            get => this.selectedItemName;
+            set
+            {
+                if (this.selectedItemName != value)
+                {
+                    this.selectedItemName = value;
+                    this.OnPropertyChanged(nameof(this.SelectedItemName));
+                }
+            }
+        }
 
-         // public PointShopViewModel(User currentUser, IDataLink dataLink)
-         // {
+        public string SelectedItemType
+        {
+            get => this.selectedItemType;
+            set
+            {
+                if (this.selectedItemType != value)
+                {
+                    this.selectedItemType = value;
+                    this.OnPropertyChanged(nameof(this.SelectedItemType));
+                }
+            }
+        }
+
+        public string SelectedItemDescription
+        {
+            get => this.selectedItemDescription;
+            set
+            {
+                if (this.selectedItemDescription != value)
+                {
+                    this.selectedItemDescription = value;
+                    this.OnPropertyChanged(nameof(this.SelectedItemDescription));
+                }
+            }
+        }
+
+        public string SelectedItemPrice
+        {
+            get => this.selectedItemPrice;
+            set
+            {
+                if (this.selectedItemPrice != value)
+                {
+                    this.selectedItemPrice = value;
+                    this.OnPropertyChanged(nameof(this.SelectedItemPrice));
+                }
+            }
+        }
+
+        public string SelectedItemImageUri
+        {
+            get => this.selectedItemImageUri;
+            set
+            {
+                if (this.selectedItemImageUri != value)
+                {
+                    this.selectedItemImageUri = value;
+                    this.OnPropertyChanged(nameof(this.SelectedItemImageUri));
+                }
+            }
+        }
+
+
+        public string NotificationMessage
+        {
+            get => this.notificationMessage;
+            set
+            {
+                this.notificationMessage = value;
+                this.OnPropertyChanged(nameof(this.NotificationMessage));
+            }
+        }
+        public Visibility NotificationVisibility
+        {
+            get => this.notificationVisibility;
+            set
+            {
+                this.notificationVisibility = value;
+                this.OnPropertyChanged(nameof(this.NotificationVisibility));
+            }
+        }
+
+        public Visibility ItemDetailVisibility
+        {
+            get => this.itemDetailVisibility;
+            set
+            {
+                this.itemDetailVisibility = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public Visibility InventoryPanelVisibility
+        {
+            get => this.inventoryPanelVisibility;
+            set
+            {
+                this.inventoryPanelVisibility = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public Visibility TransactionHistoryPanelVisibility
+        {
+            get => this.transactionHistoryPanelVisibility;
+            set
+            {
+                this.transactionHistoryPanelVisibility = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<PointShopItem> FilteredUserItems
+        {
+            get => this.filteredUserItems;
+            set
+            {
+                this.filteredUserItems = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public void ShowNotification(string message)
+        {
+            NotificationMessage = message;
+            NotificationVisibility = Visibility.Visible;
+        }
+
+        public void HideNotification()
+        {
+            NotificationVisibility = Visibility.Collapsed;
+        }
+
+        public void ApplyItemTypeFilter(string itemType)
+        {
+            if (itemType == "All")
+            {
+                this.FilteredUserItems = new ObservableCollection<PointShopItem>(this.UserItems);
+            }
+            else
+            {
+                var filteredItems = this.UserItems.Where(item => item.ItemType == itemType);
+                this.FilteredUserItems = new ObservableCollection<PointShopItem>(filteredItems);
+            }
+        }
+
+
+
+
+        // public PointShopViewModel(User currentUser, IDataLink dataLink)
+        // {
         //    // Store the current user reference
         //    this.user = currentUser;
 
@@ -69,6 +232,8 @@ namespace SteamStore.ViewModels
             this.ShopItems = new ObservableCollection<PointShopItem>();
             this.UserItems = new ObservableCollection<PointShopItem>();
             this.TransactionHistory = new ObservableCollection<PointShopTransaction>();
+           
+
 
             // Load initial data
             this.LoadItems();
@@ -77,7 +242,7 @@ namespace SteamStore.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string SelectedItemImageUri { get; private set; }
+        //public string SelectedItemImageUri { get; private set; }
 
         public bool IsDetailPanelVisible
         {
@@ -230,6 +395,7 @@ namespace SteamStore.ViewModels
                 {
                     this.UserItems.Add(item);
                 }
+                this.FilteredUserItems = new ObservableCollection<PointShopItem>(this.UserItems);
             }
             catch (Exception exception)
             {
@@ -330,6 +496,10 @@ namespace SteamStore.ViewModels
         {
             if (this.SelectedItem != null)
             {
+                this.SelectedItemName = this.SelectedItem.Name;
+                this.SelectedItemType = this.SelectedItem.ItemType;
+                this.SelectedItemDescription = this.SelectedItem.Description;
+                this.SelectedItemPrice = this.SelectedItem.PointPrice.ToString();
                 this.SelectedItemImageUri = this.SelectedItem.ImagePath;
                 this.IsDetailPanelVisible = true;
             }
@@ -338,10 +508,9 @@ namespace SteamStore.ViewModels
                 this.IsDetailPanelVisible = false;
             }
 
-            this.OnPropertyChanged(nameof(this.SelectedItemImageUri));
-            this.OnPropertyChanged(nameof(this.IsDetailPanelVisible));
             return this.IsDetailPanelVisible;
         }
+
 
         public void ClearSelection()
         {
@@ -373,12 +542,12 @@ namespace SteamStore.ViewModels
             }
         }
 
-        public async Task<bool> TryPurchaseSelectedItemAsync()
+        public async Task TryPurchaseSelectedItemAsync()
         {
             if (this.SelectedItem == null)
             {
                 await this.ShowDialog("Error", "No item selected");
-                return false;
+                return;
             }
 
             string itemName = this.SelectedItem.Name;
@@ -400,19 +569,28 @@ namespace SteamStore.ViewModels
                     this.LoadUserItems();
                     this.LoadItems();
 
-                    await this.ShowDialog("Congrats!", $"You have successfully purchased {itemName}. Check your inventory to view it.");
-                    return true;
-                }
+                   
+                    this.ClearSelection();
+                    this.ItemDetailVisibility = Visibility.Collapsed;
 
-                await this.ShowDialog("Error", "Purchase failed. Please try again.");
-                return false;
+                  
+                    this.ApplyItemTypeFilter(this.FilterType);
+
+                 
+                    this.ShowNotification($"You have successfully purchased {itemName}. Check your inventory!");
+                }
+                else
+                {
+                    
+                    this.ShowNotification("Purchase failed. Please try again.");
+                }
             }
             catch (Exception exception)
             {
-                await this.ShowDialog("Error", $"Purchase Failed: {exception.Message}");
-                return false;
+                this.ShowNotification($"Purchase failed: {exception.Message}");
             }
         }
+
 
         public async Task ToggleActivationForItemWithMessage(int itemId)
         {

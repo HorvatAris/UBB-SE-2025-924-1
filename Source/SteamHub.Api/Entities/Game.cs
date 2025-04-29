@@ -40,4 +40,7 @@ public class Game
     public virtual User Publisher { get; set; }
 
     public int PublisherUserId { get; set; }
+
+    public IList<StoreTransaction> StoreTransactions { get; set; }
+
 }

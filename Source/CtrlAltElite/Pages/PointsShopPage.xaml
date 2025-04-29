@@ -112,17 +112,18 @@
         </Grid>
 
         <!-- Simple Notification Bar -->
-        <Border Grid.Row="1" x:Name="NotificationBar" Visibility="Collapsed" Background="#75b022" Padding="15,10">
+        <Border Grid.Row="1" Visibility="{Binding NotificationVisibility}" Background="#75b022" Padding="15,10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="NotificationText" Text="Points Earned!" Foreground="White" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding NotificationMessage}" Foreground="White" FontWeight="SemiBold"/>
                 <Button Grid.Column="1" Content="✕" Click="CloseNotification_Click" 
-                        Background="Transparent" BorderBrush="Transparent" Foreground="White"/>
+                Background="Transparent" BorderBrush="Transparent" Foreground="White"/>
             </Grid>
         </Border>
+
 
         <!-- Shop Controls Grid -->
         <Grid Grid.Row="2" Margin="20,10,20,10">
@@ -213,7 +214,10 @@
         </Grid>
 
         <!-- Selected Item Details -->
-        <Grid Grid.Row="4" x:Name="ItemDetailPanel" Visibility="Collapsed" Background="#2a3a4a" Padding="20">
+        <Grid Grid.Row="4" x:Name="ItemDetailPanel" 
+      Visibility="{Binding ItemDetailVisibility}" 
+      Background="#2a3a4a" Padding="20">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -223,17 +227,20 @@
 
             <!-- Item Image -->
             <Image
-                   Grid.Column="0" x:Name="SelectedItemImage" Width="100" Height="100" 
-                   Margin="0,0,20,0" Style="{StaticResource ItemImageStyle}" 
-                   ImageFailed="Image_ImageFailed"/>
+    Grid.Column="0"
+    Width="100" Height="100" 
+    Margin="0,0,20,0" 
+    Source="{Binding SelectedItemImageUri}"
+    Style="{StaticResource ItemImageStyle}" 
+    ImageFailed="Image_ImageFailed"/>
 
             <!-- Item Details -->
             <StackPanel Grid.Column="1">
-                <TextBlock x:Name="SelectedItemName" FontSize="18" FontWeight="Bold"/>
-                <TextBlock x:Name="SelectedItemType" Foreground="#aaaaaa" Margin="0,5,0,0"/>
-                <TextBlock x:Name="SelectedItemDescription" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                <TextBlock Text="{Binding SelectedItemName}" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItemType}" Foreground="#aaaaaa" Margin="0,5,0,0"/>
+                <TextBlock Text="{Binding SelectedItemDescription}" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock x:Name="SelectedItemPrice" FontWeight="Bold" Foreground="#75b022"/>
+                    <TextBlock Text="{Binding SelectedItemPrice}" FontWeight="Bold" Foreground="#75b022"/>
                 </StackPanel>
             </StackPanel>
 
@@ -255,7 +262,7 @@
         </Grid>
 
         <!-- Inventory Panel -->
-        <Grid Grid.Row="3" Grid.RowSpan="2" x:Name="InventoryPanel" Visibility="Collapsed" Background="#1a2233" Padding="20">
+        <Grid Grid.Row="3" Grid.RowSpan="2" x:Name="InventoryPanel" Visibility="{Binding InventoryPanelVisibility}" Background="#1a2233" Padding="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -274,7 +281,8 @@
 
             <!-- Inventory Items -->
             <ScrollViewer Grid.Row="1" Margin="0,20,0,0">
-                <GridView x:Name="InventoryGridView" ItemsSource="{Binding UserItems}">
+                <GridView x:Name="InventoryGridView" ItemsSource="{Binding FilteredUserItems}">
+
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="models:PointShopItem">
                             <Grid Width="200" Height="250" Margin="10" Background="#2a3a4a">
@@ -311,10 +319,11 @@
 
         <!-- Add Transaction History Panel -->
         <Grid x:Name="TransactionHistoryPanel" 
-              Visibility="Collapsed" 
-              Grid.RowSpan="5" 
-              Background="#1a2233E6" 
-              Padding="20">
+      Visibility="{Binding TransactionHistoryPanelVisibility}" 
+      Grid.RowSpan="5" 
+      Background="#1a2233E6" 
+      Padding="20">
+
             <Border Background="#2a3a4a" 
                     BorderBrush="#417eb5" 
                     BorderThickness="1" 
