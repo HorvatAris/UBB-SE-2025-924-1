@@ -22,6 +22,7 @@ namespace SteamHub.Api.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
+        public DbSet<Item> Items { get; set; }
         public DbSet<PointShopItem> PointShopItems { get; set; }
 
         public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }

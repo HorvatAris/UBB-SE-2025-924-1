@@ -1,11 +1,13 @@
 ﻿namespace SteamHub.Api.Context.Repositories;
 
 using Models;
+using SteamHub.Api.Entities;
 using SteamHub.Api.Models.Game;
 
 public interface IGameRepository
 {
     Task<GameDetailedResponse> CreateGameAsync(CreateGameRequest game);
+    Task<Game?> GetGameEntityByIdAsync(int id);
     Task<GameDetailedResponse?> GetGameByIdAsync(int id);
     Task<List<GameDetailedResponse>> GetGamesAsync(GetGamesRequest request);
     Task<GameDetailedResponse> UpdateGameAsync(int id, UpdateGameRequest game);

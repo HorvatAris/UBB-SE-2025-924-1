@@ -60,6 +60,17 @@ public class GameRepository : IGameRepository
         return game == null ? null : MapToGameDetailedResponse(game);
     }
 
+    public async Task<Game?> GetGameEntityByIdAsync(int id)
+    {
+        var game = await context.Games
+            .Include(g => g.Tags)
+            .Include(g => g.Publisher)
+            .Include(g => g.Status)
+            .FirstOrDefaultAsync(g => g.GameId == id);
+
+        return game;
+    }
+
     public Task<List<GameDetailedResponse>> GetGamesAsync(GetGamesRequest parameters)
     {
         IQueryable<Game> query = context.Games;
