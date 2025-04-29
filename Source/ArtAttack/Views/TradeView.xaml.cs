@@ -17,26 +17,6 @@ namespace Steampunks.Views
     /// </summary>
     public sealed partial class TradeView : Page
     {
-        private const string CannotSendTradeTitle = "Cannot Send Trade";
-        private const string CannotSendTradeMessage = "Please select a user to trade with, add items to trade, and provide a trade description.";
-
-        private const string ConfirmTradeTitle = "Confirm Trade";
-        private const string ConfirmTradeMessage = "Are you sure you want to send this trade offer?";
-
-        private const string AcceptTradeTitle = "Accept Trade";
-        private const string AcceptTradeMessage = "Are you sure you want to accept this trade?";
-
-        private const string DeclineTradeTitle = "Decline Trade";
-        private const string DeclineTradeMessage = "Are you sure you want to decline this trade?";
-
-        private const string PrimaryButtonSendText = "Send";
-        private const string PrimaryButtonAcceptText = "Accept";
-        private const string PrimaryButtonDeclineText = "Decline";
-        private const string CloseButtonCancelText = "Cancel";
-        private const string CloseButtonOkText = "OK";
-
-        private const int MinimumSelectedItemsCount = 1;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TradeView"/> class.
         /// </summary>
@@ -66,18 +46,8 @@ namespace Steampunks.Views
         /// </summary>
         private void OnAddSourceItemButtonClicked(object sender, RoutedEventArgs eventArguments)
         {
-            if (this.SourceItemsListView.SelectedItems.Count >= MinimumSelectedItemsCount)
-            {
-                foreach (var selectedObject in this.SourceItemsListView.SelectedItems)
-                {
-                    if (selectedObject is Item selectedItem)
-                    {
-                        this.ViewModel.AddSourceItem(selectedItem);
-                    }
-                }
-
-                this.SourceItemsListView.SelectedItems.Clear();
-            }
+            this.ViewModel.AddSelectedSourceItems(this.SourceItemsListView.SelectedItems);
+            this.SourceItemsListView.SelectedItems.Clear();
         }
 
         /// <summary>
@@ -85,18 +55,8 @@ namespace Steampunks.Views
         /// </summary>
         private void OnAddDestinationItemButtonClicked(object sender, RoutedEventArgs eventArguments)
         {
-            if (this.DestinationItemsListView.SelectedItems.Count >= MinimumSelectedItemsCount)
-            {
-                foreach (var selectedObject in this.DestinationItemsListView.SelectedItems)
-                {
-                    if (selectedObject is Item selectedItem)
-                    {
-                        this.ViewModel.AddDestinationItem(selectedItem);
-                    }
-                }
-
-                this.DestinationItemsListView.SelectedItems.Clear();
-            }
+            this.ViewModel.AddSelectedDestinationItems(this.DestinationItemsListView.SelectedItems);
+            this.DestinationItemsListView.SelectedItems.Clear();
         }
 
         /// <summary>
@@ -126,35 +86,7 @@ namespace Steampunks.Views
         /// </summary>
         private async void OnSendTradeOfferButtonClicked(object sender, RoutedEventArgs eventArguments)
         {
-            if (!this.ViewModel.CanSendTradeOffer)
-            {
-                var cannotSendTradeDialog = new ContentDialog
-                {
-                    Title = CannotSendTradeTitle,
-                    Content = CannotSendTradeMessage,
-                    CloseButtonText = CloseButtonOkText,
-                    XamlRoot = this.XamlRoot,
-                };
-
-                await cannotSendTradeDialog.ShowAsync();
-                return;
-            }
-
-            var confirmSendTradeDialog = new ContentDialog
-            {
-                Title = ConfirmTradeTitle,
-                Content = ConfirmTradeMessage,
-                PrimaryButtonText = PrimaryButtonSendText,
-                CloseButtonText = CloseButtonCancelText,
-                XamlRoot = this.XamlRoot,
-            };
-
-            var userDialogResult = await confirmSendTradeDialog.ShowAsync();
-
-            if (userDialogResult == ContentDialogResult.Primary)
-            {
-                await this.ViewModel.CreateTradeOffer();
-            }
+            await this.ViewModel.TrySendTradeAsync(this.XamlRoot);
         }
 
         /// <summary>
@@ -164,21 +96,7 @@ namespace Steampunks.Views
         {
             if (sender is Button clickedButton && clickedButton.Tag is ItemTrade tradeToAccept)
             {
-                var confirmAcceptTradeDialog = new ContentDialog
-                {
-                    Title = AcceptTradeTitle,
-                    Content = AcceptTradeMessage,
-                    PrimaryButtonText = PrimaryButtonAcceptText,
-                    CloseButtonText = CloseButtonCancelText,
-                    XamlRoot = this.XamlRoot,
-                };
-
-                var userDialogResult = await confirmAcceptTradeDialog.ShowAsync();
-
-                if (userDialogResult == ContentDialogResult.Primary)
-                {
-                    this.ViewModel.AcceptTrade(tradeToAccept);
-                }
+                await this.ViewModel.TryAcceptTradeAsync(tradeToAccept, this.XamlRoot);
             }
         }
 
@@ -189,21 +107,7 @@ namespace Steampunks.Views
         {
             if (sender is Button clickedButton && clickedButton.Tag is ItemTrade tradeToDecline)
             {
-                var confirmDeclineTradeDialog = new ContentDialog
-                {
-                    Title = DeclineTradeTitle,
-                    Content = DeclineTradeMessage,
-                    PrimaryButtonText = PrimaryButtonDeclineText,
-                    CloseButtonText = CloseButtonCancelText,
-                    XamlRoot = this.XamlRoot,
-                };
-
-                var userDialogResult = await confirmDeclineTradeDialog.ShowAsync();
-
-                if (userDialogResult == ContentDialogResult.Primary)
-                {
-                    await this.ViewModel.DeclineTradeAsync(tradeToDecline);
-                }
+                await this.ViewModel.TryDeclineTradeAsync(tradeToDecline, this.XamlRoot);
             }
         }
     }
