@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SteamHub.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class MainMigration : Migration
+    public partial class AddItemTradesEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -178,6 +178,71 @@ namespace SteamHub.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ItemTrades",
+                columns: table => new
+                {
+                    TradeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SourceUserId = table.Column<int>(type: "int", nullable: false),
+                    DestinationUserId = table.Column<int>(type: "int", nullable: false),
+                    GameOfTradeId = table.Column<int>(type: "int", nullable: false),
+                    TradeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TradeDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TradeStatus = table.Column<int>(type: "int", nullable: false),
+                    AcceptedBySourceUser = table.Column<bool>(type: "bit", nullable: false),
+                    AcceptedByDestinationUser = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemTrades", x => x.TradeId);
+                    table.ForeignKey(
+                        name: "FK_ItemTrades_Games_GameOfTradeId",
+                        column: x => x.GameOfTradeId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ItemTrades_Users_DestinationUserId",
+                        column: x => x.DestinationUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_ItemTrades_Users_SourceUserId",
+                        column: x => x.SourceUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoreTransactions",
+                columns: table => new
+                {
+                    StoreTransactionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<float>(type: "real", nullable: false),
+                    WithMoney = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoreTransactions", x => x.StoreTransactionId);
+                    table.ForeignKey(
+                        name: "FK_StoreTransactions_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_StoreTransactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "GameStatus",
                 columns: new[] { "Id", "Name" },
@@ -288,6 +353,24 @@ namespace SteamHub.Api.Migrations
                     { 3, 9 }
                 });
 
+            migrationBuilder.InsertData(
+                table: "ItemTrades",
+                columns: new[] { "TradeId", "AcceptedByDestinationUser", "AcceptedBySourceUser", "DestinationUserId", "GameOfTradeId", "SourceUserId", "TradeDate", "TradeDescription", "TradeStatus" },
+                values: new object[,]
+                {
+                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 0 },
+                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: User3 offers Game2 to User4", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "StoreTransactions",
+                columns: new[] { "StoreTransactionId", "Amount", "Date", "GameId", "UserId", "WithMoney" },
+                values: new object[,]
+                {
+                    { 1, 49.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 1, 1, true },
+                    { 2, 59.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 2, 2, false }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Games_PublisherUserId",
                 table: "Games",
@@ -302,6 +385,31 @@ namespace SteamHub.Api.Migrations
                 name: "IX_GameTag_TagsTagId",
                 table: "GameTag",
                 column: "TagsTagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTrades_DestinationUserId",
+                table: "ItemTrades",
+                column: "DestinationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTrades_GameOfTradeId",
+                table: "ItemTrades",
+                column: "GameOfTradeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTrades_SourceUserId",
+                table: "ItemTrades",
+                column: "SourceUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoreTransactions_GameId",
+                table: "StoreTransactions",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoreTransactions_UserId",
+                table: "StoreTransactions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPointShopInventories_PointShopItemId",
@@ -321,13 +429,19 @@ namespace SteamHub.Api.Migrations
                 name: "GameTag");
 
             migrationBuilder.DropTable(
+                name: "ItemTrades");
+
+            migrationBuilder.DropTable(
+                name: "StoreTransactions");
+
+            migrationBuilder.DropTable(
                 name: "UserPointShopInventories");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "Games");
 
             migrationBuilder.DropTable(
                 name: "PointShopItems");

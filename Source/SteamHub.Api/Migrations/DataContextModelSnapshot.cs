@@ -229,6 +229,76 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SteamHub.Api.Entities.ItemTrade", b =>
+                {
+                    b.Property<int>("TradeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TradeId"));
+
+                    b.Property<bool>("AcceptedByDestinationUser")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AcceptedBySourceUser")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DestinationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameOfTradeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SourceUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TradeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TradeDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TradeStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("TradeId");
+
+                    b.HasIndex("DestinationUserId");
+
+                    b.HasIndex("GameOfTradeId");
+
+                    b.HasIndex("SourceUserId");
+
+                    b.ToTable("ItemTrades");
+
+                    b.HasData(
+                        new
+                        {
+                            TradeId = 1,
+                            AcceptedByDestinationUser = false,
+                            AcceptedBySourceUser = false,
+                            DestinationUserId = 2,
+                            GameOfTradeId = 1,
+                            SourceUserId = 1,
+                            TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                            TradeStatus = 0
+                        },
+                        new
+                        {
+                            TradeId = 2,
+                            AcceptedByDestinationUser = false,
+                            AcceptedBySourceUser = true,
+                            DestinationUserId = 4,
+                            GameOfTradeId = 2,
+                            SourceUserId = 3,
+                            TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                            TradeStatus = 0
+                        });
+                });
+
             modelBuilder.Entity("SteamHub.Api.Entities.PointShopItem", b =>
                 {
                     b.Property<int>("PointShopItemId")
@@ -702,6 +772,33 @@ namespace SteamHub.Api.Migrations
                     b.Navigation("Publisher");
 
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.ItemTrade", b =>
+                {
+                    b.HasOne("SteamHub.Api.Entities.User", "DestinationUser")
+                        .WithMany()
+                        .HasForeignKey("DestinationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SteamHub.Api.Entities.Game", "GameOfTrade")
+                        .WithMany()
+                        .HasForeignKey("GameOfTradeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SteamHub.Api.Entities.User", "SourceUser")
+                        .WithMany()
+                        .HasForeignKey("SourceUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("DestinationUser");
+
+                    b.Navigation("GameOfTrade");
+
+                    b.Navigation("SourceUser");
                 });
 
             modelBuilder.Entity("SteamHub.Api.Entities.StoreTransaction", b =>

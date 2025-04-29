@@ -17,7 +17,7 @@ builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepository>();
 builder.Services.AddScoped<IStoreTransactionRepository, StoreTransactionRepository>();
-
+builder.Services.AddScoped<IItemTradeRepository, ItemTradeRepository>();
 
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
