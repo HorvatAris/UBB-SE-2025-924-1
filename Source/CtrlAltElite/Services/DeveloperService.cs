@@ -28,7 +28,8 @@ public class DeveloperService : IDeveloperService
 
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    public ITagRepository TagRepository { get; set; }
+    //public ITagRepository TagRepository { get; set; }
+    public ITagServiceProxy TagRepository { get; set; }
 
     public IUserGameRepository UserGameRepository { get; set; }
 
@@ -268,7 +269,16 @@ public class DeveloperService : IDeveloperService
 
     public Collection<Tag> GetAllTags()
     {
-        return this.TagRepository.GetAllTags();
+        // Convert the Task<List<TagDetailedResponse>> to Collection<Tag>
+        var tagDetailedResponses = this.TagRepository.GetAllTagsAsync().Result; // Blocking call to resolve the Task
+        var tags = tagDetailedResponses.Select(tagResponse => new Tag
+        {
+            TagId = tagResponse.TagId,
+            Tag_name = tagResponse.TagName,
+            NumberOfUserGamesWithTag = 0 // Assuming default value
+        }).ToList();
+
+        return new Collection<Tag>(tags);
     }
 
     public async Task<List<Tag>> GetGameTags(int gameId)

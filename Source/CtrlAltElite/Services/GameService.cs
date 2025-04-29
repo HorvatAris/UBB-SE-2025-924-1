@@ -30,7 +30,7 @@ public class GameService : IGameService
 
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    public ITagRepository TagRepository { get; set; }
+    public ITagServiceProxy TagRepository { get; set; }
 
     public async Task<Collection<Game>> GetAllGames()
     {
@@ -38,14 +38,25 @@ public class GameService : IGameService
         return new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
     }
 
-    public Collection<Tag> GetAllTags()
+    public async Task<Collection<Tag>> GetAllTags()
     {
-        return this.TagRepository.GetAllTags();
+        var tagResponses = await this.TagRepository.GetAllTagsAsync();
+        var tags = tagResponses.Select(tagResponse => new Tag
+        {
+            // Assuming Tag has properties that match TagDetailedResponse
+            TagId = tagResponse.TagId,
+            Tag_name = tagResponse.TagName,
+        }).ToList();
+
+        return new Collection<Tag>(tags);
+
     }
 
     public Collection<Tag> GetAllGameTags(Game game)
     {
-        var allTags = this.TagRepository.GetAllTags();
+        // Await the task to get the result of GetAllTags
+        var allTags = this.GetAllTags().Result; // Ensure the task is awaited or resolved
+
         var tagsForCurrentGame = new List<Tag>();
 
         foreach (var tag in allTags)

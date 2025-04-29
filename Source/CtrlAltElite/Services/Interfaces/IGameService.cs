@@ -16,7 +16,7 @@ namespace SteamStore.Services.Interfaces
     {
         Task<Collection<Game>> GetAllGames();
 
-        Collection<Tag> GetAllTags();
+        Task<Collection<Tag>> GetAllTags();
 
         Collection<Tag> GetAllGameTags(Game game);
 

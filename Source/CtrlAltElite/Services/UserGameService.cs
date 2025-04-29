@@ -37,7 +37,7 @@ public class UserGameService : IUserGameService
 
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    public ITagRepository TagRepository { get; set; }
+    public ITagServiceProxy TagRepository { get; set; }
 
     // Property to track points earned in the last purchase
     public int LastEarnedPoints { get; private set; }
@@ -125,7 +125,20 @@ public class UserGameService : IUserGameService
 
     public Collection<Tag> GetFavoriteUserTags()
     {
-        var allTags = this.TagRepository.GetAllTags();
+        // Fetch all tags asynchronously and wait for the result
+        var allTagsTask = this.TagRepository.GetAllTagsAsync();
+        allTagsTask.Wait(); // Ensure the task completes before proceeding
+        var allTagsResponse = allTagsTask.Result;
+
+        // Map the response to the expected Collection<Tag> type
+        var allTags = new Collection<Tag>(
+            allTagsResponse.Select(tagResponse => new Tag
+            {
+                Tag_name = tagResponse.TagName,
+                NumberOfUserGamesWithTag = ResetValueForNumberOfUserGamesWithTag
+            }).ToList()
+        );
+
         this.ComputeNoOfUserGamesForEachTag(allTags);
 
         List<Tag> sortedTags = new List<Tag>(allTags);
