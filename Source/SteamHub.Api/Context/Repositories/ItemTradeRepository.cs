@@ -30,7 +30,7 @@
                 AcceptedByDestinationUser = request.AcceptedByDestinationUser
             };
 
-            await context.Set<ItemTrade>().AddAsync(newTrade);
+            await context.ItemTrades.AddAsync(newTrade);
             await context.SaveChangesAsync();
 
             return new CreateItemTradeResponse
@@ -41,7 +41,7 @@
 
         public async Task<GetItemTradesResponse?> GetItemTradesAsync()
         {
-            var trades = await context.Set<ItemTrade>()
+            var trades = await context.ItemTrades
                 .Include(trade => trade.SourceUser)
                 .Include(trade => trade.DestinationUser)
                 .Include(trade => trade.GameOfTrade)
@@ -67,7 +67,7 @@
 
         public async Task<ItemTradeResponse?> GetItemTradeByIdAsync(int id)
         {
-            var trade = await context.Set<ItemTrade>()
+            var trade = await context.ItemTrades
                 .Where(t => t.TradeId == id)
                 .Select(trade => new ItemTradeResponse
                 {
@@ -88,7 +88,7 @@
 
         public async Task UpdateItemTradeAsync(int tradeId, UpdateItemTradeRequest request)
         {
-            var existingTrade = await context.Set<ItemTrade>().FindAsync(tradeId);
+            var existingTrade = await context.ItemTrades.FindAsync(tradeId);
             if (existingTrade == null)
             {
                 throw new Exception("Trade not found");
@@ -110,7 +110,7 @@
                 throw new Exception("Trade not found");
             }
 
-            context.Set<ItemTrade>().Remove(trade);
+            context.ItemTrades.Remove(trade);
             await context.SaveChangesAsync();
         }
     }
