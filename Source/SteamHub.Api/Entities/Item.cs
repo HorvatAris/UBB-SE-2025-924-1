@@ -13,7 +13,7 @@
         public string ItemName { get; set; } = default!;
 
         [Required]
-        public virtual Game Game { get; set; } = default!;
+        public virtual int CorrespondingGameId { get; set; } = default!;
 
         public float Price { get; set; }
 
@@ -26,10 +26,10 @@
 
         public Item() { }
 
-        public Item(string itemName, Game game, float price, string description)
+        public Item(string itemName, int correspondingGameId, float price, string description)
         {
             ItemName = itemName ?? throw new ArgumentNullException(nameof(itemName));
-            Game = game ?? throw new ArgumentNullException(nameof(game));
+            CorrespondingGameId = correspondingGameId;
             Price = price;
             Description = description ?? throw new ArgumentNullException(nameof(description));
             IsListed = false;

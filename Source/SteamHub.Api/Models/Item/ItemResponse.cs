@@ -1,10 +1,10 @@
 ﻿namespace SteamHub.Api.Models.Item
 {
-    public class ItemResponseDto
+    public class ItemResponse
     {
         public int ItemId { get; set; }
         public string ItemName { get; set; } = default!;
-        public string GameTitle { get; set; } = default!;
+        public int GameId { get; set; }
         public float Price { get; set; }
         public string Description { get; set; } = default!;
         public bool IsListed { get; set; }

@@ -23,23 +23,16 @@
 
         public async Task<Item?> GetItemAsync(int itemId)
         {
-            // Include the related Game entity in the query.
-            return await _context.Items
-                .Include(i => i.Game)
-                .FirstOrDefaultAsync(i => i.ItemId == itemId);
+            return await _context.Items.FirstOrDefaultAsync(i => i.ItemId == itemId);
         }
 
         public async Task<IEnumerable<Item>> GetAllItemsAsync()
         {
-            // Retrieve all items along with their related Game.
-            return await _context.Items
-                .Include(i => i.Game)
-                .ToListAsync();
+            return await _context.Items.ToListAsync();
         }
 
         public async Task<Item> UpdateItemAsync(Item item)
         {
-            // Mark the item as updated.
             _context.Items.Update(item);
             await _context.SaveChangesAsync();
             return item;
@@ -56,6 +49,4 @@
             return (await _context.SaveChangesAsync()) > 0;
         }
     }
-    
-
 }

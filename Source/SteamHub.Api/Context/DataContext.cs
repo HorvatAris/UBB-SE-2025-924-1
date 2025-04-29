@@ -187,6 +187,68 @@ namespace SteamHub.Api.Context
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[6].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[7].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[8].TagId }));
+
+            var items =  new List<Item>
+            {
+                new Item
+                {
+                    ItemName = "Legendary Sword",
+                    CorrespondingGameId = 1,
+                    Price = 59.99f,
+                    Description = "A sword of legends, imbued with ancient power.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/etheria/legendary-sword.png"
+                },
+                new Item
+                {
+                    ItemName = "Mystic Shield",
+                    CorrespondingGameId = 1,
+                    Price = 39.99f,
+                    Description = "A shield that blocks both physical and magical attacks.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/etheria/mystic-shield.png"
+                },
+
+                new Item
+                {
+                    ItemName = "Neon Blade",
+                    CorrespondingGameId = 2,
+                    Price = 49.99f,
+                    Description = "A futuristic blade that glows under the neon lights of Nightcity.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/cyberstrike/neon-blade.png"
+                },
+                new Item
+                {
+                    ItemName = "Data Hack Module",
+                    CorrespondingGameId = 2,
+                    Price = 29.99f,
+                    Description = "An advanced module that boosts your hacking abilities in Cyberstrike 2077.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/cyberstrike/data-hack.png"
+                },
+
+                new Item
+                {
+                    ItemName = "Viking Axe",
+                    CorrespondingGameId = 3,
+                    Price = 44.99f,
+                    Description = "A mighty axe forged for the fiercest Viking warriors.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/valhalla/viking-axe.png"
+                },
+                new Item
+                {
+                    ItemName = "Warrior Helmet",
+                    CorrespondingGameId = 3,
+                    Price = 34.99f,
+                    Description = "A robust helmet that symbolizes the honor of ancient warriors.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/valhalla/warrior-helmet.png"
+                }
+            };
+            builder.Entity<Item>().HasData(testGameSeed);
+
               
             var pointShopItemsSeed = new List<PointShopItem>
             {
