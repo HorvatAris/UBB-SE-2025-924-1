@@ -27,6 +27,7 @@ namespace SteamHub.Api.Context
         public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }
 
         public DbSet<StoreTransaction> StoreTransactions { get; set; }
+        public DbSet<ItemTrade> ItemTrades { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -366,6 +367,53 @@ namespace SteamHub.Api.Context
 
             builder.Entity<StoreTransaction>().HasData(storeTransactionsSeed);
 
+            builder.Entity<ItemTrade>()
+                .HasOne(it => it.SourceUser)
+                .WithMany()
+                .HasForeignKey(it => it.SourceUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<ItemTrade>()
+                .HasOne(it => it.DestinationUser)
+                .WithMany()
+                .HasForeignKey(it => it.DestinationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<ItemTrade>()
+                .HasOne(it => it.GameOfTrade)
+                .WithMany()
+                .HasForeignKey(it => it.GameOfTradeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            var itemTradesSeed = new List<ItemTrade>
+            {
+                new ItemTrade
+                {
+                    TradeId = 1,
+                    SourceUserId = 1,
+                    DestinationUserId = 2,
+                    GameOfTradeId = 1,
+                    TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                    TradeDate = new DateTime(2025, 4, 28),
+                    TradeStatus = TradeStatusEnum.Pending,
+                    AcceptedBySourceUser = false,
+                    AcceptedByDestinationUser = false
+                },
+                new ItemTrade
+                {
+                    TradeId = 2,
+                    SourceUserId = 3,
+                    DestinationUserId = 4,
+                    GameOfTradeId = 2,
+                    TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                    TradeDate = new DateTime(2025, 4, 28),
+                    TradeStatus = TradeStatusEnum.Pending,
+                    AcceptedBySourceUser = true,
+                    AcceptedByDestinationUser = false
+                }
+            };
+
+            builder.Entity<ItemTrade>().HasData(itemTradesSeed);
         }
     }
 }
