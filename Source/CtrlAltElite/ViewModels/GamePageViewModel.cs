@@ -19,6 +19,7 @@ public class GamePageViewModel : INotifyPropertyChanged
     private const int MaxSimilarGamesToDisplay = 3;
     private const string CurrencySymbol = "$";
     private const string PriceFormat = "F2";
+
     private readonly ICartService cartService;
     private readonly IUserGameService userGameService;
     private readonly IGameService gameService;
@@ -27,7 +28,19 @@ public class GamePageViewModel : INotifyPropertyChanged
     private ObservableCollection<Game> similarGames;
     private bool isOwned;
     private ObservableCollection<string> gameTags;
+    private ObservableCollection<string> mediaLinks;
 
+    // TODO: Implement Reviews feature later when Review model is available
+    // private ObservableCollection<Review> userReviews = new();
+    // public ObservableCollection<Review> UserReviews
+    // {
+    //     get => this.userReviews;
+    //     private set
+    //     {
+    //         this.userReviews = value;
+    //         this.OnPropertyChanged();
+    //     }
+    // }
     public GamePageViewModel(IGameService gameService, ICartService cartService, IUserGameService userGameService)
     {
         this.cartService = cartService;
@@ -35,9 +48,26 @@ public class GamePageViewModel : INotifyPropertyChanged
         this.gameService = gameService;
         this.SimilarGames = new ObservableCollection<Game>();
         this.GameTags = new ObservableCollection<string>();
+        this.MediaLinks = new ObservableCollection<string>();
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
+
+    public string GameTitle => this.Game?.GameTitle ?? string.Empty;
+
+    public string GameDescription => this.Game?.GameDescription ?? string.Empty;
+
+    public string Developer => this.Game != null ? $"Developer: {this.Game.GameTitle}" : string.Empty;
+
+    public string MinimumRequirements => this.Game?.MinimumRequirements ?? string.Empty;
+
+    public string RecommendedRequirements => this.Game?.RecommendedRequirements ?? string.Empty;
+
+    public string ImagePath => this.Game?.ImagePath ?? string.Empty;
+
+    public double Rating => Convert.ToDouble(this.Game?.Rating ?? 0);
+
+    public string OwnedStatus => this.IsOwned ? "Owned" : "Not Owned";
 
     public Game Game
     {
@@ -48,6 +78,9 @@ public class GamePageViewModel : INotifyPropertyChanged
             this.OnPropertyChanged();
             this.UpdateIsOwnedStatus();
             this.UpdateGameTags();
+            this.UpdateMediaLinks();
+
+            // TODO: LoadReviews(); // Uncomment when Review model is ready
         }
     }
 
@@ -87,9 +120,20 @@ public class GamePageViewModel : INotifyPropertyChanged
         }
     }
 
+    public ObservableCollection<string> MediaLinks
+    {
+        get => this.mediaLinks;
+        private set
+        {
+            this.mediaLinks = value;
+            this.OnPropertyChanged();
+        }
+    }
+
     public void LoadGame(Game game)
     {
         this.Game = game;
+        this.OnPropertyChanged(nameof(this.Game));
         this.LoadSimilarGames();
     }
 
@@ -103,6 +147,8 @@ public class GamePageViewModel : INotifyPropertyChanged
         this.Game = this.gameService.GetGameById(gameId);
         if (this.Game != null)
         {
+            this.OnPropertyChanged(nameof(this.Game)); // Let UI know the Game has changed
+
             this.LoadSimilarGames();
         }
     }
@@ -199,6 +245,20 @@ public class GamePageViewModel : INotifyPropertyChanged
         }
     }
 
+    private void UpdateMediaLinks()
+    {
+        this.MediaLinks.Clear();
+        if (!string.IsNullOrEmpty(this.Game?.TrailerPath))
+        {
+            this.MediaLinks.Add(this.Game.TrailerPath);
+        }
+
+        if (!string.IsNullOrEmpty(this.Game?.GameplayPath))
+        {
+            this.MediaLinks.Add(this.Game.GameplayPath);
+        }
+    }
+
     // Load similar games based on current game
     private void LoadSimilarGames()
     {
@@ -210,4 +270,14 @@ public class GamePageViewModel : INotifyPropertyChanged
         var similarGames = this.gameService.GetSimilarGames(this.Game.GameId);
         this.SimilarGames = new ObservableCollection<Game>(similarGames.Take(MaxSimilarGamesToDisplay));
     }
+
+    // TODO: Implement Reviews when Review model is available
+    // private void LoadReviews()
+    // {
+    //     if (this.Game == null)
+    //         return;
+    //
+    //     var reviews = this.reviewService.GetReviewsForGame(this.Game.GameId);
+    //     this.UserReviews = new ObservableCollection<Review>(reviews);
+    // }
 }
