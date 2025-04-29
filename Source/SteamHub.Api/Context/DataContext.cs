@@ -190,10 +190,11 @@ namespace SteamHub.Api.Context
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[7].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[8].TagId }));
 
-            var items =  new List<Item>
+            var itemsSeed =  new List<Item>
             {
                 new Item
                 {
+                    ItemId = 1,
                     ItemName = "Legendary Sword",
                     CorrespondingGameId = 1,
                     Price = 59.99f,
@@ -203,6 +204,7 @@ namespace SteamHub.Api.Context
                 },
                 new Item
                 {
+                    ItemId = 2,
                     ItemName = "Mystic Shield",
                     CorrespondingGameId = 1,
                     Price = 39.99f,
@@ -213,6 +215,7 @@ namespace SteamHub.Api.Context
 
                 new Item
                 {
+                    ItemId = 3,
                     ItemName = "Neon Blade",
                     CorrespondingGameId = 2,
                     Price = 49.99f,
@@ -222,6 +225,7 @@ namespace SteamHub.Api.Context
                 },
                 new Item
                 {
+                    ItemId = 4,
                     ItemName = "Data Hack Module",
                     CorrespondingGameId = 2,
                     Price = 29.99f,
@@ -232,6 +236,7 @@ namespace SteamHub.Api.Context
 
                 new Item
                 {
+                    ItemId = 5,
                     ItemName = "Viking Axe",
                     CorrespondingGameId = 3,
                     Price = 44.99f,
@@ -241,6 +246,7 @@ namespace SteamHub.Api.Context
                 },
                 new Item
                 {
+                    ItemId = 6,
                     ItemName = "Warrior Helmet",
                     CorrespondingGameId = 3,
                     Price = 34.99f,
@@ -249,7 +255,7 @@ namespace SteamHub.Api.Context
                     ImagePath = "https://cdn.example.com/valhalla/warrior-helmet.png"
                 }
             };
-            builder.Entity<Item>().HasData(testGameSeed);
+            builder.Entity<Item>().HasData(itemsSeed);
 
               
             var pointShopItemsSeed = new List<PointShopItem>
