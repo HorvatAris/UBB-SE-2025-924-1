@@ -8,6 +8,7 @@ namespace Steampunks.ViewModels
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Threading.Tasks;
+    using Microsoft.UI.Xaml;
     using Steampunks.Domain.Entities;
 
     /// <summary>
@@ -200,5 +201,40 @@ namespace Steampunks.ViewModels
         /// </summary>
         /// <param name="item">The item in the selected list.</param>
         void RemoveSourceItem(Item item);
+
+        /// <summary>
+        /// Attempts to send a trade offer after validating input and confirming with the user.
+        /// </summary>
+        /// <param name="root">The XamlRoot of the page where the dialog should be displayed.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task TrySendTradeAsync(XamlRoot root);
+
+        /// <summary>
+        /// Attempts to accept a given trade after displaying a confirmation dialog to the user.
+        /// </summary>
+        /// <param name="trade">The trade to accept.</param>
+        /// <param name="root">The XamlRoot used to display the confirmation dialog in the UI.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task TryAcceptTradeAsync(ItemTrade trade, XamlRoot root);
+
+        /// <summary>
+        /// Attempts to decline a given trade after displaying a confirmation dialog to the user.
+        /// </summary>
+        /// <param name="trade">The trade to decline.</param>
+        /// <param name="root">The XamlRoot used to display the confirmation dialog in the UI.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task TryDeclineTradeAsync(ItemTrade trade, XamlRoot root);
+
+        /// <summary>
+        /// Adds multiple selected source items from the user's inventory to the current trade offer.
+        /// </summary>
+        /// <param name="selectedItems">The list of items selected by the user to be added to the source side of the trade.</param>
+        void AddSelectedSourceItems(IList<object> selectedItems);
+
+        /// <summary>
+        /// Adds multiple selected destination items from the trading partner's inventory to the current trade offer.
+        /// </summary>
+        /// <param name="selectedItems">The list of items selected by the user to be added to the destination side of the trade.</param>
+        void AddSelectedDestinationItems(IList<object> selectedItems);
     }
 }
