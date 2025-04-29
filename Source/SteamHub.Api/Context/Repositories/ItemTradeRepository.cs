@@ -104,7 +104,7 @@
 
         public async Task DeleteItemTradeAsync(int tradeId)
         {
-            var trade = await context.Set<ItemTrade>().FindAsync(tradeId);
+            var trade = await context.ItemTrades.FindAsync(tradeId);
             if (trade == null)
             {
                 throw new Exception("Trade not found");
