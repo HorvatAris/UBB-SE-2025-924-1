@@ -26,6 +26,24 @@ namespace SteamHub.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    ItemId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorrespondingGameId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsListed = table.Column<bool>(type: "bit", nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.ItemId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PointShopItems",
                 columns: table => new
                 {
@@ -254,6 +272,19 @@ namespace SteamHub.Api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Items",
+                columns: new[] { "ItemId", "CorrespondingGameId", "Description", "ImagePath", "IsListed", "ItemName", "Price" },
+                values: new object[,]
+                {
+                    { 1, 1, "A sword of legends, imbued with ancient power.", "https://cdn.example.com/etheria/legendary-sword.png", true, "Legendary Sword", 59.99f },
+                    { 2, 1, "A shield that blocks both physical and magical attacks.", "https://cdn.example.com/etheria/mystic-shield.png", true, "Mystic Shield", 39.99f },
+                    { 3, 2, "A futuristic blade that glows under the neon lights of Nightcity.", "https://cdn.example.com/cyberstrike/neon-blade.png", true, "Neon Blade", 49.99f },
+                    { 4, 2, "An advanced module that boosts your hacking abilities in Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/data-hack.png", true, "Data Hack Module", 29.99f },
+                    { 5, 3, "A mighty axe forged for the fiercest Viking warriors.", "https://cdn.example.com/valhalla/viking-axe.png", true, "Viking Axe", 44.99f },
+                    { 6, 3, "A robust helmet that symbolizes the honor of ancient warriors.", "https://cdn.example.com/valhalla/warrior-helmet.png", true, "Warrior Helmet", 34.99f }
+                });
+
+            migrationBuilder.InsertData(
                 table: "PointShopItems",
                 columns: new[] { "PointShopItemId", "Description", "ImagePath", "ItemType", "Name", "PointPrice" },
                 values: new object[,]
@@ -427,6 +458,9 @@ namespace SteamHub.Api.Migrations
         {
             migrationBuilder.DropTable(
                 name: "GameTag");
+
+            migrationBuilder.DropTable(
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "ItemTrades");

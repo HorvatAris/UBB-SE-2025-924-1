@@ -12,7 +12,7 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250429183814_MainMigration")]
+    [Migration("20250429204724_MainMigration")]
     partial class MainMigration
     {
         /// <inheritdoc />
@@ -229,6 +229,102 @@ namespace SteamHub.Api.Migrations
                         {
                             Id = 2,
                             Name = "Rejected"
+                        });
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.Item", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemId"));
+
+                    b.Property<int>("CorrespondingGameId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsListed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.HasKey("ItemId");
+
+                    b.ToTable("Items");
+
+                    b.HasData(
+                        new
+                        {
+                            ItemId = 1,
+                            CorrespondingGameId = 1,
+                            Description = "A sword of legends, imbued with ancient power.",
+                            ImagePath = "https://cdn.example.com/etheria/legendary-sword.png",
+                            IsListed = true,
+                            ItemName = "Legendary Sword",
+                            Price = 59.99f
+                        },
+                        new
+                        {
+                            ItemId = 2,
+                            CorrespondingGameId = 1,
+                            Description = "A shield that blocks both physical and magical attacks.",
+                            ImagePath = "https://cdn.example.com/etheria/mystic-shield.png",
+                            IsListed = true,
+                            ItemName = "Mystic Shield",
+                            Price = 39.99f
+                        },
+                        new
+                        {
+                            ItemId = 3,
+                            CorrespondingGameId = 2,
+                            Description = "A futuristic blade that glows under the neon lights of Nightcity.",
+                            ImagePath = "https://cdn.example.com/cyberstrike/neon-blade.png",
+                            IsListed = true,
+                            ItemName = "Neon Blade",
+                            Price = 49.99f
+                        },
+                        new
+                        {
+                            ItemId = 4,
+                            CorrespondingGameId = 2,
+                            Description = "An advanced module that boosts your hacking abilities in Cyberstrike 2077.",
+                            ImagePath = "https://cdn.example.com/cyberstrike/data-hack.png",
+                            IsListed = true,
+                            ItemName = "Data Hack Module",
+                            Price = 29.99f
+                        },
+                        new
+                        {
+                            ItemId = 5,
+                            CorrespondingGameId = 3,
+                            Description = "A mighty axe forged for the fiercest Viking warriors.",
+                            ImagePath = "https://cdn.example.com/valhalla/viking-axe.png",
+                            IsListed = true,
+                            ItemName = "Viking Axe",
+                            Price = 44.99f
+                        },
+                        new
+                        {
+                            ItemId = 6,
+                            CorrespondingGameId = 3,
+                            Description = "A robust helmet that symbolizes the honor of ancient warriors.",
+                            ImagePath = "https://cdn.example.com/valhalla/warrior-helmet.png",
+                            IsListed = true,
+                            ItemName = "Warrior Helmet",
+                            Price = 34.99f
                         });
                 });
 

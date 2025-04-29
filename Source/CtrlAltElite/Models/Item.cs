@@ -118,9 +118,9 @@
 
         private string GetDefaultImagePath(string itemName)
         {
-            string gameFolder = GameFolderResolver.GetFolderName(this.associatedGame.Name);
+            string gameFolder = GameFolderResolver.GetFolderName(this.associatedGame.GameTitle);
             var path = $"{ImageBasePath}{gameFolder}/{this.itemId}.png";
-            Debug.WriteLine($"Generated image path for item {this.itemId} ({itemName}) from {this.associatedGame.Name}: {path}");
+            Debug.WriteLine($"Generated image path for item {this.itemId} ({itemName}) from {this.associatedGame.GameTitle}: {path}");
             return path;
         }
 
