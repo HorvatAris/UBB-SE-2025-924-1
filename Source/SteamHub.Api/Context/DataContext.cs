@@ -2,11 +2,11 @@ namespace SteamHub.Api.Context
 {
     using Entities;
     using Microsoft.EntityFrameworkCore;
-    using Models;
     using SteamHub.Api.Models.Game;
+    using System.Reflection.Emit;
 
     public class DataContext : DbContext
-{
+    {
         private readonly IConfiguration configuration;
 
         public DataContext(DbContextOptions options, IConfiguration configuration) : base(options)
@@ -25,6 +25,8 @@ namespace SteamHub.Api.Context
         public DbSet<PointShopItem> PointShopItems { get; set; }
 
         public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }
+
+        public DbSet<StoreTransaction> StoreTransactions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -186,7 +188,7 @@ namespace SteamHub.Api.Context
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[6].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[7].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[8].TagId }));
-              
+
             var pointShopItemsSeed = new List<PointShopItem>
             {
                 new PointShopItem {
@@ -327,6 +329,43 @@ namespace SteamHub.Api.Context
             };
 
             builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
+
+            builder.Entity<StoreTransaction>()
+                .HasOne(st => st.User)
+                .WithMany(u => u.StoreTransactions)
+                .HasForeignKey(st => st.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<StoreTransaction>()
+                .HasOne(st => st.Game)
+                .WithMany(g => g.StoreTransactions)
+                .HasForeignKey(st => st.GameId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            var storeTransactionsSeed = new List<StoreTransaction>
+            {
+                new StoreTransaction
+                {
+                    StoreTransactionId = 1,
+                    UserId = 1,
+                    GameId = 1,
+                    Date = new DateTime(2025, 4, 27, 14, 30, 0),
+                    Amount = (float)49.99,
+                    WithMoney = true
+                },
+                new StoreTransaction
+                {
+                    StoreTransactionId = 2,
+                    UserId = 2,
+                    GameId = 2,
+                    Date = new DateTime(2025, 4, 27, 14, 30, 0),
+                    Amount = (float)59.99,
+                    WithMoney = false
+                }
+            };
+
+            builder.Entity<StoreTransaction>().HasData(storeTransactionsSeed);
+
         }
     }
 }
