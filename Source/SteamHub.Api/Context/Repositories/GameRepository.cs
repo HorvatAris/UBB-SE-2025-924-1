@@ -1,10 +1,10 @@
-﻿namespace SteamHub.Api.Context.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using SteamHub.Api.Entities;
+using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.Tag;
+using SteamHub.ApiContract.Repositories;
 
-using Entities;
-using Microsoft.EntityFrameworkCore;
-using Models;
-using SteamHub.Api.Models.Game;
-using SteamHub.Api.Models.Tag;
+namespace SteamHub.Api.Context.Repositories;
 
 public class GameRepository : IGameRepository
 {
@@ -60,17 +60,6 @@ public class GameRepository : IGameRepository
         return game == null ? null : MapToGameDetailedResponse(game);
     }
 
-    public async Task<Game?> GetGameEntityByIdAsync(int id)
-    {
-        var game = await context.Games
-            .Include(g => g.Tags)
-            .Include(g => g.Publisher)
-            .Include(g => g.Status)
-            .FirstOrDefaultAsync(g => g.GameId == id);
-
-        return game;
-    }
-
     public Task<List<GameDetailedResponse>> GetGamesAsync(GetGamesRequest parameters)
     {
         IQueryable<Game> query = context.Games;
@@ -111,7 +100,7 @@ public class GameRepository : IGameRepository
         await context.SaveChangesAsync();
     }
 
-    public async Task<GameDetailedResponse> UpdateGameAsync(int id, UpdateGameRequest request)
+    public async Task UpdateGameAsync(int id, UpdateGameRequest request)
     {
         var existingGame = await context.Games
             .Include(g => g.Publisher)
@@ -184,11 +173,26 @@ public class GameRepository : IGameRepository
         }
 
         await SaveChangesAsync();
-
-        return MapToGameDetailedResponse(existingGame);
+    }
+    
+    public async Task PatchGameTagsAsync(int id, PatchGameTagsRequest tags)
+    {
+       
+        if (tags.Type == GameTagsPatchType.Insert)
+        {
+            await InsertGameTag(id, tags.TagIds.ToArray());
+        }
+        else if(tags.Type == GameTagsPatchType.Delete)
+        {
+            await DeleteGameTag(id, tags.TagIds.ToArray());
+        }
+        else
+        {
+            await ReplaceGameTag(id, tags.TagIds.ToArray());
+        }
     }
 
-    public async Task InsertGameTag(int gameId, params int[] tagIds)
+    private async Task InsertGameTag(int gameId, params int[] tagIds)
     {
         var game = await context.Games
             .Include(g => g.Tags)
@@ -211,7 +215,7 @@ public class GameRepository : IGameRepository
         await SaveChangesAsync();
     }
 
-    public async Task DeleteGameTag(int gameId, params int[] tagIds)
+    private async Task DeleteGameTag(int gameId, params int[] tagIds)
     {
         var game = await context.Games
             .Include(g => g.Tags)
@@ -236,6 +240,32 @@ public class GameRepository : IGameRepository
 
         await SaveChangesAsync();
     }
+    
+    private async Task ReplaceGameTag(int gameId, params int[] tagIds)
+    {
+        var game = await this.context.Games
+            .Include(g => g.Tags)
+            .FirstOrDefaultAsync(g => g.GameId == gameId);
+
+        if (game == null)
+        {
+            throw new KeyNotFoundException($"Game with ID {gameId} not found.");
+        }
+
+        var tagIdSet = new HashSet<int>(tagIds);
+
+        var tags = await this.context.Tags.Where(tag => tagIdSet.Contains(tag.TagId)).ToListAsync();
+
+        game.Tags.Clear();
+        foreach (var tag in tags)
+        {
+            game.Tags.Add(tag);
+        }
+
+        await SaveChangesAsync();
+    }
+
+
 
     private static GameDetailedResponse MapToGameDetailedResponse(Game entity)
     {

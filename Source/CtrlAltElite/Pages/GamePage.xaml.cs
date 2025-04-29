@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System.Threading.Tasks;
+
 namespace SteamStore.Pages
 {
     using System;
@@ -26,7 +28,11 @@ namespace SteamStore.Pages
 
     public sealed partial class GamePage : Page
     {
-        public GamePage(IGameService gameService, ICartService cartService, IUserGameService userGameService, Game game = null)
+        public GamePage(
+            IGameService gameService,
+            ICartService cartService,
+            IUserGameService userGameService,
+            Game game = null)
         {
             this.InitializeComponent();
 
@@ -34,25 +40,28 @@ namespace SteamStore.Pages
 
             this.DataContext = this.ViewModel;
 
-            if (game != null)
+            this.Loaded += async (_, __) =>
             {
-                this.ViewModel.LoadGame(game);
-            }
+                if (game != null)
+                {
+                    await this.ViewModel.LoadGame(game);
+                }
+            };
         }
 
         private GamePageViewModel ViewModel { get; }
 
-        protected override void OnNavigatedTo(NavigationEventArgs navigationEventArguments)
+        protected override async void OnNavigatedTo(NavigationEventArgs navigationEventArguments)
         {
             base.OnNavigatedTo(navigationEventArguments);
 
             if (navigationEventArguments.Parameter is Game selectedGame)
             {
-                this.ViewModel.LoadGame(selectedGame);
+                await this.ViewModel.LoadGame(selectedGame);
             }
             else if (navigationEventArguments.Parameter is int gameId)
             {
-                this.ViewModel.LoadGameById(gameId);
+                await this.ViewModel.LoadGameById(gameId);
             }
         }
 
@@ -61,11 +70,15 @@ namespace SteamStore.Pages
             try
             {
                 this.ViewModel.AddToCart();
-                this.ShowNotification(NotificationStrings.AddToCartSuccessTitle, string.Format(NotificationStrings.AddToCartSuccessMessage, this.ViewModel.Game.GameTitle));
+                this.ShowNotification(
+                    NotificationStrings.AddToCartSuccessTitle,
+                    string.Format(NotificationStrings.AddToCartSuccessMessage, this.ViewModel.Game.GameTitle));
             }
             catch (Exception exception)
             {
-                this.ShowNotification(NotificationStrings.AddToCartErrorTitle, $"{NotificationStrings.AddToCartErrorMessage} {exception.Message}");
+                this.ShowNotification(
+                    NotificationStrings.AddToCartErrorTitle,
+                    $"{NotificationStrings.AddToCartErrorMessage} {exception.Message}");
             }
         }
 
@@ -74,7 +87,9 @@ namespace SteamStore.Pages
             try
             {
                 this.ViewModel.AddToWishlist();
-                this.ShowNotification(NotificationStrings.AddToWishlistSuccessTitle, string.Format(NotificationStrings.AddToWishlistSuccessMessage, this.ViewModel.Game.GameTitle));
+                this.ShowNotification(
+                    NotificationStrings.AddToWishlistSuccessTitle,
+                    string.Format(NotificationStrings.AddToWishlistSuccessMessage, this.ViewModel.Game.GameTitle));
             }
             catch (Exception exception)
             {

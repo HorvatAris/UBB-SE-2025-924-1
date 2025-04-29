@@ -1,3 +1,7 @@
+using System.Net.Http;
+using CtrlAltElite.ServiceProxies;
+using Refit;
+
 namespace SteamStore
 {
     using System;
@@ -28,32 +32,45 @@ namespace SteamStore
             // Assign to the class field so it can be used in navigation
             this.user = loggedInUser;
 
-            var dataLink = new DataLink(new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json")
-                .Build());
+            var dataLink = new DataLink(
+                new ConfigurationBuilder()
+                    .SetBasePath(AppContext.BaseDirectory)
+                    .AddJsonFile("appsettings.json")
+                    .Build());
 
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+            };
+
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://localhost:7241")
+            };
+
+            var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
             var tagRepository = new TagRepository(dataLink);
-            var gameRepository = new GameRepository(dataLink);
-            gameService = new GameService { GameRepository = gameRepository, TagRepository = tagRepository };
+            gameService = new GameService { GameServiceProxy = gameServiceProxy, TagRepository = tagRepository };
             cartService = new CartService(new CartRepository(dataLink, loggedInUser));
             var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
             userGameService = new UserGameService
             {
                 UserGameRepository = userGameRepository,
-                GameRepository = gameRepository,
+                GameServiceProxy = gameServiceProxy,
                 TagRepository = tagRepository
             };
             pointShopService = new PointShopService(loggedInUser, dataLink);
 
+            
+
             developerService = new DeveloperService
             {
-                GameRepository = gameRepository,
-                TagRepository = tagRepository, 
+                // GameRepository = gameRepository,
+                TagRepository = tagRepository,
                 UserGameRepository = userGameRepository,
-                User = loggedInUser
+                User = loggedInUser,
+                GameServiceProxy = gameServiceProxy
             };
-
 
             if (ContentFrame == null)
             {

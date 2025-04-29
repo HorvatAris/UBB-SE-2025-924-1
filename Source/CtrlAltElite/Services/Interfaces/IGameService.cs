@@ -14,24 +14,24 @@ namespace SteamStore.Services.Interfaces
 
     public interface IGameService
     {
-        Collection<Game> GetAllGames();
+        Task<Collection<Game>> GetAllGames();
 
         Collection<Tag> GetAllTags();
 
         Collection<Tag> GetAllGameTags(Game game);
 
-        Collection<Game> SearchGames(string search_query);
+        Task<Collection<Game>> SearchGames(string search_query);
 
-        Collection<Game> FilterGames(int minimumRating, int minimumPrice, int maximumPrice, string[] tags);
+        Task<Collection<Game>> FilterGames(int minimumRating, int minimumPrice, int maximumPrice, string[] tags);
 
         void ComputeTrendingScores(Collection<Game> games);
 
-        Collection<Game> GetTrendingGames();
+        Task<Collection<Game>> GetTrendingGames();
 
-        Collection<Game> GetDiscountedGames();
+        Task<Collection<Game>> GetDiscountedGames();
 
-        List<Game> GetSimilarGames(int gameId);
+        Task<List<Game>> GetSimilarGames(int gameId);
 
-        Game GetGameById(int gameId);
+        Task<Game> GetGameById(int gameId);
     }
 }

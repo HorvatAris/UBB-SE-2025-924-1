@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SteamStore.Models;
 using SteamStore.Pages;
@@ -130,26 +131,26 @@ public class GamePageViewModel : INotifyPropertyChanged
         }
     }
 
-    public void LoadGame(Game game)
+    public async Task LoadGame(Game game)
     {
         this.Game = game;
         this.OnPropertyChanged(nameof(this.Game));
-        this.LoadSimilarGames();
+        await this.LoadSimilarGames();
     }
 
-    public void LoadGameById(int gameId)
+    public async Task LoadGameById(int gameId)
     {
         if (this.gameService == null)
         {
             return;
         }
 
-        this.Game = this.gameService.GetGameById(gameId);
+        this.Game = await this.gameService.GetGameById(gameId);
         if (this.Game != null)
         {
             this.OnPropertyChanged(nameof(this.Game)); // Let UI know the Game has changed
 
-            this.LoadSimilarGames();
+            await this.LoadSimilarGames();
         }
     }
 
@@ -260,14 +261,14 @@ public class GamePageViewModel : INotifyPropertyChanged
     }
 
     // Load similar games based on current game
-    private void LoadSimilarGames()
+    private async Task LoadSimilarGames()
     {
         if (this.Game == null || this.gameService == null)
         {
             return;
         }
 
-        var similarGames = this.gameService.GetSimilarGames(this.Game.GameId);
+        var similarGames = await this.gameService.GetSimilarGames(this.Game.GameId);
         this.SimilarGames = new ObservableCollection<Game>(similarGames.Take(MaxSimilarGamesToDisplay));
     }
 
