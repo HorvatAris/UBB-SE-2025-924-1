@@ -229,172 +229,6 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SteamHub.Api.Entities.Item", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemId"));
-
-                    b.Property<int>("CorrespondingGameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsListed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ItemName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.HasKey("ItemId");
-
-                    b.ToTable("Items");
-
-                    b.HasData(
-                        new
-                        {
-                            ItemId = 1,
-                            CorrespondingGameId = 1,
-                            Description = "A sword of legends, imbued with ancient power.",
-                            ImagePath = "https://cdn.example.com/etheria/legendary-sword.png",
-                            IsListed = true,
-                            ItemName = "Legendary Sword",
-                            Price = 59.99f
-                        },
-                        new
-                        {
-                            ItemId = 2,
-                            CorrespondingGameId = 1,
-                            Description = "A shield that blocks both physical and magical attacks.",
-                            ImagePath = "https://cdn.example.com/etheria/mystic-shield.png",
-                            IsListed = true,
-                            ItemName = "Mystic Shield",
-                            Price = 39.99f
-                        },
-                        new
-                        {
-                            ItemId = 3,
-                            CorrespondingGameId = 2,
-                            Description = "A futuristic blade that glows under the neon lights of Nightcity.",
-                            ImagePath = "https://cdn.example.com/cyberstrike/neon-blade.png",
-                            IsListed = true,
-                            ItemName = "Neon Blade",
-                            Price = 49.99f
-                        },
-                        new
-                        {
-                            ItemId = 4,
-                            CorrespondingGameId = 2,
-                            Description = "An advanced module that boosts your hacking abilities in Cyberstrike 2077.",
-                            ImagePath = "https://cdn.example.com/cyberstrike/data-hack.png",
-                            IsListed = true,
-                            ItemName = "Data Hack Module",
-                            Price = 29.99f
-                        },
-                        new
-                        {
-                            ItemId = 5,
-                            CorrespondingGameId = 3,
-                            Description = "A mighty axe forged for the fiercest Viking warriors.",
-                            ImagePath = "https://cdn.example.com/valhalla/viking-axe.png",
-                            IsListed = true,
-                            ItemName = "Viking Axe",
-                            Price = 44.99f
-                        },
-                        new
-                        {
-                            ItemId = 6,
-                            CorrespondingGameId = 3,
-                            Description = "A robust helmet that symbolizes the honor of ancient warriors.",
-                            ImagePath = "https://cdn.example.com/valhalla/warrior-helmet.png",
-                            IsListed = true,
-                            ItemName = "Warrior Helmet",
-                            Price = 34.99f
-                        });
-                });
-
-            modelBuilder.Entity("SteamHub.Api.Entities.ItemTrade", b =>
-                {
-                    b.Property<int>("TradeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TradeId"));
-
-                    b.Property<bool>("AcceptedByDestinationUser")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AcceptedBySourceUser")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("DestinationUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GameOfTradeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SourceUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TradeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TradeDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TradeStatus")
-                        .HasColumnType("int");
-
-                    b.HasKey("TradeId");
-
-                    b.HasIndex("DestinationUserId");
-
-                    b.HasIndex("GameOfTradeId");
-
-                    b.HasIndex("SourceUserId");
-
-                    b.ToTable("ItemTrades");
-
-                    b.HasData(
-                        new
-                        {
-                            TradeId = 1,
-                            AcceptedByDestinationUser = false,
-                            AcceptedBySourceUser = false,
-                            DestinationUserId = 2,
-                            GameOfTradeId = 1,
-                            SourceUserId = 1,
-                            TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
-                            TradeStatus = 0
-                        },
-                        new
-                        {
-                            TradeId = 2,
-                            AcceptedByDestinationUser = false,
-                            AcceptedBySourceUser = true,
-                            DestinationUserId = 4,
-                            GameOfTradeId = 2,
-                            SourceUserId = 3,
-                            TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 2: User3 offers Game2 to User4",
-                            TradeStatus = 0
-                        });
-                });
-
             modelBuilder.Entity("SteamHub.Api.Entities.PointShopItem", b =>
                 {
                     b.Property<int>("PointShopItemId")
@@ -836,6 +670,72 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SteamHub.Api.Entities.UsersGames", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsInCart")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsInWishlist")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPurchased")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("UsersGames");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            GameId = 1,
+                            IsInCart = false,
+                            IsInWishlist = true,
+                            IsPurchased = false
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            GameId = 2,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            GameId = 3,
+                            IsInCart = true,
+                            IsInWishlist = false,
+                            IsPurchased = false
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            GameId = 1,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            GameId = 3,
+                            IsInCart = true,
+                            IsInWishlist = false,
+                            IsPurchased = false
+                        });
+                });
+
             modelBuilder.Entity("GameTag", b =>
                 {
                     b.HasOne("SteamHub.Api.Entities.Game", null)
@@ -870,39 +770,12 @@ namespace SteamHub.Api.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("SteamHub.Api.Entities.ItemTrade", b =>
-                {
-                    b.HasOne("SteamHub.Api.Entities.User", "DestinationUser")
-                        .WithMany()
-                        .HasForeignKey("DestinationUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SteamHub.Api.Entities.Game", "GameOfTrade")
-                        .WithMany()
-                        .HasForeignKey("GameOfTradeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SteamHub.Api.Entities.User", "SourceUser")
-                        .WithMany()
-                        .HasForeignKey("SourceUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("DestinationUser");
-
-                    b.Navigation("GameOfTrade");
-
-                    b.Navigation("SourceUser");
-                });
-
             modelBuilder.Entity("SteamHub.Api.Entities.StoreTransaction", b =>
                 {
                     b.HasOne("SteamHub.Api.Entities.Game", "Game")
                         .WithMany("StoreTransactions")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SteamHub.Api.Entities.User", "User")
@@ -942,6 +815,25 @@ namespace SteamHub.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("PointShopItem");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.UsersGames", b =>
+                {
+                    b.HasOne("SteamHub.Api.Entities.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SteamHub.Api.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Game");
 
                     b.Navigation("User");
                 });
