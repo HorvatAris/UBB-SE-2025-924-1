@@ -192,7 +192,12 @@ namespace SteamHub.Api.Context
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[6].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[7].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[8].TagId }));
-
+            
+            builder.Entity<Item>()
+                .HasOne(i => i.Game)
+                .WithMany(g => g.Items)
+                .HasForeignKey(i => i.CorrespondingGameId);
+            
             var itemsSeed =  new List<Item>
             {
                 // Items for Game 1: Legends of Etheria
