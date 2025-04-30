@@ -395,6 +395,38 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SteamHub.Api.Entities.ItemTradeDetail", b =>
+                {
+                    b.Property<int>("TradeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsSourceUserItem")
+                        .HasColumnType("bit");
+
+                    b.HasKey("TradeId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("ItemTradeDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            TradeId = 1,
+                            ItemId = 1,
+                            IsSourceUserItem = true
+                        },
+                        new
+                        {
+                            TradeId = 2,
+                            ItemId = 2,
+                            IsSourceUserItem = false
+                        });
+                });
+
             modelBuilder.Entity("SteamHub.Api.Entities.PointShopItem", b =>
                 {
                     b.Property<int>("PointShopItemId")
@@ -897,6 +929,25 @@ namespace SteamHub.Api.Migrations
                     b.Navigation("SourceUser");
                 });
 
+            modelBuilder.Entity("SteamHub.Api.Entities.ItemTradeDetail", b =>
+                {
+                    b.HasOne("SteamHub.Api.Entities.Item", "Item")
+                        .WithMany("ItemTradeDetails")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SteamHub.Api.Entities.ItemTrade", "ItemTrade")
+                        .WithMany("ItemTradeDetails")
+                        .HasForeignKey("TradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("ItemTrade");
+                });
+
             modelBuilder.Entity("SteamHub.Api.Entities.StoreTransaction", b =>
                 {
                     b.HasOne("SteamHub.Api.Entities.Game", "Game")
@@ -949,6 +1000,16 @@ namespace SteamHub.Api.Migrations
             modelBuilder.Entity("SteamHub.Api.Entities.Game", b =>
                 {
                     b.Navigation("StoreTransactions");
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.Item", b =>
+                {
+                    b.Navigation("ItemTradeDetails");
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.ItemTrade", b =>
+                {
+                    b.Navigation("ItemTradeDetails");
                 });
 
             modelBuilder.Entity("SteamHub.Api.Entities.PointShopItem", b =>
