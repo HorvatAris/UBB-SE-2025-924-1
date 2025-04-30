@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SteamHub.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class Mainmigration : Migration
+    public partial class MainMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,24 +23,6 @@ namespace SteamHub.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GameStatus", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Items",
-                columns: table => new
-                {
-                    ItemId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CorrespondingGameId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsListed = table.Column<bool>(type: "bit", nullable: false),
-                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Items", x => x.ItemId);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,6 +179,30 @@ namespace SteamHub.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    ItemId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorrespondingGameId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsListed = table.Column<bool>(type: "bit", nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.ItemId);
+                    table.ForeignKey(
+                        name: "FK_Items_Games_CorrespondingGameId",
+                        column: x => x.CorrespondingGameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ItemTrades",
                 columns: table => new
                 {
@@ -252,9 +258,36 @@ namespace SteamHub.Api.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "GameId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StoreTransactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsersGames",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    IsInWishlist = table.Column<bool>(type: "bit", nullable: false),
+                    IsPurchased = table.Column<bool>(type: "bit", nullable: false),
+                    IsInCart = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersGames", x => new { x.UserId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_UsersGames_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UsersGames_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -294,19 +327,6 @@ namespace SteamHub.Api.Migrations
                     { 0, "Pending" },
                     { 1, "Approved" },
                     { 2, "Rejected" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Items",
-                columns: new[] { "ItemId", "CorrespondingGameId", "Description", "ImagePath", "IsListed", "ItemName", "Price" },
-                values: new object[,]
-                {
-                    { 1, 1, "A sword of legends, imbued with ancient power.", "https://cdn.example.com/etheria/legendary-sword.png", true, "Legendary Sword", 59.99f },
-                    { 2, 1, "A shield that blocks both physical and magical attacks.", "https://cdn.example.com/etheria/mystic-shield.png", true, "Mystic Shield", 39.99f },
-                    { 3, 2, "A futuristic blade that glows under the neon lights of Nightcity.", "https://cdn.example.com/cyberstrike/neon-blade.png", true, "Neon Blade", 49.99f },
-                    { 4, 2, "An advanced module that boosts your hacking abilities in Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/data-hack.png", true, "Data Hack Module", 29.99f },
-                    { 5, 3, "A mighty axe forged for the fiercest Viking warriors.", "https://cdn.example.com/valhalla/viking-axe.png", true, "Viking Axe", 44.99f },
-                    { 6, 3, "A robust helmet that symbolizes the honor of ancient warriors.", "https://cdn.example.com/valhalla/warrior-helmet.png", true, "Warrior Helmet", 34.99f }
                 });
 
             migrationBuilder.InsertData(
@@ -419,12 +439,37 @@ namespace SteamHub.Api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Items",
+                columns: new[] { "ItemId", "CorrespondingGameId", "Description", "ImagePath", "IsListed", "ItemName", "Price" },
+                values: new object[,]
+                {
+                    { 1, 1, "A mystical blade imbued with ancient magic from Legends of Etheria.", "https://cdn.example.com/etheria/ethereal-blade.jpg", true, "Ethereal Blade", 29.99f },
+                    { 2, 1, "An enchanted armour that protects the bearer in Legends of Etheria.", "https://cdn.example.com/etheria/mystic-armour.jpg", true, "Mystic Armour", 39.99f },
+                    { 3, 2, "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/gauntlet.jpg", true, "Cybernetic Gauntlet", 34.99f },
+                    { 4, 2, "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/neon-visor.jpg", true, "Neon Visor", 24.99f },
+                    { 5, 3, "A mighty axe for the warriors of Shadow of Valhalla.", "https://cdn.example.com/valhalla/viking-axe.jpg", true, "Viking Axe", 44.99f },
+                    { 6, 3, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://cdn.example.com/valhalla/shield.jpg", true, "Valhalla Shield", 34.99f }
+                });
+
+            migrationBuilder.InsertData(
                 table: "StoreTransactions",
                 columns: new[] { "StoreTransactionId", "Amount", "Date", "GameId", "UserId", "WithMoney" },
                 values: new object[,]
                 {
                     { 1, 49.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 1, 1, true },
                     { 2, 59.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 2, 2, false }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UsersGames",
+                columns: new[] { "GameId", "UserId", "IsInCart", "IsInWishlist", "IsPurchased" },
+                values: new object[,]
+                {
+                    { 1, 1, false, true, false },
+                    { 2, 1, false, false, true },
+                    { 3, 1, true, false, false },
+                    { 1, 2, false, false, true },
+                    { 3, 2, true, false, false }
                 });
 
             migrationBuilder.InsertData(
@@ -450,6 +495,11 @@ namespace SteamHub.Api.Migrations
                 name: "IX_GameTag_TagsTagId",
                 table: "GameTag",
                 column: "TagsTagId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_CorrespondingGameId",
+                table: "Items",
+                column: "CorrespondingGameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemTradeDetails_ItemId",
@@ -490,6 +540,11 @@ namespace SteamHub.Api.Migrations
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersGames_GameId",
+                table: "UsersGames",
+                column: "GameId");
         }
 
         /// <inheritdoc />
@@ -506,6 +561,9 @@ namespace SteamHub.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserPointShopInventories");
+
+            migrationBuilder.DropTable(
+                name: "UsersGames");
 
             migrationBuilder.DropTable(
                 name: "Tags");

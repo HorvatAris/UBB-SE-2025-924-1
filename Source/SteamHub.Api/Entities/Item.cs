@@ -13,5 +13,7 @@
         public string Description { get; set; } = default!;
         public bool IsListed { get; set; }
         public string ImagePath { get; set; } = default!;
+
+        public IList<ItemTradeDetail> ItemTradeDetails { get; set; }
     }
 }

@@ -229,7 +229,6 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
-
             modelBuilder.Entity("SteamHub.Api.Entities.Item", b =>
                 {
                     b.Property<int>("ItemId")
@@ -261,6 +260,8 @@ namespace SteamHub.Api.Migrations
 
                     b.HasKey("ItemId");
 
+                    b.HasIndex("CorrespondingGameId");
+
                     b.ToTable("Items");
 
                     b.HasData(
@@ -268,48 +269,48 @@ namespace SteamHub.Api.Migrations
                         {
                             ItemId = 1,
                             CorrespondingGameId = 1,
-                            Description = "A sword of legends, imbued with ancient power.",
-                            ImagePath = "https://cdn.example.com/etheria/legendary-sword.png",
+                            Description = "A mystical blade imbued with ancient magic from Legends of Etheria.",
+                            ImagePath = "https://cdn.example.com/etheria/ethereal-blade.jpg",
                             IsListed = true,
-                            ItemName = "Legendary Sword",
-                            Price = 59.99f
+                            ItemName = "Ethereal Blade",
+                            Price = 29.99f
                         },
                         new
                         {
                             ItemId = 2,
                             CorrespondingGameId = 1,
-                            Description = "A shield that blocks both physical and magical attacks.",
-                            ImagePath = "https://cdn.example.com/etheria/mystic-shield.png",
+                            Description = "An enchanted armour that protects the bearer in Legends of Etheria.",
+                            ImagePath = "https://cdn.example.com/etheria/mystic-armour.jpg",
                             IsListed = true,
-                            ItemName = "Mystic Shield",
+                            ItemName = "Mystic Armour",
                             Price = 39.99f
                         },
                         new
                         {
                             ItemId = 3,
                             CorrespondingGameId = 2,
-                            Description = "A futuristic blade that glows under the neon lights of Nightcity.",
-                            ImagePath = "https://cdn.example.com/cyberstrike/neon-blade.png",
+                            Description = "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.",
+                            ImagePath = "https://cdn.example.com/cyberstrike/gauntlet.jpg",
                             IsListed = true,
-                            ItemName = "Neon Blade",
-                            Price = 49.99f
+                            ItemName = "Cybernetic Gauntlet",
+                            Price = 34.99f
                         },
                         new
                         {
                             ItemId = 4,
                             CorrespondingGameId = 2,
-                            Description = "An advanced module that boosts your hacking abilities in Cyberstrike 2077.",
-                            ImagePath = "https://cdn.example.com/cyberstrike/data-hack.png",
+                            Description = "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.",
+                            ImagePath = "https://cdn.example.com/cyberstrike/neon-visor.jpg",
                             IsListed = true,
-                            ItemName = "Data Hack Module",
-                            Price = 29.99f
+                            ItemName = "Neon Visor",
+                            Price = 24.99f
                         },
                         new
                         {
                             ItemId = 5,
                             CorrespondingGameId = 3,
-                            Description = "A mighty axe forged for the fiercest Viking warriors.",
-                            ImagePath = "https://cdn.example.com/valhalla/viking-axe.png",
+                            Description = "A mighty axe for the warriors of Shadow of Valhalla.",
+                            ImagePath = "https://cdn.example.com/valhalla/viking-axe.jpg",
                             IsListed = true,
                             ItemName = "Viking Axe",
                             Price = 44.99f
@@ -318,10 +319,10 @@ namespace SteamHub.Api.Migrations
                         {
                             ItemId = 6,
                             CorrespondingGameId = 3,
-                            Description = "A robust helmet that symbolizes the honor of ancient warriors.",
-                            ImagePath = "https://cdn.example.com/valhalla/warrior-helmet.png",
+                            Description = "A robust shield forged for the bravest of fighters in Shadow of Valhalla.",
+                            ImagePath = "https://cdn.example.com/valhalla/shield.jpg",
                             IsListed = true,
-                            ItemName = "Warrior Helmet",
+                            ItemName = "Valhalla Shield",
                             Price = 34.99f
                         });
                 });
@@ -969,6 +970,17 @@ namespace SteamHub.Api.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("SteamHub.Api.Entities.Item", b =>
+                {
+                    b.HasOne("SteamHub.Api.Entities.Game", "Game")
+                        .WithMany("Items")
+                        .HasForeignKey("CorrespondingGameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("SteamHub.Api.Entities.ItemTrade", b =>
                 {
                     b.HasOne("SteamHub.Api.Entities.User", "DestinationUser")
@@ -1085,6 +1097,8 @@ namespace SteamHub.Api.Migrations
 
             modelBuilder.Entity("SteamHub.Api.Entities.Game", b =>
                 {
+                    b.Navigation("Items");
+
                     b.Navigation("StoreTransactions");
                 });
 
