@@ -30,5 +30,8 @@
         public bool AcceptedBySourceUser { get; set; } = false;
 
         public bool AcceptedByDestinationUser { get; set; } = false;
+
+        public IList<ItemTradeDetail> ItemTradeDetails { get; set; }
+
     }
 }

@@ -29,8 +29,10 @@ namespace SteamHub.Api.Context
 
         public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }
 
+        public DbSet<UsersGames> UsersGames { get; set; }
         public DbSet<StoreTransaction> StoreTransactions { get; set; }
         public DbSet<ItemTrade> ItemTrades { get; set; }
+        public DbSet<ItemTradeDetail> ItemTradeDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -410,6 +412,64 @@ namespace SteamHub.Api.Context
 
             builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
 
+            builder.Entity<UsersGames>()
+                .HasOne(ug => ug.User)
+                .WithMany()
+                .HasForeignKey(ug => ug.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UsersGames>()
+               .HasOne(ug => ug.Game)
+               .WithMany()
+               .HasForeignKey(ug => ug.GameId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+           var usersGamesSeed = new List<UsersGames>
+            {
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 1,
+                    IsInWishlist = true,
+                    IsPurchased = false,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 2,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 1,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+            };
+
+            builder.Entity<UsersGames>().HasData(usersGamesSeed);
+
             builder.Entity<StoreTransaction>()
                 .HasOne(st => st.User)
                 .WithMany(u => u.StoreTransactions)
@@ -420,7 +480,7 @@ namespace SteamHub.Api.Context
                 .HasOne(st => st.Game)
                 .WithMany(g => g.StoreTransactions)
                 .HasForeignKey(st => st.GameId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var storeTransactionsSeed = new List<StoreTransaction>
             {
@@ -493,6 +553,31 @@ namespace SteamHub.Api.Context
             };
 
             builder.Entity<ItemTrade>().HasData(itemTradesSeed);
+
+            builder.Entity<ItemTradeDetail>()
+            .HasKey(itd => new { itd.TradeId, itd.ItemId });
+
+            builder.Entity<ItemTradeDetail>()
+                .HasOne(itd => itd.ItemTrade)
+                .WithMany(it => it.ItemTradeDetails)
+                .HasForeignKey(itd => itd.TradeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ItemTradeDetail>()
+                .HasOne(itd => itd.Item)
+                .WithMany(i => i.ItemTradeDetails)
+                .HasForeignKey(itd => itd.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            var itemTradeDetailsSeed = new List<ItemTradeDetail>
+            { 
+                new ItemTradeDetail { TradeId = 1, ItemId = 1, IsSourceUserItem = true },
+               // new ItemTradeDetail { TradeId = 1, ItemId = 1, IsSourceUserItem = false },
+                new ItemTradeDetail { TradeId = 2, ItemId = 2, IsSourceUserItem = false },
+               // new ItemTradeDetail { TradeId = 2, ItemId = 2, IsSourceUserItem = true }
+            };
+
+            builder.Entity<ItemTradeDetail>().HasData(itemTradeDetailsSeed);
         }
     }
 }
