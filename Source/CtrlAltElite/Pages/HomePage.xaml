@@ -21,7 +21,7 @@
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <TextBox x:Name="SearchBox"
                         PlaceholderText="Search for a game"
-                        Text="{Binding Search_filter_text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        TextChanged="SearchBox_TextChanged"
                         Width="300"
                         Height="40"
                         FontSize="16"
