@@ -62,10 +62,8 @@ namespace SteamStore
                 UserGameRepository = userGameRepository,
                 GameServiceProxy = gameServiceProxy,
                 TagServiceProxy = tagServiceProxy,
-            };
-            pointShopService = new PointShopService(loggedInUser, dataLink);
 
-            
+            };
 
             developerService = new DeveloperService
             {
