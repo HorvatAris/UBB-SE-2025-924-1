@@ -7,7 +7,7 @@
 
     public interface IItemRepository
     {
-            Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync(GetItemsRequest request);
+            Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync();
             Task<ItemDetailedResponse?> GetItemByIdAsync(int id);
             Task<ItemDetailedResponse> CreateItemAsync(CreateItemRequest request);
             Task UpdateItemAsync(int id, UpdateItemRequest request);
