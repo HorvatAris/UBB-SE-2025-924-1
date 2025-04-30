@@ -2,7 +2,6 @@
 {
     public class UpdateItemRequest
     {
-        public int ItemId { get; set; }
         public string ItemName { get; set; } = default!;
         public int GameId { get; set; }
         public float Price { get; set; }
