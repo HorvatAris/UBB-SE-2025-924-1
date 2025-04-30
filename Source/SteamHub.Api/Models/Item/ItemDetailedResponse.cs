@@ -1,6 +1,6 @@
 ﻿namespace SteamHub.Api.Models.Item
 {
-    public class UpdateItemRequest
+    public class ItemDetailedResponse
     {
         public int ItemId { get; set; }
         public string ItemName { get; set; } = default!;

@@ -6,149 +6,63 @@
     using SteamHub.Api.Context.Repositories;
     using SteamHub.Api.Entities;
 
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class ItemsController : ControllerBase
     {
-        private readonly IItemRepository _itemRepository;
+        private readonly IItemRepository itemRepository;
 
         public ItemsController(IItemRepository itemRepository)
         {
-            _itemRepository = itemRepository;
+            this.itemRepository = itemRepository;
         }
 
-        // POST: api/items
-        [HttpPost]
-        public async Task<IActionResult> CreateItem([FromBody] CreateItemRequest dto)
+        // GET: api/items?...
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ItemDetailedResponse>>> GetItems([FromQuery] GetItemsRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            // Map request DTO to Item entity.
-            var newItem = new Item
-            {
-                ItemName = dto.ItemName,
-                // Map the provided game id to the CorrespondingGameId property.
-                CorrespondingGameId = dto.GameId,
-                Price = dto.Price,
-                Description = dto.Description,
-                // ImagePath is now a URL that the client provides.
-                ImagePath = dto.ImagePath,
-                IsListed = false // Default value; update as needed.
-            };
-
-            var createdItem = await _itemRepository.AddItemAsync(newItem);
-
-            // Map the entity to a response DTO.
-            var response = new ItemResponse
-            {
-                ItemId = createdItem.ItemId,
-                ItemName = createdItem.ItemName,
-                GameId = createdItem.CorrespondingGameId,
-                Price = createdItem.Price,
-                Description = createdItem.Description,
-                IsListed = createdItem.IsListed,
-                ImagePath = createdItem.ImagePath
-            };
-
-            return CreatedAtAction(nameof(GetItem), new { id = response.ItemId }, response);
+            var items = await this.itemRepository.GetItemsAsync(request);
+            return Ok(items);
         }
 
         // GET: api/items/{id}
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetItem(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ItemDetailedResponse>> GetItemById([FromRoute] int id)
         {
-            var item = await _itemRepository.GetItemAsync(id);
+            var item = await this.itemRepository.GetItemByIdAsync(id);
             if (item == null)
             {
                 return NotFound();
             }
-
-            var response = new ItemResponse
-            {
-                ItemId = item.ItemId,
-                ItemName = item.ItemName,
-                GameId = item.CorrespondingGameId,
-                Price = item.Price,
-                Description = item.Description,
-                IsListed = item.IsListed,
-                ImagePath = item.ImagePath
-            };
-
-            return Ok(response);
+            return Ok(item);
         }
 
-        // GET: api/items
-        [HttpGet]
-        public async Task<IActionResult> GetAllItems()
+        // POST: api/items
+        [HttpPost]
+        public async Task<IActionResult> CreateItem([FromBody] CreateItemRequest request)
         {
-            var items = await _itemRepository.GetAllItemsAsync();
-            var response = items.Select(item => new ItemResponse
-            {
-                ItemId = item.ItemId,
-                ItemName = item.ItemName,
-                GameId = item.CorrespondingGameId,
-                Price = item.Price,
-                Description = item.Description,
-                IsListed = item.IsListed,
-                ImagePath = item.ImagePath
-            }).ToList();
-
-            return Ok(response);
+            var createdItem = await this.itemRepository.CreateItemAsync(request);
+            return CreatedAtAction(nameof(GetItemById), new { id = createdItem.ItemId }, createdItem);
         }
 
-        // PUT: api/items/{id}
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateItem(int id, [FromBody] UpdateItemRequestDto dto)
+        // PATCH: api/items/{id}
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateItem([FromRoute] int id, [FromBody] UpdateItemRequest request)
         {
-            if (id != dto.ItemId)
-            {
-                return BadRequest("Item id mismatch.");
-            }
-
-            var existingItem = await _itemRepository.GetItemAsync(id);
-            if (existingItem == null)
-            {
-                return NotFound();
-            }
-
-            // Update entity with the new values from the request.
-            existingItem.ItemName = dto.ItemName;
-            existingItem.CorrespondingGameId = dto.GameId;
-            existingItem.Price = dto.Price;
-            existingItem.Description = dto.Description;
-            existingItem.IsListed = dto.IsListed;
-            existingItem.ImagePath = dto.ImagePath;
-
-            var updatedItem = await _itemRepository.UpdateItemAsync(existingItem);
-
-            var response = new ItemResponse
-            {
-                ItemId = updatedItem.ItemId,
-                ItemName = updatedItem.ItemName,
-                GameId = updatedItem.CorrespondingGameId,
-                Price = updatedItem.Price,
-                Description = updatedItem.Description,
-                IsListed = updatedItem.IsListed,
-                ImagePath = updatedItem.ImagePath
-            };
-
-            return Ok(response);
+            await this.itemRepository.UpdateItemAsync(id, request);
+            return NoContent();
         }
 
         // DELETE: api/items/{id}
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteItem(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteItem([FromRoute] int id)
         {
-            var existingItem = await _itemRepository.GetItemAsync(id);
-            if (existingItem == null)
+            var item = await this.itemRepository.GetItemByIdAsync(id);
+            if (item == null)
             {
                 return NotFound();
             }
-
-            await _itemRepository.DeleteItemAsync(existingItem);
+            await this.itemRepository.DeleteItemAsync(id);
             return NoContent();
         }
     }

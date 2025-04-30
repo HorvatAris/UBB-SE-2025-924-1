@@ -195,67 +195,70 @@ namespace SteamHub.Api.Context
 
             var itemsSeed =  new List<Item>
             {
+                // Items for Game 1: Legends of Etheria
                 new Item
                 {
                     ItemId = 1,
-                    ItemName = "Legendary Sword",
+                    ItemName = "Ethereal Blade",
                     CorrespondingGameId = 1,
-                    Price = 59.99f,
-                    Description = "A sword of legends, imbued with ancient power.",
+                    Price = 29.99f,
+                    Description = "A mystical blade imbued with ancient magic from Legends of Etheria.",
                     IsListed = true,
-                    ImagePath = "https://cdn.example.com/etheria/legendary-sword.png"
+                    ImagePath = "https://cdn.example.com/etheria/ethereal-blade.jpg"
                 },
                 new Item
                 {
                     ItemId = 2,
-                    ItemName = "Mystic Shield",
+                    ItemName = "Mystic Armour",
                     CorrespondingGameId = 1,
                     Price = 39.99f,
-                    Description = "A shield that blocks both physical and magical attacks.",
+                    Description = "An enchanted armour that protects the bearer in Legends of Etheria.",
                     IsListed = true,
-                    ImagePath = "https://cdn.example.com/etheria/mystic-shield.png"
+                    ImagePath = "https://cdn.example.com/etheria/mystic-armour.jpg"
                 },
 
+                // Items for Game 2: Cyberstrike 2077
                 new Item
                 {
                     ItemId = 3,
-                    ItemName = "Neon Blade",
+                    ItemName = "Cybernetic Gauntlet",
                     CorrespondingGameId = 2,
-                    Price = 49.99f,
-                    Description = "A futuristic blade that glows under the neon lights of Nightcity.",
+                    Price = 34.99f,
+                    Description = "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.",
                     IsListed = true,
-                    ImagePath = "https://cdn.example.com/cyberstrike/neon-blade.png"
+                    ImagePath = "https://cdn.example.com/cyberstrike/gauntlet.jpg"
                 },
                 new Item
                 {
                     ItemId = 4,
-                    ItemName = "Data Hack Module",
+                    ItemName = "Neon Visor",
                     CorrespondingGameId = 2,
-                    Price = 29.99f,
-                    Description = "An advanced module that boosts your hacking abilities in Cyberstrike 2077.",
+                    Price = 24.99f,
+                    Description = "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.",
                     IsListed = true,
-                    ImagePath = "https://cdn.example.com/cyberstrike/data-hack.png"
+                    ImagePath = "https://cdn.example.com/cyberstrike/neon-visor.jpg"
                 },
 
+                // Items for Game 3: Shadow of Valhalla
                 new Item
                 {
                     ItemId = 5,
                     ItemName = "Viking Axe",
                     CorrespondingGameId = 3,
                     Price = 44.99f,
-                    Description = "A mighty axe forged for the fiercest Viking warriors.",
+                    Description = "A mighty axe for the warriors of Shadow of Valhalla.",
                     IsListed = true,
-                    ImagePath = "https://cdn.example.com/valhalla/viking-axe.png"
+                    ImagePath = "https://cdn.example.com/valhalla/viking-axe.jpg"
                 },
                 new Item
                 {
                     ItemId = 6,
-                    ItemName = "Warrior Helmet",
+                    ItemName = "Valhalla Shield",
                     CorrespondingGameId = 3,
                     Price = 34.99f,
-                    Description = "A robust helmet that symbolizes the honor of ancient warriors.",
+                    Description = "A robust shield forged for the bravest of fighters in Shadow of Valhalla.",
                     IsListed = true,
-                    ImagePath = "https://cdn.example.com/valhalla/warrior-helmet.png"
+                    ImagePath = "https://cdn.example.com/valhalla/shield.jpg"
                 }
             };
             builder.Entity<Item>().HasData(itemsSeed);
