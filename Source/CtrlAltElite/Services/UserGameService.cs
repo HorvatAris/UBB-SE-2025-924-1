@@ -185,11 +185,20 @@ public class UserGameService : IUserGameService
     {
         var games = await this.GameServiceProxy.GetGamesAsync(
             new GetGamesRequest());
+   
         var allGames = new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
-        this.ComputeTrendingScores(allGames);
-        this.ComputeTagScoreForGames(allGames);
+        var approvedGames = new Collection<Game>();
+        foreach (var game in allGames)
+        {
+            if (game.Status == "Approved")
+            {
+                approvedGames.Add(game);
+            }
+        }
+        this.ComputeTrendingScores(approvedGames);
+        this.ComputeTagScoreForGames(approvedGames);
         
-        List<Game> sortedGames = new List<Game>(allGames);
+        List<Game> sortedGames = new List<Game>(approvedGames);
 
         // Manual sorting based on weighted score
         for (int currentIndex = StartingIndexValue; currentIndex < sortedGames.Count - 1; currentIndex++)

@@ -47,13 +47,13 @@ namespace SteamStore
             {
                 BaseAddress = new Uri("https://localhost:7241")
             };
-
+            var pointShopRepository = new PointShopRepository(loggedInUser,dataLink);
+            this.pointShopService = new PointShopService(pointShopRepository);
             var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
-            var tagRepository = new TagRepository(dataLink);
+           // var tagRepository = new TagRepository(dataLink);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
 
-            gameService = new GameService { GameServiceProxy = gameServiceProxy, TagRepository = tagServiceProxy };
-
+            gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
             cartService = new CartService(new CartRepository(dataLink, loggedInUser));
             var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
@@ -68,10 +68,11 @@ namespace SteamStore
             developerService = new DeveloperService
             {
                 // GameRepository = gameRepository,
-                TagRepository = tagRepository,
+                //TagRepository = tagRepository,
+                TagServiceProxy = tagServiceProxy,
                 UserGameRepository = userGameRepository,
                 User = loggedInUser,
-                GameServiceProxy = gameServiceProxy
+                GameServiceProxy = gameServiceProxy,
             };
 
             if (ContentFrame == null)

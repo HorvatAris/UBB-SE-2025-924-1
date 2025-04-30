@@ -18,6 +18,8 @@ namespace SteamStore.Services.Interfaces
 
         Task<Collection<Tag>> GetAllTags();
 
+        Task<Collection<Game>> GetAllApprovedGames();
+
         Task<Collection<Tag>> GetAllGameTags(Game game);
 
         Task<Collection<Game>> SearchGames(string search_query);

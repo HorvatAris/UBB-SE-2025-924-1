@@ -33,6 +33,7 @@ public class HomePageViewModel : INotifyPropertyChanged
         this.RecommendedGames = new ObservableCollection<Game>();
         this.DiscountedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
+
     }
 
     public async Task InitAsync()
@@ -77,7 +78,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     {
         this.SearchedOrFilteredGames.Clear();
         this.Search_filter_text = HomePageConstants.ALLGAMESFILTER;
-        var games = await this.gameService.GetAllGames();
+        var games = await this.gameService.GetAllApprovedGames();
         foreach (var game in games)
         {
             this.SearchedOrFilteredGames.Add(game);

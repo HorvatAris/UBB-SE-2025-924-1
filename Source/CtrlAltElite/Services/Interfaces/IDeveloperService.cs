@@ -55,7 +55,7 @@ namespace SteamStore.Services.Interfaces
 
         Task InsertGameTag(int gameId, int tagId);
 
-        Collection<Tag> GetAllTags();
+        Task<Collection<Tag>> GetAllTags();
 
         Task<bool> IsGameIdInUse(int gameId);
 
