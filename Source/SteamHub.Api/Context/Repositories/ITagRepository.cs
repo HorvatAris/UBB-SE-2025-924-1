@@ -1,4 +1,4 @@
-﻿using SteamHub.Api.Models.Tag;
+﻿using SteamHub.ApiContract.Models.Tag;
 
 namespace SteamHub.Api.Context.Repositories;
 

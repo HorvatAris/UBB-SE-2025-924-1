@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SteamHub.Api.Context.Repositories;
-using SteamHub.Api.Models.Tag;
-
+using SteamHub.ApiContract.Models.Tag;
 namespace SteamHub.Api.Controllers;
 
 [ApiController]

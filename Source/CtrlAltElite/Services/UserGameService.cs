@@ -37,7 +37,8 @@ public class UserGameService : IUserGameService
 
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    public ITagRepository TagRepository { get; set; }
+    //public ITagRepository TagRepository { get; set; }
+    public ITagServiceProxy TagServiceProxy { get; set; }
 
     // Property to track points earned in the last purchase
     public int LastEarnedPoints { get; private set; }
@@ -123,9 +124,10 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public Collection<Tag> GetFavoriteUserTags()
+    public async Task<Collection<Tag>> GetFavoriteUserTags()
     {
-        var allTags = this.TagRepository.GetAllTags();
+        var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+        var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
         this.ComputeNoOfUserGamesForEachTag(allTags);
 
         List<Tag> sortedTags = new List<Tag>(allTags);
@@ -152,9 +154,9 @@ public class UserGameService : IUserGameService
         return new Collection<Tag>(topTags);
     }
 
-    public void ComputeTagScoreForGames(Collection<Game> games)
+    public async void ComputeTagScoreForGames(Collection<Game> games)
     {
-        var favorite_tags = this.GetFavoriteUserTags();
+        var favorite_tags = await this.GetFavoriteUserTags();
         foreach (var game in games)
         {
             game.TagScore = InitialTagScore;

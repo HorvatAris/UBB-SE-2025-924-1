@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 using CtrlAltElite.ServiceProxies;
 using CtrlAltElite.Services;
 using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.Tag;
 using SteamStore.Models;
 using SteamStore.Repositories;
 using SteamStore.Services.Interfaces;
+
 
 namespace SteamStore.Services;
 
@@ -30,7 +32,8 @@ public class GameService : IGameService
 
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    public ITagRepository TagRepository { get; set; }
+   //public ITagRepository TagRepository { get; set; }
+    public ITagServiceProxy TagRepository { get; set; }
 
     public async Task<Collection<Game>> GetAllGames()
     {
@@ -38,14 +41,31 @@ public class GameService : IGameService
         return new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
     }
 
-    public Collection<Tag> GetAllTags()
+    public async Task<Collection<Tag>> GetAllTags()
     {
-        return this.TagRepository.GetAllTags();
+        try
+        {
+            var tagsResponse = await this.TagRepository.GetAllTagsAsync();
+            return new Collection<Tag>(
+                        tagsResponse.Tags.Select(TagMapper.MapToTag).ToList()
+                    );
+        }
+        catch (Refit.ApiException ex)
+        {
+            string rawContent = ex.Content; // Removed ReadAsStringAsync as 'Content' is already a string
+            Console.WriteLine("Raw API Response:");
+            Console.WriteLine(rawContent);
+            throw; // rethrow the exception or handle it appropriately
+        }
     }
 
-    public Collection<Tag> GetAllGameTags(Game game)
+
+
+    public async Task<Collection<Tag>> GetAllGameTags(Game game)
     {
-        var allTags = this.TagRepository.GetAllTags();
+        var tagsResponse = await this.TagRepository.GetAllTagsAsync();
+        var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
+        // Extract the result from the task
         var tagsForCurrentGame = new List<Tag>();
 
         foreach (var tag in allTags)

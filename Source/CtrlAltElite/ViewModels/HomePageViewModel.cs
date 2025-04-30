@@ -41,7 +41,7 @@ public class HomePageViewModel : INotifyPropertyChanged
         await this.LoadTrendingGames();
         await this.LoadRecommendedGames();
         await this.LoadDiscountedGames();
-        this.LoadTags();
+        await this.LoadTags();
 
     }
 
@@ -150,9 +150,10 @@ public class HomePageViewModel : INotifyPropertyChanged
         }
     }
 
-    private void LoadTags()
+    private async Task LoadTags()
     {
-        var tagsList = this.gameService.GetAllTags();
+        var tagsList = await this.gameService.GetAllTags();
+        System.Diagnostics.Debug.WriteLine("$TAGS" + tagsList);
         foreach (var tag in tagsList)
         {
             this.Tags.Add(tag);

@@ -223,7 +223,7 @@ public class GamePageViewModel : INotifyPropertyChanged
         }
     }
 
-    private void UpdateGameTags()
+    private async void UpdateGameTags()
     {
         if (this.Game == null || this.gameService == null)
         {
@@ -233,7 +233,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
         try
         {
-            var allTags = this.gameService.GetAllGameTags(this.Game);
+            var allTags = await this.gameService.GetAllGameTags(this.Game);
             this.GameTags.Clear();
             foreach (var tag in allTags)
             {

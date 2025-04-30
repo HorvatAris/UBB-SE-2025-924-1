@@ -14,7 +14,7 @@ builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<SteamHub.Api.Context.Repositories.ITagRepository, TagRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepository>();
 builder.Services.AddScoped<IStoreTransactionRepository, StoreTransactionRepository>();
