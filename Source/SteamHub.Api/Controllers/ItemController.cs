@@ -19,9 +19,9 @@
 
         // GET: api/items?...
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ItemDetailedResponse>>> GetItems([FromQuery] GetItemsRequest request)
+        public async Task<ActionResult<IEnumerable<ItemDetailedResponse>>> GetItems()
         {
-            var items = await this.itemRepository.GetItemsAsync(request);
+            var items = await this.itemRepository.GetItemsAsync();
             return Ok(items);
         }
 
@@ -45,8 +45,8 @@
             return CreatedAtAction(nameof(GetItemById), new { id = createdItem.ItemId }, createdItem);
         }
 
-        // PATCH: api/items/{id}
-        [HttpPatch("{id}")]
+        // PUT: api/items/{id}
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateItem([FromRoute] int id, [FromBody] UpdateItemRequest request)
         {
             await this.itemRepository.UpdateItemAsync(id, request);
