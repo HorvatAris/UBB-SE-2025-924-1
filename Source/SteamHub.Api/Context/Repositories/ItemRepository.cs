@@ -15,7 +15,7 @@
             _context = context;
         }
 
-        public async Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync(GetItemsRequest request)
+        public async Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync()
         {
             // Optionally apply filtering from the request parameter.
             var query = _context.Items.AsQueryable();
