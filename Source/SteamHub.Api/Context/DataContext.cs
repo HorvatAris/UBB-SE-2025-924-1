@@ -2,8 +2,10 @@ namespace SteamHub.Api.Context
 {
     using Entities;
     using Microsoft.EntityFrameworkCore;
-    using SteamHub.Api.Models.Game;
+    using Models;
+    using SteamHub.ApiContract.Models.Game;
     using System.Reflection.Emit;
+
 
     public class DataContext : DbContext
     {
@@ -22,11 +24,15 @@ namespace SteamHub.Api.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
+        public DbSet<Item> Items { get; set; }
         public DbSet<PointShopItem> PointShopItems { get; set; }
 
         public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }
 
+        public DbSet<UsersGames> UsersGames { get; set; }
         public DbSet<StoreTransaction> StoreTransactions { get; set; }
+        public DbSet<ItemTrade> ItemTrades { get; set; }
+        public DbSet<ItemTradeDetail> ItemTradeDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -188,7 +194,83 @@ namespace SteamHub.Api.Context
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[6].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[7].TagId },
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[8].TagId }));
+            
+            builder.Entity<Item>()
+                .HasOne(i => i.Game)
+                .WithMany(g => g.Items)
+                .HasForeignKey(i => i.CorrespondingGameId);
+            
+            var itemsSeed =  new List<Item>
+            {
+                // Items for Game 1: Legends of Etheria
+                new Item
+                {
+                    ItemId = 1,
+                    ItemName = "Ethereal Blade",
+                    CorrespondingGameId = 1,
+                    Price = 29.99f,
+                    Description = "A mystical blade imbued with ancient magic from Legends of Etheria.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/etheria/ethereal-blade.jpg"
+                },
+                new Item
+                {
+                    ItemId = 2,
+                    ItemName = "Mystic Armour",
+                    CorrespondingGameId = 1,
+                    Price = 39.99f,
+                    Description = "An enchanted armour that protects the bearer in Legends of Etheria.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/etheria/mystic-armour.jpg"
+                },
 
+                // Items for Game 2: Cyberstrike 2077
+                new Item
+                {
+                    ItemId = 3,
+                    ItemName = "Cybernetic Gauntlet",
+                    CorrespondingGameId = 2,
+                    Price = 34.99f,
+                    Description = "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/cyberstrike/gauntlet.jpg"
+                },
+                new Item
+                {
+                    ItemId = 4,
+                    ItemName = "Neon Visor",
+                    CorrespondingGameId = 2,
+                    Price = 24.99f,
+                    Description = "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/cyberstrike/neon-visor.jpg"
+                },
+
+                // Items for Game 3: Shadow of Valhalla
+                new Item
+                {
+                    ItemId = 5,
+                    ItemName = "Viking Axe",
+                    CorrespondingGameId = 3,
+                    Price = 44.99f,
+                    Description = "A mighty axe for the warriors of Shadow of Valhalla.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/valhalla/viking-axe.jpg"
+                },
+                new Item
+                {
+                    ItemId = 6,
+                    ItemName = "Valhalla Shield",
+                    CorrespondingGameId = 3,
+                    Price = 34.99f,
+                    Description = "A robust shield forged for the bravest of fighters in Shadow of Valhalla.",
+                    IsListed = true,
+                    ImagePath = "https://cdn.example.com/valhalla/shield.jpg"
+                }
+            };
+            builder.Entity<Item>().HasData(itemsSeed);
+
+              
             var pointShopItemsSeed = new List<PointShopItem>
             {
                 new PointShopItem {
@@ -330,6 +412,64 @@ namespace SteamHub.Api.Context
 
             builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
 
+            builder.Entity<UsersGames>()
+                .HasOne(ug => ug.User)
+                .WithMany()
+                .HasForeignKey(ug => ug.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UsersGames>()
+               .HasOne(ug => ug.Game)
+               .WithMany()
+               .HasForeignKey(ug => ug.GameId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+           var usersGamesSeed = new List<UsersGames>
+            {
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 1,
+                    IsInWishlist = true,
+                    IsPurchased = false,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 2,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 1,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+            };
+
+            builder.Entity<UsersGames>().HasData(usersGamesSeed);
+
             builder.Entity<StoreTransaction>()
                 .HasOne(st => st.User)
                 .WithMany(u => u.StoreTransactions)
@@ -340,7 +480,7 @@ namespace SteamHub.Api.Context
                 .HasOne(st => st.Game)
                 .WithMany(g => g.StoreTransactions)
                 .HasForeignKey(st => st.GameId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var storeTransactionsSeed = new List<StoreTransaction>
             {
@@ -366,6 +506,78 @@ namespace SteamHub.Api.Context
 
             builder.Entity<StoreTransaction>().HasData(storeTransactionsSeed);
 
+            builder.Entity<ItemTrade>()
+                .HasOne(it => it.SourceUser)
+                .WithMany()
+                .HasForeignKey(it => it.SourceUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<ItemTrade>()
+                .HasOne(it => it.DestinationUser)
+                .WithMany()
+                .HasForeignKey(it => it.DestinationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<ItemTrade>()
+                .HasOne(it => it.GameOfTrade)
+                .WithMany()
+                .HasForeignKey(it => it.GameOfTradeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            var itemTradesSeed = new List<ItemTrade>
+            {
+                new ItemTrade
+                {
+                    TradeId = 1,
+                    SourceUserId = 1,
+                    DestinationUserId = 2,
+                    GameOfTradeId = 1,
+                    TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                    TradeDate = new DateTime(2025, 4, 28),
+                    TradeStatus = TradeStatusEnum.Pending,
+                    AcceptedBySourceUser = false,
+                    AcceptedByDestinationUser = false
+                },
+                new ItemTrade
+                {
+                    TradeId = 2,
+                    SourceUserId = 3,
+                    DestinationUserId = 4,
+                    GameOfTradeId = 2,
+                    TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                    TradeDate = new DateTime(2025, 4, 28),
+                    TradeStatus = TradeStatusEnum.Pending,
+                    AcceptedBySourceUser = true,
+                    AcceptedByDestinationUser = false
+                }
+            };
+
+            builder.Entity<ItemTrade>().HasData(itemTradesSeed);
+
+            builder.Entity<ItemTradeDetail>()
+            .HasKey(itd => new { itd.TradeId, itd.ItemId });
+
+            builder.Entity<ItemTradeDetail>()
+                .HasOne(itd => itd.ItemTrade)
+                .WithMany(it => it.ItemTradeDetails)
+                .HasForeignKey(itd => itd.TradeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ItemTradeDetail>()
+                .HasOne(itd => itd.Item)
+                .WithMany(i => i.ItemTradeDetails)
+                .HasForeignKey(itd => itd.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            var itemTradeDetailsSeed = new List<ItemTradeDetail>
+            { 
+                new ItemTradeDetail { TradeId = 1, ItemId = 1, IsSourceUserItem = true },
+               // new ItemTradeDetail { TradeId = 1, ItemId = 1, IsSourceUserItem = false },
+                new ItemTradeDetail { TradeId = 2, ItemId = 2, IsSourceUserItem = false },
+               // new ItemTradeDetail { TradeId = 2, ItemId = 2, IsSourceUserItem = true }
+            };
+
+            builder.Entity<ItemTradeDetail>().HasData(itemTradeDetailsSeed);
         }
     }
 }

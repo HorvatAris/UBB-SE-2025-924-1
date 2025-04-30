@@ -178,6 +178,147 @@ namespace SteamHub.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    ItemId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorrespondingGameId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsListed = table.Column<bool>(type: "bit", nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.ItemId);
+                    table.ForeignKey(
+                        name: "FK_Items_Games_CorrespondingGameId",
+                        column: x => x.CorrespondingGameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemTrades",
+                columns: table => new
+                {
+                    TradeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SourceUserId = table.Column<int>(type: "int", nullable: false),
+                    DestinationUserId = table.Column<int>(type: "int", nullable: false),
+                    GameOfTradeId = table.Column<int>(type: "int", nullable: false),
+                    TradeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TradeDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TradeStatus = table.Column<int>(type: "int", nullable: false),
+                    AcceptedBySourceUser = table.Column<bool>(type: "bit", nullable: false),
+                    AcceptedByDestinationUser = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemTrades", x => x.TradeId);
+                    table.ForeignKey(
+                        name: "FK_ItemTrades_Games_GameOfTradeId",
+                        column: x => x.GameOfTradeId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ItemTrades_Users_DestinationUserId",
+                        column: x => x.DestinationUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_ItemTrades_Users_SourceUserId",
+                        column: x => x.SourceUserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoreTransactions",
+                columns: table => new
+                {
+                    StoreTransactionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<float>(type: "real", nullable: false),
+                    WithMoney = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoreTransactions", x => x.StoreTransactionId);
+                    table.ForeignKey(
+                        name: "FK_StoreTransactions_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoreTransactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsersGames",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    IsInWishlist = table.Column<bool>(type: "bit", nullable: false),
+                    IsPurchased = table.Column<bool>(type: "bit", nullable: false),
+                    IsInCart = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersGames", x => new { x.UserId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_UsersGames_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UsersGames_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemTradeDetails",
+                columns: table => new
+                {
+                    TradeId = table.Column<int>(type: "int", nullable: false),
+                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    IsSourceUserItem = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemTradeDetails", x => new { x.TradeId, x.ItemId });
+                    table.ForeignKey(
+                        name: "FK_ItemTradeDetails_ItemTrades_TradeId",
+                        column: x => x.TradeId,
+                        principalTable: "ItemTrades",
+                        principalColumn: "TradeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ItemTradeDetails_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
+                        principalColumn: "ItemId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "GameStatus",
                 columns: new[] { "Id", "Name" },
@@ -288,6 +429,58 @@ namespace SteamHub.Api.Migrations
                     { 3, 9 }
                 });
 
+            migrationBuilder.InsertData(
+                table: "ItemTrades",
+                columns: new[] { "TradeId", "AcceptedByDestinationUser", "AcceptedBySourceUser", "DestinationUserId", "GameOfTradeId", "SourceUserId", "TradeDate", "TradeDescription", "TradeStatus" },
+                values: new object[,]
+                {
+                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 0 },
+                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: User3 offers Game2 to User4", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Items",
+                columns: new[] { "ItemId", "CorrespondingGameId", "Description", "ImagePath", "IsListed", "ItemName", "Price" },
+                values: new object[,]
+                {
+                    { 1, 1, "A mystical blade imbued with ancient magic from Legends of Etheria.", "https://cdn.example.com/etheria/ethereal-blade.jpg", true, "Ethereal Blade", 29.99f },
+                    { 2, 1, "An enchanted armour that protects the bearer in Legends of Etheria.", "https://cdn.example.com/etheria/mystic-armour.jpg", true, "Mystic Armour", 39.99f },
+                    { 3, 2, "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/gauntlet.jpg", true, "Cybernetic Gauntlet", 34.99f },
+                    { 4, 2, "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/neon-visor.jpg", true, "Neon Visor", 24.99f },
+                    { 5, 3, "A mighty axe for the warriors of Shadow of Valhalla.", "https://cdn.example.com/valhalla/viking-axe.jpg", true, "Viking Axe", 44.99f },
+                    { 6, 3, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://cdn.example.com/valhalla/shield.jpg", true, "Valhalla Shield", 34.99f }
+                });
+
+            migrationBuilder.InsertData(
+                table: "StoreTransactions",
+                columns: new[] { "StoreTransactionId", "Amount", "Date", "GameId", "UserId", "WithMoney" },
+                values: new object[,]
+                {
+                    { 1, 49.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 1, 1, true },
+                    { 2, 59.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 2, 2, false }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UsersGames",
+                columns: new[] { "GameId", "UserId", "IsInCart", "IsInWishlist", "IsPurchased" },
+                values: new object[,]
+                {
+                    { 1, 1, false, true, false },
+                    { 2, 1, false, false, true },
+                    { 3, 1, true, false, false },
+                    { 1, 2, false, false, true },
+                    { 3, 2, true, false, false }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ItemTradeDetails",
+                columns: new[] { "ItemId", "TradeId", "IsSourceUserItem" },
+                values: new object[,]
+                {
+                    { 1, 1, true },
+                    { 2, 2, false }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Games_PublisherUserId",
                 table: "Games",
@@ -304,6 +497,41 @@ namespace SteamHub.Api.Migrations
                 column: "TagsTagId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Items_CorrespondingGameId",
+                table: "Items",
+                column: "CorrespondingGameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTradeDetails_ItemId",
+                table: "ItemTradeDetails",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTrades_DestinationUserId",
+                table: "ItemTrades",
+                column: "DestinationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTrades_GameOfTradeId",
+                table: "ItemTrades",
+                column: "GameOfTradeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTrades_SourceUserId",
+                table: "ItemTrades",
+                column: "SourceUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoreTransactions_GameId",
+                table: "StoreTransactions",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoreTransactions_UserId",
+                table: "StoreTransactions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserPointShopInventories_PointShopItemId",
                 table: "UserPointShopInventories",
                 column: "PointShopItemId");
@@ -312,6 +540,11 @@ namespace SteamHub.Api.Migrations
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersGames_GameId",
+                table: "UsersGames",
+                column: "GameId");
         }
 
         /// <inheritdoc />
@@ -321,16 +554,31 @@ namespace SteamHub.Api.Migrations
                 name: "GameTag");
 
             migrationBuilder.DropTable(
+                name: "ItemTradeDetails");
+
+            migrationBuilder.DropTable(
+                name: "StoreTransactions");
+
+            migrationBuilder.DropTable(
                 name: "UserPointShopInventories");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "UsersGames");
 
             migrationBuilder.DropTable(
                 name: "Tags");
 
             migrationBuilder.DropTable(
+                name: "ItemTrades");
+
+            migrationBuilder.DropTable(
+                name: "Items");
+
+            migrationBuilder.DropTable(
                 name: "PointShopItems");
+
+            migrationBuilder.DropTable(
+                name: "Games");
 
             migrationBuilder.DropTable(
                 name: "GameStatus");

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 using SteamStore.Constants;
@@ -39,11 +40,14 @@ public class HomePageViewModel : INotifyPropertyChanged
         this.DiscountedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
         this.selectedTags = new ObservableCollection<string>(); 
-        
-        this.LoadAllGames();
-        this.LoadTrendingGames();
-        this.LoadRecommendedGames();
-        this.LoadDiscountedGames();
+    }
+
+    public async Task InitAsync()
+    {
+        await this.LoadAllGames();
+        await this.LoadTrendingGames();
+        await this.LoadRecommendedGames();
+        await this.LoadDiscountedGames();
         this.LoadTags();
     }
 
@@ -112,21 +116,21 @@ public class HomePageViewModel : INotifyPropertyChanged
         }
     }
 
-    public void LoadAllGames()
+    public async Task LoadAllGames()
     {
         this.SearchedOrFilteredGames.Clear();
         this.Search_filter_text = HomePageConstants.ALLGAMESFILTER;
-        var games = this.gameService.GetAllGames();
+        var games = await this.gameService.GetAllGames();
         foreach (var game in games)
         {
             this.SearchedOrFilteredGames.Add(game);
         }
     }
 
-    public void SearchGames(string search_query)
+    public async Task SearchGames(string search_query)
     {
         this.SearchedOrFilteredGames.Clear();
-        var filteredGames = this.gameService.SearchGames(search_query);
+        var filteredGames = await this.gameService.SearchGames(search_query);
         foreach (var game in filteredGames)
         {
             this.SearchedOrFilteredGames.Add(game);
@@ -147,10 +151,11 @@ public class HomePageViewModel : INotifyPropertyChanged
         this.Search_filter_text = HomePageConstants.SEARCHRESULTSFOR + search_query;
     }
 
-    public void ApplyFilters()
+    public async Task ApplyFilters()
     {
         this.SearchedOrFilteredGames.Clear();
-        var games = this.gameService.FilterGames(this.RatingFilter, this.MinPrice, this.MaxPrice, this.SelectedTags.ToArray());
+        var games = await this.gameService.FilterGames(this.RatingFilter, this.MinPrice, this.MaxPrice, this.SelectedTags.ToArray());
+
         foreach (var game in games)
         {
             this.SearchedOrFilteredGames.Add(game);
@@ -179,28 +184,31 @@ public class HomePageViewModel : INotifyPropertyChanged
         }
     }
 
-    private void LoadTrendingGames()
+    private async Task LoadTrendingGames()
     {
         this.TrendingGames.Clear();
-        foreach (var game in this.gameService.GetTrendingGames())
+        var trendingGames = await this.gameService.GetTrendingGames();
+        foreach (var game in trendingGames)
         {
             this.TrendingGames.Add(game);
         }
     }
 
-    private void LoadRecommendedGames()
+    private async Task LoadRecommendedGames()
     {
         this.RecommendedGames.Clear();
-        foreach (var game in this.userGameService.GetRecommendedGames())
+        var reccomendedGames = await this.userGameService.GetRecommendedGames();
+        foreach (var game in reccomendedGames)
         {
             this.RecommendedGames.Add(game);
         }
     }
 
-    private void LoadDiscountedGames()
+    private async Task LoadDiscountedGames()
     {
         this.DiscountedGames.Clear();
-        foreach (var game in this.gameService.GetDiscountedGames())
+        var discountedGames = await this.gameService.GetDiscountedGames();
+        foreach (var game in discountedGames)
         {
             this.DiscountedGames.Add(game);
         }

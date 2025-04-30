@@ -1,7 +1,7 @@
-﻿namespace SteamHub.Api.Entities;
+﻿using SteamHub.ApiContract.Models.Game;
 
-using Models;
-using SteamHub.Api.Models.Game;
+namespace SteamHub.Api.Entities;
+
 
 public class Game
 {
@@ -43,4 +43,5 @@ public class Game
 
     public IList<StoreTransaction> StoreTransactions { get; set; }
 
+    public IList<Item> Items { get; set; }
 }

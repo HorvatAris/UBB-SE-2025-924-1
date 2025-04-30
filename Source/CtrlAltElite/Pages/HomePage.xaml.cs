@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System.Threading.Tasks;
+
 namespace SteamStore.Pages
 {
     using System;
@@ -39,11 +41,12 @@ namespace SteamStore.Pages
             this.InitializeComponent();
             this.HomePageViewModel = new HomePageViewModel(gameService, userGameService, cartService);
             this.DataContext = this.HomePageViewModel;
+            this.Loaded += async (_, __) => await this.HomePageViewModel.InitAsync();
         }
 
         private HomePageViewModel HomePageViewModel { get; set; }
 
-        private void SearchBox_TextChanged(object searchBox, TextChangedEventArgs textChangedEventArgument)
+        private async void SearchBox_TextChanged(object searchBox, TextChangedEventArgs textChangedEventArgument)
         {
             this.HomePageViewModel.SearchGames(this.SearchBox.Text);
         }
@@ -53,7 +56,7 @@ namespace SteamStore.Pages
             this.FilterPopup.IsOpen = true;
         }
 
-        private void ApplyFilters_Click(object applyFiltersButton, RoutedEventArgs applyFiltersArgument)
+        private async void ApplyFilters_Click(object applyFiltersButton, RoutedEventArgs applyFiltersArgument)
         {
             // You can access the filter values from PopupRatingSlider, MinPriceSlider, MaxPriceSlider here.
             this.HomePageViewModel.RatingFilter = (int)this.PopupRatingSlider.Value;
@@ -70,16 +73,24 @@ namespace SteamStore.Pages
             }
 
             this.HomePageViewModel.ApplyFilters();
+
+            // Close the popup
             this.FilterPopup.IsOpen = false;
         }
 
-        private void ResetFilters_Click(object resetFiltersButton, RoutedEventArgs resetFiltersClickEventArgument)
+        private async void ResetFilters_Click(object resetFiltersButton, RoutedEventArgs resetFiltersClickEventArgument)
         {
             this.HomePageViewModel.ResetFilters();
             this.PopupRatingSlider.Value = 0;
             this.MinPriceSlider.Value = 0;
             this.MaxPriceSlider.Value = 200;
             this.TagListView.SelectedItems.Clear();
+
+            if (this.DataContext is HomePageViewModel viewModel)
+            {
+                await viewModel.LoadAllGames();
+            }
+
             this.FilterPopup.IsOpen = false;
         }
 

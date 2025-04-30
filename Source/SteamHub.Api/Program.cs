@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using SteamHub.Api.Context;
 using SteamHub.Api.Context.Repositories;
+using SteamHub.ApiContract.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -16,7 +17,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepository>();
+builder.Services.AddScoped<IUsersGamesRepository, UsersGamesRepository>();
 builder.Services.AddScoped<IStoreTransactionRepository, StoreTransactionRepository>();
+builder.Services.AddScoped<IItemTradeRepository, ItemTradeRepository>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailRepository>();
 
 
 builder.Services.AddControllersWithViews()
