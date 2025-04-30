@@ -26,7 +26,11 @@ public class DeveloperViewModel : INotifyPropertyChanged
         this.DeveloperGames = new ObservableCollection<Game>();
         this.UnvalidatedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
-        this.LoadGames();
+    }
+
+    public async Task InitAsync()
+    {
+        await this.LoadGames();
         this.LoadTags();
     }
 
@@ -43,10 +47,10 @@ public class DeveloperViewModel : INotifyPropertyChanged
         return this.developerService.FindGameInObservableCollectionById(gameId, this.DeveloperGames);
     }
 
-    public void LoadGames()
+    public async Task LoadGames()
     {
         this.DeveloperGames.Clear();
-        var games = this.developerService.GetDeveloperGames();
+        var games = await this.developerService.GetDeveloperGames();
         foreach (var game in games)
         {
             this.DeveloperGames.Add(game);
@@ -55,9 +59,9 @@ public class DeveloperViewModel : INotifyPropertyChanged
         this.OnPropertyChanged();
     }
 
-    public void ValidateGame(int game_id)
+    public async Task ValidateGame(int game_id)
     {
-        this.developerService.ValidateGame(game_id);
+        await this.developerService.ValidateGame(game_id);
     }
 
     public bool CheckIfUserIsADeveloper()
@@ -65,15 +69,15 @@ public class DeveloperViewModel : INotifyPropertyChanged
         return this.developerService.GetCurrentUser().UserRole == User.Role.Developer;
     }
 
-    public void CreateGame(Game game, IList<Tag> selectedTags)
+    public async Task CreateGame(Game game, IList<Tag> selectedTags)
     {
-        this.developerService.CreateGameWithTags(game, selectedTags);
+        await this.developerService.CreateGameWithTags(game, selectedTags);
         this.DeveloperGames.Add(game);
     }
 
-    public void UpdateGame(Game game)
+    public async Task UpdateGame(Game game)
     {
-        this.developerService.UpdateGameAndRefreshList(game, this.DeveloperGames);
+        await this.developerService.UpdateGameAndRefreshList(game, this.DeveloperGames);
     }
 
     public void UpdateGameWithTags(Game game, IList<Tag> selectedTags)
@@ -90,19 +94,19 @@ public class DeveloperViewModel : INotifyPropertyChanged
         this.developerService.RejectGameAndRemoveFromUnvalidated(game_id, this.UnvalidatedGames);
     }
 
-    public void LoadUnvalidated()
+    public async Task LoadUnvalidated()
     {
         this.UnvalidatedGames.Clear();
-        var games = this.developerService.GetUnvalidated();
+        var games = await this.developerService.GetUnvalidated();
         foreach (var game in games)
         {
             this.UnvalidatedGames.Add(game);
         }
     }
 
-    public bool IsGameIdInUse(int gameId)
+    public async Task<bool> IsGameIdInUse(int gameId)
     {
-        return this.developerService.IsGameIdInUse(gameId, this.DeveloperGames, this.UnvalidatedGames);
+        return await this.developerService.IsGameIdInUse(gameId, this.DeveloperGames, this.UnvalidatedGames);
     }
 
     public int GetGameOwnerCount(int game_id)
@@ -120,14 +124,14 @@ public class DeveloperViewModel : INotifyPropertyChanged
         {
             if (!string.IsNullOrWhiteSpace(rejectionReason))
             {
-                this.developerService.RejectGameWithMessage(gameId, rejectionReason);
+                await this.developerService.RejectGameWithMessage(gameId, rejectionReason);
             }
             else
             {
                 this.RejectGame(gameId);
             }
 
-            this.LoadUnvalidated();
+            await this.LoadUnvalidated();
         }
         catch (Exception exception)
         {
@@ -135,34 +139,77 @@ public class DeveloperViewModel : INotifyPropertyChanged
         }
     }
 
-    public async Task CreateGameAsync(string gameIdText, string name, string priceText, string description, string imageUrl, string trailerUrl, string gameplayUrl, string minimumRequirement, string recommendedRequirements, string discountText, IList<Tag> selectedTags)
+    public async Task CreateGameAsync(
+        string gameIdText,
+        string name,
+        string priceText,
+        string description,
+        string imageUrl,
+        string trailerUrl,
+        string gameplayUrl,
+        string minimumRequirement,
+        string recommendedRequirements,
+        string discountText,
+        IList<Tag> selectedTags)
     {
         // This can throw if any validation fails – and that’s okay
-        Game game = this.developerService.CreateValidatedGame(
-            gameIdText, name, priceText, description, imageUrl, trailerUrl, gameplayUrl, minimumRequirement, recommendedRequirements, discountText, selectedTags);
+        Game game =  await this.developerService.CreateValidatedGame(
+            gameIdText,
+            name,
+            priceText,
+            description,
+            imageUrl,
+            trailerUrl,
+            gameplayUrl,
+            minimumRequirement,
+            recommendedRequirements,
+            discountText,
+            selectedTags);
         this.DeveloperGames.Add(game);
         this.OnPropertyChanged(nameof(this.DeveloperGames));
     }
 
-    public async Task UpdateGameAsync(string gameIdText, string name, string priceText, string description, string imageUrl, string trailerUrl, string gameplayUrl, string minimumRequirement, string recommendedRequirements, string discountText, IList<Tag> selectedTags)
+    public async Task UpdateGameAsync(
+        string gameIdText,
+        string name,
+        string priceText,
+        string description,
+        string imageUrl,
+        string trailerUrl,
+        string gameplayUrl,
+        string minimumRequirement,
+        string recommendedRequirements,
+        string discountText,
+        IList<Tag> selectedTags)
     {
-        Game game = this.developerService.ValidateInputForAddingAGame(gameIdText, name, priceText, description, imageUrl, trailerUrl, gameplayUrl, minimumRequirement, recommendedRequirements, discountText, selectedTags);
-        this.developerService.UpdateGameWithTags(game, selectedTags);
+        Game game = this.developerService.ValidateInputForAddingAGame(
+            gameIdText,
+            name,
+            priceText,
+            description,
+            imageUrl,
+            trailerUrl,
+            gameplayUrl,
+            minimumRequirement,
+            recommendedRequirements,
+            discountText,
+            selectedTags);
+        await this.developerService.UpdateGameWithTags(game, selectedTags);
     }
 
-    public string GetRejectionMessage(int gameId)
+    public async Task<string> GetRejectionMessage(int gameId)
     {
-        return this.developerService.GetRejectionMessage(gameId);
+        return await this.developerService.GetRejectionMessage(gameId);
     }
 
-    public List<Tag> GetGameTags(int gameId)
+    public async Task<List<Tag>> GetGameTags(int gameId)
     {
-        return this.developerService.GetGameTags(gameId);
+        return await this.developerService.GetGameTags(gameId);
     }
 
-    public IList<Tag> GetMatchingTags(int gameId, IList<Tag> allTags)
+    public async Task<IList<Tag>> GetMatchingTags(int gameId, IList<Tag> allTags)
     {
-        return this.developerService.GetMatchingTagsForGame(gameId, allTags);
+        return await this.developerService.GetMatchingTagsForGame(gameId, allTags);
     }
 
     private void OnPropertyChanged([CallerMemberName] string propertyName = null)

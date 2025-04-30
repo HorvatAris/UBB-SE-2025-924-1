@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System.Threading.Tasks;
+
 namespace SteamStore.Pages
 {
     using System;
@@ -39,16 +41,17 @@ namespace SteamStore.Pages
             this.InitializeComponent();
             this.HomePageViewModel = new HomePageViewModel(gameService, userGameService, cartService);
             this.DataContext = this.HomePageViewModel;
+            this.Loaded += async (_, __) => await this.HomePageViewModel.InitAsync();
         }
 
         private HomePageViewModel HomePageViewModel { get; set; }
 
-        private void SearchBox_TextChanged(object searchBox, TextChangedEventArgs textChangedEventArgument)
+        private async void SearchBox_TextChanged(object searchBox, TextChangedEventArgs textChangedEventArgument)
         {
             string user_input = this.SearchBox.Text;
             if (this.DataContext is HomePageViewModel viewModel)
             {
-                viewModel.SearchGames(user_input);
+                await viewModel.SearchGames(user_input);
             }
 
             this.GameListView.UpdateLayout();
@@ -59,7 +62,7 @@ namespace SteamStore.Pages
             this.FilterPopup.IsOpen = true;
         }
 
-        private void ApplyFilters_Click(object applyFiltersButton, RoutedEventArgs applyFiltersArgument)
+        private async void ApplyFilters_Click(object applyFiltersButton, RoutedEventArgs applyFiltersArgument)
         {
             // You can access the filter values from PopupRatingSlider, MinPriceSlider, MaxPriceSlider here.
             int ratingFilter = (int)this.PopupRatingSlider.Value;
@@ -76,14 +79,14 @@ namespace SteamStore.Pages
 
             if (this.DataContext is HomePageViewModel viewModel)
             {
-                viewModel.FilterGames(ratingFilter, minimumPrice, maximumPrice, selectedTags.ToArray());
+                await viewModel.FilterGames(ratingFilter, minimumPrice, maximumPrice, selectedTags.ToArray());
             }
 
             // Close the popup
             this.FilterPopup.IsOpen = false;
         }
 
-        private void ResetFilters_Click(object resetFiltersButton, RoutedEventArgs resetFiltersClickEventArgument)
+        private async void ResetFilters_Click(object resetFiltersButton, RoutedEventArgs resetFiltersClickEventArgument)
         {
             this.PopupRatingSlider.Value = RATINGFILTERVALUE;
             this.MinPriceSlider.Value = MINIMUMPRICEFILTERVALUE;
@@ -91,7 +94,7 @@ namespace SteamStore.Pages
             this.TagListView.SelectedItems.Clear();
             if (this.DataContext is HomePageViewModel viewModel)
             {
-                viewModel.LoadAllGames();
+                await viewModel.LoadAllGames();
             }
 
             this.FilterPopup.IsOpen = false;

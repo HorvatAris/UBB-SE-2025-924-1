@@ -1,10 +1,13 @@
-﻿namespace SteamHub.Api.Controllers;
+﻿using SteamHub.ApiContract.Models;
+using SteamHub.ApiContract.Repositories;
+
+namespace SteamHub.Api.Controllers;
 
 using Context;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using SteamHub.Api.Context.Repositories;
-using SteamHub.Api.Models.Game;
+using SteamHub.ApiContract.Models.Game;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -40,25 +43,16 @@ public class GamesController : ControllerBase
         return Ok(game);
     }
 
-    // GET: api/games/{id}
     [HttpPatch("{id}/tags")]
     public async Task<IActionResult> PatchTags([FromRoute] int id, [FromBody] PatchGameTagsRequest tags)
     {
-        var game = await this.gameRepository.GetGameByIdAsync(id);
+        var game = await gameRepository.GetGameByIdAsync(id);
 
         if (game == null)
         {
             return NotFound();
         }
-
-        if (tags.Type == GameTagsPatchType.Insert)
-        {
-            await this.gameRepository.InsertGameTag(id, tags.TagIds.ToArray());
-        }
-        else
-        {
-            await this.gameRepository.DeleteGameTag(id, tags.TagIds.ToArray());
-        }
+        await gameRepository.PatchGameTagsAsync(id, tags);
 
         return NoContent();
     }
@@ -73,8 +67,8 @@ public class GamesController : ControllerBase
         return CreatedAtAction(nameof(GetGameById), new { id = createdGame.Identifier }, createdGame);
     }
 
-    // PUT: api/games/{id}
-    [HttpPut("{id}")]
+    // PATCH: api/games/{id}
+    [HttpPatch("{id}")]
     public async Task<IActionResult> UpdateGame([FromRoute] int id, [FromBody] UpdateGameRequest game)
     {
         await this.gameRepository.UpdateGameAsync(id, game);
