@@ -29,6 +29,7 @@ namespace SteamHub.Api.Context
 
         public DbSet<UserPointShopItemInventory> UserPointShopInventories { get; set; }
 
+        public DbSet<UsersGames> UsersGames { get; set; }
         public DbSet<StoreTransaction> StoreTransactions { get; set; }
         public DbSet<ItemTrade> ItemTrades { get; set; }
         public DbSet<ItemTradeDetail> ItemTradeDetails { get; set; }
@@ -403,6 +404,64 @@ namespace SteamHub.Api.Context
 
             builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
 
+            builder.Entity<UsersGames>()
+                .HasOne(ug => ug.User)
+                .WithMany()
+                .HasForeignKey(ug => ug.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UsersGames>()
+               .HasOne(ug => ug.Game)
+               .WithMany()
+               .HasForeignKey(ug => ug.GameId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+           var usersGamesSeed = new List<UsersGames>
+            {
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 1,
+                    IsInWishlist = true,
+                    IsPurchased = false,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 2,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 1,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 1,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 2,
+                    GameId = 3,
+                    IsInWishlist = false,
+                    IsPurchased = false,
+                    IsInCart = true
+                },
+            };
+
+            builder.Entity<UsersGames>().HasData(usersGamesSeed);
+
             builder.Entity<StoreTransaction>()
                 .HasOne(st => st.User)
                 .WithMany(u => u.StoreTransactions)
@@ -413,7 +472,7 @@ namespace SteamHub.Api.Context
                 .HasOne(st => st.Game)
                 .WithMany(g => g.StoreTransactions)
                 .HasForeignKey(st => st.GameId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var storeTransactionsSeed = new List<StoreTransaction>
             {
