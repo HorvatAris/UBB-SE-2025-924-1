@@ -32,6 +32,7 @@ namespace SteamHub.Api.Context
         public DbSet<UsersGames> UsersGames { get; set; }
         public DbSet<StoreTransaction> StoreTransactions { get; set; }
         public DbSet<ItemTrade> ItemTrades { get; set; }
+        public DbSet<ItemTradeDetail> ItemTradeDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -544,6 +545,31 @@ namespace SteamHub.Api.Context
             };
 
             builder.Entity<ItemTrade>().HasData(itemTradesSeed);
+
+            builder.Entity<ItemTradeDetail>()
+            .HasKey(itd => new { itd.TradeId, itd.ItemId });
+
+            builder.Entity<ItemTradeDetail>()
+                .HasOne(itd => itd.ItemTrade)
+                .WithMany(it => it.ItemTradeDetails)
+                .HasForeignKey(itd => itd.TradeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ItemTradeDetail>()
+                .HasOne(itd => itd.Item)
+                .WithMany(i => i.ItemTradeDetails)
+                .HasForeignKey(itd => itd.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            var itemTradeDetailsSeed = new List<ItemTradeDetail>
+            { 
+                new ItemTradeDetail { TradeId = 1, ItemId = 1, IsSourceUserItem = true },
+               // new ItemTradeDetail { TradeId = 1, ItemId = 1, IsSourceUserItem = false },
+                new ItemTradeDetail { TradeId = 2, ItemId = 2, IsSourceUserItem = false },
+               // new ItemTradeDetail { TradeId = 2, ItemId = 2, IsSourceUserItem = true }
+            };
+
+            builder.Entity<ItemTradeDetail>().HasData(itemTradeDetailsSeed);
         }
     }
 }

@@ -23,6 +23,9 @@
 
         public string ImagePath { get; set; } = default!;
 
+        public IList<ItemTradeDetail> ItemTradeDetails { get; set; }
+
+
         public Item() { }
 
         public Item(string itemName, int correspondingGameId, float price, string description)

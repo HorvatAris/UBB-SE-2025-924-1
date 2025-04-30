@@ -21,6 +21,8 @@ builder.Services.AddScoped<IUsersGamesRepository, UsersGamesRepository>();
 builder.Services.AddScoped<IStoreTransactionRepository, StoreTransactionRepository>();
 builder.Services.AddScoped<IItemTradeRepository, ItemTradeRepository>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailRepository>();
+
 
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
