@@ -178,6 +178,62 @@ namespace SteamHub.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "StoreTransactions",
+                columns: table => new
+                {
+                    StoreTransactionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<float>(type: "real", nullable: false),
+                    WithMoney = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoreTransactions", x => x.StoreTransactionId);
+                    table.ForeignKey(
+                        name: "FK_StoreTransactions_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoreTransactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsersGames",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    IsInWishlist = table.Column<bool>(type: "bit", nullable: false),
+                    IsPurchased = table.Column<bool>(type: "bit", nullable: false),
+                    IsInCart = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersGames", x => new { x.UserId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_UsersGames_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UsersGames_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "GameStatus",
                 columns: new[] { "Id", "Name" },
@@ -288,6 +344,27 @@ namespace SteamHub.Api.Migrations
                     { 3, 9 }
                 });
 
+            migrationBuilder.InsertData(
+                table: "StoreTransactions",
+                columns: new[] { "StoreTransactionId", "Amount", "Date", "GameId", "UserId", "WithMoney" },
+                values: new object[,]
+                {
+                    { 1, 49.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 1, 1, true },
+                    { 2, 59.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 2, 2, false }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UsersGames",
+                columns: new[] { "GameId", "UserId", "IsInCart", "IsInWishlist", "IsPurchased" },
+                values: new object[,]
+                {
+                    { 1, 1, false, true, false },
+                    { 2, 1, false, false, true },
+                    { 3, 1, true, false, false },
+                    { 1, 2, false, false, true },
+                    { 3, 2, true, false, false }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Games_PublisherUserId",
                 table: "Games",
@@ -304,6 +381,16 @@ namespace SteamHub.Api.Migrations
                 column: "TagsTagId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StoreTransactions_GameId",
+                table: "StoreTransactions",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoreTransactions_UserId",
+                table: "StoreTransactions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserPointShopInventories_PointShopItemId",
                 table: "UserPointShopInventories",
                 column: "PointShopItemId");
@@ -312,6 +399,11 @@ namespace SteamHub.Api.Migrations
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersGames_GameId",
+                table: "UsersGames",
+                column: "GameId");
         }
 
         /// <inheritdoc />
@@ -321,16 +413,22 @@ namespace SteamHub.Api.Migrations
                 name: "GameTag");
 
             migrationBuilder.DropTable(
+                name: "StoreTransactions");
+
+            migrationBuilder.DropTable(
                 name: "UserPointShopInventories");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "UsersGames");
 
             migrationBuilder.DropTable(
                 name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "PointShopItems");
+
+            migrationBuilder.DropTable(
+                name: "Games");
 
             migrationBuilder.DropTable(
                 name: "GameStatus");

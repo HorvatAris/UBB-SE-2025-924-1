@@ -12,8 +12,8 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250428202712_AddStoreTransactionEntity")]
-    partial class AddStoreTransactionEntity
+    [Migration("20250430110442_MainMigration")]
+    partial class MainMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -673,6 +673,72 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SteamHub.Api.Entities.UsersGames", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsInCart")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsInWishlist")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPurchased")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("UsersGames");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            GameId = 1,
+                            IsInCart = false,
+                            IsInWishlist = true,
+                            IsPurchased = false
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            GameId = 2,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            GameId = 3,
+                            IsInCart = true,
+                            IsInWishlist = false,
+                            IsPurchased = false
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            GameId = 1,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            GameId = 3,
+                            IsInCart = true,
+                            IsInWishlist = false,
+                            IsPurchased = false
+                        });
+                });
+
             modelBuilder.Entity("GameTag", b =>
                 {
                     b.HasOne("SteamHub.Api.Entities.Game", null)
@@ -712,7 +778,7 @@ namespace SteamHub.Api.Migrations
                     b.HasOne("SteamHub.Api.Entities.Game", "Game")
                         .WithMany("StoreTransactions")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SteamHub.Api.Entities.User", "User")
@@ -752,6 +818,25 @@ namespace SteamHub.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("PointShopItem");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.UsersGames", b =>
+                {
+                    b.HasOne("SteamHub.Api.Entities.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SteamHub.Api.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Game");
 
                     b.Navigation("User");
                 });

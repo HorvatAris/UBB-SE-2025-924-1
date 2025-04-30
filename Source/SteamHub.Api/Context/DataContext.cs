@@ -331,7 +331,19 @@ namespace SteamHub.Api.Context
 
             builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
 
-            var usersGamesSeed = new List<UsersGames>
+            builder.Entity<UsersGames>()
+                .HasOne(ug => ug.User)
+                .WithMany()
+                .HasForeignKey(ug => ug.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UsersGames>()
+               .HasOne(ug => ug.Game)
+               .WithMany()
+               .HasForeignKey(ug => ug.GameId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+           var usersGamesSeed = new List<UsersGames>
             {
                 new UsersGames
                 {
@@ -387,7 +399,7 @@ namespace SteamHub.Api.Context
                 .HasOne(st => st.Game)
                 .WithMany(g => g.StoreTransactions)
                 .HasForeignKey(st => st.GameId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             var storeTransactionsSeed = new List<StoreTransaction>
             {
