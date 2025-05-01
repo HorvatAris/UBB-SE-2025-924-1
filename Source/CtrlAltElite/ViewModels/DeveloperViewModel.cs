@@ -217,10 +217,10 @@ public class DeveloperViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void LoadTags()
+    private async void LoadTags()
     {
         this.Tags.Clear();
-        var allTags = this.developerService.GetAllTags();
+        var allTags = await this.developerService.GetAllTags();
         foreach (var tag in allTags)
         {
             this.Tags.Add(tag);

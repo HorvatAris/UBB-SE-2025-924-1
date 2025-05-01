@@ -48,7 +48,7 @@ public class HomePageViewModel : INotifyPropertyChanged
         await this.LoadTrendingGames();
         await this.LoadRecommendedGames();
         await this.LoadDiscountedGames();
-        this.LoadTags();
+        await this.LoadTags();
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -120,7 +120,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     {
         this.SearchedOrFilteredGames.Clear();
         this.Search_filter_text = HomePageConstants.ALLGAMESFILTER;
-        var games = await this.gameService.GetAllGames();
+        var games = await this.gameService.GetAllApprovedGames();
         foreach (var game in games)
         {
             this.SearchedOrFilteredGames.Add(game);
@@ -194,6 +194,16 @@ public class HomePageViewModel : INotifyPropertyChanged
         }
     }
 
+    private async Task LoadTags()
+    {
+        this.Tags.Clear();
+        var tagsList = await this.gameService.GetAllTags();
+        foreach (var tag in tagsList)
+        {
+            this.Tags.Add(tag);
+        }
+    }
+
     private async Task LoadRecommendedGames()
     {
         this.RecommendedGames.Clear();
@@ -211,15 +221,6 @@ public class HomePageViewModel : INotifyPropertyChanged
         foreach (var game in discountedGames)
         {
             this.DiscountedGames.Add(game);
-        }
-    }
-
-    private void LoadTags()
-    {
-        this.Tags.Clear();
-        foreach (var tag in this.gameService.GetAllTags())
-        {
-            this.Tags.Add(tag);
         }
     }
 
