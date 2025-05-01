@@ -1,6 +1,4 @@
-﻿using SteamHub.Api.Entities;
-
-namespace SteamHub.Api.Models.PointShopItem;
+﻿namespace SteamHub.ApiContract.Models.PointShopItem;
 
 public class GetPointShopItemsResponse
 {

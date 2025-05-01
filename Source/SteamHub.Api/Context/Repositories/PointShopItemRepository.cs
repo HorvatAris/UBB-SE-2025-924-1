@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SteamHub.Api.Context;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.PointShopItem;
+using SteamHub.ApiContract.Models.PointShopItem;
+using SteamHub.ApiContract.Repositories;
 
 namespace SteamHub.Api.Context.Repositories;
 

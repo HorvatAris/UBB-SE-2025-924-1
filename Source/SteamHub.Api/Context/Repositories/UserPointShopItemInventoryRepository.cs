@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.UserPointShopItemInventory;
+using SteamHub.ApiContract.Context.Repositories;
+using SteamHub.ApiContract.Models.UserPointShopItemInventory;
 
-namespace SteamHub.Api.Context.Repositories
-{
-    public class UserPointShopItemInventoryRepository : IUserPointShopItemInventoryRepository
+namespace SteamHub.Api.Context.Repositories;
+public class UserPointShopItemInventoryRepository : IUserPointShopItemInventoryRepository
     {
         private readonly DataContext context;
         public UserPointShopItemInventoryRepository(DataContext context)
@@ -73,5 +73,4 @@ namespace SteamHub.Api.Context.Repositories
             await context.SaveChangesAsync();
         }
     }
-}
 

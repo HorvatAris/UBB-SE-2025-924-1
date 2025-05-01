@@ -1,7 +1,8 @@
-﻿namespace SteamHub.Api.Models.PointShopItem;
+﻿namespace SteamHub.ApiContract.Models.PointShopItem;
 
-public class CreatePointShopItemRequest
+public class PointShopItemResponse
 {
+    public int PointShopItemId { get; set; }
     public string Name { get; set; }
 
     public string? Description { get; set; }
