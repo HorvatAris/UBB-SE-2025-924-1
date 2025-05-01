@@ -1,19 +1,13 @@
-﻿namespace SteamHub.Api.Entities
+﻿namespace SteamHub.Api.Models.Item
 {
-    public class Item
+    public class ItemDetailedResponse
     {
         public int ItemId { get; set; }
         public string ItemName { get; set; } = default!;
-
-        public int CorrespondingGameId { get; set; }
-
-        public virtual Game Game { get; set; } = default!;
-
+        public int GameId { get; set; }
         public float Price { get; set; }
         public string Description { get; set; } = default!;
         public bool IsListed { get; set; }
         public string ImagePath { get; set; } = default!;
-
-        public IList<ItemTradeDetail> ItemTradeDetails { get; set; }
     }
 }

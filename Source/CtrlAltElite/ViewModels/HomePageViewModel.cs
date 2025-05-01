@@ -5,6 +5,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Automation.Peers;
@@ -20,20 +21,25 @@ public class HomePageViewModel : INotifyPropertyChanged
     private readonly IGameService gameService;
     private readonly IUserGameService userGameService;
     private readonly ICartService cartService;
+
     private string searchFilterText;
+    private int ratingFilter;
+    private int minPrice;
+    private int maxPrice;
+    private ObservableCollection<string> selectedTags;
 
     public HomePageViewModel(IGameService gameService, IUserGameService userGameService, ICartService cartService)
     {
         this.gameService = gameService;
         this.userGameService = userGameService;
         this.cartService = cartService;
-        this.GameService = gameService; // Assign to public property
+
         this.SearchedOrFilteredGames = new ObservableCollection<Game>();
         this.TrendingGames = new ObservableCollection<Game>();
         this.RecommendedGames = new ObservableCollection<Game>();
         this.DiscountedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
-
+        this.selectedTags = new ObservableCollection<string>(); 
     }
 
     public async Task InitAsync()
@@ -43,7 +49,6 @@ public class HomePageViewModel : INotifyPropertyChanged
         await this.LoadRecommendedGames();
         await this.LoadDiscountedGames();
         await this.LoadTags();
-
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -58,6 +63,16 @@ public class HomePageViewModel : INotifyPropertyChanged
 
     public ObservableCollection<Tag> Tags { get; set; }
 
+    public ObservableCollection<string> SelectedTags
+    {
+        get => this.selectedTags;
+        set
+        {
+            this.selectedTags = value;
+            this.OnPropertyChanged();
+        }
+    }
+
     public string Search_filter_text
     {
         get => this.searchFilterText;
@@ -71,8 +86,35 @@ public class HomePageViewModel : INotifyPropertyChanged
         }
     }
 
-    // Expose GameService so it can be accessed by the view
-    public IGameService GameService { get; private set; }
+    public int RatingFilter
+    {
+        get => this.ratingFilter;
+        set
+        {
+            this.ratingFilter = value;
+            this.OnPropertyChanged();
+        }
+    }
+
+    public int MinPrice
+    {
+        get => this.minPrice;
+        set
+        {
+            this.minPrice = value;
+            this.OnPropertyChanged();
+        }
+    }
+
+    public int MaxPrice
+    {
+        get => this.maxPrice;
+        set
+        {
+            this.maxPrice = value;
+            this.OnPropertyChanged();
+        }
+    }
 
     public async Task LoadAllGames()
     {
@@ -109,43 +151,44 @@ public class HomePageViewModel : INotifyPropertyChanged
         this.Search_filter_text = HomePageConstants.SEARCHRESULTSFOR + search_query;
     }
 
-    public async Task FilterGames(int minimumRating, int minimumPrice, int maximumPrice, string[] tags)
+    public async Task ApplyFilters()
     {
         this.SearchedOrFilteredGames.Clear();
-        var games = await this.gameService.FilterGames(minimumRating, minimumPrice, maximumPrice, tags);
+        var games = await this.gameService.FilterGames(this.RatingFilter, this.MinPrice, this.MaxPrice, this.SelectedTags.ToArray());
+
         foreach (var game in games)
         {
             this.SearchedOrFilteredGames.Add(game);
         }
 
-        if (games.Count == EmptyGameListLength)
-        {
-            this.Search_filter_text = HomePageConstants.NOGAMESFOUND;
-            return;
-        }
-
-        this.Search_filter_text = HomePageConstants.FILTEREDGAMES;
+        this.Search_filter_text = games.Count == 0
+            ? HomePageConstants.NOGAMESFOUND
+            : HomePageConstants.FILTEREDGAMES;
     }
 
-    public void SwitchToGamePage(Microsoft.UI.Xaml.DependencyObject parent, Game selectedGame)
+    public void ResetFilters()
     {
-        if (parent is Frame frame)
-        {
-            var gamePage = new GamePage(this.GameService, this.cartService, this.userGameService, selectedGame);
-            frame.Content = gamePage;
-        }
+        this.RatingFilter = 0;
+        this.MinPrice = 0;
+        this.MaxPrice = 200;
+        this.SelectedTags.Clear();
+        this.LoadAllGames();
     }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public void NavigateToGamePage(Frame parentFrame, Game selectedGame)
     {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        if (parentFrame != null && selectedGame != null)
+        {
+            var gamePage = new GamePage(this.gameService, this.cartService, this.userGameService, selectedGame);
+            parentFrame.Content = gamePage;
+        }
     }
 
     private async Task LoadTrendingGames()
     {
         this.TrendingGames.Clear();
-        var games = await this.gameService.GetTrendingGames();
-        foreach (var game in games)
+        var trendingGames = await this.gameService.GetTrendingGames();
+        foreach (var game in trendingGames)
         {
             this.TrendingGames.Add(game);
         }
@@ -153,8 +196,8 @@ public class HomePageViewModel : INotifyPropertyChanged
 
     private async Task LoadTags()
     {
+        this.Tags.Clear();
         var tagsList = await this.gameService.GetAllTags();
-        System.Diagnostics.Debug.WriteLine("$TAGS" + tagsList);
         foreach (var tag in tagsList)
         {
             this.Tags.Add(tag);
@@ -179,5 +222,10 @@ public class HomePageViewModel : INotifyPropertyChanged
         {
             this.DiscountedGames.Add(game);
         }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -43,4 +43,5 @@ public class Game
 
     public IList<StoreTransaction> StoreTransactions { get; set; }
 
+    public IList<Item> Items { get; set; }
 }
