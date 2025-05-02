@@ -23,17 +23,15 @@ namespace SteamStore.Services
         private const int InitialIndexUserItems = 0;
         private const string FILTERTYPEALL = "All";
         private readonly IPointShopRepository repository;
-        private readonly User currentUser;
 
-        public PointShopService(User currentUser, IDataLink dataLink)
+        public PointShopService(IPointShopRepository pointShopRepository)
         {
-            this.currentUser = currentUser;
-            this.repository = new PointShopRepository(currentUser, dataLink);
+            this.repository = pointShopRepository;
         }
 
         public User GetCurrentUser()
         {
-            return this.currentUser;
+            return this.repository.GetCurrentUser();
         }
 
         public List<PointShopItem> GetAllItems()

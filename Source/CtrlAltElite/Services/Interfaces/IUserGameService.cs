@@ -24,7 +24,7 @@ namespace SteamStore.Services.Interfaces
 
         void ComputeNoOfUserGamesForEachTag(Collection<Tag> all_tags);
 
-        Collection<Tag> GetFavoriteUserTags();
+        Task<Collection<Tag>> GetFavoriteUserTags();
 
         void ComputeTagScoreForGames(Collection<Game> games);
 

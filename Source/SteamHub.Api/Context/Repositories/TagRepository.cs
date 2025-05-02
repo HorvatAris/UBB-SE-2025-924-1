@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.Tag;
+using SteamHub.ApiContract.Models.Tag;
 using System.Runtime.CompilerServices;
 
 namespace SteamHub.Api.Context.Repositories;

@@ -37,7 +37,8 @@ public class UserGameService : IUserGameService
 
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    public ITagRepository TagRepository { get; set; }
+    //public ITagRepository TagRepository { get; set; }
+    public ITagServiceProxy TagServiceProxy { get; set; }
 
     // Property to track points earned in the last purchase
     public int LastEarnedPoints { get; private set; }
@@ -123,9 +124,10 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public Collection<Tag> GetFavoriteUserTags()
+    public async Task<Collection<Tag>> GetFavoriteUserTags()
     {
-        var allTags = this.TagRepository.GetAllTags();
+        var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+        var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
         this.ComputeNoOfUserGamesForEachTag(allTags);
 
         List<Tag> sortedTags = new List<Tag>(allTags);
@@ -152,9 +154,9 @@ public class UserGameService : IUserGameService
         return new Collection<Tag>(topTags);
     }
 
-    public void ComputeTagScoreForGames(Collection<Game> games)
+    public async void ComputeTagScoreForGames(Collection<Game> games)
     {
-        var favorite_tags = this.GetFavoriteUserTags();
+        var favorite_tags = await this.GetFavoriteUserTags();
         foreach (var game in games)
         {
             game.TagScore = InitialTagScore;
@@ -183,11 +185,20 @@ public class UserGameService : IUserGameService
     {
         var games = await this.GameServiceProxy.GetGamesAsync(
             new GetGamesRequest());
+   
         var allGames = new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
-        this.ComputeTrendingScores(allGames);
-        this.ComputeTagScoreForGames(allGames);
+        var approvedGames = new Collection<Game>();
+        foreach (var game in allGames)
+        {
+            if (game.Status == "Approved")
+            {
+                approvedGames.Add(game);
+            }
+        }
+        this.ComputeTrendingScores(approvedGames);
+        this.ComputeTagScoreForGames(approvedGames);
         
-        List<Game> sortedGames = new List<Game>(allGames);
+        List<Game> sortedGames = new List<Game>(approvedGames);
 
         // Manual sorting based on weighted score
         for (int currentIndex = StartingIndexValue; currentIndex < sortedGames.Count - 1; currentIndex++)

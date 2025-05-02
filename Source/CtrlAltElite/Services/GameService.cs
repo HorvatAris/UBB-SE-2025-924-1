@@ -10,9 +10,13 @@ using System.Threading.Tasks;
 using CtrlAltElite.ServiceProxies;
 using CtrlAltElite.Services;
 using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.Tag;
 using SteamStore.Models;
 using SteamStore.Repositories;
 using SteamStore.Services.Interfaces;
+using Windows.ApplicationModel.Chat;
+using Windows.Foundation.Metadata;
+
 
 namespace SteamStore.Services;
 
@@ -30,7 +34,8 @@ public class GameService : IGameService
 
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    public ITagRepository TagRepository { get; set; }
+   //public ITagRepository TagRepository { get; set; }
+    public ITagServiceProxy TagServiceProxy { get; set; }
 
     public async Task<Collection<Game>> GetAllGames()
     {
@@ -38,14 +43,45 @@ public class GameService : IGameService
         return new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
     }
 
-    public Collection<Tag> GetAllTags()
+    public async Task<Collection<Game>> GetAllApprovedGames()
     {
-        return this.TagRepository.GetAllTags();
+        var allGames = await this.GetAllGames();
+        var approvedGames = new Collection<Game>();
+        foreach (var game in allGames)
+        {
+            if (game.Status == "Approved")
+            {
+                approvedGames.Add(game);
+            }
+        }
+        return approvedGames;
     }
 
-    public Collection<Tag> GetAllGameTags(Game game)
+    public async Task<Collection<Tag>> GetAllTags()
     {
-        var allTags = this.TagRepository.GetAllTags();
+        try
+        {
+            var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+            return new Collection<Tag>(
+                        tagsResponse.Tags.Select(TagMapper.MapToTag).ToList()
+                    );
+        }
+        catch (Refit.ApiException ex)
+        {
+            string rawContent = ex.Content; // Removed ReadAsStringAsync as 'Content' is already a string
+            Console.WriteLine("Raw API Response:");
+            Console.WriteLine(rawContent);
+            throw; // rethrow the exception or handle it appropriately
+        }
+    }
+
+
+
+    public async Task<Collection<Tag>> GetAllGameTags(Game game)
+    {
+        var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+        var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
+        // Extract the result from the task
         var tagsForCurrentGame = new List<Tag>();
 
         foreach (var tag in allTags)
@@ -141,13 +177,13 @@ public class GameService : IGameService
 
     public async Task<Collection<Game>> GetTrendingGames()
     {
-        var allGames = await this.GetAllGames();
+        var allGames = await this.GetAllApprovedGames();
         return this.GetSortedAndFilteredVideoGames(allGames);
     }
 
     public async Task<Collection<Game>> GetDiscountedGames()
     {
-        var allGames = await this.GetAllGames();
+        var allGames = await this.GetAllApprovedGames();
         var discountedGames = new List<Game>();
 
         foreach (var game in allGames)
@@ -164,7 +200,7 @@ public class GameService : IGameService
     public async Task<List<Game>> GetSimilarGames(int gameId)
     {
         var randomGenerator = new Random(DateTime.Now.Millisecond);
-        var allGames = await GetAllGames();
+        var allGames = await GetAllApprovedGames();
         var similarGames = new List<Game>();
 
         // Filter games with different identifiers

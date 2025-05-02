@@ -15,6 +15,8 @@ namespace SteamStore.Repositories.Interfaces
     {
         List<PointShopItem> GetAllItems();
 
+        User GetCurrentUser();
+
         List<PointShopItem> GetUserItems();
 
         void PurchaseItem(PointShopItem item);

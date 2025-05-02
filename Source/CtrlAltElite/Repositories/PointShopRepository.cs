@@ -28,6 +28,11 @@ namespace SteamStore.Repositories
             this.data = data;
         }
 
+        public User GetCurrentUser()
+        {
+            return this.user;
+        }
+
         public List<PointShopItem> GetAllItems()
         {
             var pointShopItems = new List<PointShopItem>();

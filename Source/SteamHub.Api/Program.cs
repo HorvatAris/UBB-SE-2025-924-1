@@ -14,7 +14,7 @@ builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<SteamHub.Api.Context.Repositories.ITagRepository, TagRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepository>();
 builder.Services.AddScoped<IUsersGamesRepository, UsersGamesRepository>();
@@ -22,6 +22,7 @@ builder.Services.AddScoped<IStoreTransactionRepository, StoreTransactionReposito
 builder.Services.AddScoped<IItemTradeRepository, ItemTradeRepository>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepository>();
+builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailRepository>();
 
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });

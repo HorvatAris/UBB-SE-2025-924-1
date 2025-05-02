@@ -3,14 +3,14 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using SteamHub.Api.Entities;
+    using SteamHub.Api.Models.Item;
 
     public interface IItemRepository
     {
-        Task<Item> AddItemAsync(Item item);
-        Task<Item?> GetItemAsync(int itemId);
-        Task<IEnumerable<Item>> GetAllItemsAsync();
-        Task<Item> UpdateItemAsync(Item item);
-        Task DeleteItemAsync(Item item);
-        Task<bool> SaveChangesAsync();
+            Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync();
+            Task<ItemDetailedResponse?> GetItemByIdAsync(int id);
+            Task<ItemDetailedResponse> CreateItemAsync(CreateItemRequest request);
+            Task UpdateItemAsync(int id, UpdateItemRequest request);
+            Task DeleteItemAsync(int id);
     }
 }

@@ -33,6 +33,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CtrlAltElite\CtrlAltElite.csproj" />
+		<ProjectReference Include="..\SteamHub.ApiContract\SteamHub.ApiContract.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
