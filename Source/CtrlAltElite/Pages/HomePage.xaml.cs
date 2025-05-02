@@ -48,7 +48,7 @@ namespace SteamStore.Pages
 
         private async void SearchBox_TextChanged(object searchBox, TextChangedEventArgs textChangedEventArgument)
         {
-            this.HomePageViewModel.SearchGames(this.SearchBox.Text);
+            await this.HomePageViewModel.SearchGames(this.SearchBox.Text);
         }
 
         private void FilterButton_Click(object filterButton, RoutedEventArgs filterClickEventArgument)
@@ -72,7 +72,7 @@ namespace SteamStore.Pages
                 }
             }
 
-            this.HomePageViewModel.ApplyFilters();
+            await this.HomePageViewModel.ApplyFilters();
 
             // Close the popup
             this.FilterPopup.IsOpen = false;
@@ -80,7 +80,7 @@ namespace SteamStore.Pages
 
         private async void ResetFilters_Click(object resetFiltersButton, RoutedEventArgs resetFiltersClickEventArgument)
         {
-            this.HomePageViewModel.ResetFilters();
+            await this.HomePageViewModel.ResetFilters();
             this.PopupRatingSlider.Value = 0;
             this.MinPriceSlider.Value = 0;
             this.MaxPriceSlider.Value = 200;

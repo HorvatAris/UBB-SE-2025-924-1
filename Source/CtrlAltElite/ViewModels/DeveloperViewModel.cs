@@ -153,7 +153,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
         IList<Tag> selectedTags)
     {
         // This can throw if any validation fails – and that’s okay
-        Game game =  await this.developerService.CreateValidatedGame(
+        Game game = await this.developerService.CreateValidatedGame(
             gameIdText,
             name,
             priceText,

@@ -166,13 +166,13 @@ public class HomePageViewModel : INotifyPropertyChanged
             : HomePageConstants.FILTEREDGAMES;
     }
 
-    public void ResetFilters()
+    public async Task ResetFilters()
     {
         this.RatingFilter = 0;
         this.MinPrice = 0;
         this.MaxPrice = 200;
         this.SelectedTags.Clear();
-        this.LoadAllGames();
+        await this.LoadAllGames();
     }
 
     public void NavigateToGamePage(Frame parentFrame, Game selectedGame)

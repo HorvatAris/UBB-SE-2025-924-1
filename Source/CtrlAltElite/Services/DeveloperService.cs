@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CtrlAltElite.ServiceProxies;
@@ -143,6 +144,12 @@ public class DeveloperService : IDeveloperService
     public async Task CreateGameWithTags(Game game, IList<Tag> selectedTags)
     {
         await this.CreateGame(game);
+        System.Diagnostics.Debug.WriteLine(game.GameId);
+        //await Task.Delay(100);
+        foreach (var tag in selectedTags)
+        {
+            System.Diagnostics.Debug.WriteLine("the tag id" + tag.TagId);
+        }
 
         if (selectedTags != null && selectedTags.Count > EmptyListLength)
         {
@@ -258,13 +265,36 @@ public class DeveloperService : IDeveloperService
 
     public async Task InsertGameTag(int gameId, int tagId)
     {
-        await this.GameServiceProxy.PatchGameTagsAsync(
+        System.Diagnostics.Debug.WriteLine($"InsertGameTag called with GameId: {gameId}, TagId: {tagId}");
+
+        try
+        {
+            try
+            {
+                var game = await this.GameServiceProxy.GetGameByIdAsync(gameId);
+            }
+            catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            throw new Exception($"Game with ID {gameId} not found.");
+        }
+
+            await this.GameServiceProxy.PatchGameTagsAsync(
             gameId,
             new PatchGameTagsRequest
-            {
-                TagIds = new HashSet<int>(tagId),
-                Type = GameTagsPatchType.Insert,
-            });
+                    {
+                        TagIds = new HashSet<int> { tagId }, // Ensure tagId is wrapped in a collection
+                        Type = GameTagsPatchType.Insert,
+                    });
+
+            // Log success
+            System.Diagnostics.Debug.WriteLine($"Successfully inserted TagId: {tagId} for GameId: {gameId}");
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            System.Diagnostics.Debug.WriteLine($"Error in InsertGameTag: {ex.Message}");
+            throw; // Re-throw the exception for further handling
+        }
     }
 
     public async Task<Collection<Tag>> GetAllTags()
