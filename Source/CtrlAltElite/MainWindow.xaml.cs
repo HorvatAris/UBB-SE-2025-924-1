@@ -7,6 +7,7 @@ namespace SteamStore
     using System;
     using CtrlAltElite.Pages;
     using CtrlAltElite.Repositories;
+    using CtrlAltElite.Services;
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -22,6 +23,7 @@ namespace SteamStore
         private DeveloperService developerService;
         private PointShopService pointShopService;
         private InventoryService inventoryService;
+        private MarketplaceService marketplaceService;
         public User user;
 
         public MainWindow()
@@ -53,6 +55,10 @@ namespace SteamStore
             var pointShopRepository = new PointShopRepository(loggedInUser,dataLink);
             this.pointShopService = new PointShopService(pointShopRepository);
             var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
+
+            var marketplaceRepository = new MarketplaceRepository(dataLink, loggedInUser);
+            var marketplaceService = new MarketplaceService(marketplaceRepository);
+            this.marketplaceService = marketplaceService;
 
             var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             // var tagRepository = new TagRepository(dataLink);
@@ -121,6 +127,9 @@ namespace SteamStore
                         break;
                     case "inventory":
                         ContentFrame.Content = new InventoryPage(inventoryService);
+                        break;
+                    case "marketplace":
+                        ContentFrame.Content = new MarketplacePage(marketplaceService);
                         break;
                 }
             }
