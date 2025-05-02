@@ -11,6 +11,7 @@ namespace SteamStore.Services
     using System.Threading.Tasks;
     using CtrlAltElite.ServiceProxies;
     using CtrlAltElite.Services;
+    using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UserPointShopItemInventory;
     using SteamStore.Constants;
     using SteamStore.Data;
@@ -32,12 +33,15 @@ namespace SteamStore.Services
 
         public IUserPointShopItemInventoryServiceProxy userPointShopItemInventoryServiceProxy { get; set; }
 
+        public IUserServiceProxy userServiceProxy { get; set; }
+
         public User user { get; set; }
 
-        public PointShopService(IPointShopItemServiceProxy pointShopItemServiceProxy, IUserPointShopItemInventoryServiceProxy userPointShopItemInventoryServiceProxy, User user)
+        public PointShopService(IPointShopItemServiceProxy pointShopItemServiceProxy, IUserPointShopItemInventoryServiceProxy userPointShopItemInventoryServiceProxy, IUserServiceProxy userServiceProxy, User user)
         {
             this.pointShopItemServiceProxy = pointShopItemServiceProxy;
             this.userPointShopItemInventoryServiceProxy = userPointShopItemInventoryServiceProxy;
+            this.userServiceProxy = userServiceProxy;
             this.user = user;
         }
 
@@ -68,12 +72,22 @@ namespace SteamStore.Services
                 var userItems = await this.userPointShopItemInventoryServiceProxy.GetUserInventoryAsync(this.user.UserId);
                 var allItems = await this.pointShopItemServiceProxy.GetPointShopItemsAsync();
                 var userPointShopItems = userItems.UserPointShopItemsInventory
-                    .Select(userItem => allItems.PointShopItems
-                        .FirstOrDefault(item => item.PointShopItemId == userItem.PointShopItemId))
-                    .Where(item => item != null)
-                    .Select(PointShopItemMapper.MapToPointShopItem)
-                    .ToList();
+                        .Select(userItem =>
+                        {
+                            var pointShopItem = allItems.PointShopItems
+                                .FirstOrDefault(item => item.PointShopItemId == userItem.PointShopItemId);
 
+                            if (pointShopItem != null)
+                            {
+                                var mappedItem = PointShopItemMapper.MapToPointShopItem(pointShopItem);
+                                mappedItem.IsActive = userItem.IsActive; // Update IsActive status
+                                return mappedItem;
+                            }
+
+                            return null;
+                        })
+                        .Where(item => item != null)
+                        .ToList();
                 return new Collection<PointShopItem>(userPointShopItems);
             }
             catch (Exception exception)
@@ -110,6 +124,18 @@ namespace SteamStore.Services
                 await this.userPointShopItemInventoryServiceProxy.PurchaseItemAsync(purchaseRequest);
 
                 this.user.PointsBalance -= (float)item.PointPrice;
+
+                // Update the user's points balance in the database
+                var updateUserRequest = new UpdateUserRequest
+                {
+                    UserName = this.user.UserName,
+                    Email = this.user.Email,
+                    WalletBalance = this.user.WalletBalance,
+                    PointsBalance = this.user.PointsBalance,
+                    Role = (RoleEnum)this.user.UserRole,
+                };
+
+                await this.userServiceProxy.UpdateUserAsync(this.user.UserId, updateUserRequest);
 
             }
             catch (Exception exception)

@@ -232,12 +232,9 @@ namespace SteamStore.ViewModels
             this.ShopItems = new ObservableCollection<PointShopItem>();
             this.UserItems = new ObservableCollection<PointShopItem>();
             this.TransactionHistory = new ObservableCollection<PointShopTransaction>();
-           
-
 
             // Load initial data
-            this.LoadItems();
-            this.LoadUserItems();
+            this.InitAsync();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -364,6 +361,12 @@ namespace SteamStore.ViewModels
             {
                 return this.pointShopService.CanUserPurchaseItem(this.user, this.selectedItem, this.UserItems);
             }
+        }
+
+        public async void InitAsync()
+        {
+            await this.LoadItems();
+            await this.LoadUserItems();
         }
 
         public async Task LoadItems()
