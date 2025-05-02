@@ -195,6 +195,23 @@ namespace SteamHub.Api.Migrations
                             RecommendedRequirements = "Intel i7-6700K, 16GB RAM, GTX 1080",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=ssrNcwxALS4"
+                        },
+                        new
+                        {
+                            GameId = 4,
+                            Description = "An action-adventure game set in the fantasy land of Hyrule, where players control Link to rescue Princess Zelda.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE",
+                            ImagePath = "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg",
+                            MinimumRequirements = "Intel Core i5, 8GB RAM, GTX 960",
+                            Name = "The Legend of Zelda",
+                            NumberOfRecentPurchases = 1500,
+                            Price = 59.99m,
+                            PublisherUserId = 3,
+                            Rating = 4.8m,
+                            RecommendedRequirements = "Intel Core i7, 16GB RAM, GTX 1060",
+                            StatusId = 1,
+                            TrailerPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE"
                         });
                 });
 

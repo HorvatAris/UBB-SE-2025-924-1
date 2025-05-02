@@ -1,4 +1,4 @@
-namespace SteamHub.Api.Models.UsersGames
+namespace SteamHub.ApiContract.Models.UsersGames
 {
     public class UserGameRequest
     {

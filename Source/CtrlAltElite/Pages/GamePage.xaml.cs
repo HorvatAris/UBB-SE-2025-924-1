@@ -65,11 +65,11 @@ namespace SteamStore.Pages
             }
         }
 
-        private void BuyButton_Click(object buyButtonSender, RoutedEventArgs buyClickEventArgument)
+        private async void BuyButton_Click(object buyButtonSender, RoutedEventArgs buyClickEventArgument)
         {
             try
             {
-                this.ViewModel.AddToCart();
+                await this.ViewModel.AddToCart();
                 this.ShowNotification(
                     NotificationStrings.AddToCartSuccessTitle,
                     string.Format(NotificationStrings.AddToCartSuccessMessage, this.ViewModel.Game.GameTitle));

@@ -1,8 +1,7 @@
-namespace SteamHub.Api.Models.UsersGames
+namespace SteamHub.ApiContract.Models.UsersGames
 {
-    public class UpdateUserGamesRequest
+    public class UserGamesResponse
     {
-        public int UserId { get; set; }
         public int GameId { get; set; }
         public bool IsInWishlist { get; set; }
         public bool IsPurchased { get; set; }

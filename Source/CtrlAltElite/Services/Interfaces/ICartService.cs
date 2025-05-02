@@ -13,17 +13,21 @@ namespace SteamStore.Services.Interfaces
 
     public interface ICartService
     {
-        List<Game> GetCartGames();
+        Task<List<int>> GetAllCartGamesIds();
+
+        Task<List<int>> GetAllPurchasedGames();
+
+        Task<decimal> GetTotalSumToBePaidAsync();
+
+        Task<List<Game>> GetCartGames();
 
         void RemoveGameFromCart(Game game);
 
-        void AddGameToCart(Game game);
+        Task AddGameToCart(Game game);
 
         void RemoveGamesFromCart(List<Game> games);
 
         float GetUserFunds();
-
-        decimal GetTotalSumToBePaid();
 
         public float GetTheTotalSumOfItemsInCart(List<Game> cartGames);
     }

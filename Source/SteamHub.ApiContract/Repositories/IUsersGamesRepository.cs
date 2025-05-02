@@ -1,6 +1,10 @@
-using SteamHub.Api.Models.UsersGames;
-
-namespace SteamHub.Api.Context.Repositories
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using SteamHub.ApiContract.Models.UsersGames;
+namespace SteamHub.ApiContract.Repositories
 {
     public interface IUsersGamesRepository
     {

@@ -1,6 +1,6 @@
-using SteamHub.Api.Models.UserPointShopItemInventory;
+using SteamHub.ApiContract.Models.UsersGames;
 
-namespace SteamHub.Api.Models.UsersGames
+namespace SteamHub.ApiContract.Models.UsersGames
 {
     public class GetUserGamesResponse
     {

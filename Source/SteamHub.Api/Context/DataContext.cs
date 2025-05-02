@@ -176,6 +176,24 @@ namespace SteamHub.Api.Context
                         "https://www.youtube.com/watch?v=gncB1_e9n8E", // Assassin's Creed Valhalla Gameplay Walkthrough
                     Discount = 0.10m,
                     PublisherUserId = usersSeed[2].UserId
+                },
+                new Game
+                {
+                    GameId=4,
+                    Name = "The Legend of Zelda",
+                    Description = "An action-adventure game set in the fantasy land of Hyrule, where players control Link to rescue Princess Zelda.",
+                    ImagePath = "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg",
+                    Price = 59.99m,
+                    MinimumRequirements = "Intel Core i5, 8GB RAM, GTX 960",
+                    RecommendedRequirements = "Intel Core i7, 16GB RAM, GTX 1060",
+                    StatusId = GameStatusEnum.Approved,
+                    RejectMessage = null,
+                    Rating = 4.8m,
+                    NumberOfRecentPurchases = 1500,
+                    TrailerPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE", // The Legend of Zelda: Breath of the Wild Trailer
+                    GameplayPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE", // The Legend of Zelda: Breath of the Wild Gameplay
+                    Discount = 0.20m,
+                    PublisherUserId = usersSeed[2].UserId
                 }
             };
 
