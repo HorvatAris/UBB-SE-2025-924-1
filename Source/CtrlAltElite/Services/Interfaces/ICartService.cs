@@ -21,11 +21,11 @@ namespace SteamStore.Services.Interfaces
 
         Task<List<Game>> GetCartGames();
 
-        void RemoveGameFromCart(Game game);
+        Task RemoveGameFromCart(Game game);
 
         Task AddGameToCart(Game game);
 
-        void RemoveGamesFromCart(List<Game> games);
+        Task RemoveGamesFromCart(List<Game> games);
 
         float GetUserFunds();
 

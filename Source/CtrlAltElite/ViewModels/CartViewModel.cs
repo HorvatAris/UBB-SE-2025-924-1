@@ -90,9 +90,9 @@ public class CartViewModel : INotifyPropertyChanged
         return this.cartService.GetUserFunds();
     }
 
-    public void RemoveGameFromCart(Game game)
+    public async void RemoveGameFromCart(Game game)
     {
-        this.cartService.RemoveGameFromCart(game);
+        await this.cartService.RemoveGameFromCart(game);
         this.CartGames.Remove(game);
         this.UpdateTotalPrice();
         this.OnPropertyChanged(nameof(this.CartGames));

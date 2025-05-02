@@ -44,7 +44,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("remove-from-cart")]
+        [HttpPatch("remove-from-cart")]
         public async Task<IActionResult> RemoveFromCart([FromBody] UserGameRequest request)
         {
             try

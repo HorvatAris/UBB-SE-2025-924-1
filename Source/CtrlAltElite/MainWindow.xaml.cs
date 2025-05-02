@@ -57,7 +57,7 @@ namespace SteamStore
 
             gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
-            cartService = new CartService(new CartRepository(dataLink, loggedInUser) , cartServiceProxy,loggedInUser,gameServiceProxy);
+            cartService = new CartService(cartServiceProxy,loggedInUser,gameServiceProxy);
             var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
             userGameService = new UserGameService
             {

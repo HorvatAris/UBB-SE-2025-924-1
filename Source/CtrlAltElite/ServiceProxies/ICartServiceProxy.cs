@@ -19,5 +19,9 @@ namespace CtrlAltElite.ServiceProxies
 
         [Post("/api/UsersGames/add-to-cart")]
         Task AddToCartAsync([Body] UserGameRequest request);
+
+        [Patch("/api/UsersGames/remove-from-cart")]
+        Task RemoveFromCartAsync([Body] UserGameRequest request);
+
     }
 }

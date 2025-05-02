@@ -191,10 +191,13 @@ public class UsersGamesRepository : IUsersGamesRepository
 
             var userGame = await _context.UsersGames
                 .FirstOrDefaultAsync(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
-            if (userGame != null)
+
+
+            if (userGame != null && userGame.IsInCart)
             {
-                _context.UsersGames.Remove(userGame);
-                await _context.SaveChangesAsync();
+                //_context.UsersGames.Remove(userGame);
+                userGame.IsInCart = false;
+            await _context.SaveChangesAsync();
             }
             else
             {

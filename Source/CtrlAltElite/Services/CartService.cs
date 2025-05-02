@@ -18,16 +18,15 @@ using SteamStore.Services.Interfaces;
 public class CartService : ICartService
 {
     private const int InitialZeroSum = 0;
-    private ICartRepository cartRepository;
     private ICartServiceProxy cartServiceProxy;
     private User user;
     private IGameServiceProxy gameServiceProxy;
 
-    public CartService(ICartRepository cartRepository, ICartServiceProxy serviceProxy, User user,IGameServiceProxy gserviceProxy)
+    public CartService( ICartServiceProxy serviceProxy, User user,IGameServiceProxy gserviceProxy)
     {
-        this.cartRepository = cartRepository;
         this.cartServiceProxy = serviceProxy;
         this.gameServiceProxy = gserviceProxy;
+
         this.user = user;
     }
 
@@ -100,10 +99,28 @@ public class CartService : ICartService
         }
     }
 
-    public void RemoveGameFromCart(Game game)
+    //public void RemoveGameFromCart(Game game)
+    //{
+    //    this.cartRepository.RemoveGameFromCart(game);
+    //}
+    public async Task RemoveGameFromCart(Game game)
     {
-        this.cartRepository.RemoveGameFromCart(game);
+        try
+        {
+            var request = new UserGameRequest
+            {
+                UserId = this.user.UserId,
+                GameId = game.GameId
+            };
+
+            await this.cartServiceProxy.RemoveFromCartAsync(request);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error removing game from cart: {ex.Message}");
+        }
     }
+
 
     //public void AddGameToCart(Game game)
     //{
@@ -175,11 +192,12 @@ public class CartService : ICartService
         await this.cartServiceProxy.AddToCartAsync(request);
     }
 
-    public void RemoveGamesFromCart(List<Game> games)
+    public async Task RemoveGamesFromCart(List<Game> games)
     {
         foreach (var game in games)
         {
-            this.cartRepository.RemoveGameFromCart(game);
+
+            this.RemoveGameFromCart(game);
         }
     }
 
