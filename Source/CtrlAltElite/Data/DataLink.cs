@@ -42,6 +42,16 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
+    public SqlConnection GetConnection()
+    {
+        if (this.sqlConnection == null)
+        {
+            this.sqlConnection = new SqlConnection(this.connectionString);
+        }
+
+        return this.sqlConnection;
+    }
+
     public T ? ExecuteScalar<T>(string storedProcedure, SqlParameter[] ? sqlParameters = null)
     {
         try

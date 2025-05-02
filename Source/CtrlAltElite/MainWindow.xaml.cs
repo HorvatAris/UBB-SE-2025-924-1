@@ -5,6 +5,8 @@ using Refit;
 namespace SteamStore
 {
     using System;
+    using CtrlAltElite.Pages;
+    using CtrlAltElite.Repositories;
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -19,6 +21,7 @@ namespace SteamStore
         private UserGameService userGameService;
         private DeveloperService developerService;
         private PointShopService pointShopService;
+        private InventoryService inventoryService;
         public User user;
 
         public MainWindow()
@@ -54,6 +57,10 @@ namespace SteamStore
             var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             // var tagRepository = new TagRepository(dataLink);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
+
+            var inventoryRepository = new InventoryRepository(dataLink, loggedInUser);
+            this.inventoryService = new InventoryService(inventoryRepository);
+
 
             gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
@@ -111,6 +118,9 @@ namespace SteamStore
                         break;
                     case "DeveloperModePage":
                         ContentFrame.Content = new DeveloperModePage(developerService);
+                        break;
+                    case "inventory":
+                        ContentFrame.Content = new InventoryPage(inventoryService);
                         break;
                 }
             }

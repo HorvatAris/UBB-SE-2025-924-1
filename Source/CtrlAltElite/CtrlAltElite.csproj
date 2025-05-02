@@ -84,6 +84,7 @@
     <None Remove="Pages\CreditCardPaymentPage.xaml" />
     <None Remove="Pages\DeveloperModePage.xaml" />
     <None Remove="Pages\HomePage.xaml" />
+    <None Remove="Pages\InventoryPage.xaml" />
     <None Remove="Pages\PaypalPaymentPage.xaml" />
     <None Remove="Pages\PointsShopPage.xaml" />
   </ItemGroup>
@@ -131,6 +132,9 @@
     <None Update="Pages\GamePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <Page Update="Pages\InventoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\PaypalPaymentPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
