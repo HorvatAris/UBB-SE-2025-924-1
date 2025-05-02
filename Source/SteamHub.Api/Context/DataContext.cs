@@ -594,7 +594,13 @@ namespace SteamHub.Api.Context
                 }
             };
 
-            // have the delete cascaded only for items and games
+            // have the delete cascaded only for games
+            builder.Entity<UserInventory>()
+                .HasOne(ui => ui.Item)
+                .WithMany()
+                .HasForeignKey(ui => ui.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<UserInventory>()
                 .HasOne(ui => ui.User)
                 .WithMany()
@@ -610,12 +616,6 @@ namespace SteamHub.Api.Context
                 .HasOne(itd => itd.ItemTrade)
                 .WithMany(it => it.ItemTradeDetails)
                 .HasForeignKey(itd => itd.TradeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<ItemTradeDetail>()
-                .HasOne(itd => itd.Item)
-                .WithMany(i => i.ItemTradeDetails)
-                .HasForeignKey(itd => itd.ItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             var itemTradeDetailsSeed = new List<ItemTradeDetail>
