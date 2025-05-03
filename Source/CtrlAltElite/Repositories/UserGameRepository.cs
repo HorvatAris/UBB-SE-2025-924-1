@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using CtrlAltElite.Models;
 using SteamStore.Constants;
 using SteamStore.Data;
 using SteamStore.Repositories.Interfaces;
