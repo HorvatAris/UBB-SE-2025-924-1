@@ -60,33 +60,26 @@ namespace SteamStore
                 BaseAddress = new Uri("https://localhost:7241")
             };
 
-            // var pointShopRepository = new PointShopRepository(loggedInUser,dataLink);
-
-            // this.pointShopService = new PointShopService(pointShopRepository);
             var pointShopServiceProxy = RestService.For<IPointShopItemServiceProxy>(httpClient);
             var userPointShopInventoryServiceProxy = RestService.For<IUserPointShopItemInventoryServiceProxy>(httpClient);
-
             var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
             var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
             var itemServiceProxy = RestService.For<IItemServiceProxy>(httpClient);
             var itemTradeServiceProxy = RestService.For<IITemTradeServiceProxy>(httpClient);
             var itemTradeDetailServiceProxy = RestService.For<IItemTradeDetailServiceProxy>(httpClient);
-
             var userInventoryServiceProxy = RestService.For<IUserInventoryServiceProxy>(httpClient);
-            
+
             var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy,userServiceProxy, gameServiceProxy,itemServiceProxy,userInventoryServiceProxy);
             this.tradeService = tradeService;
-
-            //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
 
             var userService = new UserService(userServiceProxy);
             this.userService = userService;
             var trade = new ItemTrade(
-    sourceUser: loggedInUser,
-    destinationUser: new User { UserId = 2 }, // the user you want to trade with
-    gameOfTrade: new Game { GameId = 1 },     // the game the items belong to
-    description: "Test trade from user 1 to user 2"
-);
+                sourceUser: loggedInUser,
+                destinationUser: new User { UserId = 2 }, // the user you want to trade with
+                gameOfTrade: new Game { GameId = 1 },     // the game the items belong to
+                description: "Test trade from user 1 to user 2"
+            );
             trade.SetTradeId(1); // Set the trade ID to 1 for testing purposes
 
             // Add source user items
@@ -95,15 +88,14 @@ namespace SteamStore
 
             // Add destination user items
             trade.AddDestinationUserItem(new Item { ItemId = 3 });
+
             var marketplaceRepository = new MarketplaceRepository(dataLink, loggedInUser);
             var marketplaceService = new MarketplaceService(marketplaceRepository);
             this.marketplaceService = marketplaceService;
 
 
             var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
-            // var tagRepository = new TagRepository(dataLink);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
-            //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
 
             pointShopService = new PointShopService(
                     pointShopServiceProxy,
@@ -111,8 +103,8 @@ namespace SteamStore
                     userServiceProxy,
                     loggedInUser);
 
-            var inventoryRepository = new InventoryRepository(dataLink, loggedInUser);
-            this.inventoryService = new InventoryService(inventoryRepository);
+
+            this.inventoryService = new InventoryService(userInventoryServiceProxy, itemServiceProxy, gameServiceProxy, user);
 
 
             gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
@@ -129,8 +121,6 @@ namespace SteamStore
 
             developerService = new DeveloperService
             {
-                // GameRepository = gameRepository,
-                // TagRepository = tagRepository,
                 TagServiceProxy = tagServiceProxy,
                 UserGameRepository = userGameRepository,
                 User = loggedInUser,
@@ -150,7 +140,7 @@ namespace SteamStore
                     //await tradeService.UpdateItemTradeAsync(trade);
                    // await tradeService.GetUserInventoryAsync(1);
                    await tradeService.GetUserInventoryAsync(2);
-                    System.Diagnostics.Debug.WriteLine("Trade created successfully.");
+                   System.Diagnostics.Debug.WriteLine("Trade created successfully.");
                 }
                 catch (Exception ex)
                 {

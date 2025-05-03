@@ -22,6 +22,7 @@ namespace CtrlAltElite.Repositories
             this.user = user;
         }
 
+        // done
         public async Task<List<Item>> GetItemsFromInventoryAsync(Game game)
         {
             if (game == null)
@@ -94,6 +95,7 @@ namespace CtrlAltElite.Repositories
         /// </summary>
         /// <param name="userId">The id of the user whose inventory items are to be retrieved.</param>
         /// <returns>A <see cref="Task"/> asynchronously resolving to a list of <see cref="Item"/> objects associated with the specified user.</returns>
+        // done
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
             var items = new List<Item>();
@@ -193,6 +195,7 @@ namespace CtrlAltElite.Repositories
         /// <param name="user">The user whose inventory is to be retrieved.</param>
         /// <returns>A list of all <see cref="Item"/> objects belonging to the specified user.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the <paramref name="user"/> is null.</exception>.
+        /// nu o folosim
         public async Task<List<Item>> GetAllItemsFromInventoryAsync(User user)
         {
             if (user == null)
