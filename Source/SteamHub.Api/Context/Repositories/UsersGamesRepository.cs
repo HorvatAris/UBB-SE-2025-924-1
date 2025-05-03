@@ -190,9 +190,9 @@ namespace SteamHub.Api.Context.Repositories
 
             var userGame = await _context.UsersGames
                 .FirstOrDefaultAsync(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
-            if (userGame != null)
+            if (userGame != null && userGame.IsInCart)
             {
-                _context.UsersGames.Remove(userGame);
+                userGame.IsInCart = false;
                 await _context.SaveChangesAsync();
             }
             else
@@ -211,9 +211,9 @@ namespace SteamHub.Api.Context.Repositories
 
             var userGame = _context.UsersGames
                 .FirstOrDefault(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
-            if (userGame != null)
+            if (userGame != null && userGame.IsInWishlist)
             {
-                _context.UsersGames.Remove(userGame);
+                userGame.IsInWishlist = false;
                 await _context.SaveChangesAsync();
             }
             else

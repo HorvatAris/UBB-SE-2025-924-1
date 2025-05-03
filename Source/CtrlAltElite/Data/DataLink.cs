@@ -26,6 +26,16 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
+    public SqlConnection GetConnection()
+    {
+        if (this.sqlConnection == null)
+        {
+            this.sqlConnection = new SqlConnection(this.connectionString);
+        }
+
+        return this.sqlConnection;
+    }
+
     public void OpenConnection()
     {
         if (this.sqlConnection.State != ConnectionState.Open)
@@ -42,7 +52,7 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
-    public T ? ExecuteScalar<T>(string storedProcedure, SqlParameter[] ? sqlParameters = null)
+    public T? ExecuteScalar<T>(string storedProcedure, SqlParameter[]? sqlParameters = null)
     {
         try
         {
@@ -75,7 +85,7 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
-    public DataTable ExecuteReader(string storedProcedure, SqlParameter[] ? sqlParameters = null)
+    public DataTable ExecuteReader(string storedProcedure, SqlParameter[]? sqlParameters = null)
     {
         try
         {
@@ -107,7 +117,7 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
-    public int ExecuteNonQuery(string storedProcedure, SqlParameter[] ? sqlParameters = null)
+    public int ExecuteNonQuery(string storedProcedure, SqlParameter[]? sqlParameters = null)
     {
         try
         {

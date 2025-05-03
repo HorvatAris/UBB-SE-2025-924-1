@@ -112,6 +112,15 @@
         public async Task DeleteItemAsync(int id)
         {
             var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemId == id);
+
+            var userInventory = await _context.UserInventories
+                .FirstOrDefaultAsync(ui => ui.ItemId == id);
+            _context.UserInventories.RemoveRange(userInventory);
+
+            var itemTradeDetails = _context.ItemTradeDetails
+                .Where(itd => itd.ItemId == id);
+            _context.ItemTradeDetails.RemoveRange(itemTradeDetails);
+
             if (item == null)
             {
                 throw new KeyNotFoundException($"Item with id {id} not found.");

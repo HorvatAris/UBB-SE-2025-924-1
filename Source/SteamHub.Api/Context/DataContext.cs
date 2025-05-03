@@ -32,6 +32,7 @@ namespace SteamHub.Api.Context
         public DbSet<UsersGames> UsersGames { get; set; }
         public DbSet<StoreTransaction> StoreTransactions { get; set; }
         public DbSet<ItemTrade> ItemTrades { get; set; }
+        public DbSet<UserInventory> UserInventories { get; set; }
         public DbSet<ItemTradeDetail> ItemTradeDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -554,6 +555,60 @@ namespace SteamHub.Api.Context
 
             builder.Entity<ItemTrade>().HasData(itemTradesSeed);
 
+            var userInventoryTableSeed = new List<UserInventory>
+            {
+                new UserInventory
+                {
+                    UserId = 1,
+                    ItemId = 1,
+                    GameId = 1,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 1,
+                    ItemId = 2,
+                    GameId = 1,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 1,
+                    ItemId = 3,
+                    GameId = 2,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 1,
+                    ItemId = 4,
+                    GameId = 2,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 1,
+                    ItemId = 6,
+                    GameId = 3,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                }
+            };
+
+            // have the delete cascaded only for games
+            builder.Entity<UserInventory>()
+                .HasOne(ui => ui.Item)
+                .WithMany()
+                .HasForeignKey(ui => ui.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UserInventory>()
+                .HasOne(ui => ui.User)
+                .WithMany()
+                .HasForeignKey(ui => ui.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UserInventory>().HasData(userInventoryTableSeed);
+
             builder.Entity<ItemTradeDetail>()
             .HasKey(itd => new { itd.TradeId, itd.ItemId });
 
@@ -561,12 +616,6 @@ namespace SteamHub.Api.Context
                 .HasOne(itd => itd.ItemTrade)
                 .WithMany(it => it.ItemTradeDetails)
                 .HasForeignKey(itd => itd.TradeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<ItemTradeDetail>()
-                .HasOne(itd => itd.Item)
-                .WithMany(i => i.ItemTradeDetails)
-                .HasForeignKey(itd => itd.ItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             var itemTradeDetailsSeed = new List<ItemTradeDetail>

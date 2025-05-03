@@ -43,7 +43,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("remove-from-cart")]
+        [HttpPatch("remove-from-cart")]
         public async Task<IActionResult> RemoveFromCart([FromBody] UserGameRequest request)
         {
             try
@@ -78,7 +78,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("remove-from-wishlist")]
+        [HttpPatch("remove-from-wishlist")]
         public async Task<IActionResult> RemoveFromWishlist([FromBody] UserGameRequest request)
         {
             try
