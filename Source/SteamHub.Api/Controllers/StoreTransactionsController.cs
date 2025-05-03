@@ -2,7 +2,7 @@
 using SteamHub.Api.Context.Repositories;
 using SteamHub.Api.Entities;
 using SteamHub.Api.Models.StoreTransaction;
-using SteamHub.Api.Models.User;
+using SteamHub.ApiContract.Models.User;
 
 namespace SteamHub.Api.Controllers
 {

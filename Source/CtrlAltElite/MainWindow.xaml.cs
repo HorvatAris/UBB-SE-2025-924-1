@@ -57,13 +57,19 @@ namespace SteamStore
             {
                 BaseAddress = new Uri("https://localhost:7241")
             };
-            var pointShopRepository = new PointShopRepository(loggedInUser,dataLink);
-            this.pointShopService = new PointShopService(pointShopRepository);
-            var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
 
+            // var pointShopRepository = new PointShopRepository(loggedInUser,dataLink);
+
+            // this.pointShopService = new PointShopService(pointShopRepository);
+            var pointShopServiceProxy = RestService.For<IPointShopItemServiceProxy>(httpClient);
+            var userPointShopInventoryServiceProxy = RestService.For<IUserPointShopItemInventoryServiceProxy>(httpClient);
+
+            var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
+            var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
+            var itemServiceProxy = RestService.For<IItemServiceProxy>(httpClient);
             var itemTradeServiceProxy = RestService.For<IITemTradeServiceProxy>(httpClient);
             var itemTradeDetailServiceProxy = RestService.For<IItemTradeDetailServiceProxy>(httpClient);
-            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy);
+            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy,userServiceProxy, gameServiceProxy,itemServiceProxy);
             var trade = new ItemTrade(
     sourceUser: loggedInUser,
     destinationUser: new User { UserId = 2 }, // the user you want to trade with
@@ -85,6 +91,13 @@ namespace SteamStore
             var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             // var tagRepository = new TagRepository(dataLink);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
+            //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
+
+            pointShopService = new PointShopService(
+                    pointShopServiceProxy,
+                    userPointShopInventoryServiceProxy,
+                    userServiceProxy,
+                    loggedInUser);
 
             var inventoryRepository = new InventoryRepository(dataLink, loggedInUser);
             this.inventoryService = new InventoryService(inventoryRepository);
@@ -105,7 +118,7 @@ namespace SteamStore
             developerService = new DeveloperService
             {
                 // GameRepository = gameRepository,
-                //TagRepository = tagRepository,
+                // TagRepository = tagRepository,
                 TagServiceProxy = tagServiceProxy,
                 UserGameRepository = userGameRepository,
                 User = loggedInUser,
@@ -120,7 +133,7 @@ namespace SteamStore
             {
                 try
                 {
-                    await tradeService.AddItemTradeAsync(trade);
+                    await tradeService.GetActiveTradesAsync(1);
                     System.Diagnostics.Debug.WriteLine("Trade created successfully.");
                 }
                 catch (Exception ex)

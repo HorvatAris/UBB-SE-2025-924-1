@@ -1,0 +1,17 @@
+﻿using SteamHub.ApiContract.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using SteamHub.ApiContract.Models.User;
+using Refit;
+
+namespace CtrlAltElite.ServiceProxies
+{
+    public interface IUserServiceProxy : IUserRepository
+    {
+        [Put("/api/Users/{id}")]
+        Task UpdateUserAsync(int id, [Body] UpdateUserRequest request);
+    }
+}

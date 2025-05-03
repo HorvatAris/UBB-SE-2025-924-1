@@ -12,8 +12,13 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
+<<<<<<<< HEAD:Source/SteamHub.Api/Migrations/20250502130055_MainMigration.Designer.cs
     [Migration("20250502130055_MainMigration")]
     partial class MainMigration
+========
+    [Migration("20250502194637_MyMainMigration")]
+    partial class MyMainMigration
+>>>>>>>> mara-pointshop:Source/SteamHub.Api/Migrations/20250502194637_MyMainMigration.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

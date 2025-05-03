@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.User;
+using SteamHub.ApiContract.Models.User;
+using SteamHub.ApiContract.Repositories;
 
 namespace SteamHub.Api.Context.Repositories;
 
@@ -21,7 +22,7 @@ public class UserRepository : IUserRepository
                 UserId = user.UserId,
                 UserName = user.UserName,
                 Email = user.Email,
-                Role = user.RoleId,
+                Role = (ApiContract.Models.User.RoleEnum)user.RoleId,
                 WalletBalance = user.WalletBalance,
                 PointsBalance = user.PointsBalance
             })
@@ -42,7 +43,7 @@ public class UserRepository : IUserRepository
                 UserId = user.UserId,
                 UserName = user.UserName,
                 Email = user.Email,
-                Role = user.RoleId,
+                Role = (ApiContract.Models.User.RoleEnum)user.RoleId,
                 WalletBalance = user.WalletBalance,
                 PointsBalance = user.PointsBalance
             })
@@ -61,7 +62,7 @@ public class UserRepository : IUserRepository
 
         existingUser.UserName = request.UserName;
         existingUser.Email = request.Email;
-        existingUser.RoleId = request.Role;
+        existingUser.RoleId = (Entities.RoleEnum)request.Role;
         existingUser.WalletBalance = request.WalletBalance;
         existingUser.PointsBalance = request.PointsBalance;
 
@@ -74,7 +75,7 @@ public class UserRepository : IUserRepository
         {
             UserName = request.UserName,
             Email = request.Email,
-            RoleId = request.Role,
+            RoleId = (Entities.RoleEnum)request.Role,
             WalletBalance = request.WalletBalance,
             PointsBalance = request.PointsBalance
         };

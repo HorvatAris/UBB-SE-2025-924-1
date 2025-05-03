@@ -1,7 +1,7 @@
-﻿using SteamHub.Api.Models.PointShopItem;
-
-namespace SteamHub.Api.Context.Repositories
+﻿namespace SteamHub.ApiContract.Repositories
 {
+    using SteamHub.ApiContract.Models.PointShopItem;
+
     public interface IPointShopItemRepository
     {
         Task<CreatePointShopItemResponse> CreatePointShopItemAsync(CreatePointShopItemRequest request);

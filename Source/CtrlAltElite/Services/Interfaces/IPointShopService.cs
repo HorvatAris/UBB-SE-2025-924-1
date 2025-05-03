@@ -16,24 +16,24 @@ namespace SteamStore.Services.Interfaces
     {
         User GetCurrentUser();
 
-        List<PointShopItem> GetAllItems();
+        Task<List<PointShopItem>> GetAllItems();
 
-        List<PointShopItem> GetUserItems();
+        Task<Collection<PointShopItem>> GetUserItems();
 
-        void PurchaseItem(PointShopItem item);
+        Task PurchaseItem(PointShopItem item);
 
-        void ActivateItem(PointShopItem item);
+        Task ActivateItem(PointShopItem item);
 
-        void DeactivateItem(PointShopItem item);
+        Task DeactivateItem(PointShopItem item);
 
-        List<PointShopItem> GetFilteredItems(string filterType, string searchText, double minimumPrice, double maximumPrice);
+        Task<List<PointShopItem>> GetFilteredItems(string filterType, string searchText, double minimumPrice, double maximumPrice);
 
         bool CanUserPurchaseItem(User user, PointShopItem selectedItem, IEnumerable<PointShopItem> userItems);
 
-        List<PointShopItem> GetAvailableItems(User user);
+        Task<List<PointShopItem>> GetAvailableItems(User user);
 
         bool TryPurchaseItem(PointShopItem selectedItem, ObservableCollection<PointShopTransaction> transactionHistory, User user, out PointShopTransaction newTransaction);
 
-        PointShopItem ToggleActivationForItem(int itemId, ObservableCollection<PointShopItem> userItems);
+        Task<PointShopItem> ToggleActivationForItem(int itemId, ObservableCollection<PointShopItem> userItems);
     }
 }

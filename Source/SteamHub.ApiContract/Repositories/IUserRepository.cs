@@ -1,7 +1,7 @@
-﻿using SteamHub.Api.Models.User;
-
-namespace SteamHub.Api.Context.Repositories
+﻿namespace SteamHub.ApiContract.Repositories
 {
+    using SteamHub.ApiContract.Models.User;
+
     public interface IUserRepository
     {
         Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request);
