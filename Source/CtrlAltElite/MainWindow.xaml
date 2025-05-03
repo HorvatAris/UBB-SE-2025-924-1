@@ -34,6 +34,10 @@
                         <FontIcon Glyph="&#xE943;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Icon="Shop" Content="Marketplace" Tag="marketplace" />
+                <NavigationViewItem Icon="List" Content="Inventory" Tag="inventory" />
+                <NavigationViewItem Icon="Switch" Content="Trading" Tag="trading" />
+                
             </NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame" />

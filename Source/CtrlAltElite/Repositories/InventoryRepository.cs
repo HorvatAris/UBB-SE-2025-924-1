@@ -1,15 +1,15 @@
-﻿using System;
+﻿using SteamStore.Models;
+using SteamStore.Repositories.Interfaces;
+using SteamStore.Data;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CtrlAltElite.Models;
-using SteamStore.Data;
-using SteamStore.Models;
-using SteamStore.Repositories.Interfaces;
 
-namespace SteamStore.Repositories
+namespace CtrlAltElite.Repositories
 {
     public class InventoryRepository : IInventoryRepository
     {

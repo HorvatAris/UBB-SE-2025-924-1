@@ -16,6 +16,8 @@ namespace SteamStore.Data
     {
         void OpenConnection();
 
+        SqlConnection GetConnection();
+
         void CloseConnection();
 
         T? ExecuteScalar<T>(string storedProcedure, SqlParameter[]? sqlParameters = null);

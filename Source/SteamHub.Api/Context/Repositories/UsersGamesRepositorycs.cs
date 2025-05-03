@@ -1,10 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using SteamHub.Api.Context;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.UsersGames;
-
-namespace SteamHub.Api.Context.Repositories
-{
-    public class UsersGamesRepository : IUsersGamesRepository
+using SteamHub.ApiContract.Models.UsersGames;
+using SteamHub.ApiContract.Repositories;
+using SteamHub.ApiContract.Models.UsersGames;
+public class UsersGamesRepository : IUsersGamesRepository
     {
         private readonly DataContext _context;
         public UsersGamesRepository(DataContext context)
@@ -115,6 +115,7 @@ namespace SteamHub.Api.Context.Repositories
                     IsInCart = ug.IsInCart,
                     IsPurchased = ug.IsPurchased,
                     IsInWishlist = ug.IsInWishlist
+
                 })
                 .ToListAsync();
 
@@ -222,4 +223,3 @@ namespace SteamHub.Api.Context.Repositories
             }
         }
     }
-}

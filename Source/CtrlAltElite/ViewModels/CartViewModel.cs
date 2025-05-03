@@ -90,9 +90,9 @@ public class CartViewModel : INotifyPropertyChanged
         return this.cartService.GetUserFunds();
     }
 
-    public void RemoveGameFromCart(Game game)
+    public async void RemoveGameFromCart(Game game)
     {
-        this.cartService.RemoveGameFromCart(game);
+        await this.cartService.RemoveGameFromCart(game);
         this.CartGames.Remove(game);
         this.UpdateTotalPrice();
         this.OnPropertyChanged(nameof(this.CartGames));
@@ -162,11 +162,13 @@ public class CartViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void LoadGames()
+    private async Task LoadGames()
     {
-        var games = this.cartService.GetCartGames();
+        var games = await this.cartService.GetCartGames();
+        System.Diagnostics.Debug.WriteLine($"Number of games in cart: {games.Count}");
         foreach (var game in games)
         {
+            System.Diagnostics.Debug.WriteLine($"GameId: {game.GameId}");
             this.CartGames.Add(game);
         }
 

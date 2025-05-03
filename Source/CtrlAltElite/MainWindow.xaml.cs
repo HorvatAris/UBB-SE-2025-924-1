@@ -5,6 +5,9 @@ using Refit;
 namespace SteamStore
 {
     using System;
+    using CtrlAltElite.Pages;
+    using CtrlAltElite.Repositories;
+    using CtrlAltElite.Services;
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -19,6 +22,8 @@ namespace SteamStore
         private UserGameService userGameService;
         private DeveloperService developerService;
         private PointShopService pointShopService;
+        private InventoryService inventoryService;
+        private MarketplaceService marketplaceService;
         public User user;
 
         public MainWindow()
@@ -50,12 +55,22 @@ namespace SteamStore
             var pointShopRepository = new PointShopRepository(loggedInUser,dataLink);
             this.pointShopService = new PointShopService(pointShopRepository);
             var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
-           // var tagRepository = new TagRepository(dataLink);
+
+            var marketplaceRepository = new MarketplaceRepository(dataLink, loggedInUser);
+            var marketplaceService = new MarketplaceService(marketplaceRepository);
+            this.marketplaceService = marketplaceService;
+
+            var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
+            // var tagRepository = new TagRepository(dataLink);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
+
+            var inventoryRepository = new InventoryRepository(dataLink, loggedInUser);
+            this.inventoryService = new InventoryService(inventoryRepository);
+
 
             gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
-            cartService = new CartService(new CartRepository(dataLink, loggedInUser));
+            cartService = new CartService(cartServiceProxy,loggedInUser,gameServiceProxy);
             var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
             userGameService = new UserGameService
             {
@@ -109,6 +124,12 @@ namespace SteamStore
                         break;
                     case "DeveloperModePage":
                         ContentFrame.Content = new DeveloperModePage(developerService);
+                        break;
+                    case "inventory":
+                        ContentFrame.Content = new InventoryPage(inventoryService);
+                        break;
+                    case "marketplace":
+                        ContentFrame.Content = new MarketplacePage(marketplaceService);
                         break;
                 }
             }
