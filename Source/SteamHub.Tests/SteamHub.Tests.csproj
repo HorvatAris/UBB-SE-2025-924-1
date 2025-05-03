@@ -17,13 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< Updated upstream
-=======
     <ProjectReference Include="..\SteamHub.Api\SteamHub.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
->>>>>>> Stashed changes
     <Using Include="Xunit" />
   </ItemGroup>
 
