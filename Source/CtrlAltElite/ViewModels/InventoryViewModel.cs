@@ -145,9 +145,14 @@ namespace CtrlAltElite.ViewModels
                     OnPropertyChanged();
 
                     // Update the filtered inventory when the search text changes.
-                    UpdateInventoryItemsAsync().ConfigureAwait(false);
+                    this.updateAsyncVoid();
                 }
             }
+        }
+
+        private async void updateAsyncVoid()
+        {
+            await UpdateInventoryItemsAsync();
         }
 
         /// <summary>
@@ -288,18 +293,9 @@ namespace CtrlAltElite.ViewModels
         {
             try
             {
-                var allUsers = await inventoryService.GetAllUsersAsync();
-                AvailableUsers.Clear();
-                foreach (var user in allUsers)
-                {
-                    AvailableUsers.Add(user);
-                }
-
-                // Set default selected user if available.
-                if (AvailableUsers.Any())
-                {
-                    SelectedUser = AvailableUsers.First();
-                }
+                var user = inventoryService.GetAllUsersAsync();
+                AvailableUsers.Add(user);
+                SelectedUser = user;
             }
             catch (Exception loadingUsersException)
             {
