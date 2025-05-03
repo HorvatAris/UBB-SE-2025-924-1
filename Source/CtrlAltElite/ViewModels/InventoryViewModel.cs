@@ -104,7 +104,7 @@ namespace CtrlAltElite.ViewModels
                     OnPropertyChanged();
 
                     // Update the filtered inventory when the game filter changes.
-                    UpdateInventoryItemsAsync().ConfigureAwait(false);
+                    _ = this.UpdateInventoryItemsAsync();
                 }
             }
         }
@@ -210,7 +210,7 @@ namespace CtrlAltElite.ViewModels
 
                 // Retrieve all inventory items to rebuild the games filter.
                 var allItems = await inventoryService.GetUserInventoryAsync(SelectedUser.UserId);
-                var availableGames = inventoryService.GetAvailableGames(allItems);
+                var availableGames = await inventoryService.GetAvailableGames(allItems);
                 AvailableGames.Clear();
                 foreach (var game in availableGames)
                 {
@@ -294,6 +294,7 @@ namespace CtrlAltElite.ViewModels
             try
             {
                 var user = inventoryService.GetAllUsersAsync();
+                AvailableUsers.Clear();
                 AvailableUsers.Add(user);
                 SelectedUser = user;
             }

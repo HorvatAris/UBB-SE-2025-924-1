@@ -102,7 +102,7 @@ namespace SteamStore
             // var inventoryRepository = new InventoryRepository(dataLink, loggedInUser);
             var userInventoryServiceProxy = RestService.For<IUserInventoryServiceProxy>(httpClient);
 
-            this.inventoryService = new InventoryService(userInventoryServiceProxy, itemServiceProxy, user);
+            this.inventoryService = new InventoryService(userInventoryServiceProxy, itemServiceProxy, gameServiceProxy, user);
 
 
             gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };

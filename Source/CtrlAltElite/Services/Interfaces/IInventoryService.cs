@@ -28,7 +28,7 @@ namespace SteamStore.Services.Interfaces
 
         List<Item> FilterInventoryItems(List<Item> items, Game selectedGame, string searchText);
 
-        List<Game> GetAvailableGames(List<Item> items);
+        Task<List<Game>> GetAvailableGames(List<Item> items);
 
 
         Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText);

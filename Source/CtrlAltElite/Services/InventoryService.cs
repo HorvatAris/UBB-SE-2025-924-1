@@ -8,6 +8,8 @@ namespace SteamStore.Services
 {
     using CtrlAltElite.Models;
     using CtrlAltElite.ServiceProxies;
+    using CtrlAltElite.Services;
+    using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.UserInventory;
     using SteamHub.ApiContract.Repositories;
@@ -32,10 +34,11 @@ namespace SteamStore.Services
         private readonly IGameServiceProxy gameServiceProxy;
         private User user;
 
-        public InventoryService(IUserInventoryServiceProxy userInventoryServiceProxy, IItemServiceProxy itemServiceProxy, User user)
+        public InventoryService(IUserInventoryServiceProxy userInventoryServiceProxy, IItemServiceProxy itemServiceProxy, IGameServiceProxy gameServiceProxy, User user)
         {
             this.userInventoryServiceProxy = userInventoryServiceProxy;
             this.itemServiceProxy = itemServiceProxy;
+            this.gameServiceProxy = gameServiceProxy;
 
             // Instantiate the validator with enriched logic.
             this.inventoryValidator = new InventoryValidator();
@@ -120,6 +123,8 @@ namespace SteamStore.Services
                     Price = item.Price,
                     Description = item.Description,
                     IsListed = item.IsListed,
+                    ImagePath = item.ImagePath,
+                    GameName = item.GameName,
                 })
                 .ToList();
 
@@ -138,21 +143,32 @@ namespace SteamStore.Services
 
             // set isListed to 1
             item.IsListed = true;
+            var allItems = await this.itemServiceProxy.GetItemsAsync();
+            var foundItem = allItems.FirstOrDefault(i => i.ItemId == item.ItemId);
+            var foundItemGameId = allItems.FirstOrDefault(i => i.ItemId == item.ItemId).GameId;
 
             // Create a request object for the item.
             var itemFromInventoryRequest = new UpdateItemRequest
             {
-                ItemName = item.ItemName,
-                GameId = item.Game.GameId,
-                Price = item.Price,
-                Description = item.Description,
+                ItemName = foundItem.ItemName,
+                GameId = foundItemGameId,
+                Price = foundItem.Price,
+                Description = foundItem.Description,
                 IsListed = item.IsListed,
-                ImagePath = item.ImagePath,
+                ImagePath = foundItem.ImagePath,
             };
 
             // Call the repository method to sell the item.
-            await this.itemServiceProxy.UpdateItemAsync(item.ItemId, itemFromInventoryRequest);
-
+            try
+            {
+                await this.itemServiceProxy.UpdateItemAsync(item.ItemId, itemFromInventoryRequest);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., log them).
+                Console.WriteLine($"Error selling item: {ex.Message}");
+                return false;
+            }
             // return await this.inventoryRepository.SellItemAsync(item);
             return true;
         }
@@ -164,32 +180,36 @@ namespace SteamStore.Services
                 throw new ArgumentNullException(nameof(items));
             }
 
-            // Exclude items that are already listed.
-            // var filteredItems = items.Where(item => !item.IsListed);
-            var filteredItems = items.Where(item => !item.IsListed);
+            IEnumerable<Item> filtered = items;
 
-            // If a specific game is selected (not the "All Games" option), filter by that game.
+            // Filter out listed items (only show unlisted ones)
+            filtered = filtered.Where(item => !item.IsListed);
+
+            // Filter by selected game if it's not null and not the "All Games" option
             if (selectedGame != null && selectedGame.GameTitle != "All Games")
             {
-                filteredItems = filteredItems.Where(item =>
-                    item.Game != null && item.Game.GameId == selectedGame.GameId);
+                filtered = filtered.Where(item =>
+                    string.Equals(item.GameName, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Apply search text filter on item name or description (case-insensitive).
+            // Filter by search text if provided
             if (!string.IsNullOrWhiteSpace(searchText))
             {
-                filteredItems = filteredItems.Where(item =>
+                searchText = searchText.Trim();
+                filtered = filtered.Where(item =>
                     (!string.IsNullOrEmpty(item.ItemName) &&
-                     item.ItemName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                     item.ItemName.Trim().Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
                     (!string.IsNullOrEmpty(item.Description) &&
                      item.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase)));
             }
 
-            return filteredItems.ToList();
+            return filtered.ToList();
         }
 
-        /// <inheritdoc/>
-        public List<Game> GetAvailableGames(List<Item> items)
+        // Fix for CS1061: Replace the incorrect usage of 'GameId' with 'GameName' since 'InventoryItemResponse' does not have a 'GameId' property.
+        // Update the relevant code block in the `GetAvailableGames` method.
+
+        public async Task<List<Game>> GetAvailableGames(List<Item> items)
         {
             if (items == null)
             {
@@ -197,15 +217,6 @@ namespace SteamStore.Services
             }
 
             // Create the special "All Games" option.
-            //var game = new Game
-            //{
-            //    GameId = reader.GetInt32(reader.GetOrdinal("GameId")),
-            //    GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
-            //    //Genre = reader.GetString(reader.GetOrdinal("Genre")),
-            //    GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
-            //    Price = (decimal)reader.GetDouble(reader.GetOrdinal("GamePrice")),
-            //    Status = reader.GetString(reader.GetOrdinal("GameStatus")),
-            //};
             var allGamesOption = new Game
             {
                 GameTitle = "All Games",
@@ -213,17 +224,26 @@ namespace SteamStore.Services
                 GameDescription = "Show items from all games",
             };
 
-            // Start with the "All Games" option.
-            var availableGames = new List<Game> { allGamesOption };
+            // Create a list to hold the available games.
+            var userItems = await this.userInventoryServiceProxy.GetUserInventoryAsync(this.user.UserId);
+            List<string> gameNames = userItems.Items
+                .Where(item => item.GameName != null)
+                .Select(item => item.GameName)
+                .Distinct()
+                .ToList();
 
-            // Add unique games from the inventory.
-            var uniqueGames = items
-                .Select(item => item.Game)
-                .Where(game => game != null)
-                .Distinct(new GameComparer());
-
-            availableGames.AddRange(uniqueGames);
-            return availableGames;
+            // Get the game objects from the game names.
+            List<Game> games = new List<Game> { allGamesOption };
+            var allGames = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
+            foreach (var gameName in gameNames)
+            {
+                var foundGame = allGames.FirstOrDefault(g => g.Name == gameName);
+                if (foundGame != null)
+                {
+                    games.Add(GameMapper.MapToGame(foundGame)); 
+                }
+            }
+            return games;
         }
 
         /// <inheritdoc/>
