@@ -43,17 +43,17 @@ namespace CtrlAltElite.Repositories
 
             try
             {
-                var currentUser = user;
+                var currentUser = this.user;
                 if (currentUser == null)
                 {
                     throw new InvalidOperationException("Current user not found.");
                 }
 
-                using (var command = new SqlCommand(query, dataLink.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@GameId", game.GameId);
                     command.Parameters.AddWithValue("@UserId", currentUser.UserId);
-                    dataLink.OpenConnection();
+                    this.dataLink.OpenConnection();
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         while (await reader.ReadAsync())
@@ -83,7 +83,7 @@ namespace CtrlAltElite.Repositories
             }
             finally
             {
-                dataLink.CloseConnection();
+                this.dataLink.CloseConnection();
             }
 
             return items;
@@ -120,10 +120,10 @@ namespace CtrlAltElite.Repositories
             try
             {
                 System.Diagnostics.Debug.WriteLine($"Executing GetUserInventory query for userId: {userId}");
-                using (var command = new SqlCommand(query, dataLink.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@UserId", userId);
-                    dataLink.OpenConnection();
+                    this.dataLink.OpenConnection();
                     System.Diagnostics.Debug.WriteLine("Connection opened successfully");
 
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
@@ -144,7 +144,7 @@ namespace CtrlAltElite.Repositories
                                 GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
                                 //Genre = reader.GetString(reader.GetOrdinal("Genre")),
                                 GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
-                                Price = reader.GetDecimal(reader.GetOrdinal("GamePrice")),
+                                Price = (decimal)reader.GetDecimal(reader.GetOrdinal("GamePrice")),
                                 Status = reader.GetString(reader.GetOrdinal("GameStatus")),
                             };
 
@@ -181,7 +181,7 @@ namespace CtrlAltElite.Repositories
             }
             finally
             {
-                dataLink.CloseConnection();
+                this.dataLink.CloseConnection();
             }
 
             return items;
@@ -221,10 +221,10 @@ namespace CtrlAltElite.Repositories
 
             try
             {
-                using (var command = new SqlCommand(query, dataLink.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@UserId", user.UserId);
-                    dataLink.OpenConnection();
+                    this.dataLink.OpenConnection();
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
@@ -261,7 +261,7 @@ namespace CtrlAltElite.Repositories
             }
             finally
             {
-                dataLink.CloseConnection();
+                this.dataLink.CloseConnection();
             }
 
             return items;
@@ -291,18 +291,18 @@ namespace CtrlAltElite.Repositories
 
             try
             {
-                using (var command = new SqlCommand(query, dataLink.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@UserId", user.UserId);
                     command.Parameters.AddWithValue("@GameId", game.GameId);
                     command.Parameters.AddWithValue("@ItemId", item.ItemId);
-                    dataLink.OpenConnection();
+                    this.dataLink.OpenConnection();
                     await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
             }
             finally
             {
-                dataLink.CloseConnection();
+                this.dataLink.CloseConnection();
             }
         }
 
@@ -330,18 +330,18 @@ namespace CtrlAltElite.Repositories
 
             try
             {
-                using (var command = new SqlCommand(query, dataLink.GetConnection()))
+                using (var command = new SqlCommand(query, this.dataLink.GetConnection()))
                 {
                     command.Parameters.AddWithValue("@UserId", user.UserId);
                     command.Parameters.AddWithValue("@GameId", game.GameId);
                     command.Parameters.AddWithValue("@ItemId", item.ItemId);
-                    dataLink.OpenConnection();
+                    this.dataLink.OpenConnection();
                     await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
             }
             finally
             {
-                dataLink.CloseConnection();
+                this.dataLink.CloseConnection();
             }
         }
 
@@ -355,9 +355,10 @@ namespace CtrlAltElite.Repositories
             try
             {
                 // await this.dataBaseConnector.OpenConnectionAsync().ConfigureAwait(false);
-                dataLink.OpenConnection();
+                this.dataLink.OpenConnection();
+
                 // Start transaction.
-                using (var transaction = dataLink.GetConnection().BeginTransaction())
+                using (var transaction = this.dataLink.GetConnection().BeginTransaction())
                 {
                     try
                     {
@@ -366,7 +367,7 @@ namespace CtrlAltElite.Repositories
                             @"
                             UPDATE Items 
                             SET IsListed = 1
-                            WHERE ItemId = @ItemId", dataLink.GetConnection(),
+                            WHERE ItemId = @ItemId", this.dataLink.GetConnection(),
                             transaction))
                         {
                             command.Parameters.AddWithValue("@ItemId", item.ItemId);
@@ -396,7 +397,7 @@ namespace CtrlAltElite.Repositories
             }
             finally
             {
-                dataLink.CloseConnection();
+                this.dataLink.CloseConnection();
             }
         }
 
@@ -404,11 +405,11 @@ namespace CtrlAltElite.Repositories
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
-            using (var command = new SqlCommand("SELECT user_id, UserName FROM Users", dataLink.GetConnection()))
+            using (var command = new SqlCommand("SELECT user_id, UserName FROM Users", this.dataLink.GetConnection()))
             {
                 try
                 {
-                    dataLink.OpenConnection();
+                    this.dataLink.OpenConnection();
                     using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
@@ -425,7 +426,7 @@ namespace CtrlAltElite.Repositories
                 }
                 finally
                 {
-                    dataLink.CloseConnection();
+                    this.dataLink.CloseConnection();
                 }
             }
 

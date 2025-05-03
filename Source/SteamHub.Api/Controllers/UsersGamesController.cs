@@ -79,7 +79,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("remove-from-wishlist")]
+        [HttpPatch("remove-from-wishlist")]
         public async Task<IActionResult> RemoveFromWishlist([FromBody] UserGameRequest request)
         {
             try
