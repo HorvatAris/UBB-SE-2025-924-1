@@ -196,4 +196,17 @@ namespace SteamStore.Utils
             throw new NotImplementedException();
         }
     }
+
+    public class PriceToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return value is decimal price ? $"${price:F2}" : string.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

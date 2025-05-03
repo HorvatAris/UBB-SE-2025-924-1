@@ -28,13 +28,31 @@ namespace SteamStore.ViewModels
         private string email;
         private string password;
 
+        // Updated constructor to be async and return Task
         public PaypalPaymentViewModel(ICartService cartService, IUserGameService userGameService)
         {
             this.cartService = cartService;
             this.userGameService = userGameService;
-            this.purchasedGames = cartService.GetCartGames();
             this.paypalProcessor = new PaypalProcessor();
-            this.amountToPay = cartService.GetTotalSumToBePaid();
+            this.InitAmountToPayAsync();
+        }
+
+        private async void InitAmountToPayAsync()
+        {
+            this.amountToPay = await cartService.GetTotalSumToBePaidAsync();
+        }
+
+        // Added an async factory method to initialize the ViewModel
+        public static async Task<PaypalPaymentViewModel> CreateAsync(ICartService cartService, IUserGameService userGameService)
+        {
+            var viewModel = new PaypalPaymentViewModel(cartService, userGameService);
+            await viewModel.InitAsync();
+            return viewModel;
+        }
+
+        public async Task InitAsync()
+        {
+            this.purchasedGames = await this.cartService.GetCartGames();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

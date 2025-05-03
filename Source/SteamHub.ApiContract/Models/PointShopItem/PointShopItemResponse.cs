@@ -1,5 +1,4 @@
 ﻿namespace SteamHub.ApiContract.Models.PointShopItem;
-
 public class PointShopItemResponse
 {
     public int PointShopItemId { get; set; }

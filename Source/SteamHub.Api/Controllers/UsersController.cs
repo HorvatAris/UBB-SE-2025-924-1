@@ -66,20 +66,5 @@ namespace SteamHub.Api.Controllers
                 return BadRequest($"An error occurred: {ex.Message}");
             }
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserAsync([FromRoute] int id)
-        {
-            try
-            {
-                await _userRepository.DeleteUserAsync(id);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"An error occurred: {ex.Message}");
-            }
-
-            return NoContent();
-        }
     }
 }

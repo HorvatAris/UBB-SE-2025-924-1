@@ -36,10 +36,15 @@ namespace SteamStore.ViewModels
             this.cartService = cartService;
             this.userGameService = userGameService;
             this.creditCardProcessor = new CreditCardProcessor();
-            this.TotalAmount = cartService.GetTotalSumToBePaid();
+            this.InitAsync();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private async void InitAsync()
+        {
+            this.TotalAmount = await this.cartService.GetTotalSumToBePaidAsync();
+        }
 
         public string CardNumber
         {
@@ -111,7 +116,7 @@ namespace SteamStore.ViewModels
             bool paymentSuccess = await this.creditCardProcessor.ProcessPaymentAsync(this.cardNumber, this.expirationDate, this.cvv, this.ownerName);
             if (paymentSuccess)
             {
-                List<Game> purchasedGames = this.cartService.GetCartGames();
+                List<Game> purchasedGames = await this.cartService.GetCartGames();
                 this.cartService.RemoveGamesFromCart(purchasedGames);
                 this.userGameService.PurchaseGames(purchasedGames);
                 this.LastEarnedPoints = this.userGameService.LastEarnedPoints;

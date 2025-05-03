@@ -155,16 +155,17 @@ public class GamePageViewModel : INotifyPropertyChanged
     }
 
     // Add game to cart - safely handle null CartService
-    public void AddToCart()
+    public async Task AddToCart()
     {
         if (this.Game != null && this.cartService != null)
         {
             try
             {
-                this.cartService.AddGameToCart(this.Game);
+                await this.cartService.AddGameToCart(this.Game);
             }
             catch (Exception exception)
             {
+                System.Diagnostics.Debug.WriteLine($"Error adding game to cart: {exception.Message}");
                 throw new Exception(exception.Message);
             }
         }
