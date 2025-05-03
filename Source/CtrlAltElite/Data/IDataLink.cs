@@ -20,10 +20,12 @@ namespace SteamStore.Data
 
         void CloseConnection();
 
-        T? ExecuteScalar<T>(string storedProcedure, SqlParameter[] ? sqlParameters = null);
+        T? ExecuteScalar<T>(string storedProcedure, SqlParameter[]? sqlParameters = null);
 
-        DataTable ExecuteReader(string storedProcedure, SqlParameter[] ? sqlParameters = null);
+        DataTable ExecuteReader(string storedProcedure, SqlParameter[]? sqlParameters = null);
 
-        int ExecuteNonQuery(string storedProcedure, SqlParameter[] ? sqlParameters = null);
+        int ExecuteNonQuery(string storedProcedure, SqlParameter[]? sqlParameters = null);
+
+        SqlConnection GetConnection();
     }
 }
