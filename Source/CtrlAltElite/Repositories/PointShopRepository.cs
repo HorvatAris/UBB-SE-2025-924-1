@@ -12,6 +12,7 @@ namespace SteamStore.Repositories
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml.Linq;
+    using CtrlAltElite.Models;
     using SteamStore.Constants;
     using SteamStore.Data;
     using SteamStore.Models;

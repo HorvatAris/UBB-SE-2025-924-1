@@ -234,6 +234,16 @@ namespace SteamHub.Api.Context
                 },
                 new Item
                 {
+                    ItemId = 7,
+                    ItemName = "pilfered ethereal blade",
+                    CorrespondingGameId = 1,
+                    Price = 29.99f,
+                    Description = "A mystical blade imbued with ancient magic from Legends of Etheria.",
+                    IsListed = false,
+                    ImagePath = "https://cdn.example.com/etheria/ethereal-blade.jpg"
+                },
+                new Item
+                {
                     ItemId = 2,
                     ItemName = "Mystic Armour",
                     CorrespondingGameId = 1,
@@ -568,7 +578,20 @@ namespace SteamHub.Api.Context
                     TradeStatus = TradeStatus.Pending,
                     AcceptedBySourceUser = true,
                     AcceptedByDestinationUser = false
-                }
+                },
+                new ItemTrade
+                {
+                    TradeId = 3,
+                    SourceUserId = 1,
+                    DestinationUserId = 2,
+                    GameOfTradeId = 1,
+                    TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                    TradeDate = new DateTime(2025, 4, 28),
+                    TradeStatus = TradeStatus.Declined,
+                    AcceptedBySourceUser = true,
+                    AcceptedByDestinationUser = true
+                },
+
             };
 
             builder.Entity<ItemTrade>().HasData(itemTradesSeed);
@@ -609,7 +632,35 @@ namespace SteamHub.Api.Context
                     ItemId = 6,
                     GameId = 3,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                }
+                },
+                new UserInventory
+                {
+                    UserId = 1,
+                    ItemId = 7,
+                    GameId = 1,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 2,
+                    ItemId = 6,
+                    GameId = 3,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 2,
+                    ItemId = 5,
+                    GameId = 3,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 2,
+                    ItemId = 7,
+                    GameId = 1,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
             };
 
             // have the delete cascaded only for games
