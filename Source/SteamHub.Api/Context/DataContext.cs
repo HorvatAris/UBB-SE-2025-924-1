@@ -553,7 +553,7 @@ namespace SteamHub.Api.Context
                     GameOfTradeId = 1,
                     TradeDescription = "Trade 1: User1 offers Game1 to User2",
                     TradeDate = new DateTime(2025, 4, 28),
-                    TradeStatus = TradeStatusEnum.Pending,
+                    TradeStatus = TradeStatus.Pending,
                     AcceptedBySourceUser = false,
                     AcceptedByDestinationUser = false
                 },
@@ -565,7 +565,7 @@ namespace SteamHub.Api.Context
                     GameOfTradeId = 2,
                     TradeDescription = "Trade 2: User3 offers Game2 to User4",
                     TradeDate = new DateTime(2025, 4, 28),
-                    TradeStatus = TradeStatusEnum.Pending,
+                    TradeStatus = TradeStatus.Pending,
                     AcceptedBySourceUser = true,
                     AcceptedByDestinationUser = false
                 }

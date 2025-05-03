@@ -1,7 +1,5 @@
-﻿namespace SteamHub.Api.Models
+﻿namespace SteamHub.ApiContract.Models.ItemTrade
 {
-    using Entities;
-
     public class CreateItemTradeRequest
     {
         public int SourceUserId { get; set; }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SteamHub.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class MyMainMigration : Migration
+    public partial class MainMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -295,6 +295,39 @@ namespace SteamHub.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserInventories",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    AcquiredDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserInventories", x => new { x.UserId, x.ItemId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_UserInventories_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserInventories_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
+                        principalColumn: "ItemId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserInventories_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ItemTradeDetails",
                 columns: table => new
                 {
@@ -316,7 +349,7 @@ namespace SteamHub.Api.Migrations
                         column: x => x.ItemId,
                         principalTable: "Items",
                         principalColumn: "ItemId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -482,6 +515,18 @@ namespace SteamHub.Api.Migrations
                     { 2, 2, false }
                 });
 
+            migrationBuilder.InsertData(
+                table: "UserInventories",
+                columns: new[] { "GameId", "ItemId", "UserId", "AcquiredDate", "IsActive" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 1, 2, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 2, 3, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 2, 4, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 3, 6, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Games_PublisherUserId",
                 table: "Games",
@@ -533,6 +578,16 @@ namespace SteamHub.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserInventories_GameId",
+                table: "UserInventories",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserInventories_ItemId",
+                table: "UserInventories",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserPointShopInventories_PointShopItemId",
                 table: "UserPointShopInventories",
                 column: "PointShopItemId");
@@ -559,6 +614,9 @@ namespace SteamHub.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "StoreTransactions");
+
+            migrationBuilder.DropTable(
+                name: "UserInventories");
 
             migrationBuilder.DropTable(
                 name: "UserPointShopInventories");

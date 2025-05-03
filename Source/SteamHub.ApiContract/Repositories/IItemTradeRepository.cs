@@ -1,7 +1,7 @@
-﻿namespace SteamHub.Api.Context
-{
-    using Models;
+﻿using SteamHub.ApiContract.Models.ItemTrade;
 
+namespace SteamHub.ApiContract.Repositories
+{
     public interface IItemTradeRepository
     {
         Task<CreateItemTradeResponse> CreateItemTradeAsync(CreateItemTradeRequest request);

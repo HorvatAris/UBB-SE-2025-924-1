@@ -815,6 +815,74 @@ namespace SteamHub.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SteamHub.Api.Entities.UserInventory", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AcquiredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId", "ItemId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("UserInventories");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            ItemId = 1,
+                            GameId = 1,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            ItemId = 2,
+                            GameId = 1,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            ItemId = 3,
+                            GameId = 2,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            ItemId = 4,
+                            GameId = 2,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            ItemId = 6,
+                            GameId = 3,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        });
+                });
+
             modelBuilder.Entity("SteamHub.Api.Entities.UserPointShopItemInventory", b =>
                 {
                     b.Property<int>("UserId")
@@ -1030,7 +1098,7 @@ namespace SteamHub.Api.Migrations
                     b.HasOne("SteamHub.Api.Entities.Item", "Item")
                         .WithMany("ItemTradeDetails")
                         .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SteamHub.Api.Entities.ItemTrade", "ItemTrade")
@@ -1072,6 +1140,33 @@ namespace SteamHub.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("UserRole");
+                });
+
+            modelBuilder.Entity("SteamHub.Api.Entities.UserInventory", b =>
+                {
+                    b.HasOne("SteamHub.Api.Entities.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SteamHub.Api.Entities.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SteamHub.Api.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SteamHub.Api.Entities.UserPointShopItemInventory", b =>

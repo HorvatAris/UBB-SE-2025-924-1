@@ -1,4 +1,4 @@
-﻿namespace SteamHub.Api.Entities
+﻿namespace SteamHub.ApiContract.Models.ItemTrade
 {
     public enum TradeStatusEnum
     {

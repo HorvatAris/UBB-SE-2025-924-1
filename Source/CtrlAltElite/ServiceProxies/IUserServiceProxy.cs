@@ -13,5 +13,12 @@ namespace CtrlAltElite.ServiceProxies
     {
         [Put("/api/Users/{id}")]
         Task UpdateUserAsync(int id, [Body] UpdateUserRequest request);
+
+        [Get("/api/users")]
+        Task<GetUsersResponse?> GetUsersAsync();
+
+        [Get("/api/users/{id}")]
+        Task<UserResponse?> GetUserByIdAsync(int id);
+
     }
 }

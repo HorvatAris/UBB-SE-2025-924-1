@@ -1,4 +1,4 @@
-﻿namespace SteamHub.Api.Models
+﻿namespace SteamHub.ApiContract.Models.ItemTrade
 {
     public class GetItemTradesResponse
     {

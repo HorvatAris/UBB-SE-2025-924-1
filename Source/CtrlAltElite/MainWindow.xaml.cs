@@ -5,6 +5,10 @@ using Refit;
 namespace SteamStore
 {
     using System;
+    using System.Collections.Generic;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
     using CtrlAltElite.Pages;
     using CtrlAltElite.Repositories;
     using CtrlAltElite.Services;
@@ -24,6 +28,7 @@ namespace SteamStore
         private PointShopService pointShopService;
         private InventoryService inventoryService;
         private MarketplaceService marketplaceService;
+        private TradeService tradeService;
         public User user;
 
         public MainWindow()
@@ -60,15 +65,33 @@ namespace SteamStore
             var userPointShopInventoryServiceProxy = RestService.For<IUserPointShopItemInventoryServiceProxy>(httpClient);
 
             var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
+            var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
+            var itemServiceProxy = RestService.For<IItemServiceProxy>(httpClient);
+            var itemTradeServiceProxy = RestService.For<IITemTradeServiceProxy>(httpClient);
+            var itemTradeDetailServiceProxy = RestService.For<IItemTradeDetailServiceProxy>(httpClient);
+            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy,userServiceProxy, gameServiceProxy,itemServiceProxy);
+            var trade = new ItemTrade(
+    sourceUser: loggedInUser,
+    destinationUser: new User { UserId = 2 }, // the user you want to trade with
+    gameOfTrade: new Game { GameId = 1 },     // the game the items belong to
+    description: "Test trade from user 1 to user 2"
+);
 
+            // Add source user items
+            trade.AddSourceUserItem(new Item { ItemId = 1 });
+            trade.AddSourceUserItem(new Item { ItemId = 2 });
+
+            // Add destination user items
+            trade.AddDestinationUserItem(new Item { ItemId = 3 });
             var marketplaceRepository = new MarketplaceRepository(dataLink, loggedInUser);
             var marketplaceService = new MarketplaceService(marketplaceRepository);
             this.marketplaceService = marketplaceService;
 
+
             var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             // var tagRepository = new TagRepository(dataLink);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
-            var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
+            //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
 
             pointShopService = new PointShopService(
                     pointShopServiceProxy,
@@ -106,7 +129,18 @@ namespace SteamStore
             {
                 throw new Exception("ContentFrame is not initialized.");
             }
-
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await tradeService.GetActiveTradesAsync(1);
+                    System.Diagnostics.Debug.WriteLine("Trade created successfully.");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error creating trade: {ex.Message}");
+                }
+            });
             ContentFrame.Content = new HomePage(gameService, cartService, userGameService);
         }
 

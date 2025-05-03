@@ -1,5 +1,4 @@
-﻿namespace SteamHub.Api.Models.ItemTradeDetails;
-
+﻿namespace SteamHub.ApiContract.Models.ItemTradeDetails;
 public class CreateItemTradeDetailResponse
 {
     public int TradeId { get; set; }

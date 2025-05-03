@@ -36,7 +36,7 @@
             Debug.WriteLine($"Created item {itemName}, waiting for ItemId to set image path");
         }
 
-        private Item()
+        public Item()
         {
         }
 

@@ -3,6 +3,8 @@
     using Entities;
     using Microsoft.EntityFrameworkCore;
     using Models;
+    using SteamHub.ApiContract.Models.ItemTrade;
+    using SteamHub.ApiContract.Repositories;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
@@ -25,7 +27,7 @@
                 GameOfTradeId = request.GameOfTradeId,
                 TradeDescription = request.TradeDescription,
                 TradeDate = request.TradeDate ?? DateTime.UtcNow,
-                TradeStatus = request.TradeStatus,
+                TradeStatus = (TradeStatus)request.TradeStatus, // Fixed: Removed incorrect 'TradeStatus.request.TradeStatus'
                 AcceptedBySourceUser = request.AcceptedBySourceUser,
                 AcceptedByDestinationUser = request.AcceptedByDestinationUser
             };
@@ -53,7 +55,7 @@
                     GameOfTradeId = trade.GameOfTradeId,
                     TradeDescription = trade.TradeDescription,
                     TradeDate = trade.TradeDate,
-                    TradeStatus = trade.TradeStatus,
+                    TradeStatus = (TradeStatusEnum)trade.TradeStatus,
                     AcceptedBySourceUser = trade.AcceptedBySourceUser,
                     AcceptedByDestinationUser = trade.AcceptedByDestinationUser
                 })
@@ -77,7 +79,7 @@
                     GameOfTradeId = trade.GameOfTradeId,
                     TradeDescription = trade.TradeDescription,
                     TradeDate = trade.TradeDate,
-                    TradeStatus = trade.TradeStatus,
+                    TradeStatus = (TradeStatusEnum)trade.TradeStatus,
                     AcceptedBySourceUser = trade.AcceptedBySourceUser,
                     AcceptedByDestinationUser = trade.AcceptedByDestinationUser
                 })
@@ -95,7 +97,13 @@
             }
 
             existingTrade.TradeDescription = request.TradeDescription ?? existingTrade.TradeDescription;
-            existingTrade.TradeStatus = request.TradeStatus ?? existingTrade.TradeStatus;
+
+            // Fix for CS0019 and CS8629:
+            // Use a conditional operator to check if request.TradeStatus has a value before casting.
+            existingTrade.TradeStatus = request.TradeStatus.HasValue
+                ? (TradeStatus)request.TradeStatus.Value
+                : existingTrade.TradeStatus;
+
             existingTrade.AcceptedBySourceUser = request.AcceptedBySourceUser ?? existingTrade.AcceptedBySourceUser;
             existingTrade.AcceptedByDestinationUser = request.AcceptedByDestinationUser ?? existingTrade.AcceptedByDestinationUser;
 

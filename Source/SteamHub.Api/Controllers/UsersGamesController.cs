@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using SteamHub.Api.Context.Repositories;
-using SteamHub.Api.Models.UserPointShopItemInventory;
 using SteamHub.ApiContract.Models.UsersGames;
 using SteamHub.ApiContract.Repositories;
 

@@ -1,10 +1,11 @@
 ﻿namespace SteamHub.Api.Controllers
 {
     using System.Threading.Tasks;
-    using SteamHub.Api.Models.Item;
     using Microsoft.AspNetCore.Mvc;
     using SteamHub.Api.Context.Repositories;
     using SteamHub.Api.Entities;
+    using SteamHub.ApiContract.Repositories;
+    using SteamHub.ApiContract.Models.Item;
 
     [Route("api/[controller]")]
     [ApiController]
