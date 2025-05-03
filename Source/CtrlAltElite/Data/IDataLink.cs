@@ -26,6 +26,5 @@ namespace SteamStore.Data
 
         int ExecuteNonQuery(string storedProcedure, SqlParameter[]? sqlParameters = null);
 
-        SqlConnection GetConnection();
     }
 }
