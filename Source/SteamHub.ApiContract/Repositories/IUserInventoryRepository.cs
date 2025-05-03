@@ -1,6 +1,6 @@
-using SteamHub.Api.Models.UserInventory;
+using SteamHub.ApiContract.Models.UserInventory;
 
-namespace SteamHub.Api.Context.Repositories
+namespace SteamHub.ApiContract.Repositories
 {
     public interface IUserInventoryRepository
     {

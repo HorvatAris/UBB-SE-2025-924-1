@@ -1,4 +1,4 @@
-namespace SteamHub.Api.Models.UserInventory
+namespace SteamHub.ApiContract.Models.UserInventory
 {
     public class ItemFromInventoryRequest
     {

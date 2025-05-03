@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.UserInventory;
+using SteamHub.ApiContract.Models.UserInventory;
+using SteamHub.ApiContract.Repositories;
 
 namespace SteamHub.Api.Context.Repositories
 {
