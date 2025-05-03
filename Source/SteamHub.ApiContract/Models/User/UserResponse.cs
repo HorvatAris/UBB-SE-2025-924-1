@@ -1,6 +1,4 @@
-﻿namespace SteamHub.Api.Models.User;
-
-using Entities;
+﻿namespace SteamHub.ApiContract.Models.User;
 
 public class UserResponse
 {

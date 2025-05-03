@@ -1,7 +1,4 @@
-﻿using SteamHub.ApiContract.Models;
-using SteamHub.ApiContract.Models.PointShopItem;
-
-namespace SteamHub.Api.Models.PointShopItem;
+﻿namespace SteamHub.ApiContract.Models.PointShopItem;
 
 public class GetPointShopItemsResponse
 {

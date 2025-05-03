@@ -1,4 +1,4 @@
-﻿namespace SteamHub.Api.Models.User;
+﻿namespace SteamHub.ApiContract.Models.User;
 
 public class CreateUserResponse
 {

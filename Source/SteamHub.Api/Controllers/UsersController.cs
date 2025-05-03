@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SteamHub.Api.Context.Repositories;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.User;
+using SteamHub.ApiContract.Models.User;
+using SteamHub.ApiContract.Repositories;
 
 namespace SteamHub.Api.Controllers
 {

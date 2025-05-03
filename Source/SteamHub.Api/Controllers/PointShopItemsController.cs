@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SteamHub.Api.Context.Repositories;
-using SteamHub.Api.Models.PointShopItem;
+using SteamHub.ApiContract.Models.PointShopItem;
+using SteamHub.ApiContract.Repositories;
 
 namespace SteamHub.Api.Controllers
 {

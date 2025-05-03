@@ -1,4 +1,4 @@
-﻿namespace SteamHub.Api.Models.UserPointShopItemInventory
+﻿namespace SteamHub.ApiContract.Models.UserPointShopItemInventory
 {
     public class PurchasePointShopItemRequest
     {

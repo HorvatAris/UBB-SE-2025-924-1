@@ -232,12 +232,9 @@ namespace SteamStore.ViewModels
             this.ShopItems = new ObservableCollection<PointShopItem>();
             this.UserItems = new ObservableCollection<PointShopItem>();
             this.TransactionHistory = new ObservableCollection<PointShopTransaction>();
-           
-
 
             // Load initial data
-            this.LoadItems();
-            this.LoadUserItems();
+            this.InitAsync();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -366,18 +363,24 @@ namespace SteamStore.ViewModels
             }
         }
 
-        public void LoadItems()
+        public async void InitAsync()
+        {
+            await this.LoadItems();
+            await this.LoadUserItems();
+        }
+
+        public async Task LoadItems()
         {
             try
             {
-                var availableItems = this.pointShopService.GetAvailableItems(this.user);
+                var availableItems = await this.pointShopService.GetAvailableItems(this.user);
                 this.ShopItems.Clear();
                 foreach (var item in availableItems)
                 {
                     this.ShopItems.Add(item);
                 }
 
-                this.ApplyFilters();
+                await this.ApplyFilters();
             }
             catch (Exception exception)
             {
@@ -385,11 +388,11 @@ namespace SteamStore.ViewModels
             }
         }
 
-        public void LoadUserItems()
+        public async Task LoadUserItems()
         {
             try
             {
-                var items = this.pointShopService.GetUserItems();
+                var items = await this.pointShopService.GetUserItems();
                 this.UserItems.Clear();
                 foreach (var item in items)
                 {
@@ -417,7 +420,7 @@ namespace SteamStore.ViewModels
                 // Store a local copy of the item to prevent issues after state changes
                 var itemToPurchase = this.SelectedItem;
 
-                this.pointShopService.PurchaseItem(itemToPurchase);
+                await this.pointShopService.PurchaseItem(itemToPurchase);
 
                 // Add transaction to history
                 var transaction = new PointShopTransaction(
@@ -432,10 +435,10 @@ namespace SteamStore.ViewModels
                 this.OnPropertyChanged(nameof(this.CanPurchase));
 
                 // Reload user items to show the new purchase
-                this.LoadUserItems();
+                await this.LoadUserItems();
 
                 // Reload shop items to remove the purchased item
-                this.LoadItems();
+                await this.LoadItems();
 
                 return true;
             }
@@ -455,10 +458,10 @@ namespace SteamStore.ViewModels
 
             try
             {
-                this.pointShopService.ActivateItem(item);
+                await this.pointShopService.ActivateItem(item);
 
                 // Refresh user items to reflect the activation change
-                this.LoadUserItems();
+                await this.LoadUserItems();
 
                 return true;
             }
@@ -478,10 +481,10 @@ namespace SteamStore.ViewModels
 
             try
             {
-                this.pointShopService.DeactivateItem(item);
+                await this.pointShopService.DeactivateItem(item);
 
                 // Refresh user items to reflect the deactivation change
-                this.LoadUserItems();
+                await this.LoadUserItems();
 
                 return true;
             }
@@ -566,22 +569,18 @@ namespace SteamStore.ViewModels
                         this.TransactionHistory.Add(newTransaction);
                     }
 
-                    this.LoadUserItems();
-                    this.LoadItems();
+                    await this.LoadUserItems();
+                    await this.LoadItems();
 
-                   
                     this.ClearSelection();
                     this.ItemDetailVisibility = Visibility.Collapsed;
 
-                  
                     this.ApplyItemTypeFilter(this.FilterType);
 
-                 
                     this.ShowNotification($"You have successfully purchased {itemName}. Check your inventory!");
                 }
                 else
                 {
-                    
                     this.ShowNotification("Purchase failed. Please try again.");
                 }
             }
@@ -596,7 +595,7 @@ namespace SteamStore.ViewModels
         {
             try
             {
-                var item = this.pointShopService.ToggleActivationForItem(itemId, this.UserItems);
+                var item = await this.pointShopService.ToggleActivationForItem(itemId, this.UserItems);
                 if (item == null)
                 {
                     await this.ShowDialog("Item Not Found", "The selected item could not be found.");
@@ -658,11 +657,11 @@ namespace SteamStore.ViewModels
             await dialog.ShowAsync();
         }
 
-        private void ApplyFilters()
+        private async Task ApplyFilters()
         {
             try
             {
-                var filteredItems = this.pointShopService.GetFilteredItems(this.filterType, this.searchText, this.minimumPrice, this.maximumPrice);
+                var filteredItems = await this.pointShopService.GetFilteredItems(this.filterType, this.searchText, this.minimumPrice, this.maximumPrice);
                 this.ShopItems.Clear();
                 foreach (var item in filteredItems)
                 {
@@ -685,7 +684,7 @@ namespace SteamStore.ViewModels
                 // Only apply if not cancelled
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    this.ApplyFilters();
+                    await this.ApplyFilters();
                 }
             }
             catch (TaskCanceledException)
