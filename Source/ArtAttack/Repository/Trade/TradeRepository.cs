@@ -37,7 +37,7 @@ namespace Steampunks.Repository.Trade
             this.dataBaseConnector = databaseConnector;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>  DONE
         public async Task<List<ItemTrade>> GetActiveTradesAsync(int userId)
         {
             var trades = new List<ItemTrade>();
@@ -155,7 +155,7 @@ namespace Steampunks.Repository.Trade
             return trades;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>     DONE
         public async Task<List<ItemTrade>> GetTradeHistoryAsync(int userId)
         {
             var trades = new List<ItemTrade>();
