@@ -51,6 +51,7 @@ namespace CtrlAltElite.Pages
             if (this.ViewModel != null)
             {
                 await this.ViewModel.InitializeAsync();
+                await this.ViewModel.LoadInventoryItemsAsync();
             }
         }
 

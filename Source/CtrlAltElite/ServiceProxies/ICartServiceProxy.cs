@@ -11,16 +11,16 @@ namespace CtrlAltElite.ServiceProxies
 {
     public interface ICartServiceProxy : ICartRepository
     {
-        [Get("/api/UsersGames/cart/{userId}")]
+        [Get("/api/UsersGames/Cart/{userId}")]
         Task<GetUserGamesResponse> GetUserCartAsync(int userId);
 
         [Get("/api/UsersGames/all/{userId}")]
         Task<GetUserGamesResponse> GetUserGamesAsync(int userId);
 
-        [Post("/api/UsersGames/add-to-cart")]
+        [Post("/api/UsersGames/AddToCart")]
         Task AddToCartAsync([Body] UserGameRequest request);
 
-        [Patch("/api/UsersGames/remove-from-cart")]
+        [Patch("/api/UsersGames/RemoveFromCart")]
         Task RemoveFromCartAsync([Body] UserGameRequest request);
 
     }

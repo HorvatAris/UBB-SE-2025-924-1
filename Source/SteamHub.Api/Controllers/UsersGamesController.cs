@@ -15,21 +15,35 @@ namespace SteamHub.Api.Controllers
             _usersGamesRepository = usersGamesRepository;
         }
 
-        [HttpGet("all/{userId}")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserGames(int userId)
         {
             var result = await _usersGamesRepository.GetUserGamesAsync(userId);
             return Ok(result);
         }
 
-        [HttpGet("cart/{userId}")]
+        [HttpGet("Cart/{userId}")]
         public async Task<IActionResult> GetUserCart(int userId)
         {
             var result = await _usersGamesRepository.GetUserCartAsync(userId);
             return Ok(result);
         }
 
-        [HttpPost("add-to-cart")]
+        [HttpGet("Wishlist/{userId}")]
+        public async Task<IActionResult> GetUserWishlist(int userId)
+        {
+            var result = await _usersGamesRepository.GetUserWishlistAsync(userId);
+            return Ok(result);
+        }
+
+        [HttpGet("Purchased/{userId}")]
+        public async Task<IActionResult> GetUserPurchasedGames(int userId)
+        {
+            var result = await _usersGamesRepository.GetUserPurchasedGamesAsync(userId);
+            return Ok(result);
+        }
+
+        [HttpPost("AddToCart")]
         public async Task<IActionResult> AddToCart([FromBody] UserGameRequest request)
         {
             try
@@ -43,7 +57,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpPatch("remove-from-cart")]
+        [HttpPatch("RemoveFromCart")]
         public async Task<IActionResult> RemoveFromCart([FromBody] UserGameRequest request)
         {
             try
@@ -57,14 +71,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpGet("wishlist/{userId}")]
-        public async Task<IActionResult> GetUserWishlist(int userId)
-        {
-            var result = await _usersGamesRepository.GetUserWishlistAsync(userId);
-            return Ok(result);
-        }
-
-        [HttpPost("add-to-wishlist")]
+        [HttpPost("AddToWishlist")]
         public async Task<IActionResult> AddToWishlist([FromBody] UserGameRequest request)
         {
             try
@@ -78,7 +85,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpPatch("remove-from-wishlist")]
+        [HttpPatch("RemoveFromWishlist")]
         public async Task<IActionResult> RemoveFromWishlist([FromBody] UserGameRequest request)
         {
             try
@@ -92,7 +99,7 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("purchase")]
+        [HttpPost("Purchased")]
         public async Task<IActionResult> PurchaseGame([FromBody] UserGameRequest request)
         {
             try
@@ -104,13 +111,6 @@ namespace SteamHub.Api.Controllers
                 return BadRequest($"An error occurred: {ex.Message}");
             }
             return NoContent();
-        }
-
-        [HttpGet("purchased/{userId}")]
-        public async Task<IActionResult> GetUserPurchasedGames(int userId)
-        {
-            var result = await _usersGamesRepository.GetUserPurchasedGamesAsync(userId);
-            return Ok(result);
         }
     }
 }

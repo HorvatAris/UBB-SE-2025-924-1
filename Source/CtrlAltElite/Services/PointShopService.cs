@@ -9,6 +9,7 @@ namespace SteamStore.Services
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
     using CtrlAltElite.ServiceProxies;
     using CtrlAltElite.Services;
     using SteamHub.ApiContract.Models.User;

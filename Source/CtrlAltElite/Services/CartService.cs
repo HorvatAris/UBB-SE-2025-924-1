@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CtrlAltElite.Models;
 using CtrlAltElite.ServiceProxies;
 using CtrlAltElite.Services;
 using SteamHub.ApiContract.Models.Game;

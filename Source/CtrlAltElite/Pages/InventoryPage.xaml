@@ -55,8 +55,13 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <Image Grid.Row="0" Source="{x:Bind ImagePath}" Height="150" Width="150" 
-                           Stretch="Uniform" HorizontalAlignment="Center"/>
+                        <Image Grid.Row="0"
+       Source="{Binding ImagePath}" 
+       Height="150" Width="150"
+       Stretch="Uniform"
+       HorizontalAlignment="Center"/>
+
+
                         <TextBlock Grid.Row="1" Text="{x:Bind ItemName}" 
                                HorizontalAlignment="Center" TextWrapping="Wrap"/>
                         <TextBlock Grid.Row="2" Text="{x:Bind Price}" 

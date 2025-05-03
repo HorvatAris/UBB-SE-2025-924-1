@@ -163,7 +163,7 @@ namespace Steampunks.Domain.Entities
         {
             this.itemId = id;
 
-            this.imagePath = this.GetDefaultImagePath(this.itemName);
+            // this.imagePath = this.GetDefaultImagePath(this.itemName);
             Debug.WriteLine($"Set ItemId {id} and image path: {this.imagePath}");
         }
 
