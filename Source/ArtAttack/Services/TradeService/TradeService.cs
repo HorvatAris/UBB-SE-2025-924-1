@@ -18,28 +18,24 @@ namespace Steampunks.Services.TradeService
     {
         private readonly ITradeRepository tradeRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TradeService"/> class.
-        /// </summary>
-        /// <param name="tradeRepository">the interface for the TradeRepository.</param>
         public TradeService(ITradeRepository tradeRepository)
         {
             this.tradeRepository = tradeRepository;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> moved
         public async Task<List<ItemTrade>> GetActiveTradesAsync(int userId)
         {
             return await this.tradeRepository.GetActiveTradesAsync(userId);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> moved
         public async Task<List<ItemTrade>> GetTradeHistoryAsync(int userId)
         {
             return await this.tradeRepository.GetTradeHistoryAsync(userId);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> moved 
         public async Task CreateTradeAsync(ItemTrade trade)
         {
             try
@@ -53,7 +49,7 @@ namespace Steampunks.Services.TradeService
             }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> done
         public async Task UpdateTradeAsync(ItemTrade trade)
         {
             try
@@ -111,18 +107,19 @@ namespace Steampunks.Services.TradeService
             }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> gata
         public async Task<User?> GetCurrentUserAsync()
         {
             return await this.tradeRepository.GetCurrentUserAsync();
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/> gata
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
             return await this.tradeRepository.GetUserInventoryAsync(userId);
         }
 
+        //moved
         public async void CompleteTrade(ItemTrade trade)
         {
             try

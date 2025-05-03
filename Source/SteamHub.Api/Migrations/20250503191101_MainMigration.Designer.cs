@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SteamHub.Api.Context;
 
@@ -11,9 +12,11 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250503191101_MainMigration")]
+    partial class MainMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,16 +297,6 @@ namespace SteamHub.Api.Migrations
                         },
                         new
                         {
-                            ItemId = 7,
-                            CorrespondingGameId = 1,
-                            Description = "A mystical blade imbued with ancient magic from Legends of Etheria.",
-                            ImagePath = "https://cdn.example.com/etheria/ethereal-blade.jpg",
-                            IsListed = false,
-                            ItemName = "pilfered ethereal blade",
-                            Price = 29.99f
-                        },
-                        new
-                        {
                             ItemId = 2,
                             CorrespondingGameId = 1,
                             Description = "An enchanted armour that protects the bearer in Legends of Etheria.",
@@ -421,18 +414,6 @@ namespace SteamHub.Api.Migrations
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TradeDescription = "Trade 2: User3 offers Game2 to User4",
                             TradeStatus = 0
-                        },
-                        new
-                        {
-                            TradeId = 3,
-                            AcceptedByDestinationUser = true,
-                            AcceptedBySourceUser = true,
-                            DestinationUserId = 2,
-                            GameOfTradeId = 1,
-                            SourceUserId = 1,
-                            TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
-                            TradeStatus = 2
                         });
                 });
 
@@ -900,38 +881,6 @@ namespace SteamHub.Api.Migrations
                             UserId = 1,
                             ItemId = 6,
                             GameId = 3,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 7,
-                            GameId = 1,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            ItemId = 6,
-                            GameId = 3,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            ItemId = 5,
-                            GameId = 3,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            ItemId = 7,
-                            GameId = 1,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         });
