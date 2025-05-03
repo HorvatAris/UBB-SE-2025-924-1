@@ -1,6 +1,6 @@
-﻿using SteamHub.Api.Models.ItemTradeDetails;
+﻿using SteamHub.ApiContract.Models.ItemTradeDetails;
 
-namespace SteamHub.Api.Context.Repositories;
+namespace SteamHub.ApiContract.Repositories;
 public interface IItemTradeDetailRepository
 {
     Task<GetItemTradeDetailsResponse?> GetItemTradeDetailsAsync();

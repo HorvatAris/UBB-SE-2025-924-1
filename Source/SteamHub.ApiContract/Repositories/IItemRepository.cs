@@ -1,10 +1,9 @@
-﻿namespace SteamHub.Api.Context.Repositories
-{
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using SteamHub.Api.Entities;
-    using SteamHub.Api.Models.Item;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SteamHub.ApiContract.Models.Item;
 
+namespace SteamHub.ApiContract.Repositories
+{
     public interface IItemRepository
     {
             Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync();

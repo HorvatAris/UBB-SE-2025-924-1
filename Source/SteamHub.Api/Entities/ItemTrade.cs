@@ -25,7 +25,7 @@
 
         public string TradeDescription { get; set; }
 
-        public TradeStatusEnum TradeStatus { get; set; } = TradeStatusEnum.Pending;
+        public TradeStatus TradeStatus { get; set; } = TradeStatus.Pending;
 
         public bool AcceptedBySourceUser { get; set; } = false;
 

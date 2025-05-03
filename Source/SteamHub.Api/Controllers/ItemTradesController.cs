@@ -3,6 +3,8 @@
     using Context;
     using Microsoft.AspNetCore.Mvc;
     using Models;
+    using SteamHub.ApiContract.Models.ItemTrade;
+    using SteamHub.ApiContract.Repositories;
 
     [ApiController]
     [Route("api/[controller]")]

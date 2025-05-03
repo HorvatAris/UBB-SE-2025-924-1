@@ -1,4 +1,4 @@
-﻿namespace SteamHub.Api.Models.Item
+﻿namespace SteamHub.ApiContract.Models.Item
 {
     public class GetItemsRequest
     {

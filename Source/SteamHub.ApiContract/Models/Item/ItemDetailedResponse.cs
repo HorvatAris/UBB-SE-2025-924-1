@@ -1,7 +1,8 @@
-﻿namespace SteamHub.Api.Models.Item
+﻿namespace SteamHub.ApiContract.Models.Item
 {
-    public class UpdateItemRequest
+    public class ItemDetailedResponse
     {
+        public int ItemId { get; set; }
         public string ItemName { get; set; } = default!;
         public int GameId { get; set; }
         public float Price { get; set; }

@@ -4,7 +4,8 @@
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using SteamHub.Api.Entities;
-    using SteamHub.Api.Models.Item;
+    using SteamHub.ApiContract.Models.Item;
+    using SteamHub.ApiContract.Repositories;
 
     public class ItemRepository : IItemRepository
     {

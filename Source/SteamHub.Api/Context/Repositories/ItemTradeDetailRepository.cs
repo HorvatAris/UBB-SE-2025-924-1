@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamHub.Api.Entities;
-using SteamHub.Api.Models.ItemTradeDetails;
-
+using SteamHub.ApiContract.Models.ItemTradeDetails;
+using SteamHub.ApiContract.Repositories;
 namespace SteamHub.Api.Context.Repositories;
 public class ItemTradeDetailRepository : IItemTradeDetailRepository
 {
