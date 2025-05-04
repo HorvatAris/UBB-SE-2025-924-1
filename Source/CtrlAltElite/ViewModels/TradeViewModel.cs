@@ -56,6 +56,7 @@ namespace CtrlAltElite.ViewModels
         private ItemTrade? selectedTrade;
         private ObservableCollection<Game> games;
         private ObservableCollection<User> users;
+        private ObservableCollection<User> availableUsers;
 
         public TradeViewModel(ITradeService tradeService, IUserService userService, IGameService gameService)
         {
@@ -174,17 +175,16 @@ namespace CtrlAltElite.ViewModels
                 this.OnPropertyChanged();
             }
         }
-
         public ObservableCollection<User> AvailableUsers
         {
-            get
+            get => this.availableUsers;
+            set
             {
-                if (this.CurrentUser == null)
+                if (this.availableUsers != value)
                 {
-                    return new ObservableCollection<User>(this.Users);
+                    this.availableUsers = value;
+                    this.OnPropertyChanged();
                 }
-
-                return new ObservableCollection<User>(this.Users.Where(userInner => userInner.UserId != this.CurrentUser.UserId));
             }
         }
 
@@ -452,10 +452,12 @@ namespace CtrlAltElite.ViewModels
             {
                 var allUsers = await this.userService.GetAllUsersAsync();
 
+                this.AvailableUsers.Clear();
                 this.Users.Clear();
+                this.Users.Add(this.CurrentUser);
                 foreach (var user in allUsers)
                 {
-                    this.Users.Add(user);
+                    this.AvailableUsers.Add(user);
                 }
             }
             catch (Exception loadingUsersException)
