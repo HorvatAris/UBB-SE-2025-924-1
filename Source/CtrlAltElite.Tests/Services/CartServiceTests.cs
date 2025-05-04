@@ -1,15 +1,15 @@
 ﻿namespace SteamStore.Tests.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using CtrlAltElite.Models;
-    using CtrlAltElite.ServiceProxies;
-    using Moq;
-    using SteamHub.ApiContract.Models.Game;
-    using SteamHub.ApiContract.Models.UsersGames;
-    using SteamStore.Services;
-    using Xunit;
+	using System;
+	using System.Collections.Generic;
+	using System.Threading.Tasks;
+	using CtrlAltElite.Models;
+	using CtrlAltElite.ServiceProxies;
+	using Moq;
+	using SteamHub.ApiContract.Models.Game;
+	using SteamHub.ApiContract.Models.UsersGames;
+	using SteamStore.Services;
+	using Xunit;
 
 	public class CartServiceTests
 	{
@@ -107,6 +107,39 @@
 			var foundTotalSum = await cartService.GetTotalSumToBePaidAsync();
 
 			Assert.Equal(expectedTotalSum, foundTotalSum);
+		}
+
+		[Fact]
+		public async Task RemoveGamesFromCart_WhenCalled_ShouldCallRemoveGameFromCartForEachGame()
+		{
+			var user = new User { UserId = 1 };
+
+			var games = new List<Game>
+			{
+				new Game { GameId = 1 },
+				new Game { GameId = 2 }
+			};
+
+			cartServiceProxyMock.Setup(proxy => proxy.RemoveFromCartAsync(It.IsAny<UserGameRequest>()))
+							 .Returns(Task.CompletedTask);
+
+			await cartService.RemoveGamesFromCart(games);
+
+			cartServiceProxyMock.Verify(proxy => proxy.RemoveFromCartAsync(It.IsAny<UserGameRequest>()), Times.Exactly(games.Count));
+		}
+
+		[Fact]
+		public void GetTheTotalSumOfItemsInCart_WhenCalled_ShouldReturnCorrectSum()
+		{
+			var games = new List<Game>
+			{
+				new Game { Price = 10.5m },
+				new Game { Price = 20.0m }
+			};
+
+			var total = cartService.GetTheTotalSumOfItemsInCart(games);
+
+			Assert.Equal(30.5f, total);
 		}
 	}
 }

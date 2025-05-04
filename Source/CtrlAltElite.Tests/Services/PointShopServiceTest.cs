@@ -1,5 +1,6 @@
 ﻿namespace SteamStore.Tests.Services
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
@@ -60,6 +61,7 @@
 				new PointShopItem() { ItemIdentifier = 1, Name = "Item1", PointPrice = 100 },
 				new PointShopItem() { ItemIdentifier = 2, Name = "Item2", PointPrice = 200 }
 			};
+
 			itemProxyMock.Setup(proxy => proxy.GetPointShopItemsAsync())
 				.ReturnsAsync(new GetPointShopItemsResponse
 				{
@@ -85,6 +87,7 @@
 					new UserPointShopItemInventoryResponse() { PointShopItemId = 1, IsActive = true }
 				}
 			};
+
 			var allItems = new GetPointShopItemsResponse
 			{
 				PointShopItems = new List<PointShopItemResponse>
@@ -92,6 +95,7 @@
 					new PointShopItemResponse() { PointShopItemId = 1, Name = "Item1", PointPrice = 100 }
 				}
 			};
+
 			var expectedItems = new PointShopItem[]
 			{
 				new PointShopItem() { ItemIdentifier = 1, Name = "Item1", PointPrice = 100, IsActive = true }
@@ -114,13 +118,38 @@
 
 			inventoryProxyMock.Setup(proxy => proxy.PurchaseItemAsync(It.IsAny<PurchasePointShopItemRequest>()))
 				.Returns(Task.CompletedTask);
-
 			userServiceProxyMock.Setup(proxy => proxy.UpdateUserAsync(testUser.UserId, It.IsAny<UpdateUserRequest>()))
 				.Returns(Task.CompletedTask);
 
 			await service.PurchaseItem(item);
 
 			Assert.Equal(900, testUser.PointsBalance);
+		}
+
+		[Fact]
+		public async Task ActivateItem_WhenItemValid_ShouldCallUpdateStatus()
+		{
+			var item = new PointShopItem { ItemIdentifier = 1 };
+
+			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
+				.Returns(Task.CompletedTask);
+
+			await service.ActivateItem(item);
+
+			inventoryProxyMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => request.IsActive)), Times.Once);
+		}
+
+		[Fact]
+		public async Task DeactivateItem_WhenItemValid_ShouldCallUpdateStatus()
+		{
+			var item = new PointShopItem { ItemIdentifier = 1 };
+
+			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
+				.Returns(Task.CompletedTask);
+
+			await service.DeactivateItem(item);
+
+			inventoryProxyMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => !request.IsActive)), Times.Once);
 		}
 
 		[Fact]
@@ -140,12 +169,22 @@
 			var activeItem = new PointShopItem { ItemIdentifier = 1, IsActive = true };
 			var userItems = new ObservableCollection<PointShopItem> { activeItem };
 
-			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
-				.Returns(Task.CompletedTask);
+			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>())).Returns(Task.CompletedTask);
 
 			var toggledItem = await service.ToggleActivationForItem(1, userItems);
 
 			Assert.Equal(1, toggledItem.ItemIdentifier);
+		}
+
+		[Fact]
+		public void TryPurchaseItem_WhenValidNewTransaction_ShouldCreateTransaction()
+		{
+			var item = new PointShopItem { Name = "Item1", PointPrice = 100, ItemType = "Type1" };
+			var transactions = new ObservableCollection<PointShopTransaction>();
+
+			var result = service.TryPurchaseItem(item, transactions, testUser, out var transaction);
+
+			Assert.True(result);
 		}
 	}
 }
