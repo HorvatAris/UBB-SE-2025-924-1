@@ -207,7 +207,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     private async Task LoadRecommendedGames()
     {
         this.RecommendedGames.Clear();
-        var reccomendedGames = await this.userGameService.GetRecommendedGames();
+        var reccomendedGames = await this.userGameService.GetRecommendedGamesAsync();
         foreach (var game in reccomendedGames)
         {
             this.RecommendedGames.Add(game);

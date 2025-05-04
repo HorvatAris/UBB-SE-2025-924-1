@@ -98,9 +98,9 @@ public class CartViewModel : INotifyPropertyChanged
         this.OnPropertyChanged(nameof(this.CartGames));
     }
 
-    public void PurchaseGames()
+    public async Task PurchaseGames()
     {
-        this.userGameService.PurchaseGames(this.CartGames.ToList());
+        await this.userGameService.PurchaseGamesAsync(this.CartGames.ToList());
 
         // Get the points earned from the user game service
         this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
