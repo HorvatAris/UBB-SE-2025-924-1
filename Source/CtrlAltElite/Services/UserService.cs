@@ -1,29 +1,36 @@
-﻿using CtrlAltElite.Models;
-using CtrlAltElite.ServiceProxies;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Networking.Proximity;
+﻿// <copyright file="UserService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Services
 {
-    public class UserService
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.ServiceProxies;
+    using CtrlAltElite.Services.Interfaces;
+    using Windows.Networking.Proximity;
+
+    public class UserService : IUserService
     {
-        private IUserServiceProxy _userServiceProxy;
+        private IUserServiceProxy userServiceProxy;
+
         public UserService(IUserServiceProxy userServiceProxy)
         {
-            _userServiceProxy = userServiceProxy;
+            this.userServiceProxy = userServiceProxy;
         }
+
         public async Task<List<User>> GetAllUsersAsync()
         {
-            //this.WalletBalance = walletBalance;
-            //this.PointsBalance = pointsBalance;
-            //this.UserRole = userRole;
-            var result =new List<User>();
-            var response = await _userServiceProxy.GetUsersAsync();
-            foreach(var user in response.Users)
+            // this.WalletBalance = walletBalance;
+            // this.PointsBalance = pointsBalance;
+            // this.UserRole = userRole;
+            var result = new List<User>();
+            var response = await this.userServiceProxy.GetUsersAsync();
+            foreach (var user in response.Users)
             {
                 var currentUser = new User
                 {
@@ -36,10 +43,8 @@ namespace CtrlAltElite.Services
                 };
                 result.Add(currentUser);
             }
+
             return result;
         }
-
-
-
     }
 }

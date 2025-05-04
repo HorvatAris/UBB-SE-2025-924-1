@@ -1,21 +1,25 @@
-﻿using CtrlAltElite.Models;
-using CtrlAltElite.ServiceProxies;
-using CtrlAltElite.Services.Interfaces;
-using SteamHub.ApiContract.Models.Game;
-using SteamHub.ApiContract.Models.ItemTrade;
-using SteamHub.ApiContract.Models.ItemTradeDetails;
-using SteamHub.ApiContract.Models.UserInventory;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="TradeService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.ServiceProxies;
+    using CtrlAltElite.Services.Interfaces;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.ItemTrade;
+    using SteamHub.ApiContract.Models.ItemTradeDetails;
+    using SteamHub.ApiContract.Models.UserInventory;
+
     public class TradeService : ITradeService
     {
         private IITemTradeServiceProxy itemTradeServiceProxy;
@@ -84,8 +88,6 @@ namespace CtrlAltElite.Services
             System.Diagnostics.Debug.WriteLine($"Updating trade with ID: {trade.TradeId} to status: {updateTradeRequest.TradeStatus}");
 
             await this.itemTradeServiceProxy.UpdateItemTradeAsync(trade.TradeId, updateTradeRequest);
-
-
             // 3.If the destination user accepts, transfer the items
 
             if (trade.AcceptedByDestinationUser)
@@ -128,14 +130,14 @@ namespace CtrlAltElite.Services
             {
                 UserId = fromUserId,
                 ItemId = itemId,
-                GameId = gameId
+                GameId = gameId,
             };
 
             var addRequest = new ItemFromInventoryRequest
             {
                 UserId = toUserId,
                 ItemId = itemId,
-                GameId = gameId
+                GameId = gameId,
             };
 
             try
@@ -205,22 +207,22 @@ namespace CtrlAltElite.Services
             var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
-                .Where(t => (t.SourceUserId == userId || t.DestinationUserId == userId)
-                         && t.TradeStatus == TradeStatusEnum.Completed || t.TradeStatus == TradeStatusEnum.Declined) // Fixed comparison to use the enum directly
+                .Where(trade => ((trade.SourceUserId == userId || trade.DestinationUserId == userId)
+                         && trade.TradeStatus == TradeStatusEnum.Completed) || trade.TradeStatus == TradeStatusEnum.Declined) // Fixed comparison to use the enum directly
                 .ToList();
 
             var allUsersApi = (await this.userServiceProxy.GetUsersAsync()).Users;
             var allUsers = allUsersApi
-                .Select(u =>
+                .Select(currentUser =>
                 {
                     var user = new User
                     {
-                        UserId = u.UserId,
-                        UserName = u.UserName,
-                        Email = u.Email,
-                        UserRole = (User.Role)u.Role,
-                        WalletBalance = u.WalletBalance,
-                        PointsBalance = u.PointsBalance,
+                        UserId = currentUser.UserId,
+                        UserName = currentUser.UserName,
+                        Email = currentUser.Email,
+                        UserRole = (User.Role)currentUser.Role,
+                        WalletBalance = currentUser.WalletBalance,
+                        PointsBalance = currentUser.PointsBalance,
                     };
                     return user;
                 })
@@ -236,7 +238,10 @@ namespace CtrlAltElite.Services
                 var destinationUser = allUsers.First(u => u.UserId == tradeDto.DestinationUserId);
 
                 var game = allGames.FirstOrDefault(g => g.GameId == tradeDto.GameOfTradeId);
-                if (game == null) continue; // Skip if game not found
+                if (game == null)
+                {
+                    continue; // Skip if game not found
+                }
 
                 var itemTrade = new ItemTrade(sourceUser, destinationUser, game, tradeDto.TradeDescription);
                 itemTrade.SetTradeId(tradeDto.TradeId);
@@ -269,16 +274,20 @@ namespace CtrlAltElite.Services
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
-                    //itemGame.SetGameId(gameResponse.GameId);
-
+                    // itemGame.SetGameId(gameResponse.GameId);
+                     
                     var item = new Item(itemResponseFromItemProxy.ItemName, itemGame, (float)itemResponseFromItemProxy.Price, itemResponseFromItemProxy.Description);
                     item.SetItemId(itemResponseFromItemProxy.ItemId);
                     item.SetIsListed(itemResponseFromItemProxy.IsListed);
 
                     if (detail.IsSourceUserItem)
+                    {
                         trade.AddSourceUserItem(item);
+                    }
                     else
+                    {
                         trade.AddDestinationUserItem(item);
+                    }
                 }
             }
             foreach (var r in result)
@@ -326,7 +335,10 @@ namespace CtrlAltElite.Services
                 var destinationUser = allUsers.First(u => u.UserId == tradeDto.DestinationUserId);
 
                 var game = allGames.FirstOrDefault(g => g.GameId == tradeDto.GameOfTradeId);
-                if (game == null) continue; // Skip if game not found
+                if (game == null)
+                {
+                    continue; // Skip if game not found
+                }
 
                 var itemTrade = new ItemTrade(sourceUser, destinationUser, game, tradeDto.TradeDescription);
                 itemTrade.SetTradeId(tradeDto.TradeId);
@@ -351,7 +363,7 @@ namespace CtrlAltElite.Services
             foreach (var trade in result)
             {
                 var tradeDetailsForThisTrade = allTradeDetails
-                    .Where(d => d.TradeId == trade.TradeId);
+                    .Where(tradeDetail => tradeDetail.TradeId == trade.TradeId);
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
@@ -359,31 +371,31 @@ namespace CtrlAltElite.Services
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
-                    //itemGame.SetGameId(gameResponse.GameId);
+                    // itemGame.SetGameId(gameResponse.GameId);
 
                     var item = new Item(itemResponseFromItemProxy.ItemName, itemGame, (float)itemResponseFromItemProxy.Price, itemResponseFromItemProxy.Description);
                     item.SetItemId(itemResponseFromItemProxy.ItemId);
                     item.SetIsListed(itemResponseFromItemProxy.IsListed);
 
                     if (detail.IsSourceUserItem)
+                    {
                         trade.AddSourceUserItem(item);
+                    }
                     else
+                    {
                         trade.AddDestinationUserItem(item);
+                    }
                 }
             }
+
             foreach (var r in result)
             {
                 System.Diagnostics.Debug.WriteLine($"Trade ID: {r.TradeId}, Source User: {r.SourceUser.UserName}, Destination User: {r.DestinationUser.UserName}, Game: {r.GameOfTrade}");
                 System.Diagnostics.Debug.WriteLine(r.SourceUserItems);
                 System.Diagnostics.Debug.WriteLine(r.DestinationUserItems);
             }
+
             return result;
-
-        }
-
-        public async Task TransferItemAsync(int itemId, int fromUserId, int toUserId)
-        {
-
 
         }
 
@@ -448,13 +460,13 @@ namespace CtrlAltElite.Services
                 // Transfer source user items to destination user
                 foreach (var item in trade.SourceUserItems)
                 {
-                    await this.TransferItemAsync(item.ItemId, trade.SourceUser.UserId, trade.DestinationUser.UserId);
+                    await this.TransferItemAsync(item.ItemId, trade.SourceUser.UserId, trade.DestinationUser.UserId, trade.GameOfTrade.GameId);
                 }
 
                 // Transfer destination user items to source user
                 foreach (var item in trade.DestinationUserItems)
                 {
-                    await this.TransferItemAsync(item.ItemId, trade.DestinationUser.UserId, trade.SourceUser.UserId);
+                    await this.TransferItemAsync(item.ItemId, trade.DestinationUser.UserId, trade.SourceUser.UserId, trade.GameOfTrade.GameId);
                 }
 
                 trade.MarkTradeAsCompleted();
@@ -466,31 +478,31 @@ namespace CtrlAltElite.Services
                 throw;
             }
         }
+
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
             var inventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
-            //foreach(var item in inventoryResponse.Items)
-            //{
+            // foreach(var item in inventoryResponse.Items)
+            // {
             //    System.Diagnostics.Debug.WriteLine($"IS LISTED:{item.IsListed}");
             //    System.Diagnostics.Debug.WriteLine($"Item ID: {item.ItemId}, Game Name: {item.GameName}, Item Name: {item.ItemName}, Price: {item.Price}, Description: {item.Description}");
-            //}
+            // }
             var allGamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
             var result = new List<Item>();
             var allGames = allGamesResponse.Select(GameMapper.MapToGame).ToList();
-            foreach(var inventoryItem in inventoryResponse.Items)
+            foreach (var inventoryItem in inventoryResponse.Items)
             {
                 var matchingGame = allGames.FirstOrDefault(g =>
 
                 string.Equals(g.GameTitle, inventoryItem.GameName, StringComparison.OrdinalIgnoreCase));
-                var item =new Item(inventoryItem.ItemName, matchingGame, (float)inventoryItem.Price, inventoryItem.Description);
+                var item = new Item(inventoryItem.ItemName, matchingGame, (float)inventoryItem.Price, inventoryItem.Description);
                 item.SetItemId(inventoryItem.ItemId);
                 item.SetIsListed(inventoryItem.IsListed);
                 result.Add(item);
             }
+
             return result;
 
-
         }
-
     }
 }
