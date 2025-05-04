@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using CtrlAltElite.Models;
 using CtrlAltElite.ServiceProxies;
 using CtrlAltElite.Services;
 using SteamHub.ApiContract.Models.Game;
@@ -143,7 +144,7 @@ public class UserGameService : IUserGameService
                 GameId = game.GameId,
             };
             await this.UserGameServiceProxy.PurchaseGameAsync(request);
-            await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
+            //await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
         }
 
         // Calculate earned points by comparing balances
