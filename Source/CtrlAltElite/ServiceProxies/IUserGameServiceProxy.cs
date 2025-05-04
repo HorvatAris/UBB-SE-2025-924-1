@@ -7,7 +7,7 @@
 
     public interface IUserGameServiceProxy : IUsersGamesRepository
     {
-        [Get("/api/UserGames/{userId}")]
+        [Get("/api/UsersGames/{userId}")]
         Task<GetUserGamesResponse> GetUserGamesAsync(int userId); // GetAllUserGames
 
         [Get("/api/UsersGames/Wishlist/{userId}")]
@@ -21,6 +21,15 @@
 
         [Post("/api/UsersGames/Purchased")]
         Task PurchaseGameAsync(UserGameRequest usersGames); // AddGameToPurchased
+
+        [Get("/api/UsersGames/Cart/{userId}")]
+        Task<GetUserGamesResponse> GetUserCartAsync(int userId);
+
+        [Post("/api/UsersGames/AddToCart")]
+        Task AddToCartAsync([Body] UserGameRequest request);
+
+        [Patch("/api/UsersGames/RemoveFromCart")]
+        Task RemoveFromCartAsync([Body] UserGameRequest request);
 
         [Get("/api/UsersGames/Purchased/{userId}")]
         Task<GetUserGamesResponse> GetUserPurchasedGamesAsync(int userId);

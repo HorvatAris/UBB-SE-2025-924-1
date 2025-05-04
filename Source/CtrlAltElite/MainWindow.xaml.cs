@@ -94,7 +94,7 @@ namespace SteamStore
             this.marketplaceService = marketplaceService;
 
 
-            var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
+            //var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
             //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
             var userGameServiceProxy = RestService.For<IUserGameServiceProxy>(httpClient);
@@ -111,7 +111,7 @@ namespace SteamStore
 
             gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
-            cartService = new CartService(cartServiceProxy,loggedInUser,gameServiceProxy);
+            cartService = new CartService(userGameServiceProxy, loggedInUser,gameServiceProxy);
             var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
             userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
 
