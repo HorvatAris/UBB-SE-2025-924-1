@@ -114,12 +114,7 @@ namespace SteamStore
             userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
 
             developerService = new DeveloperService
-            {
-                TagServiceProxy = tagServiceProxy,
-                UserGameRepository = userGameRepository,
-                User = loggedInUser,
-                GameServiceProxy = gameServiceProxy,
-            };
+            (gameServiceProxy, tagServiceProxy, userGameServiceProxy, userServiceProxy, itemServiceProxy, itemTradeDetailServiceProxy, loggedInUser);
 
             if (ContentFrame == null)
             {
