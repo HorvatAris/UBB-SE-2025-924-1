@@ -14,6 +14,7 @@ namespace SteamHub.ApiContract.Models.UserInventory
         public string Description { get; set; }
         public bool IsListed { get; set; }
         public string GameName { get; set; }
+        public int GameId { get; set; }
         public string ImagePath { get; set; }
     }
 }
