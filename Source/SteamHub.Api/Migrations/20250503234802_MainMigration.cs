@@ -469,7 +469,8 @@ namespace SteamHub.Api.Migrations
                 values: new object[,]
                 {
                     { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 0 },
-                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: User3 offers Game2 to User4", 0 }
+                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: User3 offers Game2 to User4", 0 },
+                    { 3, true, true, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -482,7 +483,8 @@ namespace SteamHub.Api.Migrations
                     { 3, 2, "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/gauntlet.jpg", true, "Cybernetic Gauntlet", 34.99f },
                     { 4, 2, "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/neon-visor.jpg", true, "Neon Visor", 24.99f },
                     { 5, 3, "A mighty axe for the warriors of Shadow of Valhalla.", "https://cdn.example.com/valhalla/viking-axe.jpg", true, "Viking Axe", 44.99f },
-                    { 6, 3, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://cdn.example.com/valhalla/shield.jpg", true, "Valhalla Shield", 34.99f }
+                    { 6, 3, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://cdn.example.com/valhalla/shield.jpg", true, "Valhalla Shield", 34.99f },
+                    { 7, 1, "A mystical blade imbued with ancient magic from Legends of Etheria.", "https://cdn.example.com/etheria/ethereal-blade.jpg", false, "pilfered ethereal blade", 29.99f }
                 });
 
             migrationBuilder.InsertData(
@@ -524,7 +526,11 @@ namespace SteamHub.Api.Migrations
                     { 1, 2, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 2, 3, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 2, 4, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 3, 6, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
+                    { 3, 6, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 1, 7, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 3, 5, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 3, 6, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 1, 7, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
                 });
 
             migrationBuilder.CreateIndex(

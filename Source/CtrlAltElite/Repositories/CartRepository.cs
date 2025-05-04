@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using CtrlAltElite.Models;
 using SteamStore.Constants;
 using SteamStore.Data;
 using SteamStore.Repositories.Interfaces;

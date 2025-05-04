@@ -4,6 +4,7 @@ using CtrlAltElite.Services.Interfaces;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.ApiContract.Models.ItemTrade;
 using SteamHub.ApiContract.Models.ItemTradeDetails;
+using SteamHub.ApiContract.Models.UserInventory;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,16 +16,17 @@ using System.Threading.Tasks;
 
 namespace CtrlAltElite.Services
 {
-    class TradeService : ITradeService
+    public class TradeService : ITradeService
     {
         private IITemTradeServiceProxy itemTradeServiceProxy;
         private IItemTradeDetailServiceProxy itemTradeDetailServiceProxy;
         private IUserServiceProxy userServiceProxy;
         private IGameServiceProxy gameServiceProxy;
         private IItemServiceProxy itemServiceProxy;
+        private IUserInventoryServiceProxy userInventoryServiceProxy;
         private User currentUser;
 
-        public TradeService(IITemTradeServiceProxy itemTradeServiceProxy, User currentUser, IItemTradeDetailServiceProxy itemTradeDetailServiceProxy,IUserServiceProxy userServiceProxy,IGameServiceProxy gameServiceProxy,IItemServiceProxy itemServiceProxy)
+        public TradeService(IITemTradeServiceProxy itemTradeServiceProxy, User currentUser, IItemTradeDetailServiceProxy itemTradeDetailServiceProxy, IUserServiceProxy userServiceProxy, IGameServiceProxy gameServiceProxy, IItemServiceProxy itemServiceProxy, IUserInventoryServiceProxy userInventoryServiceProxy)
         {
             this.itemTradeServiceProxy = itemTradeServiceProxy;
             this.currentUser = currentUser;
@@ -32,6 +34,7 @@ namespace CtrlAltElite.Services
             this.userServiceProxy = userServiceProxy;
             this.gameServiceProxy = gameServiceProxy;
             this.itemServiceProxy = itemServiceProxy;
+            this.userInventoryServiceProxy = userInventoryServiceProxy;
         }
 
         public async Task MarkTradeAsCompleted(int tradeId)
@@ -57,7 +60,99 @@ namespace CtrlAltElite.Services
 
         public User GetCurrentUser()
         {
+            System.Diagnostics.Debug.WriteLine($"Current user: {this.currentUser.UserName}, ID: {this.currentUser.UserId}");
             return this.currentUser;
+        }
+
+        // Fix for CS1579: Convert the `itemsToTransfer` variable to its list property `ItemTradeDetails` before iterating.
+        public async Task UpdateItemTradeAsync(ItemTrade trade)
+        {
+            var tradeStatus = TradeStatusEnum.Pending; // Default value
+            if (Enum.TryParse(trade.TradeStatus, out TradeStatusEnum parsedStatus))
+            {
+                tradeStatus = parsedStatus;
+            }
+
+            // 1. Prepare the update trade request
+            var updateTradeRequest = new UpdateItemTradeRequest
+            {
+                TradeDescription = trade.TradeDescription, // You may or may not want to update this
+                TradeStatus = trade.AcceptedByDestinationUser ? TradeStatusEnum.Completed : tradeStatus,
+                AcceptedBySourceUser = trade.AcceptedBySourceUser,
+                AcceptedByDestinationUser = trade.AcceptedByDestinationUser,
+            };
+            System.Diagnostics.Debug.WriteLine($"Updating trade with ID: {trade.TradeId} to status: {updateTradeRequest.TradeStatus}");
+
+            await this.itemTradeServiceProxy.UpdateItemTradeAsync(trade.TradeId, updateTradeRequest);
+
+
+            // 3.If the destination user accepts, transfer the items
+
+            if (trade.AcceptedByDestinationUser)
+            {
+                // Fetch all trade details and filter by trade ID
+                var response = await this.itemTradeDetailServiceProxy.GetAllItemTradeDetailsAsync();
+                var tradeDetails = response.ItemTradeDetails
+                    .Where(detail => detail.TradeId == trade.TradeId)
+                    .ToList();
+
+                foreach (var detail in tradeDetails)
+                {
+                    var fromUserId = detail.IsSourceUserItem ? trade.SourceUser.UserId : trade.DestinationUser.UserId;
+                    var toUserId = detail.IsSourceUserItem ? trade.DestinationUser.UserId : trade.SourceUser.UserId;
+
+                    // First, remove from old owner
+                    await this.userInventoryServiceProxy.RemoveItemFromUserInventoryAsync(new ItemFromInventoryRequest
+                    {
+                        UserId = toUserId,
+                        ItemId = detail.ItemId,
+                        // ????
+                        GameId = trade.GameOfTrade.GameId,
+
+                    });
+                    // Then, add to new owner
+                    await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(new ItemFromInventoryRequest
+                    {
+                        UserId = fromUserId,
+                        ItemId = detail.ItemId,
+                        // ????
+                        GameId = trade.GameOfTrade.GameId,
+                    });
+                }
+            }
+        }
+
+        public async Task TransferItemAsync(int itemId, int fromUserId, int toUserId, int gameId)
+        {
+            var removeRequest = new ItemFromInventoryRequest
+            {
+                UserId = fromUserId,
+                ItemId = itemId,
+                GameId = gameId
+            };
+
+            var addRequest = new ItemFromInventoryRequest
+            {
+                UserId = toUserId,
+                ItemId = itemId,
+                GameId = gameId
+            };
+
+            try
+            {
+                // Remove the item from the source user
+                await this.userInventoryServiceProxy.RemoveItemFromUserInventoryAsync(removeRequest);
+
+                // Add the item to the destination user
+                await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(addRequest);
+
+                System.Diagnostics.Debug.WriteLine($"Successfully transferred item {itemId} from user {fromUserId} to user {toUserId}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error transferring item {itemId}: {ex.Message}");
+                throw new Exception($"Failed to transfer item {itemId} from user {fromUserId} to user {toUserId}", ex);
+            }
         }
 
         public async Task AddItemTradeAsync(ItemTrade trade)
@@ -111,7 +206,7 @@ namespace CtrlAltElite.Services
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
                 .Where(t => (t.SourceUserId == userId || t.DestinationUserId == userId)
-                         && t.TradeStatus == TradeStatusEnum.Completed || t.TradeStatus==TradeStatusEnum.Declined) // Fixed comparison to use the enum directly
+                         && t.TradeStatus == TradeStatusEnum.Completed || t.TradeStatus == TradeStatusEnum.Declined) // Fixed comparison to use the enum directly
                 .ToList();
 
             var allUsersApi = (await this.userServiceProxy.GetUsersAsync()).Users;
@@ -276,67 +371,13 @@ namespace CtrlAltElite.Services
                         trade.AddDestinationUserItem(item);
                 }
             }
-            foreach(var r in result)
+            foreach (var r in result)
             {
                 System.Diagnostics.Debug.WriteLine($"Trade ID: {r.TradeId}, Source User: {r.SourceUser.UserName}, Destination User: {r.DestinationUser.UserName}, Game: {r.GameOfTrade}");
                 System.Diagnostics.Debug.WriteLine(r.SourceUserItems);
                 System.Diagnostics.Debug.WriteLine(r.DestinationUserItems);
             }
             return result;
-            //foreach (var trade in filteredTrades)
-            //{
-            //    var sourceUserDto = allUsers.FirstOrDefault(u => u.UserId == trade.SourceUserId);
-            //    var destUserDto = allUsers.FirstOrDefault(u => u.UserId == trade.DestinationUserId);
-            //    var gameDto = allGames.FirstOrDefault(g => g.GameId == trade.GameOfTradeId);
-
-            //    if (sourceUserDto == null || destUserDto == null || gameDto == null)
-            //    {
-            //        continue; // Skip malformed trade
-            //    }
-
-
-
-            //    var destUser = new User(destUserDto.UserName);
-            //    destUser.SetUserId(destUserDto.UserId);
-
-            //    var tradeGame = gameDto;
-
-            //    var domainTrade = new ItemTrade(sourceUser, destUser, tradeGame, trade.TradeDescription);
-            //    domainTrade.SetTradeId(trade.TradeId);
-
-            //    if (trade.TradeStatus == TradeStatusEnum.Completed)
-            //    {
-            //        domainTrade.MarkTradeAsCompleted();
-            //    }
-            //    else if (trade.TradeStatus == TradeStatusEnum.Declined)
-            //    {
-            //        domainTrade.DeclineTradeRequest();
-            //    }
-
-            //    // Process trade items
-            //    foreach (var itemDetail in trade.ItemTradeDetails)
-            //    {
-            //        var itemDto = itemDetail.Item;
-
-            //        var itemGame = allGames.FirstOrDefault(g => g.GameId == itemDto.CorrespondingGameId);
-            //        if (itemGame == null) continue;
-
-            //        var item = new Item(itemDto.ItemName, itemGame, itemDto.Price, itemDto.Description);
-            //        item.SetItemId(itemDto.ItemId);
-            //        item.SetIsListed(itemDto.IsListed);
-
-            //        if (itemDetail.IsSourceUserItem)
-            //        {
-            //            domainTrade.AddSourceUserItem(item);
-            //        }
-            //        else
-            //        {
-            //            domainTrade.AddDestinationUserItem(item);
-            //        }
-            //    }
-
-            //    result.Add(domainTrade);
-            //}
 
         }
 
@@ -345,5 +386,111 @@ namespace CtrlAltElite.Services
 
 
         }
+
+        public async Task CreateTradeAsync(ItemTrade trade)
+        {
+            try
+            {
+                await this.AddItemTradeAsync(trade);
+            }
+            catch (Exception tradeCreationException)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error creating trade: {tradeCreationException.Message}");
+                throw;
+            }
+        }
+
+        public async Task UpdateTradeAsync(ItemTrade trade)
+        {
+            try
+            {
+                await this.UpdateItemTradeAsync(trade);
+            }
+            catch (Exception tradeUpdateException)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating trade: {tradeUpdateException.Message}");
+                throw;
+            }
+        }
+
+        public async Task AcceptTradeAsync(ItemTrade trade, bool isSourceUser)
+        {
+            try
+            {
+                if (isSourceUser)
+                {
+                    trade.AcceptBySourceUser();
+                }
+                else
+                {
+                    trade.AcceptByDestinationUser();
+                }
+
+                await this.UpdateItemTradeAsync(trade);
+
+                // If both users have accepted, complete the trade
+                if (trade.AcceptedByDestinationUser)
+                {
+                    this.CompleteTrade(trade);
+                }
+            }
+            catch (Exception tradeAcceptionException)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error accepting trade: {tradeAcceptionException.Message}");
+                throw;
+            }
+        }
+
+        public async void CompleteTrade(ItemTrade trade)
+        {
+            try
+            {
+                // Transfer source user items to destination user
+                foreach (var item in trade.SourceUserItems)
+                {
+                    await this.TransferItemAsync(item.ItemId, trade.SourceUser.UserId, trade.DestinationUser.UserId);
+                }
+
+                // Transfer destination user items to source user
+                foreach (var item in trade.DestinationUserItems)
+                {
+                    await this.TransferItemAsync(item.ItemId, trade.DestinationUser.UserId, trade.SourceUser.UserId);
+                }
+
+                trade.MarkTradeAsCompleted();
+                await this.UpdateItemTradeAsync(trade);
+            }
+            catch (Exception tradeCompletingException)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error completing trade: {tradeCompletingException.Message}");
+                throw;
+            }
+        }
+        public async Task<List<Item>> GetUserInventoryAsync(int userId)
+        {
+            var inventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
+            //foreach(var item in inventoryResponse.Items)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"IS LISTED:{item.IsListed}");
+            //    System.Diagnostics.Debug.WriteLine($"Item ID: {item.ItemId}, Game Name: {item.GameName}, Item Name: {item.ItemName}, Price: {item.Price}, Description: {item.Description}");
+            //}
+            var allGamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
+            var result = new List<Item>();
+            var allGames = allGamesResponse.Select(GameMapper.MapToGame).ToList();
+            foreach(var inventoryItem in inventoryResponse.Items)
+            {
+                var matchingGame = allGames.FirstOrDefault(g =>
+
+                string.Equals(g.GameTitle, inventoryItem.GameName, StringComparison.OrdinalIgnoreCase));
+                var item =new Item(inventoryItem.ItemName, matchingGame, (float)inventoryItem.Price, inventoryItem.Description);
+                item.SetItemId(inventoryItem.ItemId);
+                item.SetIsListed(inventoryItem.IsListed);
+                result.Add(item);
+            }
+            return result;
+
+
+        }
+
     }
 }

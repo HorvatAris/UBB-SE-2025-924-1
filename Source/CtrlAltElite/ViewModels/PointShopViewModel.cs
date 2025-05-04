@@ -11,6 +11,7 @@ namespace SteamStore.ViewModels
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using SteamStore.Constants;

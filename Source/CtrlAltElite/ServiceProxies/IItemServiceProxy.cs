@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CtrlAltElite.ServiceProxies
 {
-    interface IItemServiceProxy : IItemRepository
+    public interface IItemServiceProxy : IItemRepository
     {
         [Get("/api/items")]
         Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync();

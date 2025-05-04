@@ -14,21 +14,21 @@ namespace SteamStore.Services.Interfaces
     {
         Task<List<Item>> GetItemsFromInventoryAsync(Game game);
 
-        Task<List<Item>> GetAllItemsFromInventoryAsync(User user);
+        Task<List<Item>> GetAllItemsFromInventoryAsync();
 
-        Task AddItemToInventoryAsync(Game game, Item item, User user);
+        Task AddItemToInventoryAsync(Game game, Item item);
 
-        Task RemoveItemFromInventoryAsync(Game game, Item item, User user);
+        Task RemoveItemFromInventoryAsync(Game game, Item item);
 
         Task<List<Item>> GetUserInventoryAsync(int userId);
 
-        Task<List<User>> GetAllUsersAsync();
+        User GetAllUsersAsync();
 
         Task<bool> SellItemAsync(Item item);
 
         List<Item> FilterInventoryItems(List<Item> items, Game selectedGame, string searchText);
 
-        List<Game> GetAvailableGames(List<Item> items);
+        Task<List<Game>> GetAvailableGames(List<Item> items);
 
 
         Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText);

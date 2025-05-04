@@ -104,7 +104,7 @@ namespace CtrlAltElite.ViewModels
                     OnPropertyChanged();
 
                     // Update the filtered inventory when the game filter changes.
-                    UpdateInventoryItemsAsync().ConfigureAwait(false);
+                    _ = this.UpdateInventoryItemsAsync();
                 }
             }
         }
@@ -145,9 +145,14 @@ namespace CtrlAltElite.ViewModels
                     OnPropertyChanged();
 
                     // Update the filtered inventory when the search text changes.
-                    UpdateInventoryItemsAsync().ConfigureAwait(false);
+                    this.updateAsyncVoid();
                 }
             }
+        }
+
+        private async void updateAsyncVoid()
+        {
+            await UpdateInventoryItemsAsync();
         }
 
         /// <summary>
@@ -205,7 +210,7 @@ namespace CtrlAltElite.ViewModels
 
                 // Retrieve all inventory items to rebuild the games filter.
                 var allItems = await inventoryService.GetUserInventoryAsync(SelectedUser.UserId);
-                var availableGames = inventoryService.GetAvailableGames(allItems);
+                var availableGames = await inventoryService.GetAvailableGames(allItems);
                 AvailableGames.Clear();
                 foreach (var game in availableGames)
                 {
@@ -288,18 +293,10 @@ namespace CtrlAltElite.ViewModels
         {
             try
             {
-                var allUsers = await inventoryService.GetAllUsersAsync();
+                var user = inventoryService.GetAllUsersAsync();
                 AvailableUsers.Clear();
-                foreach (var user in allUsers)
-                {
-                    AvailableUsers.Add(user);
-                }
-
-                // Set default selected user if available.
-                if (AvailableUsers.Any())
-                {
-                    SelectedUser = AvailableUsers.First();
-                }
+                AvailableUsers.Add(user);
+                SelectedUser = user;
             }
             catch (Exception loadingUsersException)
             {

@@ -208,10 +208,19 @@ namespace Steampunks.ViewModels
                     this.InventoryItems.Add(item);
                 }
 
+                var allGamesOption = new Game
+                {
+                    GameId = 0, // Use a unique ID for "All games".
+                    GameTitle = "All games",
+                    GameDescription = "Show items from all games",
+                    Price = 0
+                };
+
                 // Retrieve all inventory items to rebuild the games filter.
                 var allItems = await this.inventoryService.GetUserInventoryAsync(this.SelectedUser.UserId);
                 var availableGames = this.inventoryService.GetAvailableGames(allItems);
                 this.AvailableGames.Clear();
+                this.AvailableGames.Add(allGamesOption); // Add the "All games" option.
                 foreach (var game in availableGames)
                 {
                     this.AvailableGames.Add(game);
@@ -266,7 +275,7 @@ namespace Steampunks.ViewModels
 
                 var filteredItems = await this.inventoryService.GetUserFilteredInventoryAsync(
                     this.SelectedUser.UserId,
-                    this.SelectedGame,
+                    this.SelectedGame?.GameTitle == "All games" ? null : SelectedGame,
                     this.SearchText);
 
                 this.InventoryItems.Clear();
