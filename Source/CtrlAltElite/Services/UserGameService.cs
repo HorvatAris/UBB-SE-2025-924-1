@@ -99,7 +99,6 @@ public class UserGameService : IUserGameService
     {
         try
         {
-            
             var response = await this.UserGameServiceProxy.GetUserGamesAsync(this.user.UserId);
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");

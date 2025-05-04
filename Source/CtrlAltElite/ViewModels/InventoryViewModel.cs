@@ -125,7 +125,7 @@ namespace CtrlAltElite.ViewModels
                     // When a user is selected, load their inventory.
                     if (selectedUser != null)
                     {
-                        _ = LoadInventoryItemsAsync();
+                        _ = this.LoadInventoryItemsAsync();
                     }
                 }
             }

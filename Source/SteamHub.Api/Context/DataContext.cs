@@ -80,24 +80,24 @@ namespace SteamHub.Api.Context
             {
                 new User
                 {
-                    UserId = 1, Email = "user1@gmail.com", PointsBalance = 100, UserName = "User1",
+                    UserId = 1, Email = "johndoe@gmail.com", PointsBalance = 100, UserName = "John Doe",
                     RoleId = RoleEnum.User,
                     WalletBalance = 56
                 },
                 new User
                 {
-                    UserId = 2, Email = "user2@gmail.com", PointsBalance = 45, UserName = "User2",
+                    UserId = 2, Email = "michaeljohn@gmail.com", PointsBalance = 45, UserName = "Michael John",
                     RoleId = RoleEnum.User,
                     WalletBalance = 78
                 },
                 new User
                 {
-                    UserId = 3, Email = "user3@gmail.com", PointsBalance = 234, UserName = "User3",
+                    UserId = 3, Email = "janedoe@gmail.com", PointsBalance = 234, UserName = "Jane Doe",
                     RoleId = RoleEnum.Developer, WalletBalance = 21
                 },
                 new User
                 {
-                    UserId = 4, Email = "user4@gmail.com", PointsBalance = 34, UserName = "User4",
+                    UserId = 4, Email = "mariaelena@gmail.com", PointsBalance = 34, UserName = "Maria Elena",
                     RoleId = RoleEnum.Developer, WalletBalance = 455
                 },
             };
@@ -561,7 +561,7 @@ namespace SteamHub.Api.Context
                     SourceUserId = 1,
                     DestinationUserId = 2,
                     GameOfTradeId = 1,
-                    TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                    TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
                     TradeDate = new DateTime(2025, 4, 28),
                     TradeStatus = TradeStatus.Pending,
                     AcceptedBySourceUser = false,
@@ -573,7 +573,7 @@ namespace SteamHub.Api.Context
                     SourceUserId = 3,
                     DestinationUserId = 4,
                     GameOfTradeId = 2,
-                    TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                    TradeDescription = "Trade 2: Jane Doe offers Game2 to Maria Elena",
                     TradeDate = new DateTime(2025, 4, 28),
                     TradeStatus = TradeStatus.Pending,
                     AcceptedBySourceUser = true,
@@ -585,7 +585,7 @@ namespace SteamHub.Api.Context
                     SourceUserId = 1,
                     DestinationUserId = 2,
                     GameOfTradeId = 1,
-                    TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                    TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
                     TradeDate = new DateTime(2025, 4, 28),
                     TradeStatus = TradeStatus.Declined,
                     AcceptedBySourceUser = true,

@@ -35,13 +35,21 @@ namespace CtrlAltElite.ViewModels
         private readonly ITradeService tradeService;
         private readonly IUserService userService;
         private readonly IGameService gameService;
+
+        private User? currentUser;
+        private User? recipientUser;
+        private ObservableCollection<Item> itemsOfferedByCurrentUser;
+        private ObservableCollection<Item> itemsOfferedByRecipientUser;
+        private ObservableCollection<Item> selectedItemsFromCurrentUserInventory;
+        private ObservableCollection<Item> selectedItemsFromRecipientUserInventory;
+
         private ObservableCollection<Item> sourceUserItems;
         private ObservableCollection<Item> destinationUserItems;
         private ObservableCollection<Item> selectedSourceItems;
         private ObservableCollection<Item> selectedDestinationItems;
         private ObservableCollection<ItemTrade> activeTrades;
         private ObservableCollection<ItemTrade> tradeHistory;
-        private User? currentUser;
+
         private User? selectedUser;
         private Game? selectedGame;
         private string? tradeDescription;
@@ -54,6 +62,7 @@ namespace CtrlAltElite.ViewModels
             this.tradeService = tradeService;
             this.userService = userService;
             this.gameService = gameService;
+
             this.sourceUserItems = new ObservableCollection<Item>();
             this.destinationUserItems = new ObservableCollection<Item>();
             this.selectedSourceItems = new ObservableCollection<Item>();
@@ -62,6 +71,7 @@ namespace CtrlAltElite.ViewModels
             this.tradeHistory = new ObservableCollection<ItemTrade>();
             this.users = new ObservableCollection<User>();
             this.games = new ObservableCollection<Game>();
+
             this.LoadInitialData();
         }
 
@@ -187,10 +197,12 @@ namespace CtrlAltElite.ViewModels
                 {
                     this.currentUser = value;
                     this.OnPropertyChanged();
-                    this.OnPropertyChanged(nameof(this.AvailableUsers));
-                    this.LoadUserInventory();
                     this.LoadActiveTrades();
                     this.LoadTradeHistory();
+                    if (this.currentUser != null)
+                    {
+                        _ = this.LoadUserInventory();
+                    }
                 }
             }
         }
@@ -204,7 +216,10 @@ namespace CtrlAltElite.ViewModels
                 {
                     this.selectedUser = value;
                     this.OnPropertyChanged();
-                    this.LoadDestinationUserInventory();
+                    if (this.selectedUser != null)
+                    {
+                        _ = this.LoadDestinationUserInventory();
+                    }
                 }
             }
         }
@@ -220,12 +235,7 @@ namespace CtrlAltElite.ViewModels
                     this.OnPropertyChanged();
                     if (this.CurrentUser != null)
                     {
-                        this.LoadUserInventory();
-                    }
-
-                    if (this.SelectedUser != null)
-                    {
-                        this.LoadDestinationUserInventory();
+                        _ = this.LoadUserInventory();
                     }
                 }
             }
@@ -269,14 +279,25 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        public void AddSourceItem(Item item)
+        public async Task InitializeAsync()
         {
-            if (item != null && !this.SelectedSourceItems.Contains(item))
+            await this.LoadUsersAsync();
+            await this.LoadGamesAsync();
+        }
+
+        public void AddSourceItemsAsync()
+        {
+            foreach (var item in this.selectedSourceItems)
             {
-                this.SelectedSourceItems.Add(item);
-                this.SourceUserItems.Remove(item);
-                this.OnPropertyChanged(nameof(this.CanSendTradeOffer));
+                if (item != null && !this.SelectedSourceItems.Contains(item))
+                {
+                    this.SelectedSourceItems.Add(item);
+                    this.SourceUserItems.Remove(item);
+                    this.OnPropertyChanged(nameof(this.CanSendTradeOffer));
+                }
             }
+
+            this.SelectedSourceItems.Clear();
         }
 
         public void RemoveSourceItem(Item item)
@@ -289,14 +310,19 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        public void AddDestinationItem(Item item)
+        public void AddDestinationItemsAsync()
         {
-            if (item != null && !this.SelectedDestinationItems.Contains(item))
+            foreach (var item in this.selectedDestinationItems)
             {
-                this.SelectedDestinationItems.Add(item);
-                this.DestinationUserItems.Remove(item);
-                this.OnPropertyChanged(nameof(this.CanSendTradeOffer));
+                if (item != null && !this.SelectedDestinationItems.Contains(item))
+                {
+                    this.SelectedDestinationItems.Add(item);
+                    this.DestinationUserItems.Remove(item);
+                    this.OnPropertyChanged(nameof(this.CanSendTradeOffer));
+                }
             }
+
+            this.SelectedDestinationItems.Clear();
         }
 
         public void RemoveDestinationItem(Item item)
@@ -342,8 +368,8 @@ namespace CtrlAltElite.ViewModels
                 this.SelectedSourceItems.Clear();
                 this.SelectedDestinationItems.Clear();
                 this.TradeDescription = string.Empty;
-                this.LoadUserInventory();
-                this.LoadDestinationUserInventory();
+                await this.LoadUserInventory();
+                await this.LoadDestinationUserInventory();
             }
             catch (Exception creatingTradeException)
             {
@@ -369,8 +395,8 @@ namespace CtrlAltElite.ViewModels
                 // Refresh all relevant data
                 this.LoadActiveTrades();
                 this.LoadTradeHistory();
-                this.LoadUserInventory();
-                this.LoadDestinationUserInventory();
+                await this.LoadUserInventory();
+                await this.LoadDestinationUserInventory();
 
                 // Notify UI of changes
                 this.OnPropertyChanged(nameof(this.ActiveTrades));
@@ -492,24 +518,6 @@ namespace CtrlAltElite.ViewModels
             return this.tradeService.GetCurrentUser();
         }
 
-        public void AddSelectedSourceItems(IList<object> selectedItems)
-        {
-            foreach (var currentItem in selectedItems.OfType<Item>())
-            {
-                this.AddSourceItem(currentItem);
-            }
-        }
-
-        public void AddSelectedDestinationItems(IList<object> selectedItems)
-        {
-            foreach (var currentItem in selectedItems.OfType<Item>())
-            {
-                this.AddDestinationItem(currentItem);
-            }
-
-            this.SelectedDestinationItems.Clear();
-        }
-
         public async Task TrySendTradeAsync(XamlRoot root)
         {
             if (!this.CanSendTradeOffer)
@@ -572,13 +580,13 @@ namespace CtrlAltElite.ViewModels
 
         private async void LoadInitialData()
         {
-            this.LoadCurrentUserAsync();
+            await this.LoadCurrentUserAsync();
             await this.LoadUsersAsync();
             await this.LoadGamesAsync();
             await this.LoadActiveTradesAsync();
         }
 
-        private void LoadCurrentUserAsync()
+        private async Task LoadCurrentUserAsync()
         {
             try
             {
@@ -590,7 +598,7 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        private async void LoadUserInventory()
+        private async Task LoadUserInventory()
         {
             if (this.CurrentUser == null)
             {
@@ -617,7 +625,7 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        private async void LoadDestinationUserInventory()
+        public async Task LoadDestinationUserInventory()
         {
             if (this.SelectedUser == null)
             {
