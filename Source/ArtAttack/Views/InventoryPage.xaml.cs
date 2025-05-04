@@ -73,14 +73,6 @@ namespace Steampunks.Views
         }
 
         /// <summary>
-        /// Navigates to the trading page when the "Create Trade Offer" button is clicked.
-        /// </summary>
-        private void OnCreateTradeOfferButtonClicked(object sender, RoutedEventArgs e)
-        {
-            this.Frame.Navigate(typeof(TradingPage));
-        }
-
-        /// <summary>
         /// Updates the view model with the selected inventory item.
         /// </summary>
         private void OnInventoryItemClicked(object sender, ItemClickEventArgs e)
@@ -88,25 +80,6 @@ namespace Steampunks.Views
             if (e.ClickedItem is Item selectedItem && this.ViewModel != null)
             {
                 this.ViewModel.SelectedItem = selectedItem;
-            }
-        }
-
-        /// <summary>
-        /// Replaces a failed image load with a default image.
-        /// </summary>
-        private void OnItemImageLoadFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            if (sender is Image itemImage && itemImage.Parent is Grid parentGrid)
-            {
-                var defaultImage = parentGrid.Children
-                    .OfType<Image>()
-                    .FirstOrDefault(image => image.Name == "DefaultImage");
-
-                if (defaultImage != null)
-                {
-                    itemImage.Visibility = Visibility.Collapsed;
-                    defaultImage.Visibility = Visibility.Visible;
-                }
             }
         }
 
