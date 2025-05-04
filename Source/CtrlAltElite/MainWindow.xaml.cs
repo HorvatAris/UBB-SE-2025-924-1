@@ -116,33 +116,28 @@ namespace SteamStore
             userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
 
             developerService = new DeveloperService
-            {
-                TagServiceProxy = tagServiceProxy,
-                UserGameRepository = userGameRepository,
-                User = loggedInUser,
-                GameServiceProxy = gameServiceProxy,
-            };
+            (gameServiceProxy, tagServiceProxy, userGameServiceProxy, userServiceProxy, itemServiceProxy, itemTradeDetailServiceProxy, loggedInUser);
 
             if (ContentFrame == null)
             {
                 throw new Exception("ContentFrame is not initialized.");
             }
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                   // await tradeService.AddItemTradeAsync(trade);
-                    //await tradeService.GetActiveTradesAsync(1);
-                    //await tradeService.UpdateItemTradeAsync(trade);
-                   // await tradeService.GetUserInventoryAsync(1);
-                   await tradeService.GetUserInventoryAsync(2);
-                   System.Diagnostics.Debug.WriteLine("Trade created successfully.");
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error creating trade: {ex.Message}");
-                }
-            });
+            //_ = Task.Run(async () =>
+            //{
+            //    try
+            //    {
+            //       // await tradeService.AddItemTradeAsync(trade);
+            //        //await tradeService.GetActiveTradesAsync(1);
+            //        //await tradeService.UpdateItemTradeAsync(trade);
+            //       // await tradeService.GetUserInventoryAsync(1);
+            //       await tradeService.GetUserInventoryAsync(2);
+            //       System.Diagnostics.Debug.WriteLine("Trade created successfully.");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        System.Diagnostics.Debug.WriteLine($"Error creating trade: {ex.Message}");
+            //    }
+            //});
             ContentFrame.Content = new HomePage(gameService, cartService, userGameService);
         }
 

@@ -12,7 +12,7 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250504094646_MainMigration")]
+    [Migration("20250504133547_MainMigration")]
     partial class MainMigration
     {
         /// <inheritdoc />
@@ -215,6 +215,40 @@ namespace SteamHub.Api.Migrations
                             RecommendedRequirements = "Intel Core i7, 16GB RAM, GTX 1060",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE"
+                        },
+                        new
+                        {
+                            GameId = 5,
+                            Description = "A puzzle game where you change the rules to solve challenges.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
+                            ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
+                            MinimumRequirements = "2GB RAM, 1.0GHz Processor",
+                            Name = "Baba is You",
+                            NumberOfRecentPurchases = 1500,
+                            Price = 14.99m,
+                            PublisherUserId = 1,
+                            Rating = 4.8m,
+                            RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
+                        },
+                        new
+                        {
+                            GameId = 6,
+                            Description = "A farming simulation game where players can grow crops, raise animals, and build their farm.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
+                            ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple123/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
+                            MinimumRequirements = "2GB RAM, 1.0GHz Processor",
+                            Name = "Stardew Valley",
+                            NumberOfRecentPurchases = 1500,
+                            Price = 14.99m,
+                            PublisherUserId = 2,
+                            Rating = 4.8m,
+                            RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
                         });
                 });
 

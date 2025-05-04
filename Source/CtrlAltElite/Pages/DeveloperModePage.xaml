@@ -175,7 +175,7 @@
                              Header="Discount" 
                              PlaceholderText="Enter discount (0-100)"/>
                     
-                    <!-- Tag Selection -->
+                    <!-- Tag Selection 
                     <TextBlock Text="Select Tags" 
                              FontSize="16" 
                              FontWeight="SemiBold" 
@@ -189,7 +189,7 @@
                                 <TextBlock Text="{Binding Tag_name}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                    </ListView>
+                    </ListView> -->
                 </StackPanel>
             </ScrollViewer>
         </ContentDialog>

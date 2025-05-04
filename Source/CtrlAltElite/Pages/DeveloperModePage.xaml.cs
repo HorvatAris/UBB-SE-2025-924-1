@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -120,7 +121,8 @@ namespace SteamStore.Pages
                         this.AddGameMinimumRequirement.Text,
                         this.AddGameRecommendedRequirement.Text,
                         this.AddGameDiscount.Text,
-                        this.AddGameTagList.SelectedItems.Cast<Tag>().ToList());
+                        new List<Tag> { new Tag { TagId = 500, Tag_name = "bagpl" } });
+                        // this.AddGameTagList.SelectedItems.Cast<Tag>().ToList());
 
                     this.ClearFieldsForAddingAGame();
                 }
@@ -143,7 +145,7 @@ namespace SteamStore.Pages
             this.AddGameMinimumRequirement.Text = string.Empty;
             this.AddGameRecommendedRequirement.Text = string.Empty;
             this.AddGameDiscount.Text = string.Empty;
-            this.AddGameTagList.SelectedItems.Clear();
+            // this.AddGameTagList.SelectedItems.Clear();
         }
 
         private async Task ShowErrorMessage(string title, string message)
@@ -216,7 +218,7 @@ namespace SteamStore.Pages
                 try
                 {
                     // Check if the game is owned by any users
-                    int ownerCount = this.viewModel.GetGameOwnerCount(gameId);
+                    int ownerCount = await this.viewModel.GetGameOwnerCount(gameId);
                     ContentDialogResult result;
                     if (ownerCount > NoOwnersCount)
                     {
@@ -236,7 +238,7 @@ namespace SteamStore.Pages
 
                     if (result == ContentDialogResult.Primary)
                     {
-                        this.viewModel.DeleteGame(gameId);
+                        await this.viewModel.DeleteGame(gameId);
 
                         // Refresh the games list
                         await this.viewModel.LoadGames();
@@ -332,7 +334,6 @@ namespace SteamStore.Pages
             {
                 var availableTags = this.EditGameTagList.Items.Cast<object>().OfType<Tag>().ToList(); // Safe cast
                 var matchingTags = await this.viewModel.GetMatchingTags(game.GameId, availableTags);
-
                 foreach (Tag tag in matchingTags)
                 {
                     this.EditGameTagList.SelectedItems.Add(tag);
