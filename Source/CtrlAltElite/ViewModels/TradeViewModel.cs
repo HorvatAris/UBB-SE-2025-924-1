@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="TradeViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ViewModels
 {
@@ -14,32 +12,13 @@ namespace CtrlAltElite.ViewModels
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using CtrlAltElite.Models;
-    using CtrlAltElite.Services;
+    using CtrlAltElite.Services.Interfaces;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamStore.Services;
+    using SteamStore.Services.Interfaces;
 
-    /// <summary>
-    /// The ViewModel for game and item Trade.
-    /// </summary>
     public partial class TradeViewModel : INotifyPropertyChanged
     {
-        private readonly TradeService tradeService;
-        private readonly UserService userService;
-        private readonly GameService gameService;
-        private ObservableCollection<Item> sourceUserItems;
-        private ObservableCollection<Item> destinationUserItems;
-        private ObservableCollection<Item> selectedSourceItems;
-        private ObservableCollection<Item> selectedDestinationItems;
-        private ObservableCollection<ItemTrade> activeTrades;
-        private ObservableCollection<ItemTrade> tradeHistory;
-        private User? currentUser;
-        private User? selectedUser;
-        private Game? selectedGame;
-        private string? tradeDescription;
-        private ItemTrade? selectedTrade;
-        private ObservableCollection<Game> games;
-        private ObservableCollection<User> users;
         public const string CannotSendTradeTitle = "Cannot Send Trade";
         public const string CannotSendTradeMessage = "Please select a user to trade with, add items to trade, and provide a trade description.";
         public const string ConfirmTradeTitle = "Confirm Trade";
@@ -53,7 +32,24 @@ namespace CtrlAltElite.ViewModels
         public const string DeclineButtonText = "Decline";
         public const string CancelButtonText = "Cancel";
         public const string OkButtonText = "OK";
-        public TradeViewModel(TradeService tradeService, UserService userService, GameService gameService)
+        private readonly ITradeService tradeService;
+        private readonly IUserService userService;
+        private readonly IGameService gameService;
+        private ObservableCollection<Item> sourceUserItems;
+        private ObservableCollection<Item> destinationUserItems;
+        private ObservableCollection<Item> selectedSourceItems;
+        private ObservableCollection<Item> selectedDestinationItems;
+        private ObservableCollection<ItemTrade> activeTrades;
+        private ObservableCollection<ItemTrade> tradeHistory;
+        private User? currentUser;
+        private User? selectedUser;
+        private Game? selectedGame;
+        private string? tradeDescription;
+        private ItemTrade? selectedTrade;
+        private ObservableCollection<Game> games;
+        private ObservableCollection<User> users;
+
+        public TradeViewModel(ITradeService tradeService, IUserService userService, IGameService gameService)
         {
             this.tradeService = tradeService;
             this.userService = userService;
@@ -69,10 +65,8 @@ namespace CtrlAltElite.ViewModels
             this.LoadInitialData();
         }
 
-        /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        /// <inheritdoc/>
         public ObservableCollection<User> Users
         {
             get => this.users;
@@ -86,7 +80,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<Game> Games
         {
             get => this.games;
@@ -100,7 +93,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<Item> SourceUserItems
         {
             get => this.sourceUserItems;
@@ -114,7 +106,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<Item> DestinationUserItems
         {
             get => this.destinationUserItems;
@@ -128,7 +119,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<Item> SelectedSourceItems
         {
             get => this.selectedSourceItems;
@@ -142,7 +132,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<Item> SelectedDestinationItems
         {
             get => this.selectedDestinationItems;
@@ -156,7 +145,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<ItemTrade> ActiveTrades
         {
             get => this.activeTrades;
@@ -167,7 +155,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<ItemTrade> TradeHistory
         {
             get => this.tradeHistory;
@@ -178,7 +165,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ObservableCollection<User> AvailableUsers
         {
             get
@@ -192,7 +178,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public User? CurrentUser
         {
             get => this.currentUser;
@@ -210,7 +195,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public User? SelectedUser
         {
             get => this.selectedUser;
@@ -225,7 +209,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public Game? SelectedGame
         {
             get => this.selectedGame;
@@ -248,7 +231,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public string? TradeDescription
         {
             get => this.tradeDescription;
@@ -262,7 +244,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public ItemTrade? SelectedTrade
         {
             get => this.selectedTrade;
@@ -274,10 +255,8 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public bool CanAcceptOrDeclineTrade => this.SelectedTrade != null;
 
-        /// <inheritdoc/>
         public bool CanSendTradeOffer
         {
             get
@@ -290,7 +269,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public void AddSourceItem(Item item)
         {
             if (item != null && !this.SelectedSourceItems.Contains(item))
@@ -301,7 +279,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public void RemoveSourceItem(Item item)
         {
             if (item != null)
@@ -312,7 +289,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public void AddDestinationItem(Item item)
         {
             if (item != null && !this.SelectedDestinationItems.Contains(item))
@@ -323,7 +299,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public void RemoveDestinationItem(Item item)
         {
             if (item != null)
@@ -334,7 +309,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public async Task CreateTradeOffer()
         {
             if (!this.CanSendTradeOffer)
@@ -377,7 +351,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public async void AcceptTrade(ItemTrade trade)
         {
             try
@@ -415,7 +388,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public async Task<bool> DeclineTradeAsync(ItemTrade trade)
         {
             if (trade == null)
@@ -448,7 +420,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public async Task LoadUsersAsync()
         {
             try
@@ -467,7 +438,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public async Task LoadGamesAsync()
         {
             try
@@ -486,29 +456,21 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <inheritdoc/>
         public async Task<List<ItemTrade>> GetActiveTradesAsync(int userId)
         {
             return await this.tradeService.GetActiveTradesAsync(userId);
         }
 
-        /// <inheritdoc/>
         public async Task<List<ItemTrade>> GetTradeHistoryAsync(int userId)
         {
             return await this.tradeService.GetTradeHistoryAsync(userId);
         }
 
-        /// <inheritdoc/>
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
             return await this.tradeService.GetUserInventoryAsync(userId);
         }
 
-        /// <summary>
-        /// Calls the service function that asynchronously creates a new trade offer.
-        /// </summary>
-        /// <param name="trade">The trade offer to create.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task CreateTradeAsync(ItemTrade trade)
         {
             await this.tradeService.CreateTradeAsync(trade);
@@ -520,10 +482,6 @@ namespace CtrlAltElite.ViewModels
             return gamesCollection.ToList(); // Convert Collection<Game> to List<Game>
         }
 
-        /// <summary>
-        /// Retrieves all users from the database asynchronously.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a list of users.</returns>
         public async Task<List<User>> GetAllUsersAsync()
         {
             return await this.userService.GetAllUsersAsync();
@@ -536,17 +494,17 @@ namespace CtrlAltElite.ViewModels
 
         public void AddSelectedSourceItems(IList<object> selectedItems)
         {
-            foreach (var obj in selectedItems.OfType<Item>())
+            foreach (var currentItem in selectedItems.OfType<Item>())
             {
-                this.AddSourceItem(obj);
+                this.AddSourceItem(currentItem);
             }
         }
 
         public void AddSelectedDestinationItems(IList<object> selectedItems)
         {
-            foreach (var obj in selectedItems.OfType<Item>())
+            foreach (var currentItem in selectedItems.OfType<Item>())
             {
-                this.AddDestinationItem(obj);
+                this.AddDestinationItem(currentItem);
             }
 
             this.SelectedDestinationItems.Clear();
@@ -577,12 +535,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Attempts to accept a given trade after displaying a confirmation dialog to the user.
-        /// </summary>
-        /// <param name="trade">The trade to accept.</param>
-        /// <param name="root">The XamlRoot used to display the confirmation dialog in the UI.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task TryAcceptTradeAsync(ItemTrade trade, XamlRoot root)
         {
             var result = await this.ShowDialogAsync(
@@ -598,12 +550,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Attempts to decline a given trade after displaying a confirmation dialog to the user.
-        /// </summary>
-        /// <param name="trade">The trade to decline.</param>
-        /// <param name="root">The XamlRoot used to display the confirmation dialog in the UI.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task TryDeclineTradeAsync(ItemTrade trade, XamlRoot root)
         {
             var result = await this.ShowDialogAsync(

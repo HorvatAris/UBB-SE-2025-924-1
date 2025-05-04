@@ -18,6 +18,8 @@ using CtrlAltElite.Models;
 using CtrlAltElite.Services;
 using SteamStore.Services;
 using CtrlAltElite.ViewModels;
+using CtrlAltElite.Services.Interfaces;
+using SteamStore.Services.Interfaces;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -70,14 +72,14 @@ namespace CtrlAltElite.Pages
         private ObservableCollection<Item> selectedItemsFromCurrentUserInventory;
         private ObservableCollection<Item> selectedItemsFromRecipientUserInventory;
 
-        private TradeService tradeService;
-        private UserService userService;
-        private GameService gameService;
+        private readonly ITradeService tradeService;
+        private readonly IUserService userService;
+        private readonly IGameService gameService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TradingPage"/> class and sets up dependencies.
         /// </summary>
-        public TradingPage(TradeService tradeService, UserService userService, GameService gameService)
+        public TradingPage(ITradeService tradeService, IUserService userService, IGameService gameService)
         {
             this.InitializeComponent();
             this.tradeService = tradeService;

@@ -75,8 +75,6 @@ public class GameService : IGameService
         }
     }
 
-
-
     public async Task<Collection<Tag>> GetAllGameTags(Game game)
     {
         var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
