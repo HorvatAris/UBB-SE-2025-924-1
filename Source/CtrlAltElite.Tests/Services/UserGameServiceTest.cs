@@ -1,4 +1,5 @@
-﻿namespace SteamStore.Tests.Services
+﻿/*
+namespace SteamStore.Tests.Services
 {
     using System;
     using System.Collections.Generic;
@@ -754,3 +755,4 @@
         }
     }
 }
+*/

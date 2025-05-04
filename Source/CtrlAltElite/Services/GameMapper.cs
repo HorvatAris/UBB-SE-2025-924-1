@@ -27,7 +27,7 @@ public class GameMapper
             TrailerPath = game.TrailerPath,
             GameplayPath = game.GameplayPath,
             PublisherIdentifier = game.PublisherUserIdentifier,
-            Tags = game.Tags.Select(t => t.TagName).ToArray(),
+            Tags = game.Tags?.Select(t => t.TagName).ToArray(),
             TagScore = Game.NOTCOMPUTED,
         };
     }

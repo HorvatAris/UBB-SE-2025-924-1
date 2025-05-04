@@ -1,10 +1,9 @@
 ﻿namespace SteamStore.Tests.TestUtils
 {
-    using System.Data;
-    using System.Security.Cryptography;
-    using SteamStore.Models;
+	using System.Data;
+	using SteamStore.Models;
 
-    public static class GameTestUtils
+	public static class GameTestUtils
     {
         private const string APPROVED_STATUS = "Approved";
         private const int DISCOUNT_DECIMAL_COUNT = 0;
