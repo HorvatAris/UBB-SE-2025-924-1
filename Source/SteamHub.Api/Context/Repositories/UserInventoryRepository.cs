@@ -16,19 +16,19 @@ namespace SteamHub.Api.Context.Repositories
 
         public async Task AddItemToUserInventoryAsync(ItemFromInventoryRequest request)
         {
-            var userId = _context.Users.FindAsync(request.UserId);
+            var userId = await _context.Users.FindAsync(request.UserId);
             if (userId == null)
             {
                 throw new ArgumentException("User not found");
             }
 
-            var itemId = _context.Items.FindAsync(request.ItemId);
+            var itemId =await  _context.Items.FindAsync(request.ItemId);
             if (itemId == null)
             {
                 throw new ArgumentException("Item not found");
             }
 
-            var gameId = _context.Games.FindAsync(request.GameId);
+            var gameId = await _context.Games.FindAsync(request.GameId);
             if (gameId == null)
             {
                 throw new ArgumentException("Game not found");
@@ -64,6 +64,7 @@ namespace SteamHub.Api.Context.Repositories
                 Description = userInventory.Item.Description,
                 IsListed = userInventory.Item.IsListed,
                 GameName = userInventory.Game.Name,
+                GameId = userInventory.Game.GameId,
                 ImagePath = userInventory.Item.ImagePath
             };
         }
@@ -84,6 +85,7 @@ namespace SteamHub.Api.Context.Repositories
                 Description = ui.Item.Description,
                 IsListed = ui.Item.IsListed,
                 GameName = ui.Game.Name,
+                GameId = ui.Game.GameId,
                 ImagePath = ui.Item.ImagePath
             }).ToList();
 
@@ -99,7 +101,7 @@ namespace SteamHub.Api.Context.Repositories
             if (request == null) throw new ArgumentNullException(nameof(request));
 
             var userInventory = await _context.UserInventories
-                .FirstOrDefaultAsync(ui => ui.UserId == request.UserId && ui.ItemId == request.ItemId);
+                .FirstOrDefaultAsync(ui => ui.UserId == request.UserId && ui.ItemId == request.ItemId && ui.GameId == request.GameId);
 
             if (userInventory == null) throw new ArgumentException("Item not found in user's inventory");
 

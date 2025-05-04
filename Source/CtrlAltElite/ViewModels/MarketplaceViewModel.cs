@@ -16,9 +16,10 @@ namespace CtrlAltElite.ViewModels
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+
     public partial class MarketplaceViewModel : INotifyPropertyChanged
     {
-        private readonly IMarketplaceService marketplaceService;
+        private IMarketplaceService marketplaceService;
         private ObservableCollection<Item> items;
         private string searchText;
         private string selectedGame;
@@ -36,11 +37,50 @@ namespace CtrlAltElite.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ObservableCollection<string> AvailableGames { get; set; }
+        private ObservableCollection<string> _availableGames;
 
-        public ObservableCollection<string> AvailableTypes { get; set; }
+        public ObservableCollection<string> AvailableGames
+        {
+            get => _availableGames;
+            set
+            {
+                if (_availableGames != value)
+                {
+                    _availableGames = value;
+                    OnPropertyChanged(nameof(AvailableGames)); // Notify the UI about changes
+                }
+            }
+        }
 
-        public ObservableCollection<string> AvailableRarities { get; set; }
+        private ObservableCollection<string> _availableTypes;
+
+        public ObservableCollection<string> AvailableTypes
+        {
+            get => _availableTypes;
+            set
+            {
+                if (_availableTypes != value)
+                {
+                    _availableTypes = value;
+                    OnPropertyChanged(nameof(AvailableTypes)); // Notify the UI about changes
+                }
+            }
+        }
+
+        private ObservableCollection<string> _availableRarities;
+
+        public ObservableCollection<string> AvailableRarities
+        {
+            get => _availableRarities;
+            set
+            {
+                if (_availableRarities != value)
+                {
+                    _availableRarities = value;
+                    OnPropertyChanged(nameof(AvailableRarities)); // Notify the UI about changes
+                }
+            }
+        }
 
         public ObservableCollection<Item> Items
         {
@@ -84,6 +124,7 @@ namespace CtrlAltElite.ViewModels
                 this.OnPropertyChanged();
             }
         }
+
         public string SelectedRarity
         {
             get => this.selectedRarity;
@@ -117,7 +158,7 @@ namespace CtrlAltElite.ViewModels
                 if (this.currentUser != value)
                 {
                     this.currentUser = value;
-                    this.marketplaceService.SetCurrentUser(value);
+                    this.marketplaceService.User = value;
                     this.OnPropertyChanged();
                     this.OnPropertyChanged(nameof(this.CanBuyItem));
                 }
@@ -145,7 +186,7 @@ namespace CtrlAltElite.ViewModels
 
             try
             {
-                bool success = await this.marketplaceService.BuyItemAsync(this.SelectedItem);
+                bool success = await this.marketplaceService.BuyItemAsync(this.SelectedItem, this.CurrentUser.UserId);
                 if (success)
                 {
                     // Refresh the items list.
@@ -183,7 +224,7 @@ namespace CtrlAltElite.ViewModels
         {
             var users = await this.marketplaceService.GetAllUsersAsync();
             this.AvailableUsers = new ObservableCollection<User>(users);
-            this.CurrentUser = this.marketplaceService.GetCurrentUser();
+            this.CurrentUser = this.marketplaceService.User;
         }
 
         private async Task LoadItemsAsync()
@@ -196,9 +237,12 @@ namespace CtrlAltElite.ViewModels
         private void InitializeCollections()
         {
             var allItems = this.Items.ToList();
-            this.AvailableGames = new ObservableCollection<string>(allItems.Select(item => item.Game.GameTitle).Distinct());
-            this.AvailableTypes = new ObservableCollection<string>(allItems.Select(item => item.ItemName.Split('|').First().Trim()).Distinct());
-            this.AvailableRarities = new ObservableCollection<string>(new[] { "Common", "Uncommon", "Rare", "Epic", "Legendary" });
+            this.AvailableGames =
+                new ObservableCollection<string>(allItems.Select(item => item.Game.GameTitle).Distinct());
+            this.AvailableTypes = new ObservableCollection<string>(
+                allItems.Select(item => item.ItemName.Split('|').First().Trim()).Distinct());
+            this.AvailableRarities =
+                new ObservableCollection<string>(new[] { "Common", "Uncommon", "Rare", "Epic", "Legendary" });
         }
 
         private void FilterItems()
@@ -208,9 +252,10 @@ namespace CtrlAltElite.ViewModels
             if (!string.IsNullOrEmpty(this.SearchText))
             {
                 var searchTextLower = this.SearchText.ToLower();
-                filteredItems = filteredItems.Where(item =>
-                    item.ItemName.ToLower().Contains(searchTextLower) ||
-                    item.Description.ToLower().Contains(searchTextLower));
+                filteredItems = filteredItems.Where(
+                    item =>
+                        item.ItemName.ToLower().Contains(searchTextLower) ||
+                        item.Description.ToLower().Contains(searchTextLower));
             }
 
             if (!string.IsNullOrEmpty(this.SelectedGame))
@@ -220,10 +265,11 @@ namespace CtrlAltElite.ViewModels
 
             if (!string.IsNullOrEmpty(this.SelectedType))
             {
-                filteredItems = filteredItems.Where(item =>
-                    item.ItemName.IndexOf('|') > 0
-                        ? item.ItemName.Substring(0, item.ItemName.IndexOf('|')).Trim() == this.SelectedType
-                        : item.ItemName.Trim() == this.SelectedType);
+                filteredItems = filteredItems.Where(
+                    item =>
+                        item.ItemName.IndexOf('|') > 0
+                            ? item.ItemName.Substring(0, item.ItemName.IndexOf('|')).Trim() == this.SelectedType
+                            : item.ItemName.Trim() == this.SelectedType);
             }
 
             this.Items = new ObservableCollection<Item>(filteredItems);
