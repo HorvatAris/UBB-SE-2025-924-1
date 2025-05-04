@@ -92,6 +92,7 @@ namespace SteamStore
             // var tagRepository = new TagRepository(dataLink);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
             //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
+            var userGameServiceProxy = RestService.For<IUserGameServiceProxy>(httpClient);
 
             pointShopService = new PointShopService(
                     pointShopServiceProxy,
@@ -107,13 +108,7 @@ namespace SteamStore
 
             cartService = new CartService(cartServiceProxy,loggedInUser,gameServiceProxy);
             var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
-            userGameService = new UserGameService
-            {
-                UserGameRepository = userGameRepository,
-                GameServiceProxy = gameServiceProxy,
-                TagServiceProxy = tagServiceProxy,
-
-            };
+            userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
 
             developerService = new DeveloperService
             {

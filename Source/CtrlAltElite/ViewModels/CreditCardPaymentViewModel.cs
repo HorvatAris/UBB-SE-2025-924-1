@@ -118,7 +118,7 @@ namespace SteamStore.ViewModels
             {
                 List<Game> purchasedGames = await this.cartService.GetCartGames();
                 this.cartService.RemoveGamesFromCart(purchasedGames);
-                this.userGameService.PurchaseGames(purchasedGames);
+                await this.userGameService.PurchaseGamesAsync(purchasedGames);
                 this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
 
                 try

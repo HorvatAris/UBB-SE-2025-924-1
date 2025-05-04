@@ -172,13 +172,13 @@ public class GamePageViewModel : INotifyPropertyChanged
     }
 
     // Add game to wishlist - this will be implemented later
-    public void AddToWishlist()
+    public async Task AddToWishlist()
     {
         if (this.Game != null && this.userGameService != null)
         {
             try
             {
-                this.userGameService.AddGameToWishlist(this.Game);
+                await this.userGameService.AddGameToWishlistAsync(this.Game);
             }
             catch (Exception exception)
             {
@@ -206,7 +206,7 @@ public class GamePageViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void UpdateIsOwnedStatus()
+    private async Task UpdateIsOwnedStatus()
     {
         if (this.Game == null || this.userGameService == null)
         {
@@ -216,7 +216,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
         try
         {
-            this.IsOwned = this.userGameService.IsGamePurchased(this.Game);
+            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game);
         }
         catch (Exception)
         {
