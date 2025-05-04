@@ -145,6 +145,13 @@ namespace SteamStore.Services
             item.IsListed = true;
             var allItems = await this.itemServiceProxy.GetItemsAsync();
             var foundItem = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId);
+
+            if (foundItem == null)
+            {
+                Console.WriteLine($"Item with ID {item.ItemId} not found.", nameof(item));
+                return false;
+            }
+
             var foundItemGameId = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId).GameId;
 
             // Create a request object for the item.
@@ -189,7 +196,7 @@ namespace SteamStore.Services
             if (selectedGame != null && selectedGame.GameTitle != "All Games")
             {
                 filtered = filtered.Where(item =>
-                    string.Equals(item.GameName, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(item.Game.GameTitle, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
             }
 
             // Filter by search text if provided
