@@ -32,9 +32,26 @@ public class DeveloperService : IDeveloperService
     //public ITagRepository TagRepository { get; set; }
     public ITagServiceProxy TagServiceProxy { get; set; }
 
-    public IUserGameRepository UserGameRepository { get; set; }
+    public IUserGameServiceProxy UserGameServiceProxy { get; set; }
+
+    public IUserServiceProxy UserServiceProxy { get; set; }
+
+    public IItemServiceProxy ItemServiceProxy { get; set; }
+
+    public IItemTradeDetailServiceProxy ItemTradeDetailServiceProxy { get; set; }
 
     public User User { get; set; }
+
+    public DeveloperService(IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, IUserGameServiceProxy userGameServiceProxy, IUserServiceProxy userServiceProxy, IItemServiceProxy itemServiceProxy, IItemTradeDetailServiceProxy itemTradeDetailServiceProxy, User user)
+    {
+        this.GameServiceProxy = gameServiceProxy;
+        this.TagServiceProxy = tagServiceProxy;
+        this.UserGameServiceProxy = userGameServiceProxy;
+        this.UserServiceProxy = userServiceProxy;
+        this.ItemServiceProxy = itemServiceProxy;
+        this.ItemTradeDetailServiceProxy = itemTradeDetailServiceProxy;
+        this.User = user;
+    }
 
     public async Task ValidateGame(int game_id)
     {
@@ -145,13 +162,21 @@ public class DeveloperService : IDeveloperService
     {
         await this.CreateGame(game);
 
-        if (selectedTags != null && selectedTags.Count > EmptyListLength)
-        {
-            foreach (var tag in selectedTags)
-            {
-                await this.InsertGameTag(game.GameId, tag.TagId);
-            }
-        }
+        //if (selectedTags != null && selectedTags.Count > EmptyListLength)
+        //{
+        //    foreach (var tag in selectedTags)
+        //    {
+        //        try
+        //        {
+        //            await this.InsertGameTag(game.GameId, tag.TagId);
+        //        }
+        //        catch (ApiException exception)
+        //        {
+        //            System.Diagnostics.Debug.WriteLine(exception.Message);
+        //            continue;
+        //        }
+        //    }
+        //}
     }
 
     public async Task UpdateGame(Game game)
@@ -207,6 +232,42 @@ public class DeveloperService : IDeveloperService
 
     public async Task DeleteGame(int game_id)
     {
+        var allItemsFromThisGame = await this.ItemServiceProxy.GetItemsAsync();
+        List<int> allItemsFromThisGameIds = new List<int>();
+        foreach (var item in allItemsFromThisGame)
+        {
+            if (item.GameId == game_id)
+            {
+                allItemsFromThisGameIds.Add(item.ItemId);
+            }
+        }
+        System.Diagnostics.Debug.WriteLine(allItemsFromThisGameIds.Count);
+
+        var itemTradeDetails = await this.ItemTradeDetailServiceProxy.GetAllItemTradeDetailsAsync();
+        List<(int, int)> tradeItemPairs = new List<(int, int)>();
+        foreach (var itemId in allItemsFromThisGameIds)
+        {
+            foreach (var itemTradeDetail in itemTradeDetails.ItemTradeDetails)
+            {
+                if (itemId == itemTradeDetail.ItemId)
+                {
+                    tradeItemPairs.Add((itemTradeDetail.TradeId, itemId));
+                }
+            }
+        }
+
+        foreach (var pair in tradeItemPairs)
+        {
+            try
+            {
+                await this.ItemTradeDetailServiceProxy.DeleteItemTradeDetailAsync(pair.Item1, pair.Item2);
+            }
+            catch (ApiException exception) 
+            {
+                continue;
+            }
+        }
+        System.Diagnostics.Debug.WriteLine(game_id);
         await this.GameServiceProxy.DeleteGameAsync(game_id);
     }
 
@@ -259,13 +320,22 @@ public class DeveloperService : IDeveloperService
 
     public async Task InsertGameTag(int gameId, int tagId)
     {
-        await this.GameServiceProxy.PatchGameTagsAsync(
-            gameId,
-            new PatchGameTagsRequest
-            {
-                TagIds = new HashSet<int>(tagId),
-                Type = GameTagsPatchType.Insert,
-            });
+        try
+        {
+            System.Diagnostics.Debug.WriteLine(gameId+tagId);
+            await this.GameServiceProxy.PatchGameTagsAsync(
+                gameId,
+                new PatchGameTagsRequest
+                {
+                    TagIds = new HashSet<int>(tagId),
+                    Type = GameTagsPatchType.Insert,
+                });
+        }
+        catch (ApiException exception)
+        {
+            System.Diagnostics.Debug.WriteLine(exception.Message);
+            throw;
+        }
     }
 
     public async Task<Collection<Tag>> GetAllTags()
@@ -312,9 +382,29 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public int GetGameOwnerCount(int gameId)
+    public async Task<int> GetGameOwnerCount(int gameId)
     {
-        return this.UserGameRepository.GetGameOwnerCount(gameId);
+        // SELECT COUNT(*) AS OwnerCount
+        // FROM games_users
+        // WHERE game_id = @game_id;
+        var allUsers = await this.UserServiceProxy.GetUsersAsync();
+        int ownedCount = 0;
+        System.Diagnostics.Debug.WriteLine(allUsers.Users.Count);
+        foreach (var userResponse in allUsers.Users)
+        {
+            int userId = userResponse.UserId;
+            try
+            {
+                var games = await this.UserGameServiceProxy.GetUserGamesAsync(userId);
+                ownedCount += games.UserGames.Count;
+            }
+            catch(Exception exception)
+            {
+                continue;
+            }
+        }
+        System.Diagnostics.Debug.WriteLine(ownedCount);
+        return ownedCount;
     }
 
     public User GetCurrentUser()
@@ -446,7 +536,7 @@ public class DeveloperService : IDeveloperService
     public async Task<IList<Tag>> GetMatchingTagsForGame(int gameId, IList<Tag> allAvailableTags)
     {
         List<Tag> matchedTags = new List<Tag>();
-        IList<Tag> gameTags = await this.GetGameTags(gameId); // Assuming this is already implemented
+        List<Tag> gameTags = await this.GetGameTags(gameId); // Assuming this is already implemented
 
         foreach (Tag tag in allAvailableTags)
         {

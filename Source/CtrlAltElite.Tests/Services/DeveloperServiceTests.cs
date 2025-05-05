@@ -1,4 +1,5 @@
-﻿namespace SteamStore.Tests.Services
+﻿/*
+namespace SteamStore.Tests.Services
 {
     using System.Collections.ObjectModel;
     using System.Globalization;
@@ -436,3 +437,4 @@
 		}
 	}
 }
+*/

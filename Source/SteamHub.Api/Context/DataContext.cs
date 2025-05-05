@@ -46,14 +46,14 @@ namespace SteamHub.Api.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Role>()
-                .Property(e => e.Id).ValueGeneratedNever();
+                .Property(role => role.Id).ValueGeneratedNever();
 
             builder.Entity<Role>().HasData(Enum.GetValues(typeof(RoleEnum))
                 .Cast<RoleEnum>()
-                .Select(e => new Role
+                .Select(role => new Role
                 {
-                    Id = e,
-                    Name = e.ToString()
+                    Id = role,
+                    Name = role.ToString()
                 }));
 
             var testTagSeed = new List<Tag>
@@ -106,14 +106,14 @@ namespace SteamHub.Api.Context
             builder.Entity<User>().HasData(usersSeed);
 
             builder.Entity<GameStatus>()
-                .Property(e => e.Id).ValueGeneratedNever();
+                .Property(gameStatus => gameStatus.Id).ValueGeneratedNever();
 
             builder.Entity<GameStatus>().HasData(Enum.GetValues(typeof(GameStatusEnum))
                 .Cast<GameStatusEnum>()
-                .Select(e => new GameStatus
+                .Select(gameStatus => new GameStatus
                 {
-                    Id = e,
-                    Name = e.ToString()
+                    Id = gameStatus,
+                    Name = gameStatus.ToString()
                 }));
 
             var testGameSeed = new List<Game>
@@ -195,14 +195,50 @@ namespace SteamHub.Api.Context
                     GameplayPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE", // The Legend of Zelda: Breath of the Wild Gameplay
                     Discount = 0.20m,
                     PublisherUserId = usersSeed[2].UserId
+                },
+                new Game
+                {
+                    GameId=5,
+                    Name = "Baba is You",
+                    Description = "A puzzle game where you change the rules to solve challenges.",
+                    ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
+                    Price = 14.99m,
+                    MinimumRequirements = "2GB RAM, 1.0GHz Processor",
+                    RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
+                    StatusId = GameStatusEnum.Pending,
+                    RejectMessage = null,
+                    Rating = 4.8m,
+                    NumberOfRecentPurchases = 1500,
+                    TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs", 
+                    GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w", 
+                    Discount = 0.20m,
+                    PublisherUserId = usersSeed[0].UserId
+                },
+                new Game
+                {
+                    GameId=6,
+                    Name = "Stardew Valley",
+                    Description = "A farming simulation game where players can grow crops, raise animals, and build their farm.",
+                    ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple123/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
+                    Price = 14.99m,
+                    MinimumRequirements = "2GB RAM, 1.0GHz Processor",
+                    RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
+                    StatusId = GameStatusEnum.Pending,
+                    RejectMessage = null,
+                    Rating = 4.8m,
+                    NumberOfRecentPurchases = 1500,
+                    TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs",
+                    GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
+                    Discount = 0.20m,
+                    PublisherUserId = usersSeed[1].UserId
                 }
             };
 
             builder.Entity<Game>().HasData(testGameSeed);
 
             builder.Entity<Game>()
-                .HasMany(g => g.Tags)
-                .WithMany(t => t.Games)
+                .HasMany(game => game.Tags)
+                .WithMany(tag => tag.Games)
                 .UsingEntity<Dictionary<string, object>>("GameTag",
                     x => x.HasData(new { GamesGameId = testGameSeed[0].GameId, TagsTagId = testTagSeed[0].TagId },
                         new { GamesGameId = testGameSeed[0].GameId, TagsTagId = testTagSeed[1].TagId },
@@ -215,9 +251,9 @@ namespace SteamHub.Api.Context
                         new { GamesGameId = testGameSeed[2].GameId, TagsTagId = testTagSeed[8].TagId }));
             
             builder.Entity<Item>()
-                .HasOne(i => i.Game)
-                .WithMany(g => g.Items)
-                .HasForeignKey(i => i.CorrespondingGameId);
+                .HasOne(item => item.Game)
+                .WithMany(game => game.Items)
+                .HasForeignKey(item => item.CorrespondingGameId);
             
             var itemsSeed =  new List<Item>
             {
@@ -442,15 +478,15 @@ namespace SteamHub.Api.Context
             builder.Entity<UserPointShopItemInventory>().HasData(userInventorySeed);
 
             builder.Entity<UsersGames>()
-                .HasOne(ug => ug.User)
+                .HasOne(userGames => userGames.User)
                 .WithMany()
-                .HasForeignKey(ug => ug.UserId)
+                .HasForeignKey(userGames => userGames.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<UsersGames>()
-               .HasOne(ug => ug.Game)
+               .HasOne(userGames => userGames.Game)
                .WithMany()
-               .HasForeignKey(ug => ug.GameId)
+               .HasForeignKey(userGames => userGames.GameId)
                .OnDelete(DeleteBehavior.Cascade);
 
            var usersGamesSeed = new List<UsersGames>
@@ -500,15 +536,15 @@ namespace SteamHub.Api.Context
             builder.Entity<UsersGames>().HasData(usersGamesSeed);
 
             builder.Entity<StoreTransaction>()
-                .HasOne(st => st.User)
-                .WithMany(u => u.StoreTransactions)
-                .HasForeignKey(st => st.UserId)
+                .HasOne(storeTransaction => storeTransaction.User)
+                .WithMany(users => users.StoreTransactions)
+                .HasForeignKey(storeTransaction => storeTransaction.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<StoreTransaction>()
-                .HasOne(st => st.Game)
-                .WithMany(g => g.StoreTransactions)
-                .HasForeignKey(st => st.GameId)
+                .HasOne(storeTransaction => storeTransaction.Game)
+                .WithMany(game => game.StoreTransactions)
+                .HasForeignKey(storeTransaction => storeTransaction.GameId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             var storeTransactionsSeed = new List<StoreTransaction>
@@ -536,21 +572,21 @@ namespace SteamHub.Api.Context
             builder.Entity<StoreTransaction>().HasData(storeTransactionsSeed);
 
             builder.Entity<ItemTrade>()
-                .HasOne(it => it.SourceUser)
+                .HasOne(itemTrade => itemTrade.SourceUser)
                 .WithMany()
-                .HasForeignKey(it => it.SourceUserId)
+                .HasForeignKey(itemTrade => itemTrade.SourceUserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<ItemTrade>()
-                .HasOne(it => it.DestinationUser)
+                .HasOne(itemTrade => itemTrade.DestinationUser)
                 .WithMany()
-                .HasForeignKey(it => it.DestinationUserId)
+                .HasForeignKey(itemTrade => itemTrade.DestinationUserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<ItemTrade>()
-                .HasOne(it => it.GameOfTrade)
+                .HasOne(itemTrade => itemTrade.GameOfTrade)
                 .WithMany()
-                .HasForeignKey(it => it.GameOfTradeId)
+                .HasForeignKey(itemTrade => itemTrade.GameOfTradeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             var itemTradesSeed = new List<ItemTrade>
@@ -665,26 +701,26 @@ namespace SteamHub.Api.Context
 
             // have the delete cascaded only for games
             builder.Entity<UserInventory>()
-                .HasOne(ui => ui.Item)
+                .HasOne(userInventory => userInventory.Item)
                 .WithMany()
-                .HasForeignKey(ui => ui.ItemId)
+                .HasForeignKey(userInventory => userInventory.ItemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<UserInventory>()
-                .HasOne(ui => ui.User)
+                .HasOne(userInventory => userInventory.User)
                 .WithMany()
-                .HasForeignKey(ui => ui.UserId)
+                .HasForeignKey(userInventory => userInventory.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<UserInventory>().HasData(userInventoryTableSeed);
 
             builder.Entity<ItemTradeDetail>()
-            .HasKey(itd => new { itd.TradeId, itd.ItemId });
+            .HasKey(itemTradeDetails => new { itemTradeDetails.TradeId, itemTradeDetails.ItemId });
 
             builder.Entity<ItemTradeDetail>()
-                .HasOne(itd => itd.ItemTrade)
-                .WithMany(it => it.ItemTradeDetails)
-                .HasForeignKey(itd => itd.TradeId)
+                .HasOne(itemTradeDetails => itemTradeDetails.ItemTrade)
+                .WithMany(itemTrade => itemTrade.ItemTradeDetails)
+                .HasForeignKey(itemTradeDetails => itemTradeDetails.TradeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             var itemTradeDetailsSeed = new List<ItemTradeDetail>

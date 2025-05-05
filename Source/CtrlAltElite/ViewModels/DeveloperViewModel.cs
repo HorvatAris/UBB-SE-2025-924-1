@@ -85,9 +85,9 @@ public class DeveloperViewModel : INotifyPropertyChanged
     {
     }
 
-    public void DeleteGame(int game_id)
+    public async Task DeleteGame(int game_id)
     {
-        this.developerService.DeleteGame(game_id, this.DeveloperGames);
+        await this.developerService.DeleteGame(game_id, this.DeveloperGames);
     }
 
     public void RejectGame(int game_id)
@@ -110,9 +110,9 @@ public class DeveloperViewModel : INotifyPropertyChanged
         return await this.developerService.IsGameIdInUse(gameId, this.DeveloperGames, this.UnvalidatedGames);
     }
 
-    public int GetGameOwnerCount(int game_id)
+    public async Task<int> GetGameOwnerCount(int game_id)
     {
-        return this.developerService.GetGameOwnerCount(game_id);
+        return await this.developerService.GetGameOwnerCount(game_id);
     }
 
     public void RejectGameWithMessage(int game_id, string rejectionMessage)
@@ -154,7 +154,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
         IList<Tag> selectedTags)
     {
         // This can throw if any validation fails – and that’s okay
-        Game game =  await this.developerService.CreateValidatedGame(
+        Game game = await this.developerService.CreateValidatedGame(
             gameIdText,
             name,
             priceText,
