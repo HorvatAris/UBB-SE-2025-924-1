@@ -22,34 +22,10 @@
             var query = _context.Items.AsQueryable();
 
             // Include the related Game entity.
-            var items = await query.Include(i => i.Game).ToListAsync();
+            var items = await query.Include(item => item.Game).ToListAsync();
 
             // Map each entity to a detailed response.
-            return items.Select(i => new ItemDetailedResponse
-            {
-                ItemId = i.ItemId,
-                ItemName = i.ItemName,
-                GameId = i.CorrespondingGameId,
-                Price = i.Price,
-                Description = i.Description,
-                IsListed = i.IsListed,
-                ImagePath = i.ImagePath
-                // You can also include additional game details if needed.
-            });
-        }
-
-        public async Task<ItemDetailedResponse?> GetItemByIdAsync(int id)
-        {
-            var item = await _context.Items
-                .Include(i => i.Game)
-                .FirstOrDefaultAsync(i => i.ItemId == id);
-
-            if (item == null)
-            {
-                return null;
-            }
-
-            return new ItemDetailedResponse
+            return items.Select(item => new ItemDetailedResponse
             {
                 ItemId = item.ItemId,
                 ItemName = item.ItemName,
@@ -58,6 +34,30 @@
                 Description = item.Description,
                 IsListed = item.IsListed,
                 ImagePath = item.ImagePath
+                // You can also include additional game details if needed.
+            });
+        }
+
+        public async Task<ItemDetailedResponse?> GetItemByIdAsync(int id)
+        {
+            var currentItem = await _context.Items
+                .Include(item => item.Game)
+                .FirstOrDefaultAsync(item => item.ItemId == id);
+
+            if (currentItem == null)
+            {
+                return null;
+            }
+
+            return new ItemDetailedResponse
+            {
+                ItemId = currentItem.ItemId,
+                ItemName = currentItem.ItemName,
+                GameId = currentItem.CorrespondingGameId,
+                Price = currentItem.Price,
+                Description = currentItem.Description,
+                IsListed = currentItem.IsListed,
+                ImagePath = currentItem.ImagePath
             };
         }
 
@@ -92,42 +92,42 @@
 
         public async Task UpdateItemAsync(int id, UpdateItemRequest request)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemId == id);
-            if (item == null)
+            var currentItem = await _context.Items.FirstOrDefaultAsync(item => item.ItemId == id);
+            if (currentItem == null)
             {
                 throw new KeyNotFoundException($"Item with id {id} not found.");
             }
 
             // Update the entity's properties.
-            item.ItemName = request.ItemName;
-            item.CorrespondingGameId = request.GameId;
-            item.Price = request.Price;
-            item.Description = request.Description;
-            item.IsListed = request.IsListed;
-            item.ImagePath = request.ImagePath;
+            currentItem.ItemName = request.ItemName;
+            currentItem.CorrespondingGameId = request.GameId;
+            currentItem.Price = request.Price;
+            currentItem.Description = request.Description;
+            currentItem.IsListed = request.IsListed;
+            currentItem.ImagePath = request.ImagePath;
 
-            _context.Items.Update(item);
+            _context.Items.Update(currentItem);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteItemAsync(int id)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemId == id);
+            var currenttem = await _context.Items.FirstOrDefaultAsync(item => item.ItemId == id);
 
-            var userInventory = await _context.UserInventories
-                .FirstOrDefaultAsync(ui => ui.ItemId == id);
-            _context.UserInventories.RemoveRange(userInventory);
+            var currentUserInventory = await _context.UserInventories
+                .FirstOrDefaultAsync(userInventory => userInventory.ItemId == id);
+            _context.UserInventories.RemoveRange(currentUserInventory);
 
-            var itemTradeDetails = _context.ItemTradeDetails
-                .Where(itd => itd.ItemId == id);
-            _context.ItemTradeDetails.RemoveRange(itemTradeDetails);
+            var currentItemTradeDetails = _context.ItemTradeDetails
+                .Where(itemTradeDetails => itemTradeDetails.ItemId == id);
+            _context.ItemTradeDetails.RemoveRange(currentItemTradeDetails);
 
-            if (item == null)
+            if (currenttem == null)
             {
                 throw new KeyNotFoundException($"Item with id {id} not found.");
             }
 
-            _context.Items.Remove(item);
+            _context.Items.Remove(currenttem);
             await _context.SaveChangesAsync();
         }
     }

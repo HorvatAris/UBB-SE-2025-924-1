@@ -24,9 +24,6 @@ namespace SteamStore.Pages
     using Windows.Foundation;
     using Windows.Foundation.Collections;
 
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class HomePage : Page
     {
         private const int MINIMUMPRICEFILTERVALUE = 0;

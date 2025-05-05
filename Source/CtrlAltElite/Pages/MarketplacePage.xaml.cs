@@ -52,11 +52,6 @@ namespace CtrlAltElite.Pages
             await this.marketplaceViewModel.InitializeViewModelAsync();
         }
 
-        /// <summary>
-        /// Handles item click events in the GridView, opening a dialog and processing item purchase.
-        /// </summary>
-        /// <param name="sender">The sender of the event.</param>
-        /// <param name="eventArgs">The item click event arguments.</param>
         private void OnMarketplaceGridViewItemClicked(object sender, ItemClickEventArgs eventArgs)
         {
             if (eventArgs.ClickedItem is Item clickedMarketplaceItem)
