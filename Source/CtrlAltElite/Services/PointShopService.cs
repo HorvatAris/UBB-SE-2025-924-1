@@ -9,6 +9,7 @@ namespace SteamStore.Services
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
     using CtrlAltElite.ServiceProxies;
     using CtrlAltElite.Services;
     using SteamHub.ApiContract.Models.User;
@@ -28,33 +29,33 @@ namespace SteamStore.Services
         private const int InitialIndexUserItems = 0;
         private const string FILTERTYPEALL = "All";
 
-        // private readonly IPointShopRepository repository;
-        public IPointShopItemServiceProxy pointShopItemServiceProxy { get; set; }
-
-        public IUserPointShopItemInventoryServiceProxy userPointShopItemInventoryServiceProxy { get; set; }
-
-        public IUserServiceProxy userServiceProxy { get; set; }
-
-        public User user { get; set; }
-
         public PointShopService(IPointShopItemServiceProxy pointShopItemServiceProxy, IUserPointShopItemInventoryServiceProxy userPointShopItemInventoryServiceProxy, IUserServiceProxy userServiceProxy, User user)
         {
-            this.pointShopItemServiceProxy = pointShopItemServiceProxy;
-            this.userPointShopItemInventoryServiceProxy = userPointShopItemInventoryServiceProxy;
-            this.userServiceProxy = userServiceProxy;
-            this.user = user;
+            this.PointShopItemServiceProxy = pointShopItemServiceProxy;
+            this.UserPointShopItemInventoryServiceProxy = userPointShopItemInventoryServiceProxy;
+            this.UserServiceProxy = userServiceProxy;
+            this.User = user;
         }
+
+        // private readonly IPointShopRepository repository;
+        public IPointShopItemServiceProxy PointShopItemServiceProxy { get; set; }
+
+        public IUserPointShopItemInventoryServiceProxy UserPointShopItemInventoryServiceProxy { get; set; }
+
+        public IUserServiceProxy UserServiceProxy { get; set; }
+
+        public User User { get; set; }
 
         public User GetCurrentUser()
         {
-            return this.user;
+            return this.User;
         }
 
-        public async Task<List<PointShopItem>> GetAllItems()
+        public async Task<List<PointShopItem>> GetAllItemsAsync()
         {
             try
             {
-                var allItems = await this.pointShopItemServiceProxy.GetPointShopItemsAsync();
+                var allItems = await this.PointShopItemServiceProxy.GetPointShopItemsAsync();
                 return allItems.PointShopItems
                     .Select(PointShopItemMapper.MapToPointShopItem)
                     .ToList();
@@ -65,12 +66,12 @@ namespace SteamStore.Services
             }
         }
 
-        public async Task<Collection<PointShopItem>> GetUserItems()
+        public async Task<Collection<PointShopItem>> GetUserItemsAsync()
         {
             try
             {
-                var userItems = await this.userPointShopItemInventoryServiceProxy.GetUserInventoryAsync(this.user.UserId);
-                var allItems = await this.pointShopItemServiceProxy.GetPointShopItemsAsync();
+                var userItems = await this.UserPointShopItemInventoryServiceProxy.GetUserInventoryAsync(this.User.UserId);
+                var allItems = await this.PointShopItemServiceProxy.GetPointShopItemsAsync();
                 var userPointShopItems = userItems.UserPointShopItemsInventory
                         .Select(userItem =>
                         {
@@ -96,7 +97,7 @@ namespace SteamStore.Services
             }
         }
 
-        public async Task PurchaseItem(PointShopItem item)
+        public async Task PurchaseItemAsync(PointShopItem item)
         {
             try
             {
@@ -105,38 +106,37 @@ namespace SteamStore.Services
                     throw new ArgumentNullException(nameof(item), "Item cannot be null");
                 }
 
-                if (this.user == null)
+                if (this.User == null)
                 {
                     throw new InvalidOperationException("User is not initialized");
                 }
 
-                if (this.user.PointsBalance < item.PointPrice)
+                if (this.User.PointsBalance < item.PointPrice)
                 {
                     throw new InvalidOperationException("User does not have enough points to purchase this item");
                 }
 
                 var purchaseRequest = new PurchasePointShopItemRequest
                 {
-                    UserId = this.user.UserId,
+                    UserId = this.User.UserId,
                     PointShopItemId = item.ItemIdentifier,
                 };
 
-                await this.userPointShopItemInventoryServiceProxy.PurchaseItemAsync(purchaseRequest);
+                await this.UserPointShopItemInventoryServiceProxy.PurchaseItemAsync(purchaseRequest);
 
-                this.user.PointsBalance -= (float)item.PointPrice;
+                this.User.PointsBalance -= (float)item.PointPrice;
 
                 // Update the user's points balance in the database
                 var updateUserRequest = new UpdateUserRequest
                 {
-                    UserName = this.user.UserName,
-                    Email = this.user.Email,
-                    WalletBalance = this.user.WalletBalance,
-                    PointsBalance = this.user.PointsBalance,
-                    Role = (RoleEnum)this.user.UserRole,
+                    UserName = this.User.UserName,
+                    Email = this.User.Email,
+                    WalletBalance = this.User.WalletBalance,
+                    PointsBalance = this.User.PointsBalance,
+                    Role = (RoleEnum)this.User.UserRole,
                 };
 
-                await this.userServiceProxy.UpdateUserAsync(this.user.UserId, updateUserRequest);
-
+                await this.UserServiceProxy.UpdateUserAsync(this.User.UserId, updateUserRequest);
             }
             catch (Exception exception)
             {
@@ -144,28 +144,29 @@ namespace SteamStore.Services
             }
         }
 
-        public async Task ActivateItem(PointShopItem item)
+        public async Task ActivateItemAsync(PointShopItem item)
         {
             try
             {
-                //this.repository.ActivateItem(item);
+                // this.repository.ActivateItem(item);
                 if (item == null)
                 {
                     throw new ArgumentNullException(nameof(item), "Item cannot be null");
                 }
-                if (this.user == null)
+
+                if (this.User == null)
                 {
                     throw new InvalidOperationException("User is not initialized");
                 }
 
                 var activateRequest = new UpdateUserPointShopItemInventoryRequest
                 {
-                    UserId = this.user.UserId,
+                    UserId = this.User.UserId,
                     PointShopItemId = item.ItemIdentifier,
                     IsActive = true,
                 };
 
-                await this.userPointShopItemInventoryServiceProxy.UpdateItemStatusAsync(activateRequest);
+                await this.UserPointShopItemInventoryServiceProxy.UpdateItemStatusAsync(activateRequest);
             }
             catch (Exception exception)
             {
@@ -173,7 +174,7 @@ namespace SteamStore.Services
             }
         }
 
-        public async Task DeactivateItem(PointShopItem item)
+        public async Task DeactivateItemAsync(PointShopItem item)
         {
             try
             {
@@ -181,19 +182,20 @@ namespace SteamStore.Services
                 {
                     throw new ArgumentNullException(nameof(item), "Item cannot be null");
                 }
-                if (this.user == null)
+
+                if (this.User == null)
                 {
                     throw new InvalidOperationException("User is not initialized");
                 }
 
                 var activateRequest = new UpdateUserPointShopItemInventoryRequest
                 {
-                    UserId = this.user.UserId,
+                    UserId = this.User.UserId,
                     PointShopItemId = item.ItemIdentifier,
                     IsActive = false,
                 };
 
-                await this.userPointShopItemInventoryServiceProxy.UpdateItemStatusAsync(activateRequest);
+                await this.UserPointShopItemInventoryServiceProxy.UpdateItemStatusAsync(activateRequest);
             }
             catch (Exception exception)
             {
@@ -201,12 +203,12 @@ namespace SteamStore.Services
             }
         }
 
-        public async Task<List<PointShopItem>> GetFilteredItems(string filterType, string searchText, double minimumPrice, double maximumPrice)
+        public async Task<List<PointShopItem>> GetFilteredItemsAsync(string filterType, string searchText, double minimumPrice, double maximumPrice)
         {
             try
             {
-                var allItems = await this.GetAllItems();
-                var userItems = await this.GetUserItems();
+                var allItems = await this.GetAllItemsAsync();
+                var userItems = await this.GetUserItemsAsync();
                 var availableItems = new List<PointShopItem>();
 
                 // Exclude items already owned by the user
@@ -239,6 +241,7 @@ namespace SteamStore.Services
                             filteredByType.Add(item);
                         }
                     }
+
                     availableItems = filteredByType;
                 }
 
@@ -251,6 +254,7 @@ namespace SteamStore.Services
                         filteredByPrice.Add(item);
                     }
                 }
+
                 availableItems = filteredByPrice;
 
                 // Apply search filter
@@ -265,6 +269,7 @@ namespace SteamStore.Services
                             filteredBySearch.Add(item);
                         }
                     }
+
                     availableItems = filteredBySearch;
                 }
 
@@ -299,10 +304,10 @@ namespace SteamStore.Services
             return !isAlreadyOwned && hasEnoughPoints;
         }
 
-        public async Task<List<PointShopItem>> GetAvailableItems(User user)
+        public async Task<List<PointShopItem>> GetAvailableItemsAsync(User user)
         {
-            var allItems = await this.GetAllItems();
-            var userItems = await this.GetUserItems();
+            var allItems = await this.GetAllItemsAsync();
+            var userItems = await this.GetUserItemsAsync();
 
             var availableItems = new List<PointShopItem>();
 
@@ -370,7 +375,7 @@ namespace SteamStore.Services
             }
         }
 
-        public async Task<PointShopItem> ToggleActivationForItem(int itemId, ObservableCollection<PointShopItem> userItems)
+        public async Task<PointShopItem> ToggleActivationForItemAsync(int itemId, ObservableCollection<PointShopItem> userItems)
         {
             PointShopItem item = null;
 
@@ -390,19 +395,19 @@ namespace SteamStore.Services
 
             if (item.IsActive)
             {
-                await this.DeactivateItem(item);
+                await this.DeactivateItemAsync(item);
                 return item;
             }
             else
             {
-                await this.ActivateItem(item);
+                await this.ActivateItemAsync(item);
                 return item;
             }
         }
 
-        //public void ResetUserInventory()
-        //{
+        // public void ResetUserInventory()
+        // {
         //    this.repository.ResetUserInventory();
-        //}
+        // }
     }
 }

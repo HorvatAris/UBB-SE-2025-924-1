@@ -54,13 +54,13 @@ public class GameRepository : IGameRepository
 
     public async Task<GameDetailedResponse?> GetGameByIdAsync(int id)
     {
-        var game = await context.Games
-            .Include(g => g.Tags)
-            .Include(g => g.Publisher)
-            .Include(g => g.Status)
-            .FirstOrDefaultAsync(g => g.GameId == id);
+        var currentGame = await context.Games
+            .Include(game => game.Tags)
+            .Include(game => game.Publisher)
+            .Include(game => game.Status)
+            .FirstOrDefaultAsync(game => game.GameId == id);
 
-        return game == null ? null : MapToGameDetailedResponse(game);
+        return currentGame == null ? null : MapToGameDetailedResponse(currentGame);
     }
 
     public Task<List<GameDetailedResponse>> GetGamesAsync(GetGamesRequest parameters)
@@ -68,24 +68,24 @@ public class GameRepository : IGameRepository
         IQueryable<Game> query = context.Games;
         if (parameters.StatusIs != null)
         {
-            query = query.Where(g => g.StatusId == parameters.StatusIs);
+            query = query.Where(game => game.StatusId == parameters.StatusIs);
         }
 
         if (parameters.PublisherIdentifierIs != null)
         {
-            query = query.Where(g => g.Publisher.UserId == parameters.PublisherIdentifierIs);
+            query = query.Where(game => game.Publisher.UserId == parameters.PublisherIdentifierIs);
         }
 
         if (parameters.PublisherIdentifierIsnt != null)
         {
-            query = query.Where(g => g.Publisher.UserId != parameters.PublisherIdentifierIsnt);
+            query = query.Where(game => game.Publisher.UserId != parameters.PublisherIdentifierIsnt);
         }
 
         return query
-            .Include(g => g.Tags)
-            .Include(g => g.Publisher)
-            .Include(g => g.Status)
-            .Select(game => MapToGameDetailedResponse(game))
+            .Include(game => game.Tags)
+            .Include(game => game.Publisher)
+            .Include(game => game.Status)
+            .Select(currentGame => MapToGameDetailedResponse(currentGame))
             .ToListAsync();
     }
 
@@ -106,10 +106,10 @@ public class GameRepository : IGameRepository
     public async Task UpdateGameAsync(int id, UpdateGameRequest request)
     {
         var existingGame = await context.Games
-            .Include(g => g.Publisher)
-            .Include(g => g.Tags)
-            .Include(g => g.Status)
-            .FirstOrDefaultAsync(g => g.GameId == id);
+            .Include(game => game.Publisher)
+            .Include(game => game.Tags)
+            .Include(game => game.Status)
+            .FirstOrDefaultAsync(game => game.GameId == id);
         if (existingGame == null)
         {
             throw new KeyNotFoundException($"Game with ID {id} not found.");
@@ -197,22 +197,22 @@ public class GameRepository : IGameRepository
 
     private async Task InsertGameTag(int gameId, params int[] tagIds)
     {
-        var game = await context.Games
-            .Include(g => g.Tags)
-            .FirstOrDefaultAsync(g => g.GameId == gameId);
+        var currentGame = await context.Games
+            .Include(game => game.Tags)
+            .FirstOrDefaultAsync(game => game.GameId == gameId);
 
-        if (game == null)
+        if (currentGame == null)
         {
             throw new KeyNotFoundException($"Game with ID {gameId} not found.");
         }
 
-        var tagIdSet = new HashSet<int>(tagIds.Where(tagId => game.Tags.All(tag => tag.TagId != tagId)));
+        var tagIdSet = new HashSet<int>(tagIds.Where(tagId => currentGame.Tags.All(tag => tag.TagId != tagId)));
 
         var tags = await context.Tags.Where(tag => tagIdSet.Contains(tag.TagId)).ToListAsync();
 
         foreach (var tag in tags)
         {
-            game.Tags.Add(tag);
+            currentGame.Tags.Add(tag);
         }
 
         await SaveChangesAsync();
@@ -220,24 +220,24 @@ public class GameRepository : IGameRepository
 
     private async Task DeleteGameTag(int gameId, params int[] tagIds)
     {
-        var game = await context.Games
-            .Include(g => g.Tags)
-            .FirstOrDefaultAsync(g => g.GameId == gameId);
-        if (game == null)
+        var currentGame = await context.Games
+            .Include(game => game.Tags)
+            .FirstOrDefaultAsync(game => game.GameId == gameId);
+        if (currentGame == null)
         {
             throw new KeyNotFoundException($"Game with ID {gameId} not found.");
         }
 
         if (!tagIds.Any())
         {
-            game.Tags.Clear();
+            currentGame.Tags.Clear();
         }
         else
         {
-            var tagsToRemove = game.Tags.Where(tag => tagIds.Contains(tag.TagId));
+            var tagsToRemove = currentGame.Tags.Where(tag => tagIds.Contains(tag.TagId));
             foreach (var tag in tagsToRemove)
             {
-                game.Tags.Remove(tag);
+                currentGame.Tags.Remove(tag);
             }
         }
 
@@ -246,11 +246,11 @@ public class GameRepository : IGameRepository
     
     private async Task ReplaceGameTag(int gameId, params int[] tagIds)
     {
-        var game = await this.context.Games
-            .Include(g => g.Tags)
-            .FirstOrDefaultAsync(g => g.GameId == gameId);
+        var currentGame = await this.context.Games
+            .Include(game => game.Tags)
+            .FirstOrDefaultAsync(game => game.GameId == gameId);
 
-        if (game == null)
+        if (currentGame == null)
         {
             throw new KeyNotFoundException($"Game with ID {gameId} not found.");
         }
@@ -259,10 +259,10 @@ public class GameRepository : IGameRepository
 
         var tags = await this.context.Tags.Where(tag => tagIdSet.Contains(tag.TagId)).ToListAsync();
 
-        game.Tags.Clear();
+        currentGame.Tags.Clear();
         foreach (var tag in tags)
         {
-            game.Tags.Add(tag);
+            currentGame.Tags.Add(tag);
         }
 
         await SaveChangesAsync();
@@ -290,10 +290,10 @@ public class GameRepository : IGameRepository
             RejectMessage = entity.RejectMessage,
             PublisherUserIdentifier = entity.Publisher.UserId,
             Tags = entity.Tags.Select(
-                t => new TagDetailedResponse
+                tag => new TagDetailedResponse
                 {
-                    TagId = t.TagId,
-                    TagName = t.TagName,
+                    TagId = tag.TagId,
+                    TagName = tag.TagName,
                 }).ToList()
         };
     }

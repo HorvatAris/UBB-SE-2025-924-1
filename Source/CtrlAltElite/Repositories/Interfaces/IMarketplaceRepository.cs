@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="IMarketplaceRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Repositories.Interfaces
 {
-    using CtrlAltElite.Models;
-    using SteamStore.Models;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using SteamStore.Models;
 
     public interface IMarketplaceRepository
     {
-
         Task<bool> BuyItemAsync(Item item, User currentUser);
 
         Task<List<Item>> GetAllListedItemsAsync();

@@ -1,61 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="InventoryService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace SteamStore.Services
 {
-    using CtrlAltElite.Models;
-    using SteamStore.Models;
-    using SteamStore.Repositories.Interfaces;
-    using SteamStore.Services.Interfaces;
-    using SteamStore.Utils;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection.PortableExecutable;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.ServiceProxies;
+    using CtrlAltElite.Services;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.Item;
+    using SteamHub.ApiContract.Models.UserInventory;
+    using SteamStore.Repositories.Interfaces;
+    using SteamStore.Services.Interfaces;
+    using SteamStore.Utils;
 
     public class InventoryService : IInventoryService
     {
         private readonly IInventoryRepository inventoryRepository;
         private readonly InventoryValidator inventoryValidator;
 
-        public InventoryService(IInventoryRepository inventoryRepo)
+        private readonly IUserInventoryServiceProxy userInventoryServiceProxy;
+        private readonly IItemServiceProxy itemServiceProxy;
+        private readonly IGameServiceProxy gameServiceProxy;
+        private User user;
+
+        public InventoryService(IUserInventoryServiceProxy userInventoryServiceProxy, IItemServiceProxy itemServiceProxy, IGameServiceProxy gameServiceProxy, User user)
         {
-            this.inventoryRepository = inventoryRepo;
+            this.userInventoryServiceProxy = userInventoryServiceProxy;
+            this.itemServiceProxy = itemServiceProxy;
+            this.gameServiceProxy = gameServiceProxy;
 
             // Instantiate the validator with enriched logic.
             this.inventoryValidator = new InventoryValidator();
+            this.user = user;
         }
 
         public async Task<List<Item>> GetItemsFromInventoryAsync(Game game)
         {
             // Validate the game.
             this.inventoryValidator.ValidateGame(game);
-            return await this.inventoryRepository.GetItemsFromInventoryAsync(game);
+            int userId = this.user.UserId;
+            var userInventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
+            var filteredItems = userInventoryResponse.Items
+                .Where(item => item.GameName == game.GameTitle)
+                .Select(item => new Item
+                {
+                    ItemId = item.ItemId,
+                    ItemName = item.ItemName,
+                    Price = item.Price,
+                    Description = item.Description,
+                    IsListed = item.IsListed,
+                })
+                .ToList();
+
+            return filteredItems;
         }
 
-        public async Task<List<Item>> GetAllItemsFromInventoryAsync(User user)
+        public async Task<List<Item>> GetAllItemsFromInventoryAsync()
         {
             // Validate the user.
-            this.inventoryValidator.ValidateUser(user);
-            return await this.inventoryRepository.GetAllItemsFromInventoryAsync(user);
+            this.inventoryValidator.ValidateUser(this.user);
+
+            int userId = this.user.UserId;
+            var userInventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
+            var filteredItems = userInventoryResponse.Items
+                .Select(item => new Item
+                {
+                    ItemId = item.ItemId,
+                    ItemName = item.ItemName,
+                    Price = item.Price,
+                    Description = item.Description,
+                    IsListed = item.IsListed,
+                })
+                .ToList();
+
+            return filteredItems;
         }
 
-        public async Task AddItemToInventoryAsync(Game game, Item item, User user)
+        public async Task AddItemToInventoryAsync(Game game, Item item)
         {
             // Validate the inventory operation.
-            this.inventoryValidator.ValidateInventoryOperation(game, item, user);
-            await this.inventoryRepository.AddItemToInventoryAsync(game, item, user);
+            this.inventoryValidator.ValidateInventoryOperation(game, item, this.user);
+
+            var itemFromInventoryRequest = new ItemFromInventoryRequest
+            {
+                UserId = this.user.UserId,
+                ItemId = item.ItemId,
+                GameId = game.GameId,
+            };
+            await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(itemFromInventoryRequest);
         }
 
-        public async Task RemoveItemFromInventoryAsync(Game game, Item item, User user)
+        public async Task RemoveItemFromInventoryAsync(Game game, Item item)
         {
             // Validate the inventory operation.
-            this.inventoryValidator.ValidateInventoryOperation(game, item, user);
-            await this.inventoryRepository.RemoveItemFromInventoryAsync(game, item, user);
+            this.inventoryValidator.ValidateInventoryOperation(game, item, this.user);
+            await this.inventoryRepository.RemoveItemFromInventoryAsync(game, item, this.user);
         }
 
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
@@ -65,20 +109,71 @@ namespace SteamStore.Services
                 throw new ArgumentException("UserId must be positive.", nameof(userId));
             }
 
-            return await this.inventoryRepository.GetUserInventoryAsync(userId);
+            var userInventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
+            var filteredItems = userInventoryResponse.Items
+                .Select(item => new Item
+                {
+                    ItemId = item.ItemId,
+                    ItemName = item.ItemName,
+                    Price = item.Price,
+                    Description = item.Description,
+                    IsListed = item.IsListed,
+                    ImagePath = item.ImagePath,
+                    GameName = item.GameName,
+                })
+                .ToList();
+
+            return filteredItems;
         }
 
-        public async Task<List<User>> GetAllUsersAsync()
+        public User GetAllUsers()
         {
-
-            return await this.inventoryRepository.GetAllUsersAsync();
+            return this.user;
         }
 
         public async Task<bool> SellItemAsync(Item item)
         {
             // Validate that the item is sellable.
             this.inventoryValidator.ValidateSellableItem(item);
-            return await this.inventoryRepository.SellItemAsync(item);
+
+            // set isListed to 1
+            item.IsListed = true;
+            var allItems = await this.itemServiceProxy.GetItemsAsync();
+            var foundItem = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId);
+
+            if (foundItem == null)
+            {
+                Console.WriteLine($"Item with ID {item.ItemId} not found.", nameof(item));
+                return false;
+            }
+
+            var foundItemGameId = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId).GameId;
+
+            // Create a request object for the item.
+            var itemFromInventoryRequest = new UpdateItemRequest
+            {
+                ItemName = foundItem.ItemName,
+                GameId = foundItemGameId,
+                Price = foundItem.Price,
+                Description = foundItem.Description,
+                IsListed = item.IsListed,
+                ImagePath = foundItem.ImagePath,
+            };
+
+            // Call the repository method to sell the item.
+            try
+            {
+                await this.itemServiceProxy.UpdateItemAsync(item.ItemId, itemFromInventoryRequest);
+            }
+            catch (Exception exception)
+            {
+                // Handle exceptions (e.g., log them).
+                Console.WriteLine($"Error selling item: {exception.Message}");
+                return false;
+            }
+
+            // return await this.inventoryRepository.SellItemAsync(item);
+            return true;
         }
 
         public List<Item> FilterInventoryItems(List<Item> items, Game selectedGame, string searchText)
@@ -88,31 +183,33 @@ namespace SteamStore.Services
                 throw new ArgumentNullException(nameof(items));
             }
 
-            // Exclude items that are already listed.
-            // var filteredItems = items.Where(item => !item.IsListed);
-            var filteredItems = items.Where(item => !item.IsListed);
-            // If a specific game is selected (not the "All Games" option), filter by that game.
+            IEnumerable<Item> filtered = items;
+
+            // Filter out listed items (only show unlisted ones)
+            filtered = filtered.Where(item => !item.IsListed);
+
+            // Filter by selected game if it's not null and not the "All Games" option
             if (selectedGame != null && selectedGame.GameTitle != "All Games")
             {
-                filteredItems = filteredItems.Where(item =>
-                    item.Game != null && item.Game.GameId == selectedGame.GameId);
+                filtered = filtered.Where(item =>
+                    string.Equals(item.Game.GameTitle, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Apply search text filter on item name or description (case-insensitive).
+            // Filter by search text if provided
             if (!string.IsNullOrWhiteSpace(searchText))
             {
-                filteredItems = filteredItems.Where(item =>
+                searchText = searchText.Trim();
+                filtered = filtered.Where(item =>
                     (!string.IsNullOrEmpty(item.ItemName) &&
-                     item.ItemName.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                     item.ItemName.Trim().Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
                     (!string.IsNullOrEmpty(item.Description) &&
                      item.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase)));
             }
 
-            return filteredItems.ToList();
+            return filtered.ToList();
         }
 
-        /// <inheritdoc/>
-        public List<Game> GetAvailableGames(List<Item> items)
+        public async Task<List<Game>> GetAvailableGamesAsync(List<Item> items)
         {
             if (items == null)
             {
@@ -120,15 +217,6 @@ namespace SteamStore.Services
             }
 
             // Create the special "All Games" option.
-            //var game = new Game
-            //{
-            //    GameId = reader.GetInt32(reader.GetOrdinal("GameId")),
-            //    GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
-            //    //Genre = reader.GetString(reader.GetOrdinal("Genre")),
-            //    GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
-            //    Price = (decimal)reader.GetDouble(reader.GetOrdinal("GamePrice")),
-            //    Status = reader.GetString(reader.GetOrdinal("GameStatus")),
-            //};
             var allGamesOption = new Game
             {
                 GameTitle = "All Games",
@@ -136,39 +224,45 @@ namespace SteamStore.Services
                 GameDescription = "Show items from all games",
             };
 
-            // Start with the "All Games" option.
-            var availableGames = new List<Game> { allGamesOption };
+            // Create a list to hold the available games.
+            var userItems = await this.userInventoryServiceProxy.GetUserInventoryAsync(this.user.UserId);
+            List<string> gameNames = userItems.Items
+                .Where(item => item.GameName != null)
+                .Select(item => item.GameName)
+                .Distinct()
+                .ToList();
 
-            // Add unique games from the inventory.
-            var uniqueGames = items
-                .Select(item => item.Game)
-                .Where(game => game != null)
-                .Distinct(new GameComparer());
+            // Get the game objects from the game names.
+            List<Game> games = new List<Game> { allGamesOption };
+            var allGames = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
+            foreach (var gameName in gameNames)
+            {
+                var foundGame = allGames.FirstOrDefault(currentGame => currentGame.Name == gameName);
+                if (foundGame != null)
+                {
+                    games.Add(GameMapper.MapToGame(foundGame));
+                }
+            }
 
-            availableGames.AddRange(uniqueGames);
-            return availableGames;
+            return games;
         }
 
-        /// <inheritdoc/>
         public async Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText)
         {
             var allItems = await this.GetUserInventoryAsync(userId);
             return this.FilterInventoryItems(allItems, selectedGame, searchText);
         }
 
-        /// <summary>
-        /// Provides a custom comparer for <see cref="Game"/> objects based on the GameId.
-        /// </summary>
         private class GameComparer : IEqualityComparer<Game>
         {
-            public bool Equals(Game x, Game y)
+            public bool Equals(Game firstGame, Game secondGame)
             {
-                if (x == null || y == null)
+                if (firstGame == null || secondGame == null)
                 {
                     return false;
                 }
 
-                return x.GameId == y.GameId;
+                return firstGame.GameId == secondGame.GameId;
             }
 
             public int GetHashCode(Game objectTGetHashCodeFrom)
@@ -182,5 +276,4 @@ namespace SteamStore.Services
             }
         }
     }
-
 }

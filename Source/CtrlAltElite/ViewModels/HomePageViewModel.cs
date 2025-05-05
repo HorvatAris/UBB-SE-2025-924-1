@@ -39,16 +39,7 @@ public class HomePageViewModel : INotifyPropertyChanged
         this.RecommendedGames = new ObservableCollection<Game>();
         this.DiscountedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
-        this.selectedTags = new ObservableCollection<string>(); 
-    }
-
-    public async Task InitAsync()
-    {
-        await this.LoadAllGames();
-        await this.LoadTrendingGames();
-        await this.LoadRecommendedGames();
-        await this.LoadDiscountedGames();
-        await this.LoadTags();
+        this.selectedTags = new ObservableCollection<string>();
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -116,11 +107,20 @@ public class HomePageViewModel : INotifyPropertyChanged
         }
     }
 
+    public async Task InitAsync()
+    {
+        await this.LoadAllGames();
+        await this.LoadTrendingGames();
+        await this.LoadRecommendedGames();
+        await this.LoadDiscountedGames();
+        await this.LoadTags();
+    }
+
     public async Task LoadAllGames()
     {
         this.SearchedOrFilteredGames.Clear();
         this.Search_filter_text = HomePageConstants.ALLGAMESFILTER;
-        var games = await this.gameService.GetAllApprovedGames();
+        var games = await this.gameService.GetAllApprovedGamesAsync();
         foreach (var game in games)
         {
             this.SearchedOrFilteredGames.Add(game);
@@ -130,7 +130,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     public async Task SearchGames(string search_query)
     {
         this.SearchedOrFilteredGames.Clear();
-        var filteredGames = await this.gameService.SearchGames(search_query);
+        var filteredGames = await this.gameService.SearchGamesAsync(search_query);
         foreach (var game in filteredGames)
         {
             this.SearchedOrFilteredGames.Add(game);
@@ -154,7 +154,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     public async Task ApplyFilters()
     {
         this.SearchedOrFilteredGames.Clear();
-        var games = await this.gameService.FilterGames(this.RatingFilter, this.MinPrice, this.MaxPrice, this.SelectedTags.ToArray());
+        var games = await this.gameService.FilterGamesAsync(this.RatingFilter, this.MinPrice, this.MaxPrice, this.SelectedTags.ToArray());
 
         foreach (var game in games)
         {
@@ -184,10 +184,15 @@ public class HomePageViewModel : INotifyPropertyChanged
         }
     }
 
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     private async Task LoadTrendingGames()
     {
         this.TrendingGames.Clear();
-        var trendingGames = await this.gameService.GetTrendingGames();
+        var trendingGames = await this.gameService.GetTrendingGamesAsync();
         foreach (var game in trendingGames)
         {
             this.TrendingGames.Add(game);
@@ -197,7 +202,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     private async Task LoadTags()
     {
         this.Tags.Clear();
-        var tagsList = await this.gameService.GetAllTags();
+        var tagsList = await this.gameService.GetAllTagsAsync();
         foreach (var tag in tagsList)
         {
             this.Tags.Add(tag);
@@ -207,7 +212,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     private async Task LoadRecommendedGames()
     {
         this.RecommendedGames.Clear();
-        var reccomendedGames = await this.userGameService.GetRecommendedGames();
+        var reccomendedGames = await this.userGameService.GetRecommendedGamesAsync();
         foreach (var game in reccomendedGames)
         {
             this.RecommendedGames.Add(game);
@@ -217,15 +222,10 @@ public class HomePageViewModel : INotifyPropertyChanged
     private async Task LoadDiscountedGames()
     {
         this.DiscountedGames.Clear();
-        var discountedGames = await this.gameService.GetDiscountedGames();
+        var discountedGames = await this.gameService.GetDiscountedGamesAsync();
         foreach (var game in discountedGames)
         {
             this.DiscountedGames.Add(game);
         }
-    }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

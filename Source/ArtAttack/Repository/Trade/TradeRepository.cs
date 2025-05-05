@@ -349,7 +349,7 @@ namespace Steampunks.Repository.Trade
             }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>   DONE
         public async Task UpdateItemTradeAsync(ItemTrade trade)
         {
             const string updateTradeQuery = @"
@@ -449,7 +449,7 @@ namespace Steampunks.Repository.Trade
             }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc/>  moved
         public async Task TransferItemAsync(int itemId, int fromUserId, int toUserId)
         {
             const string query = @"

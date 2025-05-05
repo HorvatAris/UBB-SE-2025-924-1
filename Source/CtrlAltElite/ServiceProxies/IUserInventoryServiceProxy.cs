@@ -1,14 +1,18 @@
-﻿using Refit;
-using SteamHub.ApiContract.Models.UserInventory;
-using SteamHub.ApiContract.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="IUserInventoryServiceProxy.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ServiceProxies
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Refit;
+    using SteamHub.ApiContract.Models.UserInventory;
+    using SteamHub.ApiContract.Repositories;
+
     public interface IUserInventoryServiceProxy : IUserInventoryRepository
     {
         [Get("/api/UserInventory/{userId}")]

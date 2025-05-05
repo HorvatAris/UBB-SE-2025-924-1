@@ -1,4 +1,8 @@
-﻿namespace CtrlAltElite.Models
+﻿// <copyright file="Item.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace CtrlAltElite.Models
 {
     using System;
     using System.Diagnostics;
@@ -82,6 +86,8 @@
             set => this.imagePath = value;
         }
 
+        public string GameName { get; internal set; }
+
         public string GetItemName()
         {
             return this.itemName;
@@ -101,7 +107,7 @@
         {
             this.itemId = id;
 
-            this.imagePath = this.GetDefaultImagePath(this.itemName);
+            // this.imagePath = this.GetDefaultImagePath(this.itemName);
             Debug.WriteLine($"Set ItemId {id} and image path: {this.imagePath}");
         }
 
@@ -123,7 +129,5 @@
             Debug.WriteLine($"Generated image path for item {this.itemId} ({itemName}) from {this.associatedGame.GameTitle}: {path}");
             return path;
         }
-
     }
-
 }

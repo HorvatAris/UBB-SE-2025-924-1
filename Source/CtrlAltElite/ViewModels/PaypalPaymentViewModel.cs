@@ -37,9 +37,26 @@ namespace SteamStore.ViewModels
             this.InitAmountToPayAsync();
         }
 
-        private async void InitAmountToPayAsync()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Email
+            {
+                get => this.email;
+                set
+                {
+                    this.email = value;
+                    this.OnPropertyChanged();
+                }
+            }
+
+        public string Password
         {
-            this.amountToPay = await cartService.GetTotalSumToBePaidAsync();
+            get => this.password;
+            set
+            {
+                this.password = value;
+                this.OnPropertyChanged();
+            }
         }
 
         // Added an async factory method to initialize the ViewModel
@@ -52,29 +69,7 @@ namespace SteamStore.ViewModels
 
         public async Task InitAsync()
         {
-            this.purchasedGames = await this.cartService.GetCartGames();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string Email
-        {
-            get => this.email;
-            set
-            {
-                this.email = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        public string Password
-        {
-            get => this.password;
-            set
-            {
-                this.password = value;
-                this.OnPropertyChanged();
-            }
+            this.purchasedGames = await this.cartService.GetCartGamesAsync();
         }
 
         public async Task ValidatePayment(Frame frame)
@@ -82,8 +77,8 @@ namespace SteamStore.ViewModels
             bool paymentSuccess = await this.paypalProcessor.ProcessPaymentAsync(this.Email, this.Password, this.amountToPay);
             if (paymentSuccess)
             {
-                this.cartService.RemoveGamesFromCart(this.purchasedGames);
-                this.userGameService.PurchaseGames(this.purchasedGames);
+                await this.cartService.RemoveGamesFromCartAsync(this.purchasedGames);
+                await this.userGameService.PurchaseGamesAsync(this.purchasedGames);
 
                 // Get points earned from the purchase
                 int pointsEarned = this.userGameService.LastEarnedPoints;
@@ -119,6 +114,11 @@ namespace SteamStore.ViewModels
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private async void InitAmountToPayAsync()
+        {
+            this.amountToPay = await this.cartService.GetTotalSumToBePaidAsync();
         }
 
         private async Task ShowNotification(string title, string message)

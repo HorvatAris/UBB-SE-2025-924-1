@@ -14,30 +14,30 @@ public class ItemTradeDetailRepository : IItemTradeDetailRepository
 
     public async Task<GetItemTradeDetailsResponse?> GetItemTradeDetailsAsync()
     {
-        var details = await _context.ItemTradeDetails
-            .Select(d => new ItemTradeDetailResponse
+        var tradeDetails = await _context.ItemTradeDetails
+            .Select(details => new ItemTradeDetailResponse
             {
-                TradeId = d.TradeId,
-                ItemId = d.ItemId,
-                IsSourceUserItem = d.IsSourceUserItem
+                TradeId = details.TradeId,
+                ItemId = details.ItemId,
+                IsSourceUserItem = details.IsSourceUserItem
             })
             .ToListAsync();
 
         return new GetItemTradeDetailsResponse
         {
-            ItemTradeDetails = details
+            ItemTradeDetails = tradeDetails
         };
     }
 
     public async Task<ItemTradeDetailResponse?> GetItemTradeDetailAsync(int tradeId, int itemId)
     {
         var result = await _context.ItemTradeDetails
-            .Where(d => d.TradeId == tradeId && d.ItemId == itemId)
-            .Select(d => new ItemTradeDetailResponse
+            .Where(details => details.TradeId == tradeId && details.ItemId == itemId)
+            .Select(details => new ItemTradeDetailResponse
             {
-                TradeId = d.TradeId,
-                ItemId = d.ItemId,
-                IsSourceUserItem = d.IsSourceUserItem
+                TradeId = details.TradeId,
+                ItemId = details.ItemId,
+                IsSourceUserItem = details.IsSourceUserItem
             })
             .SingleOrDefaultAsync();
 

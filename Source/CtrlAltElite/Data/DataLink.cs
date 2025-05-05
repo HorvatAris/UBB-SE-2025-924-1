@@ -12,7 +12,6 @@ public class DataLink : SteamStore.Data.IDataLink
     private readonly string connectionString;
     private SqlConnection sqlConnection;
 
-
     public DataLink(IConfiguration configuration)
     {
         this.connectionString = configuration.GetConnectionString("ConnectionString");
@@ -52,7 +51,7 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
-    public T? ExecuteScalar<T>(string storedProcedure, SqlParameter[]? sqlParameters = null)
+    public T? ExecuteScalar<T>(string storedProcedure, SqlParameter[] sqlParameters = null)
     {
         try
         {
@@ -85,7 +84,7 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
-    public DataTable ExecuteReader(string storedProcedure, SqlParameter[]? sqlParameters = null)
+    public DataTable ExecuteReader(string storedProcedure, SqlParameter[] sqlParameters = null)
     {
         try
         {
@@ -117,7 +116,7 @@ public class DataLink : SteamStore.Data.IDataLink
         }
     }
 
-    public int ExecuteNonQuery(string storedProcedure, SqlParameter[]? sqlParameters = null)
+    public int ExecuteNonQuery(string storedProcedure, SqlParameter[] sqlParameters = null)
     {
         try
         {

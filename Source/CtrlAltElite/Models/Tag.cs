@@ -14,6 +14,10 @@ namespace SteamStore.Models
     {
         public const int NOTCOMPUTED = -11111;
 
+        public Tag()
+        {
+        }
+
         public int TagId { get; set; }
 
         public string Tag_name { get; set; }

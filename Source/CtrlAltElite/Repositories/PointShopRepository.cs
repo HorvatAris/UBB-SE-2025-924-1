@@ -12,6 +12,7 @@ namespace SteamStore.Repositories
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml.Linq;
+    using CtrlAltElite.Models;
     using SteamStore.Constants;
     using SteamStore.Data;
     using SteamStore.Models;
@@ -83,6 +84,7 @@ namespace SteamStore.Repositories
                     {
                         ItemIdentifier = Convert.ToInt32(row[SqlConstants.ItemIdColumnWithCapitalLetter]),
                         Name = row["Name"].ToString(),
+
                        // Name = row[SqlConstants.NameIdColumnWithCapitalLetter].ToString(),
                         Description = row["Description"].ToString(),
                         ImagePath = row[SqlConstants.ImagePathColumnWithCapitalLetter].ToString(),
@@ -97,7 +99,8 @@ namespace SteamStore.Repositories
             {
                 throw new Exception($"Failed to retrieve user's point shop items: {exception.Message}");
             }
-            System.Diagnostics.Debug.WriteLine("User point shop items are"+userPointShopItems);
+
+            System.Diagnostics.Debug.WriteLine("User point shop items are" + userPointShopItems);
             return userPointShopItems;
         }
 
@@ -141,7 +144,7 @@ namespace SteamStore.Repositories
         public void ActivateItem(PointShopItem item)
         {
             if (item == null)
-            { 
+            {
                 throw new ArgumentNullException(nameof(item), "Cannot activate a null item");
             }
 

@@ -16,30 +16,30 @@ namespace SteamStore.Services.Interfaces
     {
         int LastEarnedPoints { get; }
 
-        void RemoveGameFromWishlist(Game game);
+        Task RemoveGameFromWishlistAsync(Game game);
 
-        void AddGameToWishlist(Game game);
+        Task AddGameToWishlistAsync(Game game);
 
-        void PurchaseGames(List<Game> games);
+        Task PurchaseGamesAsync(List<Game> games);
 
-        void ComputeNoOfUserGamesForEachTag(Collection<Tag> all_tags);
+        Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags);
 
-        Task<Collection<Tag>> GetFavoriteUserTags();
+        Task<Collection<Tag>> GetFavoriteUserTagsAsync();
 
-        void ComputeTagScoreForGames(Collection<Game> games);
+        Task ComputeTagScoreForGamesAsync(Collection<Game> games);
 
         void ComputeTrendingScores(Collection<Game> games);
 
-        Task<Collection<Game>> GetRecommendedGames();
+        Task<Collection<Game>> GetRecommendedGamesAsync();
 
-        Collection<Game> GetWishListGames();
+        Task<Collection<Game>> GetWishListGamesAsync();
 
-        Collection<Game> SearchWishListByName(string searchText);
+        Task<Collection<Game>> SearchWishListByNameAsync(string searchText);
 
-        Collection<Game> FilterWishListGames(string criteria);
+        Task<Collection<Game>> FilterWishListGamesAsync(string criteria);
 
-        bool IsGamePurchased(Game game);
+        Task<bool> IsGamePurchasedAsync(Game game);
 
-        Collection<Game> SortWishListGames(string criteria, bool ascending);
+        Task<Collection<Game>> SortWishListGamesAsync(string criteria, bool ascending);
     }
 }

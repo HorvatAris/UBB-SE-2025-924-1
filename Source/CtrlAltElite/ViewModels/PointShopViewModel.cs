@@ -11,6 +11,7 @@ namespace SteamStore.ViewModels
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using SteamStore.Constants;
@@ -53,6 +54,26 @@ namespace SteamStore.ViewModels
         private string selectedItemPrice;
         private string selectedItemImageUri;
         private ObservableCollection<PointShopItem> filteredUserItems;
+
+        public PointShopViewModel(IPointShopService pointShopService)
+        {
+            // Initialize with existing service
+            this.pointShopService = pointShopService;
+
+            // Get the user reference from the service's internal repository
+            this.user = this.pointShopService.GetCurrentUser();
+
+            // Initialize collections
+            this.ShopItems = new ObservableCollection<PointShopItem>();
+            this.UserItems = new ObservableCollection<PointShopItem>();
+            this.TransactionHistory = new ObservableCollection<PointShopTransaction>();
+
+            // Load initial data
+            this.InitAsync();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public string SelectedItemName
         {
             get => this.selectedItemName;
@@ -118,7 +139,6 @@ namespace SteamStore.ViewModels
             }
         }
 
-
         public string NotificationMessage
         {
             get => this.notificationMessage;
@@ -128,6 +148,7 @@ namespace SteamStore.ViewModels
                 this.OnPropertyChanged(nameof(this.NotificationMessage));
             }
         }
+
         public Visibility NotificationVisibility
         {
             get => this.notificationVisibility;
@@ -178,33 +199,6 @@ namespace SteamStore.ViewModels
             }
         }
 
-        public void ShowNotification(string message)
-        {
-            NotificationMessage = message;
-            NotificationVisibility = Visibility.Visible;
-        }
-
-        public void HideNotification()
-        {
-            NotificationVisibility = Visibility.Collapsed;
-        }
-
-        public void ApplyItemTypeFilter(string itemType)
-        {
-            if (itemType == "All")
-            {
-                this.FilteredUserItems = new ObservableCollection<PointShopItem>(this.UserItems);
-            }
-            else
-            {
-                var filteredItems = this.UserItems.Where(item => item.ItemType == itemType);
-                this.FilteredUserItems = new ObservableCollection<PointShopItem>(filteredItems);
-            }
-        }
-
-
-
-
         // public PointShopViewModel(User currentUser, IDataLink dataLink)
         // {
         //    // Store the current user reference
@@ -220,27 +214,8 @@ namespace SteamStore.ViewModels
         //    this.LoadItems();
         //    this.LoadUserItems();
         // }
-        public PointShopViewModel(IPointShopService pointShopService)
-        {
-            // Initialize with existing service
-            this.pointShopService = pointShopService;
 
-            // Get the user reference from the service's internal repository
-            this.user = this.pointShopService.GetCurrentUser();
-
-            // Initialize collections
-            this.ShopItems = new ObservableCollection<PointShopItem>();
-            this.UserItems = new ObservableCollection<PointShopItem>();
-            this.TransactionHistory = new ObservableCollection<PointShopTransaction>();
-
-            // Load initial data
-            this.InitAsync();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        //public string SelectedItemImageUri { get; private set; }
-
+        // public string SelectedItemImageUri { get; private set; }
         public bool IsDetailPanelVisible
         {
             get => this.isDetailPanelVisible;
@@ -363,6 +338,30 @@ namespace SteamStore.ViewModels
             }
         }
 
+        public void ShowNotification(string message)
+        {
+            this.NotificationMessage = message;
+            this.NotificationVisibility = Visibility.Visible;
+        }
+
+        public void HideNotification()
+        {
+            this.NotificationVisibility = Visibility.Collapsed;
+        }
+
+        public void ApplyItemTypeFilter(string itemType)
+        {
+            if (itemType == "All")
+            {
+                this.FilteredUserItems = new ObservableCollection<PointShopItem>(this.UserItems);
+            }
+            else
+            {
+                var filteredItems = this.UserItems.Where(item => item.ItemType == itemType);
+                this.FilteredUserItems = new ObservableCollection<PointShopItem>(filteredItems);
+            }
+        }
+
         public async void InitAsync()
         {
             await this.LoadItems();
@@ -373,7 +372,7 @@ namespace SteamStore.ViewModels
         {
             try
             {
-                var availableItems = await this.pointShopService.GetAvailableItems(this.user);
+                var availableItems = await this.pointShopService.GetAvailableItemsAsync(this.user);
                 this.ShopItems.Clear();
                 foreach (var item in availableItems)
                 {
@@ -392,12 +391,13 @@ namespace SteamStore.ViewModels
         {
             try
             {
-                var items = await this.pointShopService.GetUserItems();
+                var items = await this.pointShopService.GetUserItemsAsync();
                 this.UserItems.Clear();
                 foreach (var item in items)
                 {
                     this.UserItems.Add(item);
                 }
+
                 this.FilteredUserItems = new ObservableCollection<PointShopItem>(this.UserItems);
             }
             catch (Exception exception)
@@ -420,7 +420,7 @@ namespace SteamStore.ViewModels
                 // Store a local copy of the item to prevent issues after state changes
                 var itemToPurchase = this.SelectedItem;
 
-                await this.pointShopService.PurchaseItem(itemToPurchase);
+                await this.pointShopService.PurchaseItemAsync(itemToPurchase);
 
                 // Add transaction to history
                 var transaction = new PointShopTransaction(
@@ -458,7 +458,7 @@ namespace SteamStore.ViewModels
 
             try
             {
-                await this.pointShopService.ActivateItem(item);
+                await this.pointShopService.ActivateItemAsync(item);
 
                 // Refresh user items to reflect the activation change
                 await this.LoadUserItems();
@@ -481,7 +481,7 @@ namespace SteamStore.ViewModels
 
             try
             {
-                await this.pointShopService.DeactivateItem(item);
+                await this.pointShopService.DeactivateItemAsync(item);
 
                 // Refresh user items to reflect the deactivation change
                 await this.LoadUserItems();
@@ -513,7 +513,6 @@ namespace SteamStore.ViewModels
 
             return this.IsDetailPanelVisible;
         }
-
 
         public void ClearSelection()
         {
@@ -590,12 +589,11 @@ namespace SteamStore.ViewModels
             }
         }
 
-
         public async Task ToggleActivationForItemWithMessage(int itemId)
         {
             try
             {
-                var item = await this.pointShopService.ToggleActivationForItem(itemId, this.UserItems);
+                var item = await this.pointShopService.ToggleActivationForItemAsync(itemId, this.UserItems);
                 if (item == null)
                 {
                     await this.ShowDialog("Item Not Found", "The selected item could not be found.");
@@ -661,7 +659,7 @@ namespace SteamStore.ViewModels
         {
             try
             {
-                var filteredItems = await this.pointShopService.GetFilteredItems(this.filterType, this.searchText, this.minimumPrice, this.maximumPrice);
+                var filteredItems = await this.pointShopService.GetFilteredItemsAsync(this.filterType, this.searchText, this.minimumPrice, this.maximumPrice);
                 this.ShopItems.Clear();
                 foreach (var item in filteredItems)
                 {

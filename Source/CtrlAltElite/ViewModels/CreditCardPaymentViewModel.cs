@@ -41,11 +41,6 @@ namespace SteamStore.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private async void InitAsync()
-        {
-            this.TotalAmount = await this.cartService.GetTotalSumToBePaidAsync();
-        }
-
         public string CardNumber
         {
             get => this.cardNumber;
@@ -116,9 +111,9 @@ namespace SteamStore.ViewModels
             bool paymentSuccess = await this.creditCardProcessor.ProcessPaymentAsync(this.cardNumber, this.expirationDate, this.cvv, this.ownerName);
             if (paymentSuccess)
             {
-                List<Game> purchasedGames = await this.cartService.GetCartGames();
-                this.cartService.RemoveGamesFromCart(purchasedGames);
-                this.userGameService.PurchaseGames(purchasedGames);
+                List<Game> purchasedGames = await this.cartService.GetCartGamesAsync();
+                await this.cartService.RemoveGamesFromCartAsync(purchasedGames);
+                await this.userGameService.PurchaseGamesAsync(purchasedGames);
                 this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
 
                 try
@@ -132,11 +127,11 @@ namespace SteamStore.ViewModels
 
                 if (this.LastEarnedPoints > ThresholdForNotEarningPoints)
                 {
-                    await this.ShowNotification(PaymentDialogStrings.PAYMENTSUCCESSTITLE, string.Format(PaymentDialogStrings.PAYMENTSUCCESSWITHPOINTSMESSAGE, this.LastEarnedPoints));
+                    await this.ShowNotificationAsync(PaymentDialogStrings.PAYMENTSUCCESSTITLE, string.Format(PaymentDialogStrings.PAYMENTSUCCESSWITHPOINTSMESSAGE, this.LastEarnedPoints));
                 }
                 else
                 {
-                    await this.ShowNotification(PaymentDialogStrings.PAYMENTSUCCESSTITLE, PaymentDialogStrings.PAYMENTSUCCESSMESSAGE);
+                    await this.ShowNotificationAsync(PaymentDialogStrings.PAYMENTSUCCESSTITLE, PaymentDialogStrings.PAYMENTSUCCESSMESSAGE);
                 }
 
                 CartPage cartPage = new CartPage(this.cartService, this.userGameService);
@@ -144,7 +139,7 @@ namespace SteamStore.ViewModels
             }
             else
             {
-                await this.ShowNotification(PaymentDialogStrings.PAYMENTFAILEDTITLE, PaymentDialogStrings.PAYMENTFAILEDMESSAGE);
+                await this.ShowNotificationAsync(PaymentDialogStrings.PAYMENTFAILEDTITLE, PaymentDialogStrings.PAYMENTFAILEDMESSAGE);
             }
         }
 
@@ -153,7 +148,7 @@ namespace SteamStore.ViewModels
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private async Task ShowNotification(string title, string message)
+        private async Task ShowNotificationAsync(string title, string message)
         {
             ContentDialog dialog = new ContentDialog
             {
@@ -163,6 +158,11 @@ namespace SteamStore.ViewModels
                 XamlRoot = App.MainWindow.Content.XamlRoot,
             };
             await dialog.ShowAsync();
+        }
+
+        private async void InitAsync()
+        {
+            this.TotalAmount = await this.cartService.GetTotalSumToBePaidAsync();
         }
     }
 }

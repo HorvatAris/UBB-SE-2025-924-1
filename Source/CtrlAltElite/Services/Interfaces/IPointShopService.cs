@@ -10,30 +10,31 @@ namespace SteamStore.Services.Interfaces
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
     using SteamStore.Models;
 
     public interface IPointShopService
     {
         User GetCurrentUser();
 
-        Task<List<PointShopItem>> GetAllItems();
+        Task<List<PointShopItem>> GetAllItemsAsync();
 
-        Task<Collection<PointShopItem>> GetUserItems();
+        Task<Collection<PointShopItem>> GetUserItemsAsync();
 
-        Task PurchaseItem(PointShopItem item);
+        Task PurchaseItemAsync(PointShopItem item);
 
-        Task ActivateItem(PointShopItem item);
+        Task ActivateItemAsync(PointShopItem item);
 
-        Task DeactivateItem(PointShopItem item);
+        Task DeactivateItemAsync(PointShopItem item);
 
-        Task<List<PointShopItem>> GetFilteredItems(string filterType, string searchText, double minimumPrice, double maximumPrice);
+        Task<List<PointShopItem>> GetFilteredItemsAsync(string filterType, string searchText, double minimumPrice, double maximumPrice);
 
         bool CanUserPurchaseItem(User user, PointShopItem selectedItem, IEnumerable<PointShopItem> userItems);
 
-        Task<List<PointShopItem>> GetAvailableItems(User user);
+        Task<List<PointShopItem>> GetAvailableItemsAsync(User user);
 
         bool TryPurchaseItem(PointShopItem selectedItem, ObservableCollection<PointShopTransaction> transactionHistory, User user, out PointShopTransaction newTransaction);
 
-        Task<PointShopItem> ToggleActivationForItem(int itemId, ObservableCollection<PointShopItem> userItems);
+        Task<PointShopItem> ToggleActivationForItemAsync(int itemId, ObservableCollection<PointShopItem> userItems);
     }
 }

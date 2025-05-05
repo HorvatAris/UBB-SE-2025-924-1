@@ -1,16 +1,20 @@
-﻿using SteamStore.Models;
-using SteamStore.Repositories.Interfaces;
-using SteamStore.Data;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CtrlAltElite.Models;
+﻿// <copyright file="InventoryRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Repositories
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using SteamStore.Data;
+    using SteamStore.Models;
+    using SteamStore.Repositories.Interfaces;
+
     public class InventoryRepository : IInventoryRepository
     {
         private readonly IDataLink dataLink;
@@ -22,6 +26,7 @@ namespace CtrlAltElite.Repositories
             this.user = user;
         }
 
+        // done
         public async Task<List<Item>> GetItemsFromInventoryAsync(Game game)
         {
             if (game == null)
@@ -89,11 +94,7 @@ namespace CtrlAltElite.Repositories
             return items;
         }
 
-        /// <summary>
-        /// Get the inventory of a given User by it's userID Asynchronously.
-        /// </summary>
-        /// <param name="userId">The id of the user whose inventory items are to be retrieved.</param>
-        /// <returns>A <see cref="Task"/> asynchronously resolving to a list of <see cref="Item"/> objects associated with the specified user.</returns>
+        // done
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
             var items = new List<Item>();
@@ -132,23 +133,22 @@ namespace CtrlAltElite.Repositories
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
                             System.Diagnostics.Debug.WriteLine($"Found item: {reader.GetString(reader.GetOrdinal("ItemName"))}");
-                            //var game = new Game(
+
+                            // var game = new Game(
                             //    reader.GetString(reader.GetOrdinal("GameTitle")),
                             //    (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
                             //    reader.GetString(reader.GetOrdinal("Genre")),
                             //    reader.GetString(reader.GetOrdinal("GameDescription")));
-
                             var game = new Game
                             {
                                 GameId = reader.GetInt32(reader.GetOrdinal("game_id")),
                                 GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
-                                //Genre = reader.GetString(reader.GetOrdinal("Genre")),
+
+                                // Genre = reader.GetString(reader.GetOrdinal("Genre")),
                                 GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
                                 Price = (decimal)reader.GetDecimal(reader.GetOrdinal("GamePrice")),
                                 Status = reader.GetString(reader.GetOrdinal("GameStatus")),
                             };
-
-
                             var item = new Item(
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
@@ -187,12 +187,6 @@ namespace CtrlAltElite.Repositories
             return items;
         }
 
-        /// <summary>
-        /// Retrieves all inventory items associated with a specific user across all games.
-        /// </summary>
-        /// <param name="user">The user whose inventory is to be retrieved.</param>
-        /// <returns>A list of all <see cref="Item"/> objects belonging to the specified user.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if the <paramref name="user"/> is null.</exception>.
         public async Task<List<Item>> GetAllItemsFromInventoryAsync(User user)
         {
             if (user == null)
@@ -229,19 +223,19 @@ namespace CtrlAltElite.Repositories
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
-                            //var game = new Game(
+                            // var game = new Game(
                             //    reader.GetString(reader.GetOrdinal("GameTitle")),
                             //    (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
                             //    reader.GetString(reader.GetOrdinal("Genre")),
                             //    reader.GetString(reader.GetOrdinal("GameDescription")));
-                            //game.SetGameId(reader.GetInt32(reader.GetOrdinal("GameId")));
-                            //game.SetStatus(reader.GetString(reader.GetOrdinal("GameStatus")));
-
+                            // game.SetGameId(reader.GetInt32(reader.GetOrdinal("GameId")));
+                            // game.SetStatus(reader.GetString(reader.GetOrdinal("GameStatus")));
                             var game = new Game
                             {
                                 GameId = reader.GetInt32(reader.GetOrdinal("game_id")),
                                 GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
-                                //Genre = reader.GetString(reader.GetOrdinal("Genre")),
+
+                                // Genre = reader.GetString(reader.GetOrdinal("Genre")),
                                 GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
                                 Price = (decimal)reader.GetDouble(reader.GetOrdinal("GamePrice")),
                                 Status = reader.GetString(reader.GetOrdinal("GameStatus")),
@@ -267,16 +261,6 @@ namespace CtrlAltElite.Repositories
             return items;
         }
 
-        /// <summary>
-        /// Adds an item to a specific game's inventory for a user.
-        /// </summary>
-        /// <param name="game">The game to which the item is to be added.</param>
-        /// <param name="item">The item to be added.</param>
-        /// <param name="user">The user who is adding the item to their inventory.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="game"/>, <paramref name="item"/>, or <paramref name="user"/> is null.
-        /// </exception>
-        /// <returns>AddInventoryItemAsync returns <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task AddItemToInventoryAsync(Game game, Item item, User user)
         {
             ArgumentNullException.ThrowIfNull(game);
@@ -306,16 +290,6 @@ namespace CtrlAltElite.Repositories
             }
         }
 
-        /// <summary>
-        /// Removes an item from a specific game's inventory for a user.
-        /// </summary>
-        /// <param name="game">The game from which the item is to be removed.</param>
-        /// <param name="item">The item to be removed.</param>
-        /// <param name="user">The user whose inventory the item is being removed from.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="game"/>, <paramref name="item"/>, or <paramref name="user"/> is null.
-        /// </exception>
-        /// <returns>RemoveInventoryItemAsync returns <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task RemoveItemFromInventoryAsync(Game game, Item item, User user)
         {
             ArgumentNullException.ThrowIfNull(game);
@@ -401,7 +375,6 @@ namespace CtrlAltElite.Repositories
             }
         }
 
-        /// <inheritdoc/>
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
