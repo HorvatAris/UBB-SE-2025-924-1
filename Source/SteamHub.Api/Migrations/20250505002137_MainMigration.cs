@@ -416,10 +416,10 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "UserId", "Email", "PointsBalance", "RoleId", "UserName", "WalletBalance" },
                 values: new object[,]
                 {
-                    { 1, "user1@gmail.com", 100f, 0, "User1", 56f },
-                    { 2, "user2@gmail.com", 45f, 0, "User2", 78f },
-                    { 3, "user3@gmail.com", 234f, 1, "User3", 21f },
-                    { 4, "user4@gmail.com", 34f, 1, "User4", 455f }
+                    { 1, "johndoe@gmail.com", 100f, 0, "John Doe", 56f },
+                    { 2, "michaeljohn@gmail.com", 45f, 0, "Michael John", 78f },
+                    { 3, "janedoe@gmail.com", 234f, 1, "Jane Doe", 21f },
+                    { 4, "mariaelena@gmail.com", 34f, 1, "Maria Elena", 455f }
                 });
 
             migrationBuilder.InsertData(
@@ -468,9 +468,9 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "TradeId", "AcceptedByDestinationUser", "AcceptedBySourceUser", "DestinationUserId", "GameOfTradeId", "SourceUserId", "TradeDate", "TradeDescription", "TradeStatus" },
                 values: new object[,]
                 {
-                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 0 },
-                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: User3 offers Game2 to User4", 0 },
-                    { 3, true, true, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 2 }
+                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: John Doe offers Game1 to Michael John", 0 },
+                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: Jane Doe offers Game2 to Maria Elena", 0 },
+                    { 3, true, true, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: John Doe offers Game1 to Michael John", 2 }
                 });
 
             migrationBuilder.InsertData(

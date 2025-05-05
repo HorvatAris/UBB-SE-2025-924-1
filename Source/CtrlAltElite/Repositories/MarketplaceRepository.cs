@@ -289,7 +289,6 @@ namespace CtrlAltElite.Repositories
             return this.user;
         }
 
-        /// <inheritdoc/>
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
