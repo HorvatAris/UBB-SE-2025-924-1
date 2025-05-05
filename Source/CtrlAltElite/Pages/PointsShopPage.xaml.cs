@@ -30,9 +30,6 @@ namespace SteamStore.Pages
     using Windows.Foundation;
     using Windows.Foundation.Collections;
 
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PointsShopPage : Page
     {
         private const int TimerSeconds = 15;
@@ -53,7 +50,6 @@ namespace SteamStore.Pages
                     this.ViewModel.ShowNotification(this.ViewModel.GetPointsEarnedMessage());
                     this.ViewModel.ResetEarnedPoints();
                 }
-
             }
             catch (Exception exception)
             {
@@ -91,7 +87,6 @@ namespace SteamStore.Pages
         {
             await this.ViewModel.TryPurchaseSelectedItemAsync();
         }
-
 
         private void ViewInventoryButton_Click(object viewInventoryButton, RoutedEventArgs viewInventoryClickEventArgument)
         {
@@ -138,7 +133,6 @@ namespace SteamStore.Pages
         private void CloseNotification_Click(object closeNotificationButton, RoutedEventArgs closeNotificationEventArgument)
         {
             this.ViewModel.HideNotification();
-
         }
 
         private void ViewTransactionHistoryButton_Click(object viewTransactionHistoryButton, RoutedEventArgs viewTransactionHistoryClickEventArgument)

@@ -1,32 +1,31 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+// <copyright file="MarketplacePage.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Pages
 {
-
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.InteropServices.WindowsRuntime;
     using CtrlAltElite.Models;
     using CtrlAltElite.Services.Interfaces;
     using CtrlAltElite.ViewModels;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Controls.Primitives;
+    using Microsoft.UI.Xaml.Data;
+    using Microsoft.UI.Xaml.Input;
+    using Microsoft.UI.Xaml.Media;
+    using Microsoft.UI.Xaml.Navigation;
     using SteamStore.Models;
+    using Windows.Foundation;
+    using Windows.Foundation.Collections;
 
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
     public sealed partial class MarketplacePage : Page
     {
         private const string ErrorDialogTitle = "Error";
@@ -52,11 +51,6 @@ namespace CtrlAltElite.Pages
             await this.marketplaceViewModel.InitializeViewModelAsync();
         }
 
-        /// <summary>
-        /// Handles item click events in the GridView, opening a dialog and processing item purchase.
-        /// </summary>
-        /// <param name="sender">The sender of the event.</param>
-        /// <param name="eventArgs">The item click event arguments.</param>
         private void OnMarketplaceGridViewItemClicked(object sender, ItemClickEventArgs eventArgs)
         {
             if (eventArgs.ClickedItem is Item clickedMarketplaceItem)

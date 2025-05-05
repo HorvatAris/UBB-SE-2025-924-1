@@ -7,9 +7,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using CtrlAltElite.Models;
 using CtrlAltElite.ServiceProxies;
 using CtrlAltElite.Services;
 using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.UsersGames;
 using SteamStore.Constants;
 using SteamStore.Models;
 using SteamStore.Repositories;
@@ -33,32 +35,52 @@ public class UserGameService : IUserGameService
     private const int ValueToDecrementPositionWith = 1;
     private const int ValueToIncrementPositionWith = 1;
 
-    public IUserGameRepository UserGameRepository { get; set; }
+    private User user;
 
-    public IGameServiceProxy GameServiceProxy { get; set; }
-
-    //public ITagRepository TagRepository { get; set; }
-    public ITagServiceProxy TagServiceProxy { get; set; }
+    public UserGameService(IUserGameServiceProxy userGameServiceProxy, IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, User user)
+    {
+        this.UserGameServiceProxy = userGameServiceProxy;
+        this.GameServiceProxy = gameServiceProxy;
+        this.TagServiceProxy = tagServiceProxy;
+        this.user = user;
+    }
 
     // Property to track points earned in the last purchase
     public int LastEarnedPoints { get; private set; }
 
-    public void RemoveGameFromWishlist(Game game)
+    private IUserGameServiceProxy UserGameServiceProxy { get; set; }
+
+    private IGameServiceProxy GameServiceProxy { get; set; }
+
+    private ITagServiceProxy TagServiceProxy { get; set; }
+
+    public async Task RemoveGameFromWishlistAsync(Game game)
     {
-        this.UserGameRepository.RemoveGameFromWishlist(game);
+        var request = new UserGameRequest
+        {
+            UserId = this.user.UserId,
+            GameId = game.GameId,
+        };
+        await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
     }
 
-    public void AddGameToWishlist(Game game)
+    public async Task AddGameToWishlistAsync(Game game)
     {
         try
         {
             // Check if game is already purchased
-            if (this.IsGamePurchased(game))
+            if (await this.IsGamePurchasedAsync(game))
             {
                 throw new Exception(string.Format(ExceptionMessages.GameAlreadyOwned, game.GameTitle));
             }
 
-            this.UserGameRepository.AddGameToWishlist(game);
+            var request = new UserGameRequest
+            {
+                UserId = this.user.UserId,
+                GameId = game.GameId,
+            };
+
+            await this.UserGameServiceProxy.AddToWishlistAsync(request);
         }
         catch (Exception exception)
         {
@@ -73,29 +95,67 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public void PurchaseGames(List<Game> games)
+    public async Task<Collection<Game>> GetAllGamesAsync()
+    {
+        try
+        {
+            var response = await this.UserGameServiceProxy.GetUserGamesAsync(this.user.UserId);
+            var userGamesResponses = response.UserGames;
+            System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
+            var gameIds = userGamesResponses
+                .Select(game => game.GameId)
+                .ToList();
+            if (gameIds.Count == 0)
+            {
+                return new Collection<Game>();
+            }
+
+            var games = new Collection<Game>();
+            foreach (var gameId in gameIds)
+            {
+                System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
+                var game = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
+                games.Add(game);
+            }
+
+            return games;
+        }
+        catch (Exception exception)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
+            return new Collection<Game>();
+        }
+    }
+
+    public async Task PurchaseGamesAsync(List<Game> games)
     {
         // Reset points counter
         this.LastEarnedPoints = InitialValueForLastEarnedPoints;
 
         // Track user's points before purchase
-        float pointsBalanceBefore = this.UserGameRepository.GetUserPointsBalance();
+        float pointsBalanceBefore = this.user.PointsBalance;
 
         // Purchase games
         foreach (var game in games)
         {
-            this.UserGameRepository.AddGameToPurchased(game);
-            this.UserGameRepository.RemoveGameFromWishlist(game);
+            var request = new UserGameRequest
+            {
+                UserId = this.user.UserId,
+                GameId = game.GameId,
+            };
+            await this.UserGameServiceProxy.PurchaseGameAsync(request);
+
+            // await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
         }
 
         // Calculate earned points by comparing balances
-        float pointsBalanceAfter = this.UserGameRepository.GetUserPointsBalance();
+        float pointsBalanceAfter = this.user.PointsBalance;
         this.LastEarnedPoints = (int)(pointsBalanceAfter - pointsBalanceBefore);
     }
 
-    public void ComputeNoOfUserGamesForEachTag(Collection<Tag> all_tags)
+    public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags)
     {
-        var user_games = this.UserGameRepository.GetAllUserGames();
+        var user_games = await this.GetAllGamesAsync();
 
         // Manually build the dictionary instead of using ToDictionary
         Dictionary<string, Tag> tagsDictionary = new Dictionary<string, Tag>();
@@ -124,11 +184,11 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task<Collection<Tag>> GetFavoriteUserTags()
+    public async Task<Collection<Tag>> GetFavoriteUserTagsAsync()
     {
         var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
         var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
-        this.ComputeNoOfUserGamesForEachTag(allTags);
+        await this.ComputeNoOfUserGamesForEachTagAsync(allTags);
 
         List<Tag> sortedTags = new List<Tag>(allTags);
 
@@ -154,9 +214,9 @@ public class UserGameService : IUserGameService
         return new Collection<Tag>(topTags);
     }
 
-    public async void ComputeTagScoreForGames(Collection<Game> games)
+    public async Task ComputeTagScoreForGamesAsync(Collection<Game> games)
     {
-        var favorite_tags = await this.GetFavoriteUserTags();
+        var favorite_tags = await this.GetFavoriteUserTagsAsync();
         foreach (var game in games)
         {
             game.TagScore = InitialTagScore;
@@ -181,11 +241,10 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task<Collection<Game>> GetRecommendedGames()
+    public async Task<Collection<Game>> GetRecommendedGamesAsync()
     {
         var games = await this.GameServiceProxy.GetGamesAsync(
             new GetGamesRequest());
-   
         var allGames = new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
         var approvedGames = new Collection<Game>();
         foreach (var game in allGames)
@@ -195,9 +254,10 @@ public class UserGameService : IUserGameService
                 approvedGames.Add(game);
             }
         }
+
         this.ComputeTrendingScores(approvedGames);
-        this.ComputeTagScoreForGames(approvedGames);
-        
+        await this.ComputeTagScoreForGamesAsync(approvedGames);
+
         List<Game> sortedGames = new List<Game>(approvedGames);
 
         // Manual sorting based on weighted score
@@ -228,14 +288,41 @@ public class UserGameService : IUserGameService
         return new Collection<Game>(recommendedGames);
     }
 
-    public Collection<Game> GetWishListGames()
+    public async Task<Collection<Game>> GetWishListGamesAsync()
     {
-        return this.UserGameRepository.GetWishlistGames();
+        try
+        {
+            var response = await this.UserGameServiceProxy.GetUserWishlistAsync(this.user.UserId);
+            var userGamesResponses = response.UserGames;
+            System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
+            var gameIds = userGamesResponses
+                .Select(game => game.GameId)
+                .ToList();
+            if (gameIds.Count == 0)
+            {
+                return new Collection<Game>();
+            }
+
+            var games = new Collection<Game>();
+            foreach (var gameId in gameIds)
+            {
+                System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
+                var game = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
+                games.Add(game);
+            }
+
+            return games;
+        }
+        catch (Exception exception)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
+            return new Collection<Game>();
+        }
     }
 
-    public Collection<Game> SearchWishListByName(string searchText)
+    public async Task<Collection<Game>> SearchWishListByNameAsync(string searchText)
     {
-        List<Game> allWishListGames = this.UserGameRepository.GetWishlistGames().ToList();
+        List<Game> allWishListGames = (await this.GetWishListGamesAsync()).ToList();
         List<Game> matchingGames = new List<Game>();
 
         foreach (Game game in allWishListGames)
@@ -249,9 +336,9 @@ public class UserGameService : IUserGameService
         return new Collection<Game>(matchingGames);
     }
 
-    public Collection<Game> FilterWishListGames(string criteria)
+    public async Task<Collection<Game>> FilterWishListGamesAsync(string criteria)
     {
-        Collection<Game> games = this.UserGameRepository.GetWishlistGames();
+        Collection<Game> games = await this.GetWishListGamesAsync();
         Collection<Game> filteredGames = new Collection<Game>();
 
         bool isKnownCriteria = criteria == FilterCriteria.OVERWHELMINGLYPOSITIVE ||
@@ -293,14 +380,47 @@ public class UserGameService : IUserGameService
         return filteredGames;
     }
 
-    public bool IsGamePurchased(Game game)
+    public async Task<Collection<Game>> GetPurchasedGamesAsync()
     {
-        return this.UserGameRepository.IsGamePurchased(game);
+        try
+        {
+            var response = await this.UserGameServiceProxy.GetUserPurchasedGamesAsync(this.user.UserId);
+            var userGamesResponses = response.UserGames;
+            System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
+            var gameIds = userGamesResponses
+                .Select(game => game.GameId)
+                .ToList();
+            if (gameIds.Count == 0)
+            {
+                return new Collection<Game>();
+            }
+
+            var games = new Collection<Game>();
+            foreach (var gameId in gameIds)
+            {
+                System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
+                var game = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
+                games.Add(game);
+            }
+
+            return games;
+        }
+        catch (Exception exception)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
+            return new Collection<Game>();
+        }
     }
 
-    public Collection<Game> SortWishListGames(string criteria, bool ascending)
+    public async Task<bool> IsGamePurchasedAsync(Game game)
     {
-        Collection<Game> gamesCollection = this.UserGameRepository.GetWishlistGames();
+        var purchasedGameList = await this.GetPurchasedGamesAsync();
+        return purchasedGameList.Contains(game);
+    }
+
+    public async Task<Collection<Game>> SortWishListGamesAsync(string criteria, bool ascending)
+    {
+        Collection<Game> gamesCollection = await this.GetWishListGamesAsync();
         List<Game> games = new List<Game>();
 
         foreach (var game in gamesCollection)

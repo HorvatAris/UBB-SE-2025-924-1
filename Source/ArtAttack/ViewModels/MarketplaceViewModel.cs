@@ -40,35 +40,29 @@ namespace Steampunks.ViewModels
             this.marketplaceService = marketplaceService;
         }
 
-        public enum PurchaseResult
-        {
-            Success,
-            MissingUser,
-            Error,
-        }
-
-        public async Task<PurchaseResult> RequestPurchaseSelectedItemAsync()
-        {
-            if (this.CurrentUser == null)
-            {
-                return PurchaseResult.MissingUser;
-            }
-
-            try
-            {
-                bool success = await this.BuyItemAsync();
-                return success ? PurchaseResult.Success : PurchaseResult.Error;
-            }
-            catch (Exception exception)
-            {
-                Debug.WriteLine($"Error: {exception.Message}");
-                return PurchaseResult.Error;
-            }
-        }
-
-
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Shows the result of the purchase.
+        /// </summary>
+        public enum PurchaseResult
+        {
+            /// <summary>
+            /// Purchase was a success.
+            /// </summary>
+            Success,
+
+            /// <summary>
+            /// User is missing.
+            /// </summary>
+            MissingUser,
+
+            /// <summary>
+            /// There was an error.
+            /// </summary>
+            Error,
+        }
 
         /// <summary>
         /// Gets or sets the AvailableGames ObservableCollection.
@@ -207,6 +201,25 @@ namespace Steampunks.ViewModels
         /// the current user is not null).
         /// </summary>
         public bool CanBuyItem => this.SelectedItem != null && this.SelectedItem.IsListed && this.CurrentUser != null;
+
+        public async Task<PurchaseResult> RequestPurchaseSelectedItemAsync()
+        {
+            if (this.CurrentUser == null)
+            {
+                return PurchaseResult.MissingUser;
+            }
+
+            try
+            {
+                bool success = await this.BuyItemAsync();
+                return success ? PurchaseResult.Success : PurchaseResult.Error;
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"Error: {exception.Message}");
+                return PurchaseResult.Error;
+            }
+        }
 
         /// <summary>
         /// Handles the purchase of an item by removing former ownership, adding the item to the new owner's inventory,

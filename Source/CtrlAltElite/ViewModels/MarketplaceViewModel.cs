@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="MarketplaceViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ViewModels
 {
-    using CtrlAltElite.Models;
-    using CtrlAltElite.Services.Interfaces;
-    using SteamStore.Models;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -16,9 +11,15 @@ namespace CtrlAltElite.ViewModels
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.Services.Interfaces;
+
+    /// <summary>
+    /// Viewmodel for the Marketplace Page.
+    /// </summary>
     public partial class MarketplaceViewModel : INotifyPropertyChanged
     {
-        private readonly IMarketplaceService marketplaceService;
+        private IMarketplaceService marketplaceService;
         private ObservableCollection<Item> items;
         private string searchText;
         private string selectedGame;
@@ -28,6 +29,9 @@ namespace CtrlAltElite.ViewModels
         private Item selectedItem;
         private User currentUser;
         private ObservableCollection<User> availableUsers;
+        private ObservableCollection<string> availableGames;
+        private ObservableCollection<string> availableTypes;
+        private ObservableCollection<string> availableRarities;
 
         public MarketplaceViewModel(IMarketplaceService marketplaceService)
         {
@@ -36,11 +40,44 @@ namespace CtrlAltElite.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ObservableCollection<string> AvailableGames { get; set; }
+        public ObservableCollection<string> AvailableGames
+        {
+            get => this.availableGames;
+            set
+            {
+                if (this.availableGames != value)
+                {
+                    this.availableGames = value;
+                    this.OnPropertyChanged(nameof(this.AvailableGames)); // Notify the UI about changes
+                }
+            }
+        }
 
-        public ObservableCollection<string> AvailableTypes { get; set; }
+        public ObservableCollection<string> AvailableTypes
+        {
+            get => this.availableTypes;
+            set
+            {
+                if (this.availableTypes != value)
+                {
+                    this.availableTypes = value;
+                    this.OnPropertyChanged(nameof(this.AvailableTypes)); // Notify the UI about changes
+                }
+            }
+        }
 
-        public ObservableCollection<string> AvailableRarities { get; set; }
+        public ObservableCollection<string> AvailableRarities
+        {
+            get => this.availableRarities;
+            set
+            {
+                if (this.availableRarities != value)
+                {
+                    this.availableRarities = value;
+                    this.OnPropertyChanged(nameof(this.AvailableRarities)); // Notify the UI about changes
+                }
+            }
+        }
 
         public ObservableCollection<Item> Items
         {
@@ -84,6 +121,7 @@ namespace CtrlAltElite.ViewModels
                 this.OnPropertyChanged();
             }
         }
+
         public string SelectedRarity
         {
             get => this.selectedRarity;
@@ -117,7 +155,7 @@ namespace CtrlAltElite.ViewModels
                 if (this.currentUser != value)
                 {
                     this.currentUser = value;
-                    this.marketplaceService.SetCurrentUser(value);
+                    this.marketplaceService.User = value;
                     this.OnPropertyChanged();
                     this.OnPropertyChanged(nameof(this.CanBuyItem));
                 }
@@ -145,7 +183,7 @@ namespace CtrlAltElite.ViewModels
 
             try
             {
-                bool success = await this.marketplaceService.BuyItemAsync(this.SelectedItem);
+                bool success = await this.marketplaceService.BuyItemAsync(this.SelectedItem, this.CurrentUser.UserId);
                 if (success)
                 {
                     // Refresh the items list.
@@ -168,10 +206,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Initializes the ViewModel by asynchronously loading the items and users, as well as initializing the ObservableCollections.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         internal async Task InitializeViewModelAsync()
         {
             await this.LoadUsersAsync();
@@ -183,7 +217,7 @@ namespace CtrlAltElite.ViewModels
         {
             var users = await this.marketplaceService.GetAllUsersAsync();
             this.AvailableUsers = new ObservableCollection<User>(users);
-            this.CurrentUser = this.marketplaceService.GetCurrentUser();
+            this.CurrentUser = this.marketplaceService.User;
         }
 
         private async Task LoadItemsAsync()
@@ -196,9 +230,12 @@ namespace CtrlAltElite.ViewModels
         private void InitializeCollections()
         {
             var allItems = this.Items.ToList();
-            this.AvailableGames = new ObservableCollection<string>(allItems.Select(item => item.Game.GameTitle).Distinct());
-            this.AvailableTypes = new ObservableCollection<string>(allItems.Select(item => item.ItemName.Split('|').First().Trim()).Distinct());
-            this.AvailableRarities = new ObservableCollection<string>(new[] { "Common", "Uncommon", "Rare", "Epic", "Legendary" });
+            this.AvailableGames =
+                new ObservableCollection<string>(allItems.Select(item => item.Game.GameTitle).Distinct());
+            this.AvailableTypes = new ObservableCollection<string>(
+                allItems.Select(item => item.ItemName.Split('|').First().Trim()).Distinct());
+            this.AvailableRarities =
+                new ObservableCollection<string>(new[] { "Common", "Uncommon", "Rare", "Epic", "Legendary" });
         }
 
         private void FilterItems()
@@ -208,9 +245,10 @@ namespace CtrlAltElite.ViewModels
             if (!string.IsNullOrEmpty(this.SearchText))
             {
                 var searchTextLower = this.SearchText.ToLower();
-                filteredItems = filteredItems.Where(item =>
-                    item.ItemName.ToLower().Contains(searchTextLower) ||
-                    item.Description.ToLower().Contains(searchTextLower));
+                filteredItems = filteredItems.Where(
+                    item =>
+                        item.ItemName.ToLower().Contains(searchTextLower) ||
+                        item.Description.ToLower().Contains(searchTextLower));
             }
 
             if (!string.IsNullOrEmpty(this.SelectedGame))
@@ -220,10 +258,11 @@ namespace CtrlAltElite.ViewModels
 
             if (!string.IsNullOrEmpty(this.SelectedType))
             {
-                filteredItems = filteredItems.Where(item =>
-                    item.ItemName.IndexOf('|') > 0
-                        ? item.ItemName.Substring(0, item.ItemName.IndexOf('|')).Trim() == this.SelectedType
-                        : item.ItemName.Trim() == this.SelectedType);
+                filteredItems = filteredItems.Where(
+                    item =>
+                        item.ItemName.IndexOf('|') > 0
+                            ? item.ItemName.Substring(0, item.ItemName.IndexOf('|')).Trim() == this.SelectedType
+                            : item.ItemName.Trim() == this.SelectedType);
             }
 
             this.Items = new ObservableCollection<Item>(filteredItems);

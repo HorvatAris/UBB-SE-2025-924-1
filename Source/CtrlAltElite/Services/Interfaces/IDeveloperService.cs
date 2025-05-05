@@ -15,11 +15,11 @@ namespace SteamStore.Services.Interfaces
 
     public interface IDeveloperService
     {
-        Task ValidateGame(int game_id);
+        Task ValidateGameAsync(int game_id);
 
         Game ValidateInputForAddingAGame(string gameIdText, string name, string priceText, string description, string imageUrl, string trailerUrl, string gameplayUrl, string minimumRequirement, string reccommendedRequirement, string discountText, IList<Tag> selectedTags);
 
-        Task<Game> CreateValidatedGame(
+        Task<Game> CreateValidatedGameAsync(
             string gameIdText,
             string name,
             string priceText,
@@ -34,51 +34,51 @@ namespace SteamStore.Services.Interfaces
 
         Game FindGameInObservableCollectionById(int gameId, ObservableCollection<Game> gameList);
 
-        Task CreateGame(Game game);
+        Task CreateGameAsync(Game game);
 
-        Task CreateGameWithTags(Game game, IList<Tag> selectedTags);
+        Task CreateGameWithTagsAsync(Game game, IList<Tag> selectedTags);
 
-        Task UpdateGame(Game game);
+        Task UpdateGameAsync(Game game);
 
-        Task UpdateGameWithTags(Game game, IList<Tag> selectedTags);
+        Task UpdateGameWithTagsAsync(Game game, IList<Tag> selectedTags);
 
-        Task DeleteGame(int game_id);
+        Task DeleteGameAsync(int game_id);
 
-        Task<List<Game>> GetDeveloperGames();
+        Task<List<Game>> GetDeveloperGamesAsync();
 
-        Task<List<Game>> GetUnvalidated();
+        Task<List<Game>> GetUnvalidatedAsync();
 
-        Task RejectGame(int game_id);
+        Task RejectGameAsync(int game_id);
 
-        Task RejectGameWithMessage(int game_id, string message);
+        Task RejectGameWithMessageAsync(int game_id, string message);
 
-        Task<string> GetRejectionMessage(int game_id);
+        Task<string> GetRejectionMessageAsync(int game_id);
 
-        Task InsertGameTag(int gameId, int tagId);
+        Task InsertGameTagAsync(int gameId, int tagId);
 
-        Task<Collection<Tag>> GetAllTags();
+        Task<Collection<Tag>> GetAllTagsAsync();
 
-        Task<bool> IsGameIdInUse(int gameId);
+        Task<bool> IsGameIdInUseAsync(int gameId);
 
-        Task<List<Tag>> GetGameTags(int gameId);
+        Task<List<Tag>> GetGameTagsAsync(int gameId);
 
-        Task DeleteGameTags(int gameId);
+        Task DeleteGameTagsAsync(int gameId);
 
-        int GetGameOwnerCount(int game_id);
+        Task<int> GetGameOwnerCountAsync(int gameId);
 
         User GetCurrentUser();
 
-        Task DeleteGame(int gameId, ObservableCollection<Game> developerGames);
+        Task DeleteGameAsync(int gameId, ObservableCollection<Game> developerGames);
 
-        Task UpdateGameAndRefreshList(Game game, ObservableCollection<Game> developerGames);
+        Task UpdateGameAndRefreshListAsync(Game game, ObservableCollection<Game> developerGames);
 
-        Task RejectGameAndRemoveFromUnvalidated(int gameId, ObservableCollection<Game> unvalidatedGames);
+        Task RejectGameAndRemoveFromUnvalidatedAsync(int gameId, ObservableCollection<Game> unvalidatedGames);
 
-        Task<bool> IsGameIdInUse(
+        Task<bool> IsGameIdInUseAsync(
             int gameId,
             ObservableCollection<Game> developerGames,
             ObservableCollection<Game> unvalidatedGames);
 
-        Task<IList<Tag>> GetMatchingTagsForGame(int gameId, IList<Tag> allAvailableTags);
+        Task<IList<Tag>> GetMatchingTagsForGameAsync(int gameId, IList<Tag> allAvailableTags);
     }
 }

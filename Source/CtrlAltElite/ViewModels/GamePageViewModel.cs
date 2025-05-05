@@ -77,8 +77,8 @@ public class GamePageViewModel : INotifyPropertyChanged
         {
             this.game = value;
             this.OnPropertyChanged();
-            this.UpdateIsOwnedStatus();
-            this.UpdateGameTags();
+            this.UpdateIsOwnedStatusAsync();
+            this.UpdateGameTagsAsync();
             this.UpdateMediaLinks();
 
             // TODO: LoadReviews(); // Uncomment when Review model is ready
@@ -135,7 +135,7 @@ public class GamePageViewModel : INotifyPropertyChanged
     {
         this.Game = game;
         this.OnPropertyChanged(nameof(this.Game));
-        await this.LoadSimilarGames();
+        await this.LoadSimilarGamesAsync();
     }
 
     public async Task LoadGameById(int gameId)
@@ -145,23 +145,23 @@ public class GamePageViewModel : INotifyPropertyChanged
             return;
         }
 
-        this.Game = await this.gameService.GetGameById(gameId);
+        this.Game = await this.gameService.GetGameByIdAsync(gameId);
         if (this.Game != null)
         {
             this.OnPropertyChanged(nameof(this.Game)); // Let UI know the Game has changed
 
-            await this.LoadSimilarGames();
+            await this.LoadSimilarGamesAsync();
         }
     }
 
     // Add game to cart - safely handle null CartService
-    public async Task AddToCart()
+    public async Task AddToCartAsync()
     {
         if (this.Game != null && this.cartService != null)
         {
             try
             {
-                await this.cartService.AddGameToCart(this.Game);
+                await this.cartService.AddGameToCartAsync(this.Game);
             }
             catch (Exception exception)
             {
@@ -172,13 +172,13 @@ public class GamePageViewModel : INotifyPropertyChanged
     }
 
     // Add game to wishlist - this will be implemented later
-    public void AddToWishlist()
+    public async Task AddToWishlistAsync()
     {
         if (this.Game != null && this.userGameService != null)
         {
             try
             {
-                this.userGameService.AddGameToWishlist(this.Game);
+                await this.userGameService.AddGameToWishlistAsync(this.Game);
             }
             catch (Exception exception)
             {
@@ -206,7 +206,7 @@ public class GamePageViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void UpdateIsOwnedStatus()
+    private async void UpdateIsOwnedStatusAsync()
     {
         if (this.Game == null || this.userGameService == null)
         {
@@ -216,7 +216,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
         try
         {
-            this.IsOwned = this.userGameService.IsGamePurchased(this.Game);
+            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game);
         }
         catch (Exception)
         {
@@ -224,7 +224,7 @@ public class GamePageViewModel : INotifyPropertyChanged
         }
     }
 
-    private async void UpdateGameTags()
+    private async void UpdateGameTagsAsync()
     {
         if (this.Game == null || this.gameService == null)
         {
@@ -234,7 +234,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
         try
         {
-            var allTags = await this.gameService.GetAllGameTags(this.Game);
+            var allTags = await this.gameService.GetAllGameTagsAsync(this.Game);
             this.GameTags.Clear();
             foreach (var tag in allTags)
             {
@@ -262,14 +262,14 @@ public class GamePageViewModel : INotifyPropertyChanged
     }
 
     // Load similar games based on current game
-    private async Task LoadSimilarGames()
+    private async Task LoadSimilarGamesAsync()
     {
         if (this.Game == null || this.gameService == null)
         {
             return;
         }
 
-        var similarGames = await this.gameService.GetSimilarGames(this.Game.GameId);
+        var similarGames = await this.gameService.GetSimilarGamesAsync(this.Game.GameId);
         this.SimilarGames = new ObservableCollection<Game>(similarGames.Take(MaxSimilarGamesToDisplay));
     }
 

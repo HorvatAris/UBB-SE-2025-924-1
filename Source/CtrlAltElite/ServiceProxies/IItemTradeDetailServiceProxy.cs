@@ -1,13 +1,17 @@
-﻿using Refit;
-using SteamHub.ApiContract.Models.ItemTradeDetails;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="IItemTradeDetailServiceProxy.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ServiceProxies
-{ 
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Refit;
+    using SteamHub.ApiContract.Models.ItemTradeDetails;
+
     public interface IItemTradeDetailServiceProxy
     {
         [Get("/api/ItemTradeDetails")]

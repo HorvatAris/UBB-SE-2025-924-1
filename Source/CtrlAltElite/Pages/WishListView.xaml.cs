@@ -14,6 +14,9 @@ namespace SteamStore.Pages
     using SteamStore.Services.Interfaces;
     using SteamStore.ViewModels;
 
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
     public sealed partial class WishListView : Page
     {
         private WishListViewModel viewModel;
@@ -44,11 +47,11 @@ namespace SteamStore.Pages
             }
         }
 
-        private void SearchBox_TextChanged(object searchTextBox, TextChangedEventArgs textChangedEventArguments)
+        private async void SearchBox_TextChanged(object searchTextBox, TextChangedEventArgs textChangedEventArguments)
         {
             if (this.viewModel != null)
             {
-                this.viewModel.HandleSearchWishListGames();
+                await this.viewModel.HandleSearchWishListGames();
             }
         }
     }

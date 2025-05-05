@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Refit;
-using SteamHub.ApiContract.Context.Repositories;
-using SteamHub.ApiContract.Models.UserPointShopItemInventory;
+﻿// <copyright file="IUserPointShopItemInventoryServiceProxy.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ServiceProxies
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Refit;
+    using SteamHub.ApiContract.Context.Repositories;
+    using SteamHub.ApiContract.Models.UserPointShopItemInventory;
 
     public interface IUserPointShopItemInventoryServiceProxy : IUserPointShopItemInventoryRepository
     {

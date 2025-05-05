@@ -1,11 +1,15 @@
-﻿using System;
+﻿// <copyright file="GameFolderResolver.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
 public static class GameFolderResolver
 {
-    private static readonly Dictionary<string, string> titleToFolder;
+    private static readonly Dictionary<string, string> TitleToFolder;
 
     static GameFolderResolver()
     {
@@ -13,22 +17,22 @@ public static class GameFolderResolver
         if (File.Exists(filePath))
         {
             string json = File.ReadAllText(filePath);
-            titleToFolder = JsonSerializer.Deserialize<Dictionary<string, string>>(json)!;
+            TitleToFolder = JsonSerializer.Deserialize<Dictionary<string, string>>(json) !;
         }
         else
         {
-            titleToFolder = new Dictionary<string, string>();
+            TitleToFolder = new Dictionary<string, string>();
         }
     }
 
     public static string GetFolderName(string gameTitle)
     {
-        if (titleToFolder.TryGetValue(gameTitle.ToLower(), out string folderName))
+        if (TitleToFolder.TryGetValue(gameTitle.ToLower(), out string folderName))
         {
             return folderName;
         }
 
         // Fallback to normalized folder name
-        return gameTitle.ToLower().Replace(" ", "").Replace(":", "");
+        return gameTitle.ToLower().Replace(" ", string.Empty).Replace(":", string.Empty);
     }
 }

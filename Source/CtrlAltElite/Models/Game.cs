@@ -47,9 +47,4 @@ public class Game
     public decimal TagScore { get; set; }
 
     public int PublisherIdentifier { get; set; }
-
-    //public static implicit operator Game(Game v)
-    //{
-    //    throw new NotImplementedException();
-    //}
 }

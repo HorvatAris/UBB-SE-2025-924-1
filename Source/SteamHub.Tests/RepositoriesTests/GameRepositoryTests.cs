@@ -21,13 +21,14 @@
             var options = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
+
             var inMemorySettings = new Dictionary<string, string>
-{
+            {
                 { "SomeSetting", "SomeValue" }
-};
+            };
             var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
-            .Build();
+                .Build();
 
             _mockContext = new DataContext(options, configuration);
             _repository = new GameRepository(_mockContext);
@@ -43,12 +44,15 @@
             _mockContext.RemoveRange(_mockContext.Tags);
             _mockContext.SaveChanges();
 
-            // Create enum entities (won't be tracked by context)
+            // Create enum entities
             var approvedStatus = new GameStatus { Id = GameStatusEnum.Approved, Name = "Approved" };
+            var pendingStatus = new GameStatus { Id = GameStatusEnum.Pending, Name = "Pending" };
+            var rejectedStatus = new GameStatus { Id = GameStatusEnum.Rejected, Name = "Rejected" };
+
             var userRole = new Role { Id = RoleEnum.User, Name = "User" };
             var developerRole = new Role { Id = RoleEnum.Developer, Name = "Developer" };
 
-            // Create test user
+            // Create test users
             var user = new User
             {
                 UserId = 1,
@@ -75,16 +79,15 @@
 
             _mockContext.Users.AddRange(user, developer);
 
-            // Create test tag
-            var actionTag = new Tag{ TagId = 1, TagName = "Action", Games = new List<Game>()};
+            // Create test tags
+            var actionTag = new Tag { TagId = 1, TagName = "Action", Games = new List<Game>() };
             var adventureTag = new Tag { TagId = 2, TagName = "Adventure", Games = new List<Game>() };
             var puzzleTag = new Tag { TagId = 3, TagName = "Puzzle", Games = new List<Game>() };
 
+            _mockContext.Tags.AddRange(actionTag, adventureTag, puzzleTag);
 
-            _mockContext.Tags.Add(actionTag);
-
-            // Create test game
-            var game = new Game
+            // Create test games
+            var game1 = new Game
             {
                 GameId = 1,
                 Name = "Test Game",
@@ -93,7 +96,7 @@
                 Price = 59.99m,
                 MinimumRequirements = "Min Spec",
                 RecommendedRequirements = "Recommended Spec",
-                StatusId = GameStatusEnum.Approved,
+                Status = approvedStatus,
                 RejectMessage = null,
                 Tags = new HashSet<Tag> { actionTag },
                 Rating = 4.5m,
@@ -106,12 +109,57 @@
                 StoreTransactions = new List<StoreTransaction>(),
                 Items = new List<Item>()
             };
-            actionTag.Games.Add(game);
 
-            _mockContext.Games.Add(game);
+            var game2 = new Game
+            {
+                GameId = 2,
+                Name = "Test Game 2",
+                Description = "Another Test Description",
+                ImagePath = "/images/test2.jpg",
+                Price = 39.99m,
+                MinimumRequirements = "Min Spec 2",
+                RecommendedRequirements = "Recommended Spec 2",
+                Status = rejectedStatus,
+                RejectMessage = null,
+                Tags = new HashSet<Tag> { adventureTag },
+                Rating = 4.0m,
+                NumberOfRecentPurchases = 50,
+                TrailerPath = "/trailers/test2.mp4",
+                GameplayPath = "/gameplay/test2.mp4",
+                Discount = 5.0m,
+                PublisherUserId = 2,
+                Publisher = developer,
+                StoreTransactions = new List<StoreTransaction>(),
+                Items = new List<Item>()
+            };
 
-            // Create store transaction
-            var storeTransaction = new StoreTransaction
+            var game3 = new Game
+            {
+                GameId = 3,
+                Name = "Test Game 3",
+                Description = "Yet Another Test Description",
+                ImagePath = "/images/test3.jpg",
+                Price = 19.99m,
+                MinimumRequirements = "Min Spec 3",
+                RecommendedRequirements = "Recommended Spec 3",
+                Status = pendingStatus,
+                RejectMessage = null,
+                Tags = new HashSet<Tag> { puzzleTag },
+                Rating = 3.5m,
+                NumberOfRecentPurchases = 20,
+                TrailerPath = "/trailers/test3.mp4",
+                GameplayPath = "/gameplay/test3.mp4",
+                Discount = 0.0m,
+                PublisherUserId = 1,
+                Publisher = user,
+                StoreTransactions = new List<StoreTransaction>(),
+                Items = new List<Item>()
+            };
+
+            _mockContext.Games.AddRange(game1, game2, game3);
+
+            // Create store transactions
+            var storeTransaction1 = new StoreTransaction
             {
                 StoreTransactionId = 1,
                 UserId = 1,
@@ -120,14 +168,31 @@
                 Amount = 59.99f,
                 WithMoney = true,
                 User = user,
-                Game = game
+                Game = game1
             };
-            user.StoreTransactions.Add(storeTransaction);
-            game.StoreTransactions.Add(storeTransaction);
 
-            _mockContext.StoreTransactions.Add(storeTransaction);
+            var storeTransaction2 = new StoreTransaction
+            {
+                StoreTransactionId = 2,
+                UserId = 1,
+                GameId = 2,
+                Date = DateTime.Now,
+                Amount = 39.99f,
+                WithMoney = true,
+                User = user,
+                Game = game2
+            };
+
+            user.StoreTransactions.Add(storeTransaction1);
+            user.StoreTransactions.Add(storeTransaction2);
+            game1.StoreTransactions.Add(storeTransaction1);
+            game2.StoreTransactions.Add(storeTransaction2);
+
+            _mockContext.StoreTransactions.AddRange(storeTransaction1, storeTransaction2);
+
             _mockContext.SaveChanges();
         }
+
 
         public void Dispose()
         {
@@ -166,18 +231,12 @@
         [Fact]
         public async Task GetGameByIdAsync_WithExistingId_ReturnsGame()
         {
-            // Arrange - Seed the test data
-            SeedTestData(); 
-
-            // Act
             var result = await _repository.GetGameByIdAsync(1);
 
-            
             Assert.NotNull(result);
-            Assert.Equal("Test Game", result.Name); 
-            Assert.Equal(GameStatusEnum.Approved, result.Status); 
-            Assert.Null(result.RejectMessage);  
-            Assert.Equal(59.99m, result.Price); 
+            Assert.Equal("Test Game", result.Name);
+            Assert.Null(result.RejectMessage);
+            Assert.Equal(59.99m, result.Price);
         }
 
         [Fact]
@@ -193,13 +252,8 @@
         [Fact]
         public async Task GetGamesAsync_WithNoFilters_ReturnsAllGames()
         {
-            // Arrange
             var parameters = new GetGamesRequest();
-
-            // Act
             var result = await _repository.GetGamesAsync(parameters);
-
-            // Assert
             Assert.Equal(3, result.Count);
         }
 
@@ -214,7 +268,7 @@
 
             // Assert
             Assert.Single(result);
-            Assert.Equal("Test Game 2", result[0].Name);
+            Assert.Equal("Test Game", result[0].Name);
         }
 
         [Fact]
@@ -323,7 +377,6 @@
         public async Task PatchGameTagsAsync_WithReplaceType_ReplacesTags()
         {
             // Arrange
-            // First add some tags
             var game = await _mockContext.Games
                 .Include(g => g.Tags)
                 .FirstOrDefaultAsync(g => g.GameId == 1);

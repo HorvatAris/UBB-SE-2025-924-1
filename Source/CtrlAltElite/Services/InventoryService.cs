@@ -1,28 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="InventoryService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace SteamStore.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using CtrlAltElite.Models;
     using CtrlAltElite.ServiceProxies;
     using CtrlAltElite.Services;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.UserInventory;
-    using SteamHub.ApiContract.Repositories;
-    using SteamStore.Models;
     using SteamStore.Repositories.Interfaces;
     using SteamStore.Services.Interfaces;
     using SteamStore.Utils;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection.PortableExecutable;
-    using System.Threading.Tasks;
-    using Windows.Security.Authentication.OnlineId;
 
     public class InventoryService : IInventoryService
     {
@@ -69,7 +63,7 @@ namespace SteamStore.Services
         public async Task<List<Item>> GetAllItemsFromInventoryAsync()
         {
             // Validate the user.
-            this.inventoryValidator.ValidateUser(user);
+            this.inventoryValidator.ValidateUser(this.user);
 
             int userId = this.user.UserId;
             var userInventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
@@ -104,8 +98,8 @@ namespace SteamStore.Services
         public async Task RemoveItemFromInventoryAsync(Game game, Item item)
         {
             // Validate the inventory operation.
-            this.inventoryValidator.ValidateInventoryOperation(game, item, user);
-            await this.inventoryRepository.RemoveItemFromInventoryAsync(game, item, user);
+            this.inventoryValidator.ValidateInventoryOperation(game, item, this.user);
+            await this.inventoryRepository.RemoveItemFromInventoryAsync(game, item, this.user);
         }
 
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
@@ -114,6 +108,7 @@ namespace SteamStore.Services
             {
                 throw new ArgumentException("UserId must be positive.", nameof(userId));
             }
+
             var userInventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
             var filteredItems = userInventoryResponse.Items
                 .Select(item => new Item
@@ -131,7 +126,7 @@ namespace SteamStore.Services
             return filteredItems;
         }
 
-        public User GetAllUsersAsync()
+        public User GetAllUsers()
         {
             return this.user;
         }
@@ -144,8 +139,15 @@ namespace SteamStore.Services
             // set isListed to 1
             item.IsListed = true;
             var allItems = await this.itemServiceProxy.GetItemsAsync();
-            var foundItem = allItems.FirstOrDefault(i => i.ItemId == item.ItemId);
-            var foundItemGameId = allItems.FirstOrDefault(i => i.ItemId == item.ItemId).GameId;
+            var foundItem = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId);
+
+            if (foundItem == null)
+            {
+                Console.WriteLine($"Item with ID {item.ItemId} not found.", nameof(item));
+                return false;
+            }
+
+            var foundItemGameId = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId).GameId;
 
             // Create a request object for the item.
             var itemFromInventoryRequest = new UpdateItemRequest
@@ -163,12 +165,13 @@ namespace SteamStore.Services
             {
                 await this.itemServiceProxy.UpdateItemAsync(item.ItemId, itemFromInventoryRequest);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 // Handle exceptions (e.g., log them).
-                Console.WriteLine($"Error selling item: {ex.Message}");
+                Console.WriteLine($"Error selling item: {exception.Message}");
                 return false;
             }
+
             // return await this.inventoryRepository.SellItemAsync(item);
             return true;
         }
@@ -189,7 +192,7 @@ namespace SteamStore.Services
             if (selectedGame != null && selectedGame.GameTitle != "All Games")
             {
                 filtered = filtered.Where(item =>
-                    string.Equals(item.GameName, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(item.Game.GameTitle, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
             }
 
             // Filter by search text if provided
@@ -206,10 +209,7 @@ namespace SteamStore.Services
             return filtered.ToList();
         }
 
-        // Fix for CS1061: Replace the incorrect usage of 'GameId' with 'GameName' since 'InventoryItemResponse' does not have a 'GameId' property.
-        // Update the relevant code block in the `GetAvailableGames` method.
-
-        public async Task<List<Game>> GetAvailableGames(List<Item> items)
+        public async Task<List<Game>> GetAvailableGamesAsync(List<Item> items)
         {
             if (items == null)
             {
@@ -237,35 +237,32 @@ namespace SteamStore.Services
             var allGames = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
             foreach (var gameName in gameNames)
             {
-                var foundGame = allGames.FirstOrDefault(g => g.Name == gameName);
+                var foundGame = allGames.FirstOrDefault(currentGame => currentGame.Name == gameName);
                 if (foundGame != null)
                 {
-                    games.Add(GameMapper.MapToGame(foundGame)); 
+                    games.Add(GameMapper.MapToGame(foundGame));
                 }
             }
+
             return games;
         }
 
-        /// <inheritdoc/>
         public async Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText)
         {
             var allItems = await this.GetUserInventoryAsync(userId);
             return this.FilterInventoryItems(allItems, selectedGame, searchText);
         }
 
-        /// <summary>
-        /// Provides a custom comparer for <see cref="Game"/> objects based on the GameId.
-        /// </summary>
         private class GameComparer : IEqualityComparer<Game>
         {
-            public bool Equals(Game x, Game y)
+            public bool Equals(Game firstGame, Game secondGame)
             {
-                if (x == null || y == null)
+                if (firstGame == null || secondGame == null)
                 {
                     return false;
                 }
 
-                return x.GameId == y.GameId;
+                return firstGame.GameId == secondGame.GameId;
             }
 
             public int GetHashCode(Game objectTGetHashCodeFrom)
@@ -279,5 +276,4 @@ namespace SteamStore.Services
             }
         }
     }
-
 }
