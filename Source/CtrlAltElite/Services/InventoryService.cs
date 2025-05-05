@@ -246,7 +246,6 @@ namespace SteamStore.Services
             return games;
         }
 
-        /// <inheritdoc/>
         public async Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText)
         {
             var allItems = await this.GetUserInventoryAsync(userId);

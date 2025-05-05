@@ -1,6 +1,7 @@
 namespace SteamStore
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -69,20 +70,21 @@ namespace SteamStore
 
             var userService = new UserService(userServiceProxy);
             this.userService = userService;
-            var trade = new ItemTrade(
-                sourceUser: loggedInUser,
-                destinationUser: new User { UserId = 2 }, // the user you want to trade with
-                gameOfTrade: new Game { GameId = 1 }, // the game the items belong to
-                description: "Test trade from user 1 to user 2"
-            );
-            trade.SetTradeId(1); // Set the trade ID to 1 for testing purposes
+            var trade = new ItemTrade
+            {
+                TradeId = 1,
+                SourceUser = loggedInUser,
+                DestinationUser = new User { UserId = 2 },
+                GameOfTrade = new Game { GameId = 1 },
+                TradeDescription = "Test trade from user 1 to user 2",
+            };
 
             // Add source user items
-            trade.AddSourceUserItem(new Item { ItemId = 1 });
-            trade.AddSourceUserItem(new Item { ItemId = 2 });
+            trade.SourceUserItems.Add(new Item { ItemId = 1 });
+            trade.SourceUserItems.Add(new Item { ItemId = 2 });
 
             // Add destination user items
-            trade.AddDestinationUserItem(new Item { ItemId = 3 });
+            trade.DestinationUserItems.Add(new Item { ItemId = 3 });
             this.marketplaceService = new MarketplaceService
             {
                 userInventoryServiceProxy = userInventoryServiceProxy,

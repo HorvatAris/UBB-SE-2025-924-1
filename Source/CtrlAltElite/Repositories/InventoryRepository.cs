@@ -90,11 +90,6 @@ namespace CtrlAltElite.Repositories
             return items;
         }
 
-        /// <summary>
-        /// Get the inventory of a given User by it's userID Asynchronously.
-        /// </summary>
-        /// <param name="userId">The id of the user whose inventory items are to be retrieved.</param>
-        /// <returns>A <see cref="Task"/> asynchronously resolving to a list of <see cref="Item"/> objects associated with the specified user.</returns>
         // done
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
@@ -189,13 +184,6 @@ namespace CtrlAltElite.Repositories
             return items;
         }
 
-        /// <summary>
-        /// Retrieves all inventory items associated with a specific user across all games.
-        /// </summary>
-        /// <param name="user">The user whose inventory is to be retrieved.</param>
-        /// <returns>A list of all <see cref="Item"/> objects belonging to the specified user.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if the <paramref name="user"/> is null.</exception>.
-        /// nu o folosim
         public async Task<List<Item>> GetAllItemsFromInventoryAsync(User user)
         {
             if (user == null)
@@ -270,16 +258,6 @@ namespace CtrlAltElite.Repositories
             return items;
         }
 
-        /// <summary>
-        /// Adds an item to a specific game's inventory for a user.
-        /// </summary>
-        /// <param name="game">The game to which the item is to be added.</param>
-        /// <param name="item">The item to be added.</param>
-        /// <param name="user">The user who is adding the item to their inventory.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="game"/>, <paramref name="item"/>, or <paramref name="user"/> is null.
-        /// </exception>
-        /// <returns>AddInventoryItemAsync returns <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task AddItemToInventoryAsync(Game game, Item item, User user)
         {
             ArgumentNullException.ThrowIfNull(game);
@@ -309,16 +287,6 @@ namespace CtrlAltElite.Repositories
             }
         }
 
-        /// <summary>
-        /// Removes an item from a specific game's inventory for a user.
-        /// </summary>
-        /// <param name="game">The game from which the item is to be removed.</param>
-        /// <param name="item">The item to be removed.</param>
-        /// <param name="user">The user whose inventory the item is being removed from.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="game"/>, <paramref name="item"/>, or <paramref name="user"/> is null.
-        /// </exception>
-        /// <returns>RemoveInventoryItemAsync returns <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task RemoveItemFromInventoryAsync(Game game, Item item, User user)
         {
             ArgumentNullException.ThrowIfNull(game);
@@ -404,7 +372,6 @@ namespace CtrlAltElite.Repositories
             }
         }
 
-        /// <inheritdoc/>
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = new List<User>();
