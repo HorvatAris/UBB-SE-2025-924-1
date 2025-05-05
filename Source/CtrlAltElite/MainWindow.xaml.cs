@@ -1,23 +1,19 @@
-using System.Net.Http;
-using CtrlAltElite.ServiceProxies;
-using Refit;
-
 namespace SteamStore
 {
     using System;
     using System.Collections.Generic;
-    using System.Security.Cryptography.X509Certificates;
+    using System.Diagnostics;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using CtrlAltElite.Models;
     using CtrlAltElite.Pages;
-    using CtrlAltElite.Repositories;
+    using CtrlAltElite.ServiceProxies;
     using CtrlAltElite.Services;
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.ApiContract.Repositories;
+    using Refit;
     using SteamStore.Pages;
-    using SteamStore.Repositories;
     using SteamStore.Services;
 
     public sealed partial class MainWindow : Window
@@ -52,12 +48,12 @@ namespace SteamStore
 
             var handler = new HttpClientHandler
             {
-                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
             };
 
             var httpClient = new HttpClient(handler)
             {
-                BaseAddress = new Uri("https://localhost:7241")
+                BaseAddress = new Uri("https://localhost:7241"),
             };
 
             var pointShopServiceProxy = RestService.For<IPointShopItemServiceProxy>(httpClient);
@@ -74,40 +70,44 @@ namespace SteamStore
 
             var userService = new UserService(userServiceProxy);
             this.userService = userService;
-            var trade = new ItemTrade(
-                sourceUser: loggedInUser,
-                destinationUser: new User { UserId = 2 }, // the user you want to trade with
-                gameOfTrade: new Game { GameId = 1 },     // the game the items belong to
-                description: "Test trade from user 1 to user 2"
-            );
-            trade.SetTradeId(1); // Set the trade ID to 1 for testing purposes
+            var trade = new ItemTrade
+            {
+                TradeId = 1,
+                SourceUser = loggedInUser,
+                DestinationUser = new User { UserId = 2 },
+                GameOfTrade = new Game { GameId = 1 },
+                TradeDescription = "Test trade from user 1 to user 2",
+            };
 
             // Add source user items
-            trade.AddSourceUserItem(new Item { ItemId = 1 });
-            trade.AddSourceUserItem(new Item { ItemId = 2 });
+            trade.SourceUserItems.Add(new Item { ItemId = 1 });
+            trade.SourceUserItems.Add(new Item { ItemId = 2 });
 
             // Add destination user items
-            trade.AddDestinationUserItem(new Item { ItemId = 3 });
-
-            var marketplaceRepository = new MarketplaceRepository(dataLink, loggedInUser);
-            var marketplaceService = new MarketplaceService(marketplaceRepository);
-            this.marketplaceService = marketplaceService;
-
+            trade.DestinationUserItems.Add(new Item { ItemId = 3 });
+            this.marketplaceService = new MarketplaceService
+            {
+                userInventoryServiceProxy = userInventoryServiceProxy,
+                gameServiceProxy = gameServiceProxy,
+                userServiceProxy = userServiceProxy,
+                itemServiceProxy = itemServiceProxy,
+                User = loggedInUser,
+            };
 
             //var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
+
             //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
             var userGameServiceProxy = RestService.For<IUserGameServiceProxy>(httpClient);
 
             pointShopService = new PointShopService(
-                    pointShopServiceProxy,
-                    userPointShopInventoryServiceProxy,
-                    userServiceProxy,
-                    loggedInUser);
+                pointShopServiceProxy,
+                userPointShopInventoryServiceProxy,
+                userServiceProxy,
+                loggedInUser);
 
 
             this.inventoryService = new InventoryService(userInventoryServiceProxy, itemServiceProxy, gameServiceProxy, user);
-
 
             gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
@@ -116,12 +116,7 @@ namespace SteamStore
             userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
 
             developerService = new DeveloperService
-            {
-                TagServiceProxy = tagServiceProxy,
-                UserGameRepository = userGameRepository,
-                User = loggedInUser,
-                GameServiceProxy = gameServiceProxy,
-            };
+            (gameServiceProxy, tagServiceProxy, userGameServiceProxy, userServiceProxy, itemServiceProxy, itemTradeDetailServiceProxy, loggedInUser);
 
             if (ContentFrame == null)
             {
@@ -136,11 +131,11 @@ namespace SteamStore
                     //await tradeService.UpdateItemTradeAsync(trade);
                    // await tradeService.GetUserInventoryAsync(1);
                    await tradeService.GetUserInventoryAsync(2);
-                   System.Diagnostics.Debug.WriteLine("Trade created successfully.");
+                   Debug.WriteLine("Trade created successfully.");
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Error creating trade: {ex.Message}");
+                    Debug.WriteLine($"Error creating trade: {ex.Message}");
                 }
             });
             ContentFrame.Content = new HomePage(gameService, cartService, userGameService);
@@ -177,7 +172,7 @@ namespace SteamStore
                         ContentFrame.Content = new InventoryPage(inventoryService);
                         break;
                     case "marketplace":
-                        ContentFrame.Content = new MarketplacePage(marketplaceService);
+                        ContentFrame.Content = new MarketplacePage(this.marketplaceService);
                         break;
                     case "trading":
                         ContentFrame.Content = new TradingPage(tradeService,userService,gameService);
