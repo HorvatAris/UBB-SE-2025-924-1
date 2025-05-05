@@ -314,7 +314,7 @@ namespace CtrlAltElite.Services
         public async Task<List<ItemTrade>> GetActiveTradesAsync(int userId)
         {
             var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
-            
+
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
                 .Where(trade => (trade.SourceUserId == userId || trade.DestinationUserId == userId)
