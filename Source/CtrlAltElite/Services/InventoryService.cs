@@ -163,10 +163,10 @@ namespace SteamStore.Services
             {
                 await this.itemServiceProxy.UpdateItemAsync(item.ItemId, itemFromInventoryRequest);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 // Handle exceptions (e.g., log them).
-                Console.WriteLine($"Error selling item: {ex.Message}");
+                Console.WriteLine($"Error selling item: {exception.Message}");
                 return false;
             }
             // return await this.inventoryRepository.SellItemAsync(item);
@@ -246,7 +246,6 @@ namespace SteamStore.Services
             return games;
         }
 
-        /// <inheritdoc/>
         public async Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText)
         {
             var allItems = await this.GetUserInventoryAsync(userId);
@@ -255,14 +254,14 @@ namespace SteamStore.Services
 
         private class GameComparer : IEqualityComparer<Game>
         {
-            public bool Equals(Game x, Game y)
+            public bool Equals(Game firstGame, Game secondGame)
             {
-                if (x == null || y == null)
+                if (firstGame == null || secondGame == null)
                 {
                     return false;
                 }
 
-                return x.GameId == y.GameId;
+                return firstGame.GameId == secondGame.GameId;
             }
 
             public int GetHashCode(Game objectTGetHashCodeFrom)

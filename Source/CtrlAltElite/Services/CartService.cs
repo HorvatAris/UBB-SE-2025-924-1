@@ -39,7 +39,7 @@ public class CartService : ICartService
             var userGamesResponses = response.UserGames; // Access the actual list her
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
-        .Select(g => g.GameId)
+        .Select(game => game.GameId)
         .ToList();
             if (gameIds.Count == 0)
             {
@@ -56,9 +56,9 @@ public class CartService : ICartService
             }
             return games;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
             return new List<Game>();
         }
 
@@ -96,7 +96,7 @@ public class CartService : ICartService
             return purchasedGames;
 
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
             //System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
             return new List<Game>();
@@ -115,9 +115,9 @@ public class CartService : ICartService
         .ToList();
             return gameIds;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {exception.Message}");
             return new List<int>();
         }
     }
@@ -138,9 +138,9 @@ public class CartService : ICartService
 
             await this.userGameServiceProxy.RemoveFromCartAsync(request);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error removing game from cart: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error removing game from cart: {exception.Message}");
         }
     }
 

@@ -6,8 +6,9 @@
     xmlns:local="using:SteamStore.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:utils="using:SteamStore.Utils"
-    mc:Ignorable="d">
+    xmlns:utils="using:SteamStore.Utils" 
+    mc:Ignorable="d"
+    Loaded="DeveloperModePage_Loaded">
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
@@ -18,17 +19,18 @@
 
         <!-- Page Title -->
         <TextBlock x:Name="PageTitle"
-                 Text="My Games" 
                  FontSize="28" 
                  FontWeight="Bold" 
-                 Margin="0,0,0,20"/>
+                 Margin="0,0,0,20"
+                   Text="{Binding PageTitle}"/>
 
         <!-- Developer Games List -->
         <ListView ItemsSource="{Binding DeveloperGames}"
                  x:Name="DeveloperGamesList"
                  Grid.Row="1" 
                  Margin="0,0,0,20"
-                 Visibility="Visible">
+                  IsEnabled="{Binding IsDeveloper}"
+                  Visibility="Visible">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,10" Width="800">
@@ -76,7 +78,8 @@
                 x:Name="ReviewGamesList"
                  Grid.Row="1" 
                  Margin="0,0,0,20"
-                 Visibility="Collapsed">
+                  IsEnabled="{Binding IsDeveloper}"
+                  Visibility="Collapsed">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,10" Width="800">
@@ -119,13 +122,19 @@
                     Spacing="20">
             <Button x:Name="MyGamesButton"
                     Content="My Games" 
-                    Width="150"/>
+                    Width="150"
+                    Click="MyGamesButton_Click"
+                    IsEnabled="{Binding IsDeveloper}"/>
             <Button x:Name="ReviewGamesButton"
                     Content="Review Games" 
-                    Width="150"/>
+                    Width="150"
+                    Click="ReviewGamesButton_Click"
+                    IsEnabled="{Binding IsDeveloper}"/>
             <Button x:Name="AddGameButton"
                     Content="Add Game" 
-                    Width="150"/>
+                    Width="150"
+                    Click="AddGameButton_Click"
+                    IsEnabled="{Binding IsDeveloper}"/>
         </StackPanel>
 
         <!-- Add Game Dialog -->
@@ -137,45 +146,55 @@
                 <StackPanel Spacing="10">
                     <TextBox x:Name="AddGameId"
                              Header="Game ID" 
-                             PlaceholderText="Enter game ID"/>
+                             PlaceholderText="Enter game ID"
+                             Text="{Binding AddGameId, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGameName"
                              Header="Game Name" 
-                             PlaceholderText="Enter game name"/>
+                             PlaceholderText="Enter game name"
+                             Text="{Binding AddGameName, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGameDescription"
                              Header="Description" 
                              PlaceholderText="Enter game description" 
                              AcceptsReturn="True" 
                              TextWrapping="Wrap" 
-                             Height="100"/>
+                             Height="100"
+                             Text="{Binding AddGameDescription, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGamePrice"
                              Header="Price" 
-                             PlaceholderText="Enter price"/>
+                             PlaceholderText="Enter price"
+                             Text="{Binding AddGamePrice, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGameImageUrl"
                              Header="Image URL" 
-                             PlaceholderText="Enter image URL"/>
+                             PlaceholderText="Enter image URL"
+                             Text="{Binding AddGameImageUrl, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGameplayUrl"
                              Header="Gameplay URL" 
-                             PlaceholderText="Enter gameplay video URL"/>
+                             PlaceholderText="Enter gameplay video URL"
+                             Text="{Binding AddGameplayUrl, Mode=TwoWay}"/>
                     <TextBox x:Name="AddTrailerUrl"
                              Header="Trailer URL" 
-                             PlaceholderText="Enter trailer video URL"/>
+                             PlaceholderText="Enter trailer video URL"
+                             Text="{Binding AddTrailerUrl, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGameMinimumRequirement"
                              Header="Minimum Requirements" 
                              PlaceholderText="Enter minimum requirements" 
                              AcceptsReturn="True" 
                              TextWrapping="Wrap" 
-                             Height="100"/>
+                             Height="100"
+                             Text="{Binding AddGameMinimumRequirement, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGameRecommendedRequirement"
                              Header="Recommended Requirements" 
                              PlaceholderText="Enter recommended requirements" 
                              AcceptsReturn="True" 
                              TextWrapping="Wrap" 
-                             Height="100"/>
+                             Height="100"
+                             Text="{Binding AddGameRecommendedRequirement, Mode=TwoWay}"/>
                     <TextBox x:Name="AddGameDiscount"
                              Header="Discount" 
-                             PlaceholderText="Enter discount (0-100)"/>
-                    
-                    <!-- Tag Selection 
+                             PlaceholderText="Enter discount (0-100)"
+                             Text="{Binding AddGameDiscount, Mode=TwoWay}"/>
+
+                    <!-- Tag Selection -->
                     <TextBlock Text="Select Tags" 
                              FontSize="16" 
                              FontWeight="SemiBold" 
@@ -189,7 +208,7 @@
                                 <TextBlock Text="{Binding Tag_name}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                    </ListView> -->
+                    </ListView>
                 </StackPanel>
             </ScrollViewer>
         </ContentDialog>
@@ -203,44 +222,55 @@
                 <StackPanel Spacing="10">
                     <TextBox x:Name="EditGameId"
                              Header="Game ID" 
-                             PlaceholderText="Enter game ID"/>
+                             PlaceholderText="Enter game ID"
+                             IsEnabled="False"
+                             Text="{Binding EditGameId, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGameName"
                              Header="Game Name" 
-                             PlaceholderText="Enter game name"/>
+                             PlaceholderText="Enter game name"
+                             Text="{Binding EditGameName, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGameDescription"
                              Header="Description" 
                              PlaceholderText="Enter game description" 
                              AcceptsReturn="True" 
                              TextWrapping="Wrap" 
-                             Height="100"/>
+                             Height="100"
+                             Text="{Binding EditGameDescription, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGamePrice"
                              Header="Price" 
-                             PlaceholderText="Enter price"/>
+                             PlaceholderText="Enter price"
+                             Text="{Binding EditGamePrice, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGameImageUrl"
                              Header="Image URL" 
-                             PlaceholderText="Enter image URL"/>
+                             PlaceholderText="Enter image URL"
+                             Text="{Binding EditGameImageUrl, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGameplayUrl"
                              Header="Gameplay URL" 
-                             PlaceholderText="Enter gameplay video URL"/>
+                             PlaceholderText="Enter gameplay video URL"
+                             Text="{Binding EditGameplayUrl, Mode=TwoWay}"/>
                     <TextBox x:Name="EditTrailerUrl"
                              Header="Trailer URL" 
-                             PlaceholderText="Enter trailer video URL"/>
+                             PlaceholderText="Enter trailer video URL"
+                             Text="{Binding EditTrailerUrl, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGameMinReq"
                              Header="Minimum Requirements" 
                              PlaceholderText="Enter minimum requirements" 
                              AcceptsReturn="True" 
                              TextWrapping="Wrap" 
-                             Height="100"/>
+                             Height="100"
+                             Text="{Binding EditGameMinReq, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGameRecReq"
                              Header="Recommended Requirements" 
                              PlaceholderText="Enter recommended requirements" 
                              AcceptsReturn="True" 
                              TextWrapping="Wrap" 
-                             Height="100"/>
+                             Height="100"
+                             Text="{Binding EditGameRecReq, Mode=TwoWay}"/>
                     <TextBox x:Name="EditGameDiscount"
                              Header="Discount" 
-                             PlaceholderText="Enter discount (0-100)"/>
-                    
+                             PlaceholderText="Enter discount (0-100)"
+                             Text="{Binding EditGameDiscount, Mode=TwoWay}"/>
+
                     <!-- Tag Selection -->
                     <TextBlock Text="Select Tags" 
                              FontSize="16" 
@@ -281,7 +311,8 @@
                          TextWrapping="Wrap"
                          Foreground="Red"/>
                 <TextBlock x:Name="OwnerCountText"
-                         TextWrapping="Wrap"/>
+                         TextWrapping="Wrap"
+                           Text="{Binding OwnerCountText, Mode=TwoWay}"/>
                 <TextBlock Text="Are you sure you want to proceed with deletion?" 
                          TextWrapping="Wrap"
                          FontWeight="SemiBold"/>
@@ -296,7 +327,8 @@
             <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="RejectionMessageText"
                           TextWrapping="Wrap"
-                          FontSize="14"/>
+                          FontSize="14"
+                           Text="{Binding RejectionMessage, Mode=TwoWay}"/>
             </ScrollViewer>
         </ContentDialog>
 
@@ -312,7 +344,8 @@
                        Height="100"
                        AcceptsReturn="True"
                        TextWrapping="Wrap"
-                       PlaceholderText="Explain why this game is being rejected..."/>
+                       PlaceholderText="Explain why this game is being rejected..."
+                        Text="{Binding RejectReason, Mode=TwoWay}"/>
             </StackPanel>
         </ContentDialog>
     </Grid>
