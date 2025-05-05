@@ -17,6 +17,7 @@ namespace SteamStore
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Refit;
+    using SteamHub.ApiContract.Models.User;
     using SteamStore.Pages;
     using SteamStore.Services;
 
@@ -42,15 +43,51 @@ namespace SteamStore
 
             // initiate the user
             // this will need to be changed when we conenct with a database query to get the user
-            User loggedInUser = new User
+
+            var users = new List<User>
             {
-                UserId = 7,
-                Email = "noah.smith@example.com",
-                PointsBalance = 38,
-                UserName = "NoahS",
-                UserRole = User.Role.User,
-                WalletBalance = 33,
+                new User
+                {
+                    UserId = 3,
+                    Email = "john.chen@thatgamecompany.com",
+                    PointsBalance = 92,
+                    UserName = "JohnC",
+                    UserRole = User.Role.Developer,
+                    WalletBalance = 390,
+                },
+
+                new User
+                {
+                    UserId = 4,
+                    Email = "alice.johnson@example.com",
+                    PointsBalance = 45,
+                    UserName = "AliceJ",
+                    UserRole = User.Role.User,
+                    WalletBalance = 78,
+                },
+
+                new User
+                {
+                    UserId = 5,
+                    Email = "liam.garcia@example.com",
+                    PointsBalance = 67,
+                    UserName = "LiamG",
+                    UserRole = User.Role.User,
+                    WalletBalance = 55,
+                },
+
+                new User
+                {
+                    UserId = 7,
+                    Email = "noah.smith@example.com",
+                    PointsBalance = 38,
+                    UserName = "NoahS",
+                    UserRole = User.Role.User,
+                    WalletBalance = 33,
+                },
             };
+
+            User loggedInUser = users[1];
 
             // Assign to the class field so it can be used in navigation
             this.user = loggedInUser;
