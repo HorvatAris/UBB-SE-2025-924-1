@@ -39,12 +39,8 @@ namespace CtrlAltElite.ViewModels
             // this.LoadUsersAsync().GetAwaiter().GetResult();
         }
 
-        /// <inheritdoc/>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Gets the collection of inventory items.
-        /// </summary>
         public ObservableCollection<Item> InventoryItems
         {
             get => inventoryItems;
@@ -58,9 +54,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets the collection of available games.
-        /// </summary>
         public ObservableCollection<Game> AvailableGames
         {
             get => availableGames;
@@ -74,9 +67,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets the collection of available users.
-        /// </summary>
         public ObservableCollection<User> AvailableUsers
         {
             get => availableUsers;
@@ -90,9 +80,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets or sets the selected game filter.
-        /// </summary>
         public Game SelectedGame
         {
             get => selectedGame;
@@ -109,9 +96,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets or sets the selected user.
-        /// </summary>
         public User SelectedUser
         {
             get => selectedUser;
@@ -125,15 +109,12 @@ namespace CtrlAltElite.ViewModels
                     // When a user is selected, load their inventory.
                     if (selectedUser != null)
                     {
-                        _ = LoadInventoryItemsAsync();
+                        _ = this.LoadInventoryItemsAsync();
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// Gets or sets the search text used to filter inventory items.
-        /// </summary>
         public string SearchText
         {
             get => searchText;
@@ -155,9 +136,6 @@ namespace CtrlAltElite.ViewModels
             await UpdateInventoryItemsAsync();
         }
 
-        /// <summary>
-        /// Gets or sets the currently selected inventory item.
-        /// </summary>
         public Item SelectedItem
         {
             get => selectedItem;
@@ -171,19 +149,11 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Initializes the Users and their inventories.
-        /// </summary>
-        /// <returns>Return a Task for asynchronous operations.</returns>
         public async Task InitializeAsync()
         {
             await LoadUsersAsync();
         }
 
-        /// <summary>
-        /// Asynchronously loads the inventory items and available games for the selected user.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task LoadInventoryItemsAsync()
         {
             if (SelectedUser == null)
@@ -229,30 +199,16 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Sells an item asynchronously.
-        /// </summary>
-        /// <param name="selectedItem">The item who will be listed as for sale.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task<bool> SellItemAsync(Item selectedItem)
         {
             return await inventoryService.SellItemAsync(selectedItem);
         }
 
-        /// <summary>
-        /// Notifies listeners that a property value has changed.
-        /// </summary>
-        /// <param name="propertyName">
-        /// Name of the property that changed.
-        /// </param>
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        /// <summary>
-        /// Updates the filtered inventory items based on the current game filter and search text.
-        /// </summary>
         private async Task UpdateInventoryItemsAsync()
         {
             if (SelectedUser == null)
@@ -286,9 +242,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Asynchronously loads the available users from the service.
-        /// </summary>
         private async Task LoadUsersAsync()
         {
             try

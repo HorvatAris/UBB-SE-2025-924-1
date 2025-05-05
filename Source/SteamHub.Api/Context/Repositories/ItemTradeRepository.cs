@@ -69,8 +69,8 @@
 
         public async Task<ItemTradeResponse?> GetItemTradeByIdAsync(int id)
         {
-            var trade = await context.ItemTrades
-                .Where(t => t.TradeId == id)
+            var itemTrade = await context.ItemTrades
+                .Where(trade => trade.TradeId == id)
                 .Select(trade => new ItemTradeResponse
                 {
                     TradeId = trade.TradeId,
@@ -85,7 +85,7 @@
                 })
                 .SingleOrDefaultAsync();
 
-            return trade;
+            return itemTrade;
         }
 
         public async Task UpdateItemTradeAsync(int tradeId, UpdateItemTradeRequest request)
