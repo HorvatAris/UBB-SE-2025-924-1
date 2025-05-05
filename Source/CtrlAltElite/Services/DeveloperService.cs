@@ -119,6 +119,7 @@ public class DeveloperService : IDeveloperService
             RecommendedRequirements = reccommendedRequirement,
             Status = PendingState,
             Discount = discount,
+            PublisherIdentifier = this.User.UserId,
         };
         return game;
     }
@@ -365,7 +366,7 @@ public class DeveloperService : IDeveloperService
             await this.GameServiceProxy.GetGameByIdAsync(gameId);
             return true;
         }
-        catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        catch (ApiException exception) when (exception.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return false;
         }
