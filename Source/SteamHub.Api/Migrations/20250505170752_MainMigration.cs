@@ -393,22 +393,23 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "TagId", "TagName" },
                 values: new object[,]
                 {
-                    { 1, "Tag1" },
-                    { 2, "Rogue-Like" },
-                    { 3, "Third-Person Shooter" },
-                    { 4, "Multiplayer" },
-                    { 5, "Horror" },
-                    { 6, "First-Person Shooter" },
-                    { 7, "Action" },
-                    { 8, "Platformer" },
-                    { 9, "Adventure" },
-                    { 10, "Puzzle" },
-                    { 11, "Exploration" },
-                    { 12, "Sandbox" },
-                    { 13, "Survival" },
-                    { 14, "Arcade" },
-                    { 15, "RPG" },
-                    { 16, "Racing" }
+                    { 1, "Rogue-Like" },
+                    { 2, "Third-Person Shooter" },
+                    { 3, "Multiplayer" },
+                    { 4, "Horror" },
+                    { 5, "First-Person Shooter" },
+                    { 6, "Action" },
+                    { 7, "Platformer" },
+                    { 8, "Adventure" },
+                    { 9, "Puzzle" },
+                    { 10, "Exploration" },
+                    { 11, "Sandbox" },
+                    { 12, "Survival" },
+                    { 13, "Arcade" },
+                    { 14, "RPG" },
+                    { 15, "Racing" },
+                    { 16, "Action RPG" },
+                    { 17, "Battle Royale" }
                 });
 
             migrationBuilder.InsertData(
@@ -416,10 +417,14 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "UserId", "Email", "PointsBalance", "RoleId", "UserName", "WalletBalance" },
                 values: new object[,]
                 {
-                    { 1, "johndoe@gmail.com", 100f, 0, "John Doe", 56f },
-                    { 2, "michaeljohn@gmail.com", 45f, 0, "Michael John", 78f },
-                    { 3, "janedoe@gmail.com", 234f, 1, "Jane Doe", 21f },
-                    { 4, "mariaelena@gmail.com", 34f, 1, "Maria Elena", 455f }
+                    { 1, "gabe.newell@valvestudio.com", 100f, 1, "GabeN", 500f },
+                    { 2, "mathias.new@cdprojektred.com", 85f, 1, "MattN", 420f },
+                    { 3, "john.chen@thatgamecompany.com", 92f, 1, "JohnC", 390f },
+                    { 4, "alice.johnson@example.com", 45f, 0, "AliceJ", 78f },
+                    { 5, "liam.garcia@example.com", 67f, 0, "LiamG", 55f },
+                    { 6, "sophie.williams@example.com", 120f, 0, "SophieW", 95f },
+                    { 7, "noah.smith@example.com", 38f, 0, "NoahS", 33f },
+                    { 8, "emily.brown@example.com", 84f, 0, "EmilyB", 110f }
                 });
 
             migrationBuilder.InsertData(
@@ -427,12 +432,26 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "GameId", "Description", "Discount", "GameplayPath", "ImagePath", "MinimumRequirements", "Name", "NumberOfRecentPurchases", "Price", "PublisherUserId", "Rating", "RecommendedRequirements", "RejectMessage", "StatusId", "TrailerPath" },
                 values: new object[,]
                 {
-                    { 1, "An epic open-world RPG set in a mystical realm full of adventure, magic, and danger.", 0.15m, "https://www.youtube.com/watch?v=AKXiKBnzpBQ", "https://upload.wikimedia.org/wikipedia/en/5/5e/Elden_Ring_Box_art.jpg", "Intel i5-8400, 8GB RAM, GTX 1060", "Legends of Etheria", 1200, 49.99m, 3, 4.7m, "Intel i7-8700K, 16GB RAM, RTX 2070", "rejected game", 2, "https://www.youtube.com/watch?v=E3Huy2cdih0" },
-                    { 2, "A futuristic open-world RPG where you explore the neon-lit streets of Nightcity.", 0.25m, "https://www.youtube.com/watch?v=8X2kIfS6fb8", "https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg", "Intel i5-3570K, 8GB RAM, GTX 780", "Cyberstrike 2077", 950, 59.99m, 4, 4.2m, "Intel i7-4790, 12GB RAM, GTX 1060", null, 1, "https://www.youtube.com/watch?v=FknHjl7eQ6o" },
-                    { 3, "Immerse yourself in the Viking age in this brutal and breathtaking action RPG.", 0.10m, "https://www.youtube.com/watch?v=gncB1_e9n8E", "https://upload.wikimedia.org/wikipedia/en/6/6d/Assassin%27s_Creed_Valhalla_cover.jpg", "Intel i5-4460, 8GB RAM, GTX 960", "Shadow of Valhalla", 780, 44.99m, 3, 4.5m, "Intel i7-6700K, 16GB RAM, GTX 1080", null, 1, "https://www.youtube.com/watch?v=ssrNcwxALS4" },
-                    { 4, "An action-adventure game set in the fantasy land of Hyrule, where players control Link to rescue Princess Zelda.", 0.20m, "https://www.youtube.com/watch?v=0u8g1c2v4xE", "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg", "Intel Core i5, 8GB RAM, GTX 960", "The Legend of Zelda", 1500, 59.99m, 3, 4.8m, "Intel Core i7, 16GB RAM, GTX 1060", null, 1, "https://www.youtube.com/watch?v=0u8g1c2v4xE" },
-                    { 5, "A puzzle game where you change the rules to solve challenges.", 0.20m, "https://www.youtube.com/watch?v=dAiX8s-Eu7w", "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg", "2GB RAM, 1.0GHz Processor", "Baba is You", 1500, 14.99m, 1, 4.8m, "4GB RAM, 2.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=z3_yA4HTJfs" },
-                    { 6, "A farming simulation game where players can grow crops, raise animals, and build their farm.", 0.20m, "https://www.youtube.com/watch?v=dAiX8s-Eu7w", "https://is5-ssl.mzstatic.com/image/thumb/Purple123/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg", "2GB RAM, 1.0GHz Processor", "Stardew Valley", 1500, 14.99m, 2, 4.8m, "4GB RAM, 2.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=z3_yA4HTJfs" }
+                    { 1, "A rogue-like third-person shooter where players fight through hordes of monsters to escape an alien planet.", 0.20m, "https://www.youtube.com/watch?v=Cwk3qmD28CE", "https://upload.wikimedia.org/wikipedia/en/c/c1/Risk_of_Rain_2.jpg", "4GB RAM, 2.5GHz Processor, GTX 580", "Risk of Rain 2", 0, 24.99m, 1, 0m, "8GB RAM, 3.0GHz Processor, GTX 680", "Minimum requirements are too high", 2, "https://www.youtube.com/watch?v=pJ-aR--gScM" },
+                    { 2, "A multiplayer horror game where survivors must evade a killer.", 0.40m, "https://www.youtube.com/watch?v=3wUHKO0ieyY", "https://pbs.twimg.com/media/FOEzJiXX0AcxBTi.jpg", "8GB RAM, i3-4170, GTX 760", "Dead by Daylight", 0, 19.99m, 1, 0m, "16GB RAM, i5-6500, GTX 1060", null, 0, "https://www.youtube.com/watch?v=JGhIXLO3ul8" },
+                    { 3, "A tactical first-person shooter featuring team-based gameplay.", 0.50m, "https://www.youtube.com/watch?v=P22HqM9w500", "https://sm.ign.com/ign_nordic/cover/c/counter-st/counter-strike-2_jc2d.jpg", "8GB RAM, i5-2500K, GTX 660", "Counter-Strike 2", 0, 20.99m, 1, 0m, "16GB RAM, i7-7700K, GTX 1060", null, 1, "https://www.youtube.com/watch?v=c80dVYcL69E" },
+                    { 4, "A story-driven first-person shooter that revolutionized the genre.", 0.60m, "https://www.youtube.com/watch?v=jElU1mD8JnI", "https://media.moddb.com/images/mods/1/47/46951/d1jhx20-dc797b78-5feb-4005-b206-.1.jpg", "512MB RAM, 1.7GHz Processor, DirectX 8 GPU", "Half-Life 2", 0, 9.99m, 1, 0m, "1GB RAM, 3.0GHz Processor, DirectX 9 GPU", null, 1, "https://www.youtube.com/watch?v=UKA7JkV51Jw" },
+                    { 5, "A classic platformer adventure with iconic characters and worlds.", 0.70m, "https://www.youtube.com/watch?v=rLl9XBg7wSs", "https://play-lh.googleusercontent.com/3ZKfMRp_QrdN-LzsZTbXdXBH-LS1iykSg9ikNq_8T2ppc92ltNbFxS-tORxw2-6kGA", "N/A", "Mario", 0, 59.99m, 1, 0m, "N/A", null, 1, "https://www.youtube.com/watch?v=TnGl01FkMMo" },
+                    { 6, "An epic adventure game where heroes save the kingdom of Hyrule.", 0.30m, "https://www.youtube.com/watch?v=wW7jkBJ_yK0", "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg", "N/A", "The Legend of Zelda", 0, 59.99m, 1, 0m, "N/A", null, 1, "https://www.youtube.com/watch?v=_X2h3SF7gd4" },
+                    { 7, "A puzzle game where you change the rules to solve challenges.", 0.20m, "https://www.youtube.com/watch?v=dAiX8s-Eu7w", "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg", "2GB RAM, 1.0GHz Processor", "Baba Is You", 0, 14.99m, 2, 0m, "4GB RAM, 2.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=z3_yA4HTJfs" },
+                    { 8, "A mind-bending puzzle-platformer with a dark sense of humor.", 0.10m, "https://www.youtube.com/watch?v=ts-j0nFf2e0", "https://cdn2.steamgriddb.com/icon_thumb/0994c8d1d6bc62cc56e9112d2303266b.png", "2GB RAM, 1.7GHz Processor, DirectX 9 GPU", "Portal 2", 0, 9.99m, 2, 0m, "4GB RAM, 3.0GHz Processor, GTX 760", null, 0, "https://www.youtube.com/watch?v=tax4e4hBBZc" },
+                    { 9, "An exploration-based game where you unravel cosmic mysteries.", 0.15m, "https://www.youtube.com/watch?v=huL_TawYrMs", "https://images.nintendolife.com/62a79995ed766/outer-wilds-echoes-of-the-eye-cover.cover_large.jpg", "6GB RAM, i5-2300, GTX 560", "Outer Wilds", 0, 24.99m, 2, 0m, "8GB RAM, i7-6700, GTX 970", null, 0, "https://www.youtube.com/watch?v=d9u6KYVq5kw" },
+                    { 10, "A rogue-like dungeon crawler where you defy the god of the dead.", 0.20m, "https://www.youtube.com/watch?v=4fVO0qUBe4E", "https://image.api.playstation.com/vulcan/ap/rnd/202104/0517/9AcM3vy5t77zPiJyKHwRfnNT.png", "4GB RAM, Dual Core 2.4GHz, Intel HD 5000", "Hades", 0, 24.99m, 2, 0m, "8GB RAM, Dual Core 3.0GHz, GTX 760", null, 0, "https://www.youtube.com/watch?v=91sW0DMkZzI" },
+                    { 11, "A deck-building rogue-like where strategy is key to survival.", 0.25m, "https://www.youtube.com/watch?v=JO3EIPtw-4I", "https://image.api.playstation.com/cdn/EP3717/CUSA15338_00/Sn5xbNutqfQdWYIjbeCIN0bwTJOV7UPG.png", "2GB RAM, 2.0GHz Processor", "Slay the Spire", 0, 19.99m, 2, 0m, "4GB RAM, 3.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=75qT5KOs-Ew" },
+                    { 12, "A platformer about climbing a mountain and facing inner demons.", 0.30m, "https://www.youtube.com/watch?v=FfRjHZWSYqY", "https://images.nintendolife.com/ef02c2e24c59e/celeste-cover.cover_large.jpg", "2GB RAM, 2.0GHz Processor", "Celeste", 0, 19.99m, 2, 0m, "4GB RAM, 2.4GHz Processor", null, 0, "https://www.youtube.com/watch?v=iofYDsP2vhQ" },
+                    { 13, "An action-adventure game set in a beautifully animated underground world.", 0.35m, "https://www.youtube.com/watch?v=UAO2urG23S4", "https://image.api.playstation.com/cdn/EP1805/CUSA13285_00/DmwPWlU0468FbsjrtI92FhQz1xBYMoog.png", "4GB RAM, 2.0GHz Processor", "Hollow Knight", 0, 14.99m, 2, 0m, "8GB RAM, 3.2GHz Processor", null, 0, "https://www.youtube.com/watch?v=UAO2urG23S4" },
+                    { 14, "A farming simulator RPG where you build a life in the countryside.", 0.20m, "https://www.youtube.com/watch?v=ot7uXNQskhs", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHWjybGuWhdyJqjmtziGvtHvCnQf23yY0R6g&s", "2GB RAM, 2.0GHz Processor", "Stardew Valley", 0, 14.99m, 2, 0m, "4GB RAM, 3.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=ot7uXNQskhs" },
+                    { 15, "A sandbox game that lets you build and explore infinite worlds.", 0.14m, "https://www.youtube.com/watch?v=ANgI2o_Jinc", "https://cdn2.steamgriddb.com/icon/f0b57183da91a7972b2b3c06b0db5542/32/512x512.png", "4GB RAM, Intel HD 4000", "Minecraft", 1420, 29.99m, 2, 4.8m, "8GB RAM, GTX 1060", null, 1, "https://www.youtube.com/watch?v=MmB9b5njVbA" },
+                    { 16, "A survival game in a dark and whimsical world filled with strange creatures.", 0.25m, "https://www.youtube.com/watch?v=htXgxyLpPMg", "https://image.api.playstation.com/cdn/EP2107/CUSA00327_00/i5qwqMWJj33IIr2m9TM29GQNnFCi4ZqI.png?w=440", "1.7GHz Processor, 1GB RAM", "Don't Starve", 0, 9.99m, 2, 0m, "2.0GHz Processor, 2GB RAM", null, 0, "https://www.youtube.com/watch?v=ochPlhMFk84" },
+                    { 17, "A classic run and gun game with hand-drawn animations and tough bosses.", 0.40m, "https://www.youtube.com/watch?v=DNIMD8ZpMSQ", "https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Cuphead_%28artwork%29.png/250px-Cuphead_%28artwork%29.png", "3GB RAM, Intel Core2 Duo E8400", "Cuphead", 0, 19.99m, 2, 0m, "4GB RAM, i3-3240", null, 0, "https://www.youtube.com/watch?v=NN-9SQXoi50" },
+                    { 18, "A black-and-white puzzle platformer with a haunting atmosphere.", 0.30m, "https://www.youtube.com/watch?v=dYeuLZY7fZk", "https://image.api.playstation.com/cdn/EP2054/CUSA01369_00/W45kellY9yrwSDpmQEL9tFqZQW7N4FEz.png?w=440", "512MB RAM, 1.5GHz Processor", "Limbo", 0, 9.99m, 2, 0m, "2GB RAM, 2.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=Y4HSyVXKYz8" },
+                    { 19, "A futuristic open-world RPG where you explore the neon-lit streets of Nightcity.", 0.25m, "https://www.youtube.com/watch?v=8X2kIfS6fb8", "https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg", "Intel i5-3570K, 8GB RAM, GTX 780", "Cyberstrike 2077", 950, 59.99m, 3, 4.2m, "Intel i7-4790, 12GB RAM, GTX 1060", null, 1, "https://www.youtube.com/watch?v=FknHjl7eQ6o" },
+                    { 20, "Immerse yourself in the Viking age in this brutal and breathtaking action RPG.", 0.10m, "https://www.youtube.com/watch?v=gncB1_e9n8E", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDtZKyDW9Jrnh8ix-Y38qG5fddbUgYEW7yxA&s", "Intel i5-4460, 8GB RAM, GTX 960", "Shadow of Valhalla", 780, 44.99m, 3, 4.5m, "Intel i7-6700K, 16GB RAM, GTX 1080", null, 1, "https://www.youtube.com/watch?v=ssrNcwxALS4" }
                 });
 
             migrationBuilder.InsertData(
@@ -440,13 +459,13 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "PointShopItemId", "UserId", "IsActive", "PurchaseDate" },
                 values: new object[,]
                 {
-                    { 1, 1, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 1, true, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, 1, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 2, true, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 6, 2, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 3, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 3, true, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 4, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 4, true, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, 4, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 5, true, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
+                    { 6, 5, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 6, false, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, 7, true, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -456,13 +475,43 @@ namespace SteamHub.Api.Migrations
                 {
                     { 1, 1 },
                     { 1, 2 },
-                    { 1, 3 },
+                    { 2, 3 },
                     { 2, 4 },
-                    { 2, 5 },
-                    { 2, 6 },
-                    { 3, 7 },
-                    { 3, 8 },
-                    { 3, 9 }
+                    { 3, 3 },
+                    { 3, 5 },
+                    { 3, 6 },
+                    { 4, 5 },
+                    { 4, 8 },
+                    { 5, 7 },
+                    { 5, 8 },
+                    { 6, 8 },
+                    { 6, 14 },
+                    { 7, 9 },
+                    { 8, 8 },
+                    { 8, 9 },
+                    { 9, 8 },
+                    { 9, 10 },
+                    { 10, 1 },
+                    { 10, 6 },
+                    { 11, 1 },
+                    { 11, 9 },
+                    { 12, 7 },
+                    { 13, 6 },
+                    { 13, 7 },
+                    { 14, 8 },
+                    { 14, 12 },
+                    { 15, 11 },
+                    { 15, 12 },
+                    { 16, 8 },
+                    { 16, 12 },
+                    { 17, 6 },
+                    { 17, 7 },
+                    { 18, 7 },
+                    { 18, 9 },
+                    { 19, 6 },
+                    { 19, 14 },
+                    { 19, 16 },
+                    { 20, 16 }
                 });
 
             migrationBuilder.InsertData(
@@ -470,9 +519,9 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "TradeId", "AcceptedByDestinationUser", "AcceptedBySourceUser", "DestinationUserId", "GameOfTradeId", "SourceUserId", "TradeDate", "TradeDescription", "TradeStatus" },
                 values: new object[,]
                 {
-                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: John Doe offers Game1 to Michael John", 0 },
-                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: Jane Doe offers Game2 to Maria Elena", 0 },
-                    { 3, true, true, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: John Doe offers Game1 to Michael John", 2 }
+                    { 1, false, false, 8, 6, 4, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: AliceJ offers Legend of Zelda to EmilyB", 0 },
+                    { 2, false, true, 4, 19, 5, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: LiamG offers Cyberstrike 2077 to AliceJ", 0 },
+                    { 3, true, true, 6, 20, 7, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 3: NoahS offers Shadow of Valhalla to SophieW", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -480,13 +529,20 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "ItemId", "CorrespondingGameId", "Description", "ImagePath", "IsListed", "ItemName", "Price" },
                 values: new object[,]
                 {
-                    { 1, 1, "A mystical blade imbued with ancient magic from Legends of Etheria.", "https://cdn.example.com/etheria/ethereal-blade.jpg", true, "Ethereal Blade", 29.99f },
-                    { 2, 1, "An enchanted armour that protects the bearer in Legends of Etheria.", "https://cdn.example.com/etheria/mystic-armour.jpg", true, "Mystic Armour", 39.99f },
-                    { 3, 2, "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/gauntlet.jpg", true, "Cybernetic Gauntlet", 34.99f },
-                    { 4, 2, "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.", "https://cdn.example.com/cyberstrike/neon-visor.jpg", true, "Neon Visor", 24.99f },
-                    { 5, 3, "A mighty axe for the warriors of Shadow of Valhalla.", "https://cdn.example.com/valhalla/viking-axe.jpg", true, "Viking Axe", 44.99f },
-                    { 6, 3, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://cdn.example.com/valhalla/shield.jpg", true, "Valhalla Shield", 34.99f },
-                    { 7, 1, "A mystical blade imbued with ancient magic from Legends of Etheria.", "https://cdn.example.com/etheria/ethereal-blade.jpg", false, "pilfered ethereal blade", 29.99f }
+                    { 1, 3, "A sleek and aggressive finish for your AK-47.", "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak47_cobra_light_large.7494bfdf4855fd4e6a2dbd983ed0a243c80ef830.png", false, "AK-47 | Redline Skin", 29.99f },
+                    { 2, 3, "Legendary pistol skin with a fiery design.", "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_aa_flames_light_large.dd140c3b359c16ccd8e918ca6ad0b2628151fe1c.png", false, "Desert Eagle | Blaze Skin", 34.99f },
+                    { 3, 4, "Iconic weapon that manipulates objects with physics.", "https://www.toyark.com/wp-content/uploads/2013/05/Half-Life-2-Gravity-Gun-007.jpg", false, "Gravity Gun Replica", 49.99f },
+                    { 4, 4, "Protective gloves from the HEV suit worn by Gordon Freeman.", "https://preview.redd.it/hl2-revision-update-the-grabbity-gloves-v0-ftz143vjmqcb1.jpg?width=640&crop=smart&auto=webp&s=9b3738a0f4bce98cc6a38b34e6ec319d03c05dd0", false, "HEV Suit Gloves", 19.99f },
+                    { 5, 5, "A soft collectible version of the iconic power-up.", "https://mario.wiki.gallery/images/thumb/7/7e/New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png/1200px-New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png", false, "Fire Flower", 14.99f },
+                    { 6, 5, "The classic red cap worn by Mario himself.", "https://static.wikia.nocookie.net/mario/images/c/cd/Mario_Cap.png/revision/latest?cb=20180310022043", false, "Mario Cap", 24.99f },
+                    { 7, 6, "Faithful replica of Link's legendary blade.", "https://upload.wikimedia.org/wikipedia/en/f/f9/Master_Sword_Lead.png", false, "Master Sword Replica", 69.99f },
+                    { 8, 6, "Sturdy shield bearing the crest of Hyrule.", "https://theswordstall.co.uk/cdn/shop/files/Legend-Of-Zelda-Deluxe-Hylian-Shield-Full-Metal-3.jpg?v=1723552799&width=750", false, "Hylian Shield", 59.99f },
+                    { 9, 15, "Miniature version of the famous mining tool.", "https://cdn.example.com/minecraft/diamond-pickaxe.jphttps://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Diamond_Pickaxe_JE1_BE1.png/revision/latest?cb=20190518122739g", false, "Diamond Pickaxe", 9.99f },
+                    { 10, 15, "Soft plush of the infamous explosive mob.", "https://feltright.com/cdn/shop/files/minecraft-creeper.jpg?v=1720033057&width=800", false, "Creeper Plush", 19.99f },
+                    { 11, 19, "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.", "https://static.wikia.nocookie.net/shop-heroes/images/4/4a/Gauntlets_Cybernetic_Gauntlets_Blueprint.png/revision/latest?cb=20200724020856", false, "Cybernetic Gauntlet", 34.99f },
+                    { 12, 19, "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.", "https://www.motocentral.co.uk/cdn/shop/files/Ruroc-EOX-Cyberstrike_-From-Moto-Central-_-Fast-Free-UK-Delivery-257043288_1024x.jpg?v=1744036882", false, "Neon Visor", 24.99f },
+                    { 13, 20, "A mighty axe for the warriors of Shadow of Valhalla.", "https://valhalla-vikings.co.uk/cdn/shop/products/il_fullxfull.3370240260_td4v.jpg?v=1679150085&width=1080", false, "Viking Axe", 44.99f },
+                    { 14, 20, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://www.vikingsroar.com/cdn/shop/products/d7f00df1f2c5a9059ec5dd319139da24.webp?v=1652049514", false, "Valhalla Shield", 34.99f }
                 });
 
             migrationBuilder.InsertData(
@@ -494,8 +550,9 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "StoreTransactionId", "Amount", "Date", "GameId", "UserId", "WithMoney" },
                 values: new object[,]
                 {
-                    { 1, 49.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 1, 1, true },
-                    { 2, 59.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 2, 2, false }
+                    { 1, 14.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 5, 4, true },
+                    { 2, 34.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 20, 7, false },
+                    { 3, 29.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 15, 4, true }
                 });
 
             migrationBuilder.InsertData(
@@ -503,11 +560,14 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "GameId", "UserId", "IsInCart", "IsInWishlist", "IsPurchased" },
                 values: new object[,]
                 {
-                    { 1, 1, false, true, false },
-                    { 2, 1, false, false, true },
-                    { 3, 1, true, false, false },
-                    { 1, 2, false, false, true },
-                    { 3, 2, true, false, false }
+                    { 3, 4, false, true, false },
+                    { 5, 4, false, false, true },
+                    { 6, 4, false, false, true },
+                    { 15, 4, false, false, true },
+                    { 6, 5, true, false, false },
+                    { 19, 5, false, false, true },
+                    { 20, 7, false, false, true },
+                    { 15, 8, true, false, false }
                 });
 
             migrationBuilder.InsertData(
@@ -515,8 +575,8 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "ItemId", "TradeId", "IsSourceUserItem" },
                 values: new object[,]
                 {
-                    { 1, 1, true },
-                    { 2, 2, false }
+                    { 7, 1, true },
+                    { 12, 2, false }
                 });
 
             migrationBuilder.InsertData(
@@ -524,15 +584,14 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "GameId", "ItemId", "UserId", "AcquiredDate", "IsActive" },
                 values: new object[,]
                 {
-                    { 1, 1, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 1, 2, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 2, 3, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 2, 4, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 3, 6, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 1, 7, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 3, 5, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 3, 6, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 1, 7, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
+                    { 5, 5, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 5, 6, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 15, 9, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 15, 10, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 6, 7, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 6, 8, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 19, 12, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 20, 13, 7, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
                 });
 
             migrationBuilder.CreateIndex(

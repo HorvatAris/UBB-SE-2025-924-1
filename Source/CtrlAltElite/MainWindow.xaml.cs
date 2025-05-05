@@ -42,7 +42,15 @@ namespace SteamStore
 
             // initiate the user
             // this will need to be changed when we conenct with a database query to get the user
-            User loggedInUser = new User(1, "John Doe", "johnyDoe@gmail.com", 999999.99f, 6000f, User.Role.Developer);
+            User loggedInUser = new User
+            {
+                UserId = 5,
+                Email = "liam.garcia@example.com",
+                PointsBalance = 67,
+                UserName = "LiamG",
+                UserRole = User.Role.User,
+                WalletBalance = 55
+            };
 
             // Assign to the class field so it can be used in navigation
             this.user = loggedInUser;
@@ -133,12 +141,12 @@ namespace SteamStore
             {
                 try
                 {
-                   // await tradeService.AddItemTradeAsync(trade);
-                   // await tradeService.GetActiveTradesAsync(1);
-                   // await tradeService.UpdateItemTradeAsync(trade);
-                   // await tradeService.GetUserInventoryAsync(1);
-                   await tradeService.GetUserInventoryAsync(2);
-                   Debug.WriteLine("Trade created successfully.");
+                    // await tradeService.AddItemTradeAsync(trade);
+                    // await tradeService.GetActiveTradesAsync(1);
+                    // await tradeService.UpdateItemTradeAsync(trade);
+                    // await tradeService.GetUserInventoryAsync(1);
+                    await tradeService.GetUserInventoryAsync(2);
+                    Debug.WriteLine("Trade created successfully.");
                 }
                 catch (Exception ex)
                 {
