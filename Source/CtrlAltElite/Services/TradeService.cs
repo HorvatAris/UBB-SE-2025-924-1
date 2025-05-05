@@ -41,7 +41,7 @@ namespace CtrlAltElite.Services
             this.userInventoryServiceProxy = userInventoryServiceProxy;
         }
 
-        public async Task MarkTradeAsCompleted(int tradeId)
+        public async Task MarkTradeAsCompletedAsync(int tradeId)
         {
             var updateRequest = new UpdateItemTradeRequest
             {
@@ -52,7 +52,7 @@ namespace CtrlAltElite.Services
             await this.itemTradeServiceProxy.UpdateItemTradeAsync(tradeId, updateRequest);
         }
 
-        public async Task DeclineTradeRequest()
+        public void DeclineTradeRequest()
         {
             var updateRequest = new UpdateItemTradeRequest
             {
@@ -88,8 +88,8 @@ namespace CtrlAltElite.Services
             System.Diagnostics.Debug.WriteLine($"Updating trade with ID: {trade.TradeId} to status: {updateTradeRequest.TradeStatus}");
 
             await this.itemTradeServiceProxy.UpdateItemTradeAsync(trade.TradeId, updateTradeRequest);
-            // 3.If the destination user accepts, transfer the items
 
+            // 3.If the destination user accepts, transfer the items
             if (trade.AcceptedByDestinationUser)
             {
                 // Fetch all trade details and filter by trade ID
@@ -108,15 +108,17 @@ namespace CtrlAltElite.Services
                     {
                         UserId = toUserId,
                         ItemId = detail.ItemId,
+
                         // ????
                         GameId = trade.GameOfTrade.GameId,
-
                     });
+
                     // Then, add to new owner
                     await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(new ItemFromInventoryRequest
                     {
                         UserId = fromUserId,
                         ItemId = detail.ItemId,
+
                         // ????
                         GameId = trade.GameOfTrade.GameId,
                     });
@@ -205,6 +207,7 @@ namespace CtrlAltElite.Services
         public async Task<List<ItemTrade>> GetTradeHistoryAsync(int userId)
         {
             var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
+
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
                 .Where(trade => ((trade.SourceUserId == userId || trade.DestinationUserId == userId)
@@ -227,9 +230,11 @@ namespace CtrlAltElite.Services
                     return user;
                 })
                 .ToList();
+
             // 3. Get all games
             var gamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
             var allGames = new Collection<Game>(gamesResponse.Select(GameMapper.MapToGame).ToList());
+
             // 4. Map to domain model
             var result = new List<ItemTrade>();
             foreach (var tradeDto in filteredTrades)
@@ -274,8 +279,8 @@ namespace CtrlAltElite.Services
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
+
                     // itemGame.SetGameId(gameResponse.GameId);
-                     
                     var item = new Item(itemResponseFromItemProxy.ItemName, itemGame, (float)itemResponseFromItemProxy.Price, itemResponseFromItemProxy.Description);
                     item.SetItemId(itemResponseFromItemProxy.ItemId);
                     item.SetIsListed(itemResponseFromItemProxy.IsListed);
@@ -290,18 +295,21 @@ namespace CtrlAltElite.Services
                     }
                 }
             }
+
             foreach (var r in result)
             {
                 System.Diagnostics.Debug.WriteLine($"Trade ID: {r.TradeId}, Source User: {r.SourceUser.UserName}, Destination User: {r.DestinationUser.UserName}, Game: {r.GameOfTrade}");
                 System.Diagnostics.Debug.WriteLine(r.SourceUserItems);
                 System.Diagnostics.Debug.WriteLine(r.DestinationUserItems);
             }
+
             return result;
         }
 
         public async Task<List<ItemTrade>> GetActiveTradesAsync(int userId)
         {
             var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
+
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
                 .Where(t => (t.SourceUserId == userId || t.DestinationUserId == userId)
@@ -324,9 +332,11 @@ namespace CtrlAltElite.Services
                     return user;
                 })
                 .ToList();
+
             // 3. Get all games
             var gamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
             var allGames = new Collection<Game>(gamesResponse.Select(GameMapper.MapToGame).ToList());
+
             // 4. Map to domain model
             var result = new List<ItemTrade>();
             foreach (var tradeDto in filteredTrades)
@@ -371,8 +381,8 @@ namespace CtrlAltElite.Services
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
-                    // itemGame.SetGameId(gameResponse.GameId);
 
+                    // itemGame.SetGameId(gameResponse.GameId);
                     var item = new Item(itemResponseFromItemProxy.ItemName, itemGame, (float)itemResponseFromItemProxy.Price, itemResponseFromItemProxy.Description);
                     item.SetItemId(itemResponseFromItemProxy.ItemId);
                     item.SetIsListed(itemResponseFromItemProxy.IsListed);
@@ -396,7 +406,6 @@ namespace CtrlAltElite.Services
             }
 
             return result;
-
         }
 
         public async Task CreateTradeAsync(ItemTrade trade)
@@ -443,7 +452,7 @@ namespace CtrlAltElite.Services
                 // If both users have accepted, complete the trade
                 if (trade.AcceptedByDestinationUser)
                 {
-                    this.CompleteTrade(trade);
+                    await this.CompleteTradeAsync(trade);
                 }
             }
             catch (Exception tradeAcceptionException)
@@ -453,7 +462,7 @@ namespace CtrlAltElite.Services
             }
         }
 
-        public async void CompleteTrade(ItemTrade trade)
+        public async Task CompleteTradeAsync(ItemTrade trade)
         {
             try
             {
@@ -482,6 +491,7 @@ namespace CtrlAltElite.Services
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
             var inventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
+
             // foreach(var item in inventoryResponse.Items)
             // {
             //    System.Diagnostics.Debug.WriteLine($"IS LISTED:{item.IsListed}");
@@ -502,7 +512,6 @@ namespace CtrlAltElite.Services
             }
 
             return result;
-
         }
     }
 }

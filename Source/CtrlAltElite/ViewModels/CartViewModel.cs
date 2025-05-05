@@ -36,10 +36,10 @@ public class CartViewModel : INotifyPropertyChanged
         this.userGameService = userGameService;
         this.CartGames = new ObservableCollection<Game>();
         this.LastEarnedPoints = InitialValueForLastEarnedPoints;
-        this.LoadGames();
+        this.LoadGamesAsync();
 
         // Initialize commands
-        this.RemoveGameCommand = new RelayCommand<Game>(this.RemoveGameFromCart);
+        this.RemoveGameCommand = new RelayCommand<Game>(this.RemoveGameFromCartAsync);
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -90,27 +90,27 @@ public class CartViewModel : INotifyPropertyChanged
         return this.cartService.GetUserFunds();
     }
 
-    public async void RemoveGameFromCart(Game game)
+    public async void RemoveGameFromCartAsync(Game game)
     {
-        await this.cartService.RemoveGameFromCart(game);
+        await this.cartService.RemoveGameFromCartAsync(game);
         this.CartGames.Remove(game);
         this.UpdateTotalPrice();
         this.OnPropertyChanged(nameof(this.CartGames));
     }
 
-    public async Task PurchaseGames()
+    public async Task PurchaseGamesAsync()
     {
         await this.userGameService.PurchaseGamesAsync(this.CartGames.ToList());
 
         // Get the points earned from the user game service
         this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
 
-        this.cartService.RemoveGamesFromCart(this.CartGames.ToList());
+        await this.cartService.RemoveGamesFromCartAsync(this.CartGames.ToList());
         this.CartGames.Clear();
         this.UpdateTotalPrice();
     }
 
-    public async void ChangeToPaymentPage(Frame frame)
+    public async void ChangeToPaymentPageAsync(Frame frame)
     {
         if (this.SelectedPaymentMethod == PaymentMethods.PayPalPaymentMethods)
         {
@@ -139,7 +139,7 @@ public class CartViewModel : INotifyPropertyChanged
                 return;
             }
 
-            this.PurchaseGames();
+            await this.PurchaseGamesAsync();
             if (this.LastEarnedPoints > ThresholdForNotEarningPoints)
             {
                 // Store the points in App resources for PointsShopPage to access
@@ -162,9 +162,9 @@ public class CartViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private async Task LoadGames()
+    private async Task LoadGamesAsync()
     {
-        var games = await this.cartService.GetCartGames();
+        var games = await this.cartService.GetCartGamesAsync();
         System.Diagnostics.Debug.WriteLine($"Number of games in cart: {games.Count}");
         foreach (var game in games)
         {

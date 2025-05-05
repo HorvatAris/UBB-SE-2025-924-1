@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Refit;
-using SteamHub.ApiContract.Models.Game;
+﻿// <copyright file="IGameServiceProxy.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ServiceProxies
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Refit;
+    using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Repositories;
 
     public interface IGameServiceProxy : IGameRepository

@@ -1,3 +1,7 @@
+// <copyright file="MainWindow.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace SteamStore
 {
     using System;
@@ -15,8 +19,12 @@ namespace SteamStore
     using SteamStore.Pages;
     using SteamStore.Services;
 
+    /// <summary>
+    /// Main window.
+    /// </summary>
     public sealed partial class MainWindow : Window
     {
+        private User user;
         private GameService gameService;
         private CartService cartService;
         private UserGameService userGameService;
@@ -26,13 +34,12 @@ namespace SteamStore
         private MarketplaceService marketplaceService;
         private TradeService tradeService;
         private UserService userService;
-        public User user;
 
         public MainWindow()
         {
             this.InitializeComponent();
 
-            //initiate the user
+            // initiate the user
             // this will need to be changed when we conenct with a database query to get the user
             User loggedInUser = new User(1, "John Doe", "johnyDoe@gmail.com", 999999.99f, 6000f, User.Role.Developer);
 
@@ -64,7 +71,7 @@ namespace SteamStore
             var itemTradeDetailServiceProxy = RestService.For<IItemTradeDetailServiceProxy>(httpClient);
             var userInventoryServiceProxy = RestService.For<IUserInventoryServiceProxy>(httpClient);
 
-            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy,userServiceProxy, gameServiceProxy,itemServiceProxy,userInventoryServiceProxy);
+            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy, userServiceProxy, gameServiceProxy, itemServiceProxy, userInventoryServiceProxy);
             this.tradeService = tradeService;
 
             var userService = new UserService(userServiceProxy);
@@ -73,8 +80,7 @@ namespace SteamStore
                 sourceUser: loggedInUser,
                 destinationUser: new User { UserId = 2 }, // the user you want to trade with
                 gameOfTrade: new Game { GameId = 1 }, // the game the items belong to
-                description: "Test trade from user 1 to user 2"
-            );
+                description: "Test trade from user 1 to user 2");
             trade.SetTradeId(1); // Set the trade ID to 1 for testing purposes
 
             // Add source user items
@@ -85,48 +91,48 @@ namespace SteamStore
             trade.AddDestinationUserItem(new Item { ItemId = 3 });
             this.marketplaceService = new MarketplaceService
             {
-                userInventoryServiceProxy = userInventoryServiceProxy,
-                gameServiceProxy = gameServiceProxy,
-                userServiceProxy = userServiceProxy,
-                itemServiceProxy = itemServiceProxy,
+                UserInventoryServiceProxy = userInventoryServiceProxy,
+                GameServiceProxy = gameServiceProxy,
+                UserServiceProxy = userServiceProxy,
+                ItemServiceProxy = itemServiceProxy,
                 User = loggedInUser,
             };
 
-            //var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
+            // var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
 
-            //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
+            // var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
             var userGameServiceProxy = RestService.For<IUserGameServiceProxy>(httpClient);
 
-            pointShopService = new PointShopService(
+            this.pointShopService = new PointShopService(
                 pointShopServiceProxy,
                 userPointShopInventoryServiceProxy,
                 userServiceProxy,
                 loggedInUser);
 
+            this.inventoryService = new InventoryService(userInventoryServiceProxy, itemServiceProxy, gameServiceProxy, this.user);
 
-            this.inventoryService = new InventoryService(userInventoryServiceProxy, itemServiceProxy, gameServiceProxy, user);
+            this.gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
-            gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
-
-            cartService = new CartService(userGameServiceProxy, loggedInUser,gameServiceProxy);
+            this.cartService = new CartService(userGameServiceProxy, loggedInUser, gameServiceProxy);
             var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
-            userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
+            this.userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
 
-            developerService = new DeveloperService
-            (gameServiceProxy, tagServiceProxy, userGameServiceProxy, userServiceProxy, itemServiceProxy, itemTradeDetailServiceProxy, loggedInUser);
+            this.developerService = new DeveloperService(
+            gameServiceProxy, tagServiceProxy, userGameServiceProxy, userServiceProxy, itemServiceProxy, itemTradeDetailServiceProxy, loggedInUser);
 
-            if (ContentFrame == null)
+            if (this.ContentFrame == null)
             {
                 throw new Exception("ContentFrame is not initialized.");
             }
+
             _ = Task.Run(async () =>
             {
                 try
                 {
                    // await tradeService.AddItemTradeAsync(trade);
-                    //await tradeService.GetActiveTradesAsync(1);
-                    //await tradeService.UpdateItemTradeAsync(trade);
+                   // await tradeService.GetActiveTradesAsync(1);
+                   // await tradeService.UpdateItemTradeAsync(trade);
                    // await tradeService.GetUserInventoryAsync(1);
                    await tradeService.GetUserInventoryAsync(2);
                    Debug.WriteLine("Trade created successfully.");
@@ -136,12 +142,12 @@ namespace SteamStore
                     Debug.WriteLine($"Error creating trade: {ex.Message}");
                 }
             });
-            ContentFrame.Content = new HomePage(gameService, cartService, userGameService);
+            this.ContentFrame.Content = new HomePage(this.gameService, this.cartService, this.userGameService);
         }
 
         public void ResetToHomePage()
         {
-            ContentFrame.Content = new HomePage(gameService, cartService, userGameService);
+            this.ContentFrame.Content = new HomePage(this.gameService, this.cartService, this.userGameService);
         }
 
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -152,36 +158,36 @@ namespace SteamStore
                 switch (tag)
                 {
                     case "HomePage":
-                        ContentFrame.Content = new HomePage(gameService, cartService, userGameService);
+                        this.ContentFrame.Content = new HomePage(this.gameService, this.cartService, this.userGameService);
                         break;
                     case "CartPage":
-                        ContentFrame.Content = new CartPage(cartService, userGameService);
+                        this.ContentFrame.Content = new CartPage(this.cartService, this.userGameService);
                         break;
                     case "PointsShopPage":
-                        ContentFrame.Content = new PointsShopPage(pointShopService);
+                        this.ContentFrame.Content = new PointsShopPage(this.pointShopService);
                         break;
                     case "WishlistPage":
-                        ContentFrame.Content = new WishListView(userGameService, gameService, cartService);
+                        this.ContentFrame.Content = new WishListView(this.userGameService, this.gameService, this.cartService);
                         break;
                     case "DeveloperModePage":
-                        ContentFrame.Content = new DeveloperModePage(developerService);
+                        this.ContentFrame.Content = new DeveloperModePage(this.developerService);
                         break;
                     case "inventory":
-                        ContentFrame.Content = new InventoryPage(inventoryService);
+                        this.ContentFrame.Content = new InventoryPage(this.inventoryService);
                         break;
                     case "marketplace":
-                        ContentFrame.Content = new MarketplacePage(this.marketplaceService);
+                        this.ContentFrame.Content = new MarketplacePage(this.marketplaceService);
                         break;
                     case "trading":
-                        ContentFrame.Content = new TradingPage(tradeService,userService,gameService);
+                        this.ContentFrame.Content = new TradingPage(this.tradeService, this.userService, this.gameService);
                         break;
                 }
             }
 
-            if (NavView != null)
+            if (this.NavView != null)
             {
                 // Deselect the NavigationViewItem when moving to a non-menu page
-                NavView.SelectedItem = null;
+                this.NavView.SelectedItem = null;
             }
         }
     }

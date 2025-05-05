@@ -16,7 +16,7 @@ namespace SteamStore.Pages.Converters
         private const string StatusWhenNotListed = "Not Listed";
         private const string StatusWhenUnknown = "Unknown";
 
-        /// </returns>
+        // </returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is bool isItemListed)

@@ -1,31 +1,32 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI;
-using System.Collections.ObjectModel;
-using CtrlAltElite.Models;
-using CtrlAltElite.Services;
-using SteamStore.Services;
-using CtrlAltElite.ViewModels;
-using CtrlAltElite.Services.Interfaces;
-using SteamStore.Services.Interfaces;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+// <copyright file="TradingPage.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Pages
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.InteropServices.WindowsRuntime;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.Services;
+    using CtrlAltElite.Services.Interfaces;
+    using CtrlAltElite.ViewModels;
+    using Microsoft.UI;
+    using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Controls.Primitives;
+    using Microsoft.UI.Xaml.Data;
+    using Microsoft.UI.Xaml.Input;
+    using Microsoft.UI.Xaml.Media;
+    using Microsoft.UI.Xaml.Navigation;
+    using SteamStore.Services;
+    using SteamStore.Services.Interfaces;
+    using Windows.Foundation;
+    using Windows.Foundation.Collections;
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -65,6 +66,10 @@ namespace CtrlAltElite.Pages
         private const string DeclineTradeErrorPrefix = "Error declining trade: ";
         private const int NoSelectionIndex = -1;
 
+        private readonly ITradeService tradeService;
+        private readonly IUserService userService;
+        private readonly IGameService gameService;
+
         private User? currentUser;
         private User? recipientUser;
         private ObservableCollection<Item> itemsOfferedByCurrentUser;
@@ -72,24 +77,22 @@ namespace CtrlAltElite.Pages
         private ObservableCollection<Item> selectedItemsFromCurrentUserInventory;
         private ObservableCollection<Item> selectedItemsFromRecipientUserInventory;
 
-        private readonly ITradeService tradeService;
-        private readonly IUserService userService;
-        private readonly IGameService gameService;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TradingPage"/> class and sets up dependencies.
         /// </summary>
+        /// <param name="tradeService"> Trade service. </param>
+        /// <param name="userService"> User service. </param>
+        /// <param name="gameService"> Game service. </param>
         public TradingPage(ITradeService tradeService, IUserService userService, IGameService gameService)
         {
             this.InitializeComponent();
             this.tradeService = tradeService;
             this.userService = userService;
             this.gameService = gameService;
-            //ITradeRepository tradeRepository = new TradeRepository();
+
+            // ITradeRepository tradeRepository = new TradeRepository();
             // IUserRepository userRepository = new UserRepository();
             // IGameRepository gameRepository = new GameRepository();
-
-
             this.ViewModel = new TradeViewModel(tradeService, userService, gameService);
 
             this.ActiveTrades = new ObservableCollection<ItemTrade>();
@@ -204,7 +207,7 @@ namespace CtrlAltElite.Pages
                     if (selectedGame != null)
                     {
                         userItems = userItems.Where(item => item.GetCorrespondingGame().GameId == selectedGame.GameId).ToList();
-                        foreach(var item in userItems)
+                        foreach (var item in userItems)
                         {
                             System.Diagnostics.Debug.WriteLine($"Loading users items {item.ItemId}");
                         }
@@ -213,7 +216,7 @@ namespace CtrlAltElite.Pages
                     foreach (var item in userItems)
                     {
                         this.itemsOfferedByCurrentUser.Add(item);
-                        System.Diagnostics.Debug.WriteLine(itemsOfferedByCurrentUser);
+                        System.Diagnostics.Debug.WriteLine(this.itemsOfferedByCurrentUser);
                     }
                 }
             }

@@ -1,33 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using CtrlAltElite.Models;
-using CtrlAltElite.ServiceProxies;
-using CtrlAltElite.Services.Interfaces;
-using SteamHub.ApiContract.Models.Game;
-using SteamHub.ApiContract.Models.Item;
-using SteamHub.ApiContract.Models.User;
-using SteamHub.ApiContract.Models.UserInventory;
+﻿// <copyright file="MarketplaceService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.ServiceProxies;
+    using CtrlAltElite.Services.Interfaces;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.Item;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.UserInventory;
+
     public class MarketplaceService : IMarketplaceService
     {
         // private readonly IMarketplaceRepository marketplaceRepository;
-        public IGameServiceProxy gameServiceProxy { get; set; }
+        public IGameServiceProxy GameServiceProxy { get; set; }
 
-        public IUserInventoryServiceProxy userInventoryServiceProxy { get; set; }
+        public IUserInventoryServiceProxy UserInventoryServiceProxy { get; set; }
 
-        public IUserServiceProxy userServiceProxy { get; set; }
+        public IUserServiceProxy UserServiceProxy { get; set; }
 
-        public IItemServiceProxy itemServiceProxy { get; set; }
+        public IItemServiceProxy ItemServiceProxy { get; set; }
 
         public User User { get; set; }
 
         public async Task<List<User>> GetAllUsersAsync()
         {
             var returnUsers = new List<User>();
-            var users = await this.userServiceProxy.GetUsersAsync();
+            var users = await this.UserServiceProxy.GetUsersAsync();
             foreach (var user in users.Users)
             {
                 returnUsers.Add(
@@ -48,12 +52,12 @@ namespace CtrlAltElite.Services
         public async Task<List<Item>> GetAllListingsAsync()
         {
             var result = new List<Item>();
-            var items = await this.itemServiceProxy.GetItemsAsync();
+            var items = await this.ItemServiceProxy.GetItemsAsync();
             foreach (var item in items)
             {
                 if (item.IsListed)
                 {
-                    var resultGame = GameMapper.MapToGame(await this.gameServiceProxy.GetGameByIdAsync(item.GameId));
+                    var resultGame = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(item.GameId));
                     var resultItem = new Item
                     {
                         ItemId = item.ItemId,
@@ -80,13 +84,13 @@ namespace CtrlAltElite.Services
 
             var result = new List<Item>();
 
-            var userItems = (await userInventoryServiceProxy.GetUserInventoryAsync(userId)).Items;
+            var userItems = (await this.UserInventoryServiceProxy.GetUserInventoryAsync(userId)).Items;
             foreach (var u in userItems)
             {
-                var item = await this.itemServiceProxy.GetItemByIdAsync(u.ItemId);
+                var item = await this.ItemServiceProxy.GetItemByIdAsync(u.ItemId);
                 if (item.IsListed && item.GameId == game.GameId)
                 {
-                    var resultGame = GameMapper.MapToGame(await this.gameServiceProxy.GetGameByIdAsync(item.GameId));
+                    var resultGame = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(item.GameId));
                     var resultItem = new Item
                     {
                         ItemId = item.ItemId,
@@ -126,7 +130,7 @@ namespace CtrlAltElite.Services
                 throw new ArgumentNullException(nameof(item));
             }
 
-            await this.itemServiceProxy.UpdateItemAsync(
+            await this.ItemServiceProxy.UpdateItemAsync(
                 item.ItemId,
                 new UpdateItemRequest
                 {
@@ -152,13 +156,12 @@ namespace CtrlAltElite.Services
             }
 
             // await this.(item, transaction);
-
-            var entries = await this.userInventoryServiceProxy.GetUserInventoryAsync(this.User.UserId);
+            var entries = await this.UserInventoryServiceProxy.GetUserInventoryAsync(this.User.UserId);
             foreach (var entry in entries.Items)
             {
                 if (entry.ItemId == item.ItemId)
                 {
-                    await this.userInventoryServiceProxy.RemoveItemFromUserInventoryAsync(
+                    await this.UserInventoryServiceProxy.RemoveItemFromUserInventoryAsync(
                         new ItemFromInventoryRequest
                         {
                             GameId = entry.GameId,
@@ -172,7 +175,7 @@ namespace CtrlAltElite.Services
             //     new ItemFromInventoryRequest
             //     {
             //     });
-            await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(
+            await this.UserInventoryServiceProxy.AddItemToUserInventoryAsync(
                 new ItemFromInventoryRequest
                 {
                     GameId = item.Game.GameId,
@@ -180,7 +183,7 @@ namespace CtrlAltElite.Services
                     ItemId = item.ItemId,
                 });
 
-            await this.itemServiceProxy.UpdateItemAsync(
+            await this.ItemServiceProxy.UpdateItemAsync(
                 item.ItemId,
                 new UpdateItemRequest
                 {
@@ -209,7 +212,7 @@ namespace CtrlAltElite.Services
                 throw new ArgumentNullException(nameof(item));
             }
 
-            await this.itemServiceProxy.UpdateItemAsync(
+            await this.ItemServiceProxy.UpdateItemAsync(
                 item.ItemId,
                 new UpdateItemRequest
                 {

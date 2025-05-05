@@ -27,9 +27,20 @@ public class DeveloperService : IDeveloperService
     private const int EmptyListLength = 0;
     private const string PendingState = "Pending";
 
+    public DeveloperService(IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, IUserGameServiceProxy userGameServiceProxy, IUserServiceProxy userServiceProxy, IItemServiceProxy itemServiceProxy, IItemTradeDetailServiceProxy itemTradeDetailServiceProxy, User user)
+    {
+        this.GameServiceProxy = gameServiceProxy;
+        this.TagServiceProxy = tagServiceProxy;
+        this.UserGameServiceProxy = userGameServiceProxy;
+        this.UserServiceProxy = userServiceProxy;
+        this.ItemServiceProxy = itemServiceProxy;
+        this.ItemTradeDetailServiceProxy = itemTradeDetailServiceProxy;
+        this.User = user;
+    }
+
     public IGameServiceProxy GameServiceProxy { get; set; }
 
-    //public ITagRepository TagRepository { get; set; }
+    // public ITagRepository TagRepository { get; set; }
     public ITagServiceProxy TagServiceProxy { get; set; }
 
     public IUserGameServiceProxy UserGameServiceProxy { get; set; }
@@ -42,24 +53,13 @@ public class DeveloperService : IDeveloperService
 
     public User User { get; set; }
 
-    public DeveloperService(IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, IUserGameServiceProxy userGameServiceProxy, IUserServiceProxy userServiceProxy, IItemServiceProxy itemServiceProxy, IItemTradeDetailServiceProxy itemTradeDetailServiceProxy, User user)
-    {
-        this.GameServiceProxy = gameServiceProxy;
-        this.TagServiceProxy = tagServiceProxy;
-        this.UserGameServiceProxy = userGameServiceProxy;
-        this.UserServiceProxy = userServiceProxy;
-        this.ItemServiceProxy = itemServiceProxy;
-        this.ItemTradeDetailServiceProxy = itemTradeDetailServiceProxy;
-        this.User = user;
-    }
-
-    public async Task ValidateGame(int game_id)
+    public async Task ValidateGameAsync(int game_id)
     {
         await this.GameServiceProxy.UpdateGameAsync(
             game_id,
             new UpdateGameRequest
             {
-                Status = GameStatusEnum.Approved
+                Status = GameStatusEnum.Approved,
             });
     }
 
@@ -136,7 +136,7 @@ public class DeveloperService : IDeveloperService
         return null;
     }
 
-    public async Task CreateGame(Game game)
+    public async Task CreateGameAsync(Game game)
     {
         game.PublisherIdentifier = this.User.UserId;
 
@@ -158,12 +158,12 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public async Task CreateGameWithTags(Game game, IList<Tag> selectedTags)
+    public async Task CreateGameWithTagsAsync(Game game, IList<Tag> selectedTags)
     {
-        await this.CreateGame(game);
+        await this.CreateGameAsync(game);
 
-        //if (selectedTags != null && selectedTags.Count > EmptyListLength)
-        //{
+        // if (selectedTags != null && selectedTags.Count > EmptyListLength)
+        // {
         //    foreach (var tag in selectedTags)
         //    {
         //        try
@@ -176,10 +176,10 @@ public class DeveloperService : IDeveloperService
         //            continue;
         //        }
         //    }
-        //}
+        // }
     }
 
-    public async Task UpdateGame(Game game)
+    public async Task UpdateGameAsync(Game game)
     {
         game.PublisherIdentifier = this.User.UserId;
 
@@ -201,7 +201,7 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public async Task UpdateGameWithTags(Game game, IList<Tag> selectedTags)
+    public async Task UpdateGameWithTagsAsync(Game game, IList<Tag> selectedTags)
     {
         game.PublisherIdentifier = this.User.UserId;
         await this.GameServiceProxy.UpdateGameAsync(
@@ -230,7 +230,7 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public async Task DeleteGame(int game_id)
+    public async Task DeleteGameAsync(int game_id)
     {
         var allItemsFromThisGame = await this.ItemServiceProxy.GetItemsAsync();
         List<int> allItemsFromThisGameIds = new List<int>();
@@ -241,6 +241,7 @@ public class DeveloperService : IDeveloperService
                 allItemsFromThisGameIds.Add(item.ItemId);
             }
         }
+
         System.Diagnostics.Debug.WriteLine(allItemsFromThisGameIds.Count);
 
         var itemTradeDetails = await this.ItemTradeDetailServiceProxy.GetAllItemTradeDetailsAsync();
@@ -262,16 +263,17 @@ public class DeveloperService : IDeveloperService
             {
                 await this.ItemTradeDetailServiceProxy.DeleteItemTradeDetailAsync(pair.Item1, pair.Item2);
             }
-            catch (ApiException exception) 
+            catch (ApiException)
             {
                 continue;
             }
         }
+
         System.Diagnostics.Debug.WriteLine(game_id);
         await this.GameServiceProxy.DeleteGameAsync(game_id);
     }
 
-    public async Task<List<Game>> GetDeveloperGames()
+    public async Task<List<Game>> GetDeveloperGamesAsync()
     {
         var games = await this.GameServiceProxy.GetGamesAsync(
             new GetGamesRequest
@@ -281,7 +283,7 @@ public class DeveloperService : IDeveloperService
         return games.Select(GameMapper.MapToGame).ToList();
     }
 
-    public async Task<List<Game>> GetUnvalidated()
+    public async Task<List<Game>> GetUnvalidatedAsync()
     {
         var games = await this.GameServiceProxy.GetGamesAsync(
             new GetGamesRequest
@@ -292,7 +294,7 @@ public class DeveloperService : IDeveloperService
         return games.Select(GameMapper.MapToGame).ToList();
     }
 
-    public async Task RejectGame(int gameId)
+    public async Task RejectGameAsync(int gameId)
     {
         await this.GameServiceProxy.UpdateGameAsync(
             gameId,
@@ -302,7 +304,7 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public async Task RejectGameWithMessage(int gameId, string message)
+    public async Task RejectGameWithMessageAsync(int gameId, string message)
     {
         await this.GameServiceProxy.UpdateGameAsync(
             gameId,
@@ -313,16 +315,16 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public async Task<string> GetRejectionMessage(int gameId)
+    public async Task<string> GetRejectionMessageAsync(int gameId)
     {
         return (await this.GameServiceProxy.GetGameByIdAsync(gameId)) !.RejectMessage;
     }
 
-    public async Task InsertGameTag(int gameId, int tagId)
+    public async Task InsertGameTagAsync(int gameId, int tagId)
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine(gameId+tagId);
+            System.Diagnostics.Debug.WriteLine(gameId + tagId);
             await this.GameServiceProxy.PatchGameTagsAsync(
                 gameId,
                 new PatchGameTagsRequest
@@ -338,15 +340,14 @@ public class DeveloperService : IDeveloperService
         }
     }
 
-    public async Task<Collection<Tag>> GetAllTags()
+    public async Task<Collection<Tag>> GetAllTagsAsync()
     {
         var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
         return new Collection<Tag>(
-                    tagsResponse.Tags.Select(TagMapper.MapToTag).ToList()
-                );
+                    tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
     }
 
-    public async Task<List<Tag>> GetGameTags(int gameId)
+    public async Task<List<Tag>> GetGameTagsAsync(int gameId)
     {
         var game = (await this.GameServiceProxy.GetGameByIdAsync(gameId)) !;
         return game.Tags.Select(
@@ -358,20 +359,20 @@ public class DeveloperService : IDeveloperService
             }).ToList();
     }
 
-    public async Task<bool> IsGameIdInUse(int gameId)
+    public async Task<bool> IsGameIdInUseAsync(int gameId)
     {
         try
         {
             await this.GameServiceProxy.GetGameByIdAsync(gameId);
             return true;
         }
-        catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        catch (ApiException exception) when (exception.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return false;
         }
     }
 
-    public async Task DeleteGameTags(int gameId)
+    public async Task DeleteGameTagsAsync(int gameId)
     {
         await this.GameServiceProxy.PatchGameTagsAsync(
             gameId,
@@ -382,7 +383,7 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public async Task<int> GetGameOwnerCount(int gameId)
+    public async Task<int> GetGameOwnerCountAsync(int gameId)
     {
         // SELECT COUNT(*) AS OwnerCount
         // FROM games_users
@@ -398,11 +399,12 @@ public class DeveloperService : IDeveloperService
                 var games = await this.UserGameServiceProxy.GetUserGamesAsync(userId);
                 ownedCount += games.UserGames.Count;
             }
-            catch(Exception exception)
+            catch (Exception)
             {
                 continue;
             }
         }
+
         System.Diagnostics.Debug.WriteLine(ownedCount);
         return ownedCount;
     }
@@ -412,7 +414,7 @@ public class DeveloperService : IDeveloperService
         return this.User;
     }
 
-    public async Task<Game> CreateValidatedGame(
+    public async Task<Game> CreateValidatedGameAsync(
         string gameIdText,
         string name,
         string priceText,
@@ -438,16 +440,16 @@ public class DeveloperService : IDeveloperService
             discountText,
             selectedTags);
 
-        if (await this.IsGameIdInUse(game.GameId))
+        if (await this.IsGameIdInUseAsync(game.GameId))
         {
             throw new Exception(ExceptionMessages.IdAlreadyInUse);
         }
 
-        await this.CreateGameWithTags(game, selectedTags);
+        await this.CreateGameWithTagsAsync(game, selectedTags);
         return game;
     }
 
-    public async Task DeleteGame(int gameId, ObservableCollection<Game> developerGames)
+    public async Task DeleteGameAsync(int gameId, ObservableCollection<Game> developerGames)
     {
         Game gameToRemove = null;
         foreach (var game in developerGames)
@@ -465,10 +467,10 @@ public class DeveloperService : IDeveloperService
         }
 
         // Perform the actual deletion logic (e.g. from DB)
-        await this.DeleteGame(gameId);
+        await this.DeleteGameAsync(gameId);
     }
 
-    public async Task UpdateGameAndRefreshList(Game game, ObservableCollection<Game> developerGames)
+    public async Task UpdateGameAndRefreshListAsync(Game game, ObservableCollection<Game> developerGames)
     {
         Game existing = null;
         foreach (var gameInDeveloperGames in developerGames)
@@ -485,13 +487,13 @@ public class DeveloperService : IDeveloperService
             developerGames.Remove(existing);
         }
 
-        await this.UpdateGame(game); // this should be your existing logic that updates in DB/repo
+        await this.UpdateGameAsync(game); // this should be your existing logic that updates in DB/repo
         developerGames.Add(game);
     }
 
-    public async Task RejectGameAndRemoveFromUnvalidated(int gameId, ObservableCollection<Game> unvalidatedGames)
+    public async Task RejectGameAndRemoveFromUnvalidatedAsync(int gameId, ObservableCollection<Game> unvalidatedGames)
     {
-        await this.RejectGame(gameId);
+        await this.RejectGameAsync(gameId);
 
         Game gameToRemove = null;
         foreach (var game in unvalidatedGames)
@@ -509,7 +511,7 @@ public class DeveloperService : IDeveloperService
         }
     }
 
-    public async Task<bool> IsGameIdInUse(
+    public async Task<bool> IsGameIdInUseAsync(
         int gameId,
         ObservableCollection<Game> developerGames,
         ObservableCollection<Game> unvalidatedGames)
@@ -530,13 +532,13 @@ public class DeveloperService : IDeveloperService
             }
         }
 
-        return await this.IsGameIdInUse(gameId); // Call the existing database check or logic
+        return await this.IsGameIdInUseAsync(gameId); // Call the existing database check or logic
     }
 
-    public async Task<IList<Tag>> GetMatchingTagsForGame(int gameId, IList<Tag> allAvailableTags)
+    public async Task<IList<Tag>> GetMatchingTagsForGameAsync(int gameId, IList<Tag> allAvailableTags)
     {
         List<Tag> matchedTags = new List<Tag>();
-        List<Tag> gameTags = await this.GetGameTags(gameId); // Assuming this is already implemented
+        List<Tag> gameTags = await this.GetGameTagsAsync(gameId); // Assuming this is already implemented
 
         foreach (Tag tag in allAvailableTags)
         {

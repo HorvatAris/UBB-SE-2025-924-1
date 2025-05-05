@@ -1,4 +1,8 @@
-﻿namespace CtrlAltElite.Models
+﻿// <copyright file="ItemTrade.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace CtrlAltElite.Models
 {
     using System;
     using System.Collections.Generic;

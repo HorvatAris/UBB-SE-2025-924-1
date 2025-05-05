@@ -17,6 +17,9 @@ namespace CtrlAltElite.ViewModels
     using Microsoft.UI.Xaml.Controls;
     using SteamStore.Services.Interfaces;
 
+    /// <summary>
+    /// Viewmodel for Trade page.
+    /// </summary>
     public partial class TradeViewModel : INotifyPropertyChanged
     {
         public const string CannotSendTradeTitle = "Cannot Send Trade";
@@ -442,7 +445,7 @@ namespace CtrlAltElite.ViewModels
         {
             try
             {
-                var allGames = await this.gameService.GetAllGames();
+                var allGames = await this.gameService.GetAllGamesAsync();
 
                 this.Games.Clear();
                 foreach (var game in allGames)
@@ -478,7 +481,7 @@ namespace CtrlAltElite.ViewModels
 
         public async Task<List<Game>> GetAllGamesAsync()
         {
-            var gamesCollection = await this.gameService.GetAllGames();
+            var gamesCollection = await this.gameService.GetAllGamesAsync();
             return gamesCollection.ToList(); // Convert Collection<Game> to List<Game>
         }
 
@@ -600,7 +603,6 @@ namespace CtrlAltElite.ViewModels
             try
             {
                 var userInventoryItems = await this.tradeService.GetUserInventoryAsync(this.CurrentUser.UserId);
-
 
                 this.SourceUserItems.Clear();
                 foreach (var item in userInventoryItems.Where(itemInner => !itemInner.IsListed))

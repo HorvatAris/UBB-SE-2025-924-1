@@ -72,7 +72,7 @@
 					}
 				});
 
-			var foundItems = await service.GetAllItems();
+			var foundItems = await service.GetAllItemsAsync();
 
 			AssertUtils.AssertContainsEquivalent(foundItems, expectedItems);
 		}
@@ -106,7 +106,7 @@
 			itemProxyMock.Setup(proxy => proxy.GetPointShopItemsAsync())
 				.ReturnsAsync(allItems);
 
-			var foundItems = await service.GetUserItems();
+			var foundItems = await service.GetUserItemsAsync();
 
 			AssertUtils.AssertContainsEquivalent(foundItems, expectedItems);
 		}
@@ -121,7 +121,7 @@
 			userServiceProxyMock.Setup(proxy => proxy.UpdateUserAsync(testUser.UserId, It.IsAny<UpdateUserRequest>()))
 				.Returns(Task.CompletedTask);
 
-			await service.PurchaseItem(item);
+			await service.PurchaseItemAsync(item);
 
 			Assert.Equal(900, testUser.PointsBalance);
 		}
@@ -134,7 +134,7 @@
 			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
 				.Returns(Task.CompletedTask);
 
-			await service.ActivateItem(item);
+			await service.ActivateItemAsync(item);
 
 			inventoryProxyMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => request.IsActive)), Times.Once);
 		}
@@ -147,7 +147,7 @@
 			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
 				.Returns(Task.CompletedTask);
 
-			await service.DeactivateItem(item);
+			await service.DeactivateItemAsync(item);
 
 			inventoryProxyMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => !request.IsActive)), Times.Once);
 		}
@@ -171,7 +171,7 @@
 
 			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>())).Returns(Task.CompletedTask);
 
-			var toggledItem = await service.ToggleActivationForItem(1, userItems);
+			var toggledItem = await service.ToggleActivationForItemAsync(1, userItems);
 
 			Assert.Equal(1, toggledItem.ItemIdentifier);
 		}

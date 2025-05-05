@@ -2,19 +2,19 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using SteamStore.Constants;
-using SteamStore.Models;
-using SteamStore.Services.Interfaces;
-
 namespace SteamStore.Pages
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
+    using SteamStore.Constants;
+    using SteamStore.Models;
+    using SteamStore.Services.Interfaces;
+
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -50,6 +50,7 @@ namespace SteamStore.Pages
         private async void DeveloperModePage_Loaded(object developerModePage, RoutedEventArgs developerPageLoadedArguments)
         {
             await this.viewModel.InitAsync();
+
             // Check if user is a developer
             if (!this.viewModel.CheckIfUserIsADeveloper())
             {
@@ -63,7 +64,7 @@ namespace SteamStore.Pages
 
         private async void ReviewGamesButton_Click(object reviewGamesButton, RoutedEventArgs reviewGamesEventArgument)
         {
-            await this.viewModel.LoadUnvalidated();
+            await this.viewModel.LoadUnvalidatedAsync();
             this.DeveloperGamesList.Visibility = Visibility.Collapsed;
             this.ReviewGamesList.Visibility = Visibility.Visible;
             this.PageTitle.Text = DeveloperPageTitles.REVIEWGAMES;
@@ -71,7 +72,7 @@ namespace SteamStore.Pages
 
         private async void MyGamesButton_Click(object myGamesButton, RoutedEventArgs myGamesClickEventArgument)
         {
-            await this.viewModel.LoadGames();
+            await this.viewModel.LoadGamesAsync();
             this.DeveloperGamesList.Visibility = Visibility.Visible;
             this.ReviewGamesList.Visibility = Visibility.Collapsed;
             this.PageTitle.Text = DeveloperPageTitles.MYGAMES;
@@ -81,8 +82,8 @@ namespace SteamStore.Pages
         {
             if (acceptButton is Button button && button.CommandParameter is int gameId)
             {
-                await this.viewModel.ValidateGame(gameId);
-                await this.viewModel.LoadUnvalidated();
+                await this.viewModel.ValidateGameAsync(gameId);
+                await this.viewModel.LoadUnvalidatedAsync();
             }
         }
 
@@ -122,8 +123,8 @@ namespace SteamStore.Pages
                         this.AddGameRecommendedRequirement.Text,
                         this.AddGameDiscount.Text,
                         new List<Tag> { new Tag { TagId = 500, Tag_name = "bagpl" } });
-                        // this.AddGameTagList.SelectedItems.Cast<Tag>().ToList());
 
+                        // this.AddGameTagList.SelectedItems.Cast<Tag>().ToList());
                     this.ClearFieldsForAddingAGame();
                 }
                 catch (Exception exception)
@@ -145,6 +146,7 @@ namespace SteamStore.Pages
             this.AddGameMinimumRequirement.Text = string.Empty;
             this.AddGameRecommendedRequirement.Text = string.Empty;
             this.AddGameDiscount.Text = string.Empty;
+
             // this.AddGameTagList.SelectedItems.Clear();
         }
 
@@ -192,7 +194,7 @@ namespace SteamStore.Pages
             {
                 try
                 {
-                    string rejectionMessage = await this.viewModel.GetRejectionMessage(gameId);
+                    string rejectionMessage = await this.viewModel.GetRejectionMessageAsync(gameId);
                     if (!string.IsNullOrWhiteSpace(rejectionMessage))
                     {
                         this.RejectionMessageText.Text = rejectionMessage;
@@ -218,7 +220,7 @@ namespace SteamStore.Pages
                 try
                 {
                     // Check if the game is owned by any users
-                    int ownerCount = await this.viewModel.GetGameOwnerCount(gameId);
+                    int ownerCount = await this.viewModel.GetGameOwnerCountAsync(gameId);
                     ContentDialogResult result;
                     if (ownerCount > NoOwnersCount)
                     {
@@ -238,10 +240,10 @@ namespace SteamStore.Pages
 
                     if (result == ContentDialogResult.Primary)
                     {
-                        await this.viewModel.DeleteGame(gameId);
+                        await this.viewModel.DeleteGameAsync(gameId);
 
                         // Refresh the games list
-                        await this.viewModel.LoadGames();
+                        await this.viewModel.LoadGamesAsync();
                     }
                 }
                 catch (Exception exception)
@@ -276,7 +278,7 @@ namespace SteamStore.Pages
                             await this.SaveUpdatedGameAsync();
 
                             // Reload games after the update
-                            await this.viewModel.LoadGames();
+                            await this.viewModel.LoadGamesAsync();
                         }
                     }
                     catch (Exception exception)
@@ -333,7 +335,7 @@ namespace SteamStore.Pages
             try
             {
                 var availableTags = this.EditGameTagList.Items.Cast<object>().OfType<Tag>().ToList(); // Safe cast
-                var matchingTags = await this.viewModel.GetMatchingTags(game.GameId, availableTags);
+                var matchingTags = await this.viewModel.GetMatchingTagsAsync(game.GameId, availableTags);
                 foreach (Tag tag in matchingTags)
                 {
                     this.EditGameTagList.SelectedItems.Add(tag);
