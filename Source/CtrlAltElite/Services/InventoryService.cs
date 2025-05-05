@@ -192,7 +192,7 @@ namespace SteamStore.Services
             if (selectedGame != null && selectedGame.GameTitle != "All Games")
             {
                 filtered = filtered.Where(item =>
-                    string.Equals(item.Game.GameTitle, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(item.GameName, selectedGame.GameTitle, StringComparison.OrdinalIgnoreCase));
             }
 
             // Filter by search text if provided

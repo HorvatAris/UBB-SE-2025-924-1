@@ -635,7 +635,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 3,
                     Price = 29.99f,
                     Description = "A sleek and aggressive finish for your AK-47.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak47_cobra_light_large.7494bfdf4855fd4e6a2dbd983ed0a243c80ef830.png"
                 },
                 new Item
@@ -645,7 +645,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 3,
                     Price = 34.99f,
                     Description = "Legendary pistol skin with a fiery design.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_aa_flames_light_large.dd140c3b359c16ccd8e918ca6ad0b2628151fe1c.png"
                 },
 
@@ -657,7 +657,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 4,
                     Price = 49.99f,
                     Description = "Iconic weapon that manipulates objects with physics.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://www.toyark.com/wp-content/uploads/2013/05/Half-Life-2-Gravity-Gun-007.jpg"
                 },
                 new Item
@@ -667,7 +667,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 4,
                     Price = 19.99f,
                     Description = "Protective gloves from the HEV suit worn by Gordon Freeman.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://preview.redd.it/hl2-revision-update-the-grabbity-gloves-v0-ftz143vjmqcb1.jpg?width=640&crop=smart&auto=webp&s=9b3738a0f4bce98cc6a38b34e6ec319d03c05dd0"
                 },
 
@@ -679,7 +679,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 5,
                     Price = 14.99f,
                     Description = "A soft collectible version of the iconic power-up.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://mario.wiki.gallery/images/thumb/7/7e/New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png/1200px-New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png"
                 },
                 new Item
@@ -689,7 +689,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 5,
                     Price = 24.99f,
                     Description = "The classic red cap worn by Mario himself.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://static.wikia.nocookie.net/mario/images/c/cd/Mario_Cap.png/revision/latest?cb=20180310022043"
                 },
 
@@ -701,7 +701,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 6,
                     Price = 69.99f,
                     Description = "Faithful replica of Link's legendary blade.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://upload.wikimedia.org/wikipedia/en/f/f9/Master_Sword_Lead.png"
                 },
                 new Item
@@ -711,7 +711,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 6,
                     Price = 59.99f,
                     Description = "Sturdy shield bearing the crest of Hyrule.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://theswordstall.co.uk/cdn/shop/files/Legend-Of-Zelda-Deluxe-Hylian-Shield-Full-Metal-3.jpg?v=1723552799&width=750"
                 },
 
@@ -723,7 +723,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 15,
                     Price = 9.99f,
                     Description = "Miniature version of the famous mining tool.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://cdn.example.com/minecraft/diamond-pickaxe.jphttps://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Diamond_Pickaxe_JE1_BE1.png/revision/latest?cb=20190518122739g"
                 },
                 new Item
@@ -733,7 +733,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 15,
                     Price = 19.99f,
                     Description = "Soft plush of the infamous explosive mob.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://feltright.com/cdn/shop/files/minecraft-creeper.jpg?v=1720033057&width=800"
                 },
 
@@ -746,7 +746,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 19,
                     Price = 34.99f,
                     Description = "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://static.wikia.nocookie.net/shop-heroes/images/4/4a/Gauntlets_Cybernetic_Gauntlets_Blueprint.png/revision/latest?cb=20200724020856"
                 },
                 new Item
@@ -756,7 +756,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 19,
                     Price = 24.99f,
                     Description = "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://www.motocentral.co.uk/cdn/shop/files/Ruroc-EOX-Cyberstrike_-From-Moto-Central-_-Fast-Free-UK-Delivery-257043288_1024x.jpg?v=1744036882"
                 },
 
@@ -768,7 +768,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 20,
                     Price = 44.99f,
                     Description = "A mighty axe for the warriors of Shadow of Valhalla.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://valhalla-vikings.co.uk/cdn/shop/products/il_fullxfull.3370240260_td4v.jpg?v=1679150085&width=1080"
                 },
                 new Item
@@ -778,7 +778,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 20,
                     Price = 34.99f,
                     Description = "A robust shield forged for the bravest of fighters in Shadow of Valhalla.",
-                    IsListed = true,
+                    IsListed = false,
                     ImagePath = "https://www.vikingsroar.com/cdn/shop/products/d7f00df1f2c5a9059ec5dd319139da24.webp?v=1652049514"
                 }
             };
@@ -1120,56 +1120,64 @@ namespace SteamHub.Api.Context
                     UserId = 4,
                     ItemId = 5,
                     GameId = 5,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
                     UserId = 4,
                     ItemId = 6,
                     GameId = 5,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
                     UserId = 4,
                     ItemId = 9,
                     GameId = 15,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
                     UserId = 5,
                     ItemId = 7,
                     GameId = 6,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
                     UserId = 5,
                     ItemId = 8,
                     GameId = 6,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
                     UserId = 5,
                     ItemId = 12,
                     GameId = 19,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
                     UserId = 7,
                     ItemId = 13,
                     GameId = 20,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
                     UserId = 4,
                     ItemId = 10,
                     GameId = 15,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
             };
 

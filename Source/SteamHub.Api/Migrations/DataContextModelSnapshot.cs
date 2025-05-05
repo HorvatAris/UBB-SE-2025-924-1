@@ -49,7 +49,7 @@ namespace SteamHub.Api.Migrations
                         },
                         new
                         {
-                            GamesGameId = 1,
+                            GamesGameId = 2,
                             TagsTagId = 3
                         },
                         new
@@ -59,28 +59,178 @@ namespace SteamHub.Api.Migrations
                         },
                         new
                         {
-                            GamesGameId = 2,
+                            GamesGameId = 3,
+                            TagsTagId = 3
+                        },
+                        new
+                        {
+                            GamesGameId = 3,
                             TagsTagId = 5
                         },
                         new
                         {
-                            GamesGameId = 2,
+                            GamesGameId = 3,
                             TagsTagId = 6
                         },
                         new
                         {
-                            GamesGameId = 3,
-                            TagsTagId = 7
+                            GamesGameId = 4,
+                            TagsTagId = 5
                         },
                         new
                         {
-                            GamesGameId = 3,
+                            GamesGameId = 4,
                             TagsTagId = 8
                         },
                         new
                         {
-                            GamesGameId = 3,
+                            GamesGameId = 5,
+                            TagsTagId = 7
+                        },
+                        new
+                        {
+                            GamesGameId = 5,
+                            TagsTagId = 8
+                        },
+                        new
+                        {
+                            GamesGameId = 6,
+                            TagsTagId = 8
+                        },
+                        new
+                        {
+                            GamesGameId = 6,
+                            TagsTagId = 14
+                        },
+                        new
+                        {
+                            GamesGameId = 7,
                             TagsTagId = 9
+                        },
+                        new
+                        {
+                            GamesGameId = 8,
+                            TagsTagId = 9
+                        },
+                        new
+                        {
+                            GamesGameId = 8,
+                            TagsTagId = 8
+                        },
+                        new
+                        {
+                            GamesGameId = 9,
+                            TagsTagId = 10
+                        },
+                        new
+                        {
+                            GamesGameId = 9,
+                            TagsTagId = 8
+                        },
+                        new
+                        {
+                            GamesGameId = 10,
+                            TagsTagId = 6
+                        },
+                        new
+                        {
+                            GamesGameId = 10,
+                            TagsTagId = 1
+                        },
+                        new
+                        {
+                            GamesGameId = 11,
+                            TagsTagId = 1
+                        },
+                        new
+                        {
+                            GamesGameId = 11,
+                            TagsTagId = 9
+                        },
+                        new
+                        {
+                            GamesGameId = 12,
+                            TagsTagId = 7
+                        },
+                        new
+                        {
+                            GamesGameId = 13,
+                            TagsTagId = 6
+                        },
+                        new
+                        {
+                            GamesGameId = 13,
+                            TagsTagId = 7
+                        },
+                        new
+                        {
+                            GamesGameId = 14,
+                            TagsTagId = 12
+                        },
+                        new
+                        {
+                            GamesGameId = 14,
+                            TagsTagId = 8
+                        },
+                        new
+                        {
+                            GamesGameId = 15,
+                            TagsTagId = 11
+                        },
+                        new
+                        {
+                            GamesGameId = 15,
+                            TagsTagId = 12
+                        },
+                        new
+                        {
+                            GamesGameId = 16,
+                            TagsTagId = 12
+                        },
+                        new
+                        {
+                            GamesGameId = 16,
+                            TagsTagId = 8
+                        },
+                        new
+                        {
+                            GamesGameId = 17,
+                            TagsTagId = 6
+                        },
+                        new
+                        {
+                            GamesGameId = 17,
+                            TagsTagId = 7
+                        },
+                        new
+                        {
+                            GamesGameId = 18,
+                            TagsTagId = 9
+                        },
+                        new
+                        {
+                            GamesGameId = 18,
+                            TagsTagId = 7
+                        },
+                        new
+                        {
+                            GamesGameId = 19,
+                            TagsTagId = 6
+                        },
+                        new
+                        {
+                            GamesGameId = 19,
+                            TagsTagId = 14
+                        },
+                        new
+                        {
+                            GamesGameId = 19,
+                            TagsTagId = 16
+                        },
+                        new
+                        {
+                            GamesGameId = 20,
+                            TagsTagId = 16
                         });
                 });
 
@@ -147,24 +297,313 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             GameId = 1,
-                            Description = "An epic open-world RPG set in a mystical realm full of adventure, magic, and danger.",
-                            Discount = 0.15m,
-                            GameplayPath = "https://www.youtube.com/watch?v=AKXiKBnzpBQ",
-                            ImagePath = "https://upload.wikimedia.org/wikipedia/en/5/5e/Elden_Ring_Box_art.jpg",
-                            MinimumRequirements = "Intel i5-8400, 8GB RAM, GTX 1060",
-                            Name = "Legends of Etheria",
-                            NumberOfRecentPurchases = 1200,
-                            Price = 49.99m,
-                            PublisherUserId = 3,
-                            Rating = 4.7m,
-                            RecommendedRequirements = "Intel i7-8700K, 16GB RAM, RTX 2070",
-                            RejectMessage = "rejected game",
+                            Description = "A rogue-like third-person shooter where players fight through hordes of monsters to escape an alien planet.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=Cwk3qmD28CE",
+                            ImagePath = "https://upload.wikimedia.org/wikipedia/en/c/c1/Risk_of_Rain_2.jpg",
+                            MinimumRequirements = "4GB RAM, 2.5GHz Processor, GTX 580",
+                            Name = "Risk of Rain 2",
+                            NumberOfRecentPurchases = 0,
+                            Price = 24.99m,
+                            PublisherUserId = 1,
+                            Rating = 0m,
+                            RecommendedRequirements = "8GB RAM, 3.0GHz Processor, GTX 680",
+                            RejectMessage = "Minimum requirements are too high",
                             StatusId = 2,
-                            TrailerPath = "https://www.youtube.com/watch?v=E3Huy2cdih0"
+                            TrailerPath = "https://www.youtube.com/watch?v=pJ-aR--gScM"
                         },
                         new
                         {
                             GameId = 2,
+                            Description = "A multiplayer horror game where survivors must evade a killer.",
+                            Discount = 0.40m,
+                            GameplayPath = "https://www.youtube.com/watch?v=3wUHKO0ieyY",
+                            ImagePath = "https://pbs.twimg.com/media/FOEzJiXX0AcxBTi.jpg",
+                            MinimumRequirements = "8GB RAM, i3-4170, GTX 760",
+                            Name = "Dead by Daylight",
+                            NumberOfRecentPurchases = 0,
+                            Price = 19.99m,
+                            PublisherUserId = 1,
+                            Rating = 0m,
+                            RecommendedRequirements = "16GB RAM, i5-6500, GTX 1060",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=JGhIXLO3ul8"
+                        },
+                        new
+                        {
+                            GameId = 3,
+                            Description = "A tactical first-person shooter featuring team-based gameplay.",
+                            Discount = 0.50m,
+                            GameplayPath = "https://www.youtube.com/watch?v=P22HqM9w500",
+                            ImagePath = "https://sm.ign.com/ign_nordic/cover/c/counter-st/counter-strike-2_jc2d.jpg",
+                            MinimumRequirements = "8GB RAM, i5-2500K, GTX 660",
+                            Name = "Counter-Strike 2",
+                            NumberOfRecentPurchases = 0,
+                            Price = 20.99m,
+                            PublisherUserId = 1,
+                            Rating = 0m,
+                            RecommendedRequirements = "16GB RAM, i7-7700K, GTX 1060",
+                            StatusId = 1,
+                            TrailerPath = "https://www.youtube.com/watch?v=c80dVYcL69E"
+                        },
+                        new
+                        {
+                            GameId = 4,
+                            Description = "A story-driven first-person shooter that revolutionized the genre.",
+                            Discount = 0.60m,
+                            GameplayPath = "https://www.youtube.com/watch?v=jElU1mD8JnI",
+                            ImagePath = "https://media.moddb.com/images/mods/1/47/46951/d1jhx20-dc797b78-5feb-4005-b206-.1.jpg",
+                            MinimumRequirements = "512MB RAM, 1.7GHz Processor, DirectX 8 GPU",
+                            Name = "Half-Life 2",
+                            NumberOfRecentPurchases = 0,
+                            Price = 9.99m,
+                            PublisherUserId = 1,
+                            Rating = 0m,
+                            RecommendedRequirements = "1GB RAM, 3.0GHz Processor, DirectX 9 GPU",
+                            StatusId = 1,
+                            TrailerPath = "https://www.youtube.com/watch?v=UKA7JkV51Jw"
+                        },
+                        new
+                        {
+                            GameId = 5,
+                            Description = "A classic platformer adventure with iconic characters and worlds.",
+                            Discount = 0.70m,
+                            GameplayPath = "https://www.youtube.com/watch?v=rLl9XBg7wSs",
+                            ImagePath = "https://play-lh.googleusercontent.com/3ZKfMRp_QrdN-LzsZTbXdXBH-LS1iykSg9ikNq_8T2ppc92ltNbFxS-tORxw2-6kGA",
+                            MinimumRequirements = "N/A",
+                            Name = "Mario",
+                            NumberOfRecentPurchases = 0,
+                            Price = 59.99m,
+                            PublisherUserId = 1,
+                            Rating = 0m,
+                            RecommendedRequirements = "N/A",
+                            StatusId = 1,
+                            TrailerPath = "https://www.youtube.com/watch?v=TnGl01FkMMo"
+                        },
+                        new
+                        {
+                            GameId = 6,
+                            Description = "An epic adventure game where heroes save the kingdom of Hyrule.",
+                            Discount = 0.30m,
+                            GameplayPath = "https://www.youtube.com/watch?v=wW7jkBJ_yK0",
+                            ImagePath = "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg",
+                            MinimumRequirements = "N/A",
+                            Name = "The Legend of Zelda",
+                            NumberOfRecentPurchases = 0,
+                            Price = 59.99m,
+                            PublisherUserId = 1,
+                            Rating = 0m,
+                            RecommendedRequirements = "N/A",
+                            StatusId = 1,
+                            TrailerPath = "https://www.youtube.com/watch?v=_X2h3SF7gd4"
+                        },
+                        new
+                        {
+                            GameId = 7,
+                            Description = "A puzzle game where you change the rules to solve challenges.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
+                            ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
+                            MinimumRequirements = "2GB RAM, 1.0GHz Processor",
+                            Name = "Baba Is You",
+                            NumberOfRecentPurchases = 0,
+                            Price = 14.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
+                        },
+                        new
+                        {
+                            GameId = 8,
+                            Description = "A mind-bending puzzle-platformer with a dark sense of humor.",
+                            Discount = 0.10m,
+                            GameplayPath = "https://www.youtube.com/watch?v=ts-j0nFf2e0",
+                            ImagePath = "https://cdn2.steamgriddb.com/icon_thumb/0994c8d1d6bc62cc56e9112d2303266b.png",
+                            MinimumRequirements = "2GB RAM, 1.7GHz Processor, DirectX 9 GPU",
+                            Name = "Portal 2",
+                            NumberOfRecentPurchases = 0,
+                            Price = 9.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "4GB RAM, 3.0GHz Processor, GTX 760",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=tax4e4hBBZc"
+                        },
+                        new
+                        {
+                            GameId = 9,
+                            Description = "An exploration-based game where you unravel cosmic mysteries.",
+                            Discount = 0.15m,
+                            GameplayPath = "https://www.youtube.com/watch?v=huL_TawYrMs",
+                            ImagePath = "https://images.nintendolife.com/62a79995ed766/outer-wilds-echoes-of-the-eye-cover.cover_large.jpg",
+                            MinimumRequirements = "6GB RAM, i5-2300, GTX 560",
+                            Name = "Outer Wilds",
+                            NumberOfRecentPurchases = 0,
+                            Price = 24.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "8GB RAM, i7-6700, GTX 970",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=d9u6KYVq5kw"
+                        },
+                        new
+                        {
+                            GameId = 10,
+                            Description = "A rogue-like dungeon crawler where you defy the god of the dead.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=4fVO0qUBe4E",
+                            ImagePath = "https://image.api.playstation.com/vulcan/ap/rnd/202104/0517/9AcM3vy5t77zPiJyKHwRfnNT.png",
+                            MinimumRequirements = "4GB RAM, Dual Core 2.4GHz, Intel HD 5000",
+                            Name = "Hades",
+                            NumberOfRecentPurchases = 0,
+                            Price = 24.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "8GB RAM, Dual Core 3.0GHz, GTX 760",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=91sW0DMkZzI"
+                        },
+                        new
+                        {
+                            GameId = 11,
+                            Description = "A deck-building rogue-like where strategy is key to survival.",
+                            Discount = 0.25m,
+                            GameplayPath = "https://www.youtube.com/watch?v=JO3EIPtw-4I",
+                            ImagePath = "https://image.api.playstation.com/cdn/EP3717/CUSA15338_00/Sn5xbNutqfQdWYIjbeCIN0bwTJOV7UPG.png",
+                            MinimumRequirements = "2GB RAM, 2.0GHz Processor",
+                            Name = "Slay the Spire",
+                            NumberOfRecentPurchases = 0,
+                            Price = 19.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "4GB RAM, 3.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=75qT5KOs-Ew"
+                        },
+                        new
+                        {
+                            GameId = 12,
+                            Description = "A platformer about climbing a mountain and facing inner demons.",
+                            Discount = 0.30m,
+                            GameplayPath = "https://www.youtube.com/watch?v=FfRjHZWSYqY",
+                            ImagePath = "https://images.nintendolife.com/ef02c2e24c59e/celeste-cover.cover_large.jpg",
+                            MinimumRequirements = "2GB RAM, 2.0GHz Processor",
+                            Name = "Celeste",
+                            NumberOfRecentPurchases = 0,
+                            Price = 19.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "4GB RAM, 2.4GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=iofYDsP2vhQ"
+                        },
+                        new
+                        {
+                            GameId = 13,
+                            Description = "An action-adventure game set in a beautifully animated underground world.",
+                            Discount = 0.35m,
+                            GameplayPath = "https://www.youtube.com/watch?v=UAO2urG23S4",
+                            ImagePath = "https://image.api.playstation.com/cdn/EP1805/CUSA13285_00/DmwPWlU0468FbsjrtI92FhQz1xBYMoog.png",
+                            MinimumRequirements = "4GB RAM, 2.0GHz Processor",
+                            Name = "Hollow Knight",
+                            NumberOfRecentPurchases = 0,
+                            Price = 14.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "8GB RAM, 3.2GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=UAO2urG23S4"
+                        },
+                        new
+                        {
+                            GameId = 14,
+                            Description = "A farming simulator RPG where you build a life in the countryside.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=ot7uXNQskhs",
+                            ImagePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHWjybGuWhdyJqjmtziGvtHvCnQf23yY0R6g&s",
+                            MinimumRequirements = "2GB RAM, 2.0GHz Processor",
+                            Name = "Stardew Valley",
+                            NumberOfRecentPurchases = 0,
+                            Price = 14.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "4GB RAM, 3.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=ot7uXNQskhs"
+                        },
+                        new
+                        {
+                            GameId = 15,
+                            Description = "A sandbox game that lets you build and explore infinite worlds.",
+                            Discount = 0.14m,
+                            GameplayPath = "https://www.youtube.com/watch?v=ANgI2o_Jinc",
+                            ImagePath = "https://cdn2.steamgriddb.com/icon/f0b57183da91a7972b2b3c06b0db5542/32/512x512.png",
+                            MinimumRequirements = "4GB RAM, Intel HD 4000",
+                            Name = "Minecraft",
+                            NumberOfRecentPurchases = 1420,
+                            Price = 29.99m,
+                            PublisherUserId = 2,
+                            Rating = 4.8m,
+                            RecommendedRequirements = "8GB RAM, GTX 1060",
+                            StatusId = 1,
+                            TrailerPath = "https://www.youtube.com/watch?v=MmB9b5njVbA"
+                        },
+                        new
+                        {
+                            GameId = 16,
+                            Description = "A survival game in a dark and whimsical world filled with strange creatures.",
+                            Discount = 0.25m,
+                            GameplayPath = "https://www.youtube.com/watch?v=htXgxyLpPMg",
+                            ImagePath = "https://image.api.playstation.com/cdn/EP2107/CUSA00327_00/i5qwqMWJj33IIr2m9TM29GQNnFCi4ZqI.png?w=440",
+                            MinimumRequirements = "1.7GHz Processor, 1GB RAM",
+                            Name = "Don't Starve",
+                            NumberOfRecentPurchases = 0,
+                            Price = 9.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "2.0GHz Processor, 2GB RAM",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=ochPlhMFk84"
+                        },
+                        new
+                        {
+                            GameId = 17,
+                            Description = "A classic run and gun game with hand-drawn animations and tough bosses.",
+                            Discount = 0.40m,
+                            GameplayPath = "https://www.youtube.com/watch?v=DNIMD8ZpMSQ",
+                            ImagePath = "https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Cuphead_%28artwork%29.png/250px-Cuphead_%28artwork%29.png",
+                            MinimumRequirements = "3GB RAM, Intel Core2 Duo E8400",
+                            Name = "Cuphead",
+                            NumberOfRecentPurchases = 0,
+                            Price = 19.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "4GB RAM, i3-3240",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=NN-9SQXoi50"
+                        },
+                        new
+                        {
+                            GameId = 18,
+                            Description = "A black-and-white puzzle platformer with a haunting atmosphere.",
+                            Discount = 0.30m,
+                            GameplayPath = "https://www.youtube.com/watch?v=dYeuLZY7fZk",
+                            ImagePath = "https://image.api.playstation.com/cdn/EP2054/CUSA01369_00/W45kellY9yrwSDpmQEL9tFqZQW7N4FEz.png?w=440",
+                            MinimumRequirements = "512MB RAM, 1.5GHz Processor",
+                            Name = "Limbo",
+                            NumberOfRecentPurchases = 0,
+                            Price = 9.99m,
+                            PublisherUserId = 2,
+                            Rating = 0m,
+                            RecommendedRequirements = "2GB RAM, 2.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=Y4HSyVXKYz8"
+                        },
+                        new
+                        {
+                            GameId = 19,
                             Description = "A futuristic open-world RPG where you explore the neon-lit streets of Nightcity.",
                             Discount = 0.25m,
                             GameplayPath = "https://www.youtube.com/watch?v=8X2kIfS6fb8",
@@ -173,7 +612,7 @@ namespace SteamHub.Api.Migrations
                             Name = "Cyberstrike 2077",
                             NumberOfRecentPurchases = 950,
                             Price = 59.99m,
-                            PublisherUserId = 4,
+                            PublisherUserId = 3,
                             Rating = 4.2m,
                             RecommendedRequirements = "Intel i7-4790, 12GB RAM, GTX 1060",
                             StatusId = 1,
@@ -181,11 +620,11 @@ namespace SteamHub.Api.Migrations
                         },
                         new
                         {
-                            GameId = 3,
+                            GameId = 20,
                             Description = "Immerse yourself in the Viking age in this brutal and breathtaking action RPG.",
                             Discount = 0.10m,
                             GameplayPath = "https://www.youtube.com/watch?v=gncB1_e9n8E",
-                            ImagePath = "https://upload.wikimedia.org/wikipedia/en/6/6d/Assassin%27s_Creed_Valhalla_cover.jpg",
+                            ImagePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDtZKyDW9Jrnh8ix-Y38qG5fddbUgYEW7yxA&s",
                             MinimumRequirements = "Intel i5-4460, 8GB RAM, GTX 960",
                             Name = "Shadow of Valhalla",
                             NumberOfRecentPurchases = 780,
@@ -195,57 +634,6 @@ namespace SteamHub.Api.Migrations
                             RecommendedRequirements = "Intel i7-6700K, 16GB RAM, GTX 1080",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=ssrNcwxALS4"
-                        },
-                        new
-                        {
-                            GameId = 4,
-                            Description = "An action-adventure game set in the fantasy land of Hyrule, where players control Link to rescue Princess Zelda.",
-                            Discount = 0.20m,
-                            GameplayPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE",
-                            ImagePath = "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg",
-                            MinimumRequirements = "Intel Core i5, 8GB RAM, GTX 960",
-                            Name = "The Legend of Zelda",
-                            NumberOfRecentPurchases = 1500,
-                            Price = 59.99m,
-                            PublisherUserId = 3,
-                            Rating = 4.8m,
-                            RecommendedRequirements = "Intel Core i7, 16GB RAM, GTX 1060",
-                            StatusId = 1,
-                            TrailerPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE"
-                        },
-                        new
-                        {
-                            GameId = 5,
-                            Description = "A puzzle game where you change the rules to solve challenges.",
-                            Discount = 0.20m,
-                            GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
-                            ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
-                            MinimumRequirements = "2GB RAM, 1.0GHz Processor",
-                            Name = "Baba is You",
-                            NumberOfRecentPurchases = 1500,
-                            Price = 14.99m,
-                            PublisherUserId = 1,
-                            Rating = 4.8m,
-                            RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
-                            StatusId = 0,
-                            TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
-                        },
-                        new
-                        {
-                            GameId = 6,
-                            Description = "A farming simulation game where players can grow crops, raise animals, and build their farm.",
-                            Discount = 0.20m,
-                            GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
-                            ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple123/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
-                            MinimumRequirements = "2GB RAM, 1.0GHz Processor",
-                            Name = "Stardew Valley",
-                            NumberOfRecentPurchases = 1500,
-                            Price = 14.99m,
-                            PublisherUserId = 2,
-                            Rating = 4.8m,
-                            RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
-                            StatusId = 0,
-                            TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
                         });
                 });
 
@@ -319,70 +707,140 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             ItemId = 1,
-                            CorrespondingGameId = 1,
-                            Description = "A mystical blade imbued with ancient magic from Legends of Etheria.",
-                            ImagePath = "https://cdn.example.com/etheria/ethereal-blade.jpg",
-                            IsListed = true,
-                            ItemName = "Ethereal Blade",
-                            Price = 29.99f
-                        },
-                        new
-                        {
-                            ItemId = 7,
-                            CorrespondingGameId = 1,
-                            Description = "A mystical blade imbued with ancient magic from Legends of Etheria.",
-                            ImagePath = "https://cdn.example.com/etheria/ethereal-blade.jpg",
+                            CorrespondingGameId = 3,
+                            Description = "A sleek and aggressive finish for your AK-47.",
+                            ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak47_cobra_light_large.7494bfdf4855fd4e6a2dbd983ed0a243c80ef830.png",
                             IsListed = false,
-                            ItemName = "pilfered ethereal blade",
+                            ItemName = "AK-47 | Redline Skin",
                             Price = 29.99f
                         },
                         new
                         {
                             ItemId = 2,
-                            CorrespondingGameId = 1,
-                            Description = "An enchanted armour that protects the bearer in Legends of Etheria.",
-                            ImagePath = "https://cdn.example.com/etheria/mystic-armour.jpg",
-                            IsListed = true,
-                            ItemName = "Mystic Armour",
-                            Price = 39.99f
+                            CorrespondingGameId = 3,
+                            Description = "Legendary pistol skin with a fiery design.",
+                            ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_aa_flames_light_large.dd140c3b359c16ccd8e918ca6ad0b2628151fe1c.png",
+                            IsListed = false,
+                            ItemName = "Desert Eagle | Blaze Skin",
+                            Price = 34.99f
                         },
                         new
                         {
                             ItemId = 3,
-                            CorrespondingGameId = 2,
+                            CorrespondingGameId = 4,
+                            Description = "Iconic weapon that manipulates objects with physics.",
+                            ImagePath = "https://www.toyark.com/wp-content/uploads/2013/05/Half-Life-2-Gravity-Gun-007.jpg",
+                            IsListed = false,
+                            ItemName = "Gravity Gun Replica",
+                            Price = 49.99f
+                        },
+                        new
+                        {
+                            ItemId = 4,
+                            CorrespondingGameId = 4,
+                            Description = "Protective gloves from the HEV suit worn by Gordon Freeman.",
+                            ImagePath = "https://preview.redd.it/hl2-revision-update-the-grabbity-gloves-v0-ftz143vjmqcb1.jpg?width=640&crop=smart&auto=webp&s=9b3738a0f4bce98cc6a38b34e6ec319d03c05dd0",
+                            IsListed = false,
+                            ItemName = "HEV Suit Gloves",
+                            Price = 19.99f
+                        },
+                        new
+                        {
+                            ItemId = 5,
+                            CorrespondingGameId = 5,
+                            Description = "A soft collectible version of the iconic power-up.",
+                            ImagePath = "https://mario.wiki.gallery/images/thumb/7/7e/New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png/1200px-New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png",
+                            IsListed = false,
+                            ItemName = "Fire Flower",
+                            Price = 14.99f
+                        },
+                        new
+                        {
+                            ItemId = 6,
+                            CorrespondingGameId = 5,
+                            Description = "The classic red cap worn by Mario himself.",
+                            ImagePath = "https://static.wikia.nocookie.net/mario/images/c/cd/Mario_Cap.png/revision/latest?cb=20180310022043",
+                            IsListed = false,
+                            ItemName = "Mario Cap",
+                            Price = 24.99f
+                        },
+                        new
+                        {
+                            ItemId = 7,
+                            CorrespondingGameId = 6,
+                            Description = "Faithful replica of Link's legendary blade.",
+                            ImagePath = "https://upload.wikimedia.org/wikipedia/en/f/f9/Master_Sword_Lead.png",
+                            IsListed = false,
+                            ItemName = "Master Sword Replica",
+                            Price = 69.99f
+                        },
+                        new
+                        {
+                            ItemId = 8,
+                            CorrespondingGameId = 6,
+                            Description = "Sturdy shield bearing the crest of Hyrule.",
+                            ImagePath = "https://theswordstall.co.uk/cdn/shop/files/Legend-Of-Zelda-Deluxe-Hylian-Shield-Full-Metal-3.jpg?v=1723552799&width=750",
+                            IsListed = false,
+                            ItemName = "Hylian Shield",
+                            Price = 59.99f
+                        },
+                        new
+                        {
+                            ItemId = 9,
+                            CorrespondingGameId = 15,
+                            Description = "Miniature version of the famous mining tool.",
+                            ImagePath = "https://cdn.example.com/minecraft/diamond-pickaxe.jphttps://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Diamond_Pickaxe_JE1_BE1.png/revision/latest?cb=20190518122739g",
+                            IsListed = false,
+                            ItemName = "Diamond Pickaxe",
+                            Price = 9.99f
+                        },
+                        new
+                        {
+                            ItemId = 10,
+                            CorrespondingGameId = 15,
+                            Description = "Soft plush of the infamous explosive mob.",
+                            ImagePath = "https://feltright.com/cdn/shop/files/minecraft-creeper.jpg?v=1720033057&width=800",
+                            IsListed = false,
+                            ItemName = "Creeper Plush",
+                            Price = 19.99f
+                        },
+                        new
+                        {
+                            ItemId = 11,
+                            CorrespondingGameId = 19,
                             Description = "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.",
-                            ImagePath = "https://cdn.example.com/cyberstrike/gauntlet.jpg",
-                            IsListed = true,
+                            ImagePath = "https://static.wikia.nocookie.net/shop-heroes/images/4/4a/Gauntlets_Cybernetic_Gauntlets_Blueprint.png/revision/latest?cb=20200724020856",
+                            IsListed = false,
                             ItemName = "Cybernetic Gauntlet",
                             Price = 34.99f
                         },
                         new
                         {
-                            ItemId = 4,
-                            CorrespondingGameId = 2,
+                            ItemId = 12,
+                            CorrespondingGameId = 19,
                             Description = "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.",
-                            ImagePath = "https://cdn.example.com/cyberstrike/neon-visor.jpg",
-                            IsListed = true,
+                            ImagePath = "https://www.motocentral.co.uk/cdn/shop/files/Ruroc-EOX-Cyberstrike_-From-Moto-Central-_-Fast-Free-UK-Delivery-257043288_1024x.jpg?v=1744036882",
+                            IsListed = false,
                             ItemName = "Neon Visor",
                             Price = 24.99f
                         },
                         new
                         {
-                            ItemId = 5,
-                            CorrespondingGameId = 3,
+                            ItemId = 13,
+                            CorrespondingGameId = 20,
                             Description = "A mighty axe for the warriors of Shadow of Valhalla.",
-                            ImagePath = "https://cdn.example.com/valhalla/viking-axe.jpg",
-                            IsListed = true,
+                            ImagePath = "https://valhalla-vikings.co.uk/cdn/shop/products/il_fullxfull.3370240260_td4v.jpg?v=1679150085&width=1080",
+                            IsListed = false,
                             ItemName = "Viking Axe",
                             Price = 44.99f
                         },
                         new
                         {
-                            ItemId = 6,
-                            CorrespondingGameId = 3,
+                            ItemId = 14,
+                            CorrespondingGameId = 20,
                             Description = "A robust shield forged for the bravest of fighters in Shadow of Valhalla.",
-                            ImagePath = "https://cdn.example.com/valhalla/shield.jpg",
-                            IsListed = true,
+                            ImagePath = "https://www.vikingsroar.com/cdn/shop/products/d7f00df1f2c5a9059ec5dd319139da24.webp?v=1652049514",
+                            IsListed = false,
                             ItemName = "Valhalla Shield",
                             Price = 34.99f
                         });
@@ -437,11 +895,11 @@ namespace SteamHub.Api.Migrations
                             TradeId = 1,
                             AcceptedByDestinationUser = false,
                             AcceptedBySourceUser = false,
-                            DestinationUserId = 2,
-                            GameOfTradeId = 1,
-                            SourceUserId = 1,
+                            DestinationUserId = 8,
+                            GameOfTradeId = 6,
+                            SourceUserId = 4,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
+                            TradeDescription = "Trade 1: AliceJ offers Legend of Zelda to EmilyB",
                             TradeStatus = 0
                         },
                         new
@@ -450,10 +908,10 @@ namespace SteamHub.Api.Migrations
                             AcceptedByDestinationUser = false,
                             AcceptedBySourceUser = true,
                             DestinationUserId = 4,
-                            GameOfTradeId = 2,
-                            SourceUserId = 3,
+                            GameOfTradeId = 19,
+                            SourceUserId = 5,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 2: Jane Doe offers Game2 to Maria Elena",
+                            TradeDescription = "Trade 2: LiamG offers Cyberstrike 2077 to AliceJ",
                             TradeStatus = 0
                         },
                         new
@@ -461,12 +919,12 @@ namespace SteamHub.Api.Migrations
                             TradeId = 3,
                             AcceptedByDestinationUser = true,
                             AcceptedBySourceUser = true,
-                            DestinationUserId = 2,
-                            GameOfTradeId = 1,
-                            SourceUserId = 1,
+                            DestinationUserId = 6,
+                            GameOfTradeId = 20,
+                            SourceUserId = 7,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
-                            TradeStatus = 2
+                            TradeDescription = "Trade 3: NoahS offers Shadow of Valhalla to SophieW",
+                            TradeStatus = 1
                         });
                 });
 
@@ -491,13 +949,13 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             TradeId = 1,
-                            ItemId = 1,
+                            ItemId = 7,
                             IsSourceUserItem = true
                         },
                         new
                         {
                             TradeId = 2,
-                            ItemId = 2,
+                            ItemId = 12,
                             IsSourceUserItem = false
                         });
                 });
@@ -685,20 +1143,29 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             StoreTransactionId = 1,
-                            Amount = 49.99f,
+                            Amount = 14.99f,
                             Date = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            GameId = 1,
-                            UserId = 1,
+                            GameId = 5,
+                            UserId = 4,
                             WithMoney = true
                         },
                         new
                         {
                             StoreTransactionId = 2,
-                            Amount = 59.99f,
+                            Amount = 34.99f,
                             Date = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            GameId = 2,
-                            UserId = 2,
+                            GameId = 20,
+                            UserId = 7,
                             WithMoney = false
+                        },
+                        new
+                        {
+                            StoreTransactionId = 3,
+                            Amount = 29.99f,
+                            Date = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            GameId = 15,
+                            UserId = 4,
+                            WithMoney = true
                         });
                 });
 
@@ -722,82 +1189,87 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             TagId = 1,
-                            TagName = "Tag1"
-                        },
-                        new
-                        {
-                            TagId = 2,
                             TagName = "Rogue-Like"
                         },
                         new
                         {
-                            TagId = 3,
+                            TagId = 2,
                             TagName = "Third-Person Shooter"
                         },
                         new
                         {
-                            TagId = 4,
+                            TagId = 3,
                             TagName = "Multiplayer"
                         },
                         new
                         {
-                            TagId = 5,
+                            TagId = 4,
                             TagName = "Horror"
                         },
                         new
                         {
-                            TagId = 6,
+                            TagId = 5,
                             TagName = "First-Person Shooter"
                         },
                         new
                         {
-                            TagId = 7,
+                            TagId = 6,
                             TagName = "Action"
                         },
                         new
                         {
-                            TagId = 8,
+                            TagId = 7,
                             TagName = "Platformer"
                         },
                         new
                         {
-                            TagId = 9,
+                            TagId = 8,
                             TagName = "Adventure"
                         },
                         new
                         {
-                            TagId = 10,
+                            TagId = 9,
                             TagName = "Puzzle"
                         },
                         new
                         {
-                            TagId = 11,
+                            TagId = 10,
                             TagName = "Exploration"
                         },
                         new
                         {
-                            TagId = 12,
+                            TagId = 11,
                             TagName = "Sandbox"
                         },
                         new
                         {
-                            TagId = 13,
+                            TagId = 12,
                             TagName = "Survival"
                         },
                         new
                         {
-                            TagId = 14,
+                            TagId = 13,
                             TagName = "Arcade"
                         },
                         new
                         {
-                            TagId = 15,
+                            TagId = 14,
                             TagName = "RPG"
                         },
                         new
                         {
-                            TagId = 16,
+                            TagId = 15,
                             TagName = "Racing"
+                        },
+                        new
+                        {
+                            TagId = 16,
+                            TagName = "Action RPG"
+                        },
+                        new
+                        {
+                            TagId = 17,
+                            TagName = "Battle Royale"
                         });
                 });
 
@@ -836,38 +1308,74 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             UserId = 1,
-                            Email = "johndoe@gmail.com",
+                            Email = "gabe.newell@valvestudio.com",
                             PointsBalance = 100f,
-                            RoleId = 0,
-                            UserName = "John Doe",
-                            WalletBalance = 56f
+                            RoleId = 1,
+                            UserName = "GabeN",
+                            WalletBalance = 500f
                         },
                         new
                         {
                             UserId = 2,
-                            Email = "michaeljohn@gmail.com",
-                            PointsBalance = 45f,
-                            RoleId = 0,
-                            UserName = "Michael John",
-                            WalletBalance = 78f
+                            Email = "mathias.new@cdprojektred.com",
+                            PointsBalance = 85f,
+                            RoleId = 1,
+                            UserName = "MattN",
+                            WalletBalance = 420f
                         },
                         new
                         {
                             UserId = 3,
-                            Email = "janedoe@gmail.com",
-                            PointsBalance = 234f,
+                            Email = "john.chen@thatgamecompany.com",
+                            PointsBalance = 92f,
                             RoleId = 1,
-                            UserName = "Jane Doe",
-                            WalletBalance = 21f
+                            UserName = "JohnC",
+                            WalletBalance = 390f
                         },
                         new
                         {
                             UserId = 4,
-                            Email = "mariaelena@gmail.com",
-                            PointsBalance = 34f,
-                            RoleId = 1,
-                            UserName = "Maria Elena",
-                            WalletBalance = 455f
+                            Email = "alice.johnson@example.com",
+                            PointsBalance = 45f,
+                            RoleId = 0,
+                            UserName = "AliceJ",
+                            WalletBalance = 78f
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            Email = "liam.garcia@example.com",
+                            PointsBalance = 67f,
+                            RoleId = 0,
+                            UserName = "LiamG",
+                            WalletBalance = 55f
+                        },
+                        new
+                        {
+                            UserId = 6,
+                            Email = "sophie.williams@example.com",
+                            PointsBalance = 120f,
+                            RoleId = 0,
+                            UserName = "SophieW",
+                            WalletBalance = 95f
+                        },
+                        new
+                        {
+                            UserId = 7,
+                            Email = "noah.smith@example.com",
+                            PointsBalance = 38f,
+                            RoleId = 0,
+                            UserName = "NoahS",
+                            WalletBalance = 33f
+                        },
+                        new
+                        {
+                            UserId = 8,
+                            Email = "emily.brown@example.com",
+                            PointsBalance = 84f,
+                            RoleId = 0,
+                            UserName = "EmilyB",
+                            WalletBalance = 110f
                         });
                 });
 
@@ -899,73 +1407,65 @@ namespace SteamHub.Api.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
-                            ItemId = 1,
-                            GameId = 1,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 2,
-                            GameId = 1,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 3,
-                            GameId = 2,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 4,
-                            GameId = 2,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 6,
-                            GameId = 3,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 7,
-                            GameId = 1,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            ItemId = 6,
-                            GameId = 3,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 2,
+                            UserId = 4,
                             ItemId = 5,
-                            GameId = 3,
+                            GameId = 5,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         },
                         new
                         {
-                            UserId = 2,
+                            UserId = 4,
+                            ItemId = 6,
+                            GameId = 5,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            ItemId = 9,
+                            GameId = 15,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 5,
                             ItemId = 7,
-                            GameId = 1,
+                            GameId = 6,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            ItemId = 8,
+                            GameId = 6,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            ItemId = 12,
+                            GameId = 19,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 7,
+                            ItemId = 13,
+                            GameId = 20,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            ItemId = 10,
+                            GameId = 15,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         });
@@ -994,49 +1494,49 @@ namespace SteamHub.Api.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
+                            UserId = 4,
                             PointShopItemId = 1,
                             IsActive = false,
                             PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            UserId = 1,
+                            UserId = 4,
                             PointShopItemId = 2,
                             IsActive = true,
                             PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            UserId = 1,
+                            UserId = 4,
                             PointShopItemId = 5,
                             IsActive = false,
                             PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            UserId = 2,
+                            UserId = 5,
                             PointShopItemId = 2,
                             IsActive = true,
                             PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            UserId = 2,
+                            UserId = 5,
                             PointShopItemId = 6,
                             IsActive = false,
                             PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            UserId = 3,
+                            UserId = 6,
                             PointShopItemId = 3,
                             IsActive = false,
                             PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            UserId = 3,
+                            UserId = 7,
                             PointShopItemId = 4,
                             IsActive = true,
                             PurchaseDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified)
@@ -1069,40 +1569,64 @@ namespace SteamHub.Api.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
-                            GameId = 1,
+                            UserId = 4,
+                            GameId = 3,
                             IsInCart = false,
                             IsInWishlist = true,
                             IsPurchased = false
                         },
                         new
                         {
-                            UserId = 1,
-                            GameId = 2,
+                            UserId = 4,
+                            GameId = 5,
                             IsInCart = false,
                             IsInWishlist = false,
                             IsPurchased = true
                         },
                         new
                         {
-                            UserId = 1,
-                            GameId = 3,
+                            UserId = 4,
+                            GameId = 6,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            GameId = 15,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            GameId = 6,
                             IsInCart = true,
                             IsInWishlist = false,
                             IsPurchased = false
                         },
                         new
                         {
-                            UserId = 2,
-                            GameId = 1,
+                            UserId = 5,
+                            GameId = 19,
                             IsInCart = false,
                             IsInWishlist = false,
                             IsPurchased = true
                         },
                         new
                         {
-                            UserId = 2,
-                            GameId = 3,
+                            UserId = 7,
+                            GameId = 20,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 8,
+                            GameId = 15,
                             IsInCart = true,
                             IsInWishlist = false,
                             IsPurchased = false
