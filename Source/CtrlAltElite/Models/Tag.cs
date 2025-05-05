@@ -19,5 +19,10 @@ namespace SteamStore.Models
         public string Tag_name { get; set; }
 
         public int NumberOfUserGamesWithTag { get; set; }
+
+        public Tag()
+        {
+
+        }
     }
 }

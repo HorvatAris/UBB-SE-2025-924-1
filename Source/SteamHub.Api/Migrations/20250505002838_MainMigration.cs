@@ -416,10 +416,10 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "UserId", "Email", "PointsBalance", "RoleId", "UserName", "WalletBalance" },
                 values: new object[,]
                 {
-                    { 1, "user1@gmail.com", 100f, 0, "User1", 56f },
-                    { 2, "user2@gmail.com", 45f, 0, "User2", 78f },
-                    { 3, "user3@gmail.com", 234f, 1, "User3", 21f },
-                    { 4, "user4@gmail.com", 34f, 1, "User4", 455f }
+                    { 1, "johndoe@gmail.com", 100f, 0, "John Doe", 56f },
+                    { 2, "michaeljohn@gmail.com", 45f, 0, "Michael John", 78f },
+                    { 3, "janedoe@gmail.com", 234f, 1, "Jane Doe", 21f },
+                    { 4, "mariaelena@gmail.com", 34f, 1, "Maria Elena", 455f }
                 });
 
             migrationBuilder.InsertData(
@@ -430,7 +430,9 @@ namespace SteamHub.Api.Migrations
                     { 1, "An epic open-world RPG set in a mystical realm full of adventure, magic, and danger.", 0.15m, "https://www.youtube.com/watch?v=AKXiKBnzpBQ", "https://upload.wikimedia.org/wikipedia/en/5/5e/Elden_Ring_Box_art.jpg", "Intel i5-8400, 8GB RAM, GTX 1060", "Legends of Etheria", 1200, 49.99m, 3, 4.7m, "Intel i7-8700K, 16GB RAM, RTX 2070", "rejected game", 2, "https://www.youtube.com/watch?v=E3Huy2cdih0" },
                     { 2, "A futuristic open-world RPG where you explore the neon-lit streets of Nightcity.", 0.25m, "https://www.youtube.com/watch?v=8X2kIfS6fb8", "https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg", "Intel i5-3570K, 8GB RAM, GTX 780", "Cyberstrike 2077", 950, 59.99m, 4, 4.2m, "Intel i7-4790, 12GB RAM, GTX 1060", null, 1, "https://www.youtube.com/watch?v=FknHjl7eQ6o" },
                     { 3, "Immerse yourself in the Viking age in this brutal and breathtaking action RPG.", 0.10m, "https://www.youtube.com/watch?v=gncB1_e9n8E", "https://upload.wikimedia.org/wikipedia/en/6/6d/Assassin%27s_Creed_Valhalla_cover.jpg", "Intel i5-4460, 8GB RAM, GTX 960", "Shadow of Valhalla", 780, 44.99m, 3, 4.5m, "Intel i7-6700K, 16GB RAM, GTX 1080", null, 1, "https://www.youtube.com/watch?v=ssrNcwxALS4" },
-                    { 4, "An action-adventure game set in the fantasy land of Hyrule, where players control Link to rescue Princess Zelda.", 0.20m, "https://www.youtube.com/watch?v=0u8g1c2v4xE", "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg", "Intel Core i5, 8GB RAM, GTX 960", "The Legend of Zelda", 1500, 59.99m, 3, 4.8m, "Intel Core i7, 16GB RAM, GTX 1060", null, 1, "https://www.youtube.com/watch?v=0u8g1c2v4xE" }
+                    { 4, "An action-adventure game set in the fantasy land of Hyrule, where players control Link to rescue Princess Zelda.", 0.20m, "https://www.youtube.com/watch?v=0u8g1c2v4xE", "https://m.media-amazon.com/images/I/71oHNyzdN1L.jpg", "Intel Core i5, 8GB RAM, GTX 960", "The Legend of Zelda", 1500, 59.99m, 3, 4.8m, "Intel Core i7, 16GB RAM, GTX 1060", null, 1, "https://www.youtube.com/watch?v=0u8g1c2v4xE" },
+                    { 5, "A puzzle game where you change the rules to solve challenges.", 0.20m, "https://www.youtube.com/watch?v=dAiX8s-Eu7w", "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg", "2GB RAM, 1.0GHz Processor", "Baba is You", 1500, 14.99m, 1, 4.8m, "4GB RAM, 2.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=z3_yA4HTJfs" },
+                    { 6, "A farming simulation game where players can grow crops, raise animals, and build their farm.", 0.20m, "https://www.youtube.com/watch?v=dAiX8s-Eu7w", "https://is5-ssl.mzstatic.com/image/thumb/Purple123/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg", "2GB RAM, 1.0GHz Processor", "Stardew Valley", 1500, 14.99m, 2, 4.8m, "4GB RAM, 2.0GHz Processor", null, 0, "https://www.youtube.com/watch?v=z3_yA4HTJfs" }
                 });
 
             migrationBuilder.InsertData(
@@ -468,9 +470,9 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "TradeId", "AcceptedByDestinationUser", "AcceptedBySourceUser", "DestinationUserId", "GameOfTradeId", "SourceUserId", "TradeDate", "TradeDescription", "TradeStatus" },
                 values: new object[,]
                 {
-                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 0 },
-                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: User3 offers Game2 to User4", 0 },
-                    { 3, true, true, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 2 }
+                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: John Doe offers Game1 to Michael John", 0 },
+                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: Jane Doe offers Game2 to Maria Elena", 0 },
+                    { 3, true, true, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: John Doe offers Game1 to Michael John", 2 }
                 });
 
             migrationBuilder.InsertData(

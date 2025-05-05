@@ -44,5 +44,14 @@
                 Assert.Equal(expectedElements[i], collection.ElementAt(i));
             }
         }
-    }
+
+		public static void AssertContainsEquivalent<T>(IList<T> collection, params T[] expectedElements)
+		{
+			Assert.Equal(expectedElements.Length, collection.Count);
+			for (int i = 0; i < expectedElements.Length; i++)
+			{
+				Assert.Equivalent(expectedElements[i], collection.ElementAt(i));
+			}
+		}
+	}
 }
