@@ -119,6 +119,7 @@ public class DeveloperService : IDeveloperService
             RecommendedRequirements = reccommendedRequirement,
             Status = PendingState,
             Discount = discount,
+            PublisherIdentifier = this.User.UserId,
         };
         return game;
     }
