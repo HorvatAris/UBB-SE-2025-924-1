@@ -207,7 +207,7 @@
                                                 <StackPanel Grid.Column="1">
                                                     <TextBlock Text="{Binding ItemName}" 
                                                           Style="{StaticResource BodyTextBlockStyle}"/>
-                                                    <TextBlock Text="{Binding PriceDisplay}" 
+                                                    <TextBlock Text="{Binding Price}" 
                                                           Style="{StaticResource CaptionTextBlockStyle}"/>
                                                 </StackPanel>
                                             </Grid>
@@ -241,7 +241,7 @@
                                                 <StackPanel Grid.Column="1">
                                                     <TextBlock Text="{Binding ItemName}" 
                                                           Style="{StaticResource BodyTextBlockStyle}"/>
-                                                    <TextBlock Text="{Binding PriceDisplay}" 
+                                                    <TextBlock Text="{Binding Price}" 
                                                           Style="{StaticResource CaptionTextBlockStyle}"/>
                                                 </StackPanel>
                                                 <Button Grid.Column="2"

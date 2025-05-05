@@ -88,42 +88,6 @@ namespace CtrlAltElite.Services
             System.Diagnostics.Debug.WriteLine($"Updating trade with ID: {trade.TradeId} to status: {updateTradeRequest.TradeStatus}");
 
             await this.itemTradeServiceProxy.UpdateItemTradeAsync(trade.TradeId, updateTradeRequest);
-
-            // 3.If the destination user accepts, transfer the items
-            if (trade.AcceptedByDestinationUser)
-            {
-                // Fetch all trade details and filter by trade ID
-                var response = await this.itemTradeDetailServiceProxy.GetAllItemTradeDetailsAsync();
-                var tradeDetails = response.ItemTradeDetails
-                    .Where(detail => detail.TradeId == trade.TradeId)
-                    .ToList();
-
-                foreach (var detail in tradeDetails)
-                {
-                    var fromUserId = detail.IsSourceUserItem ? trade.SourceUser.UserId : trade.DestinationUser.UserId;
-                    var toUserId = detail.IsSourceUserItem ? trade.DestinationUser.UserId : trade.SourceUser.UserId;
-
-                    // First, remove from old owner
-                    await this.userInventoryServiceProxy.RemoveItemFromUserInventoryAsync(new ItemFromInventoryRequest
-                    {
-                        UserId = toUserId,
-                        ItemId = detail.ItemId,
-
-                        // ????
-                        GameId = trade.GameOfTrade.GameId,
-                    });
-
-                    // Then, add to new owner
-                    await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(new ItemFromInventoryRequest
-                    {
-                        UserId = fromUserId,
-                        ItemId = detail.ItemId,
-
-                        // ????
-                        GameId = trade.GameOfTrade.GameId,
-                    });
-                }
-            }
         }
 
         public async Task TransferItemAsync(int itemId, int fromUserId, int toUserId, int gameId)
@@ -280,7 +244,7 @@ namespace CtrlAltElite.Services
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
-                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.ItemId);
+                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.TradeId);
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
@@ -362,6 +326,8 @@ namespace CtrlAltElite.Services
                     DestinationUser = destinationUser,
                     GameOfTrade = game,
                     TradeDescription = tradeDto.TradeDescription,
+                    AcceptedBySourceUser = tradeDto.AcceptedBySourceUser,
+                    AcceptedByDestinationUser = tradeDto.AcceptedByDestinationUser,
                 };
 
                 // Set trade status
@@ -388,7 +354,7 @@ namespace CtrlAltElite.Services
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
-                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.ItemId);
+                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.TradeId);
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);

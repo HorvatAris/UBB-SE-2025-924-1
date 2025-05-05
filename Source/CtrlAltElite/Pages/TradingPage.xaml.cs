@@ -71,49 +71,6 @@ namespace CtrlAltElite.Pages
             }
         }
 
-        private async void LoadTradeHistoryAsync()
-        {
-            if (this.ViewModel.CurrentUser == null)
-            {
-                System.Diagnostics.Debug.WriteLine(CurrentUserNullMessageForHistory);
-                return;
-            }
-
-            try
-            {
-                var tradeHistoryEntries = await this.ViewModel.GetTradeHistoryAsync(this.ViewModel.CurrentUser.UserId);
-                this.TradeHistory.Clear();
-
-                foreach (var trade in tradeHistoryEntries)
-                {
-                    bool isCurrentUserSource = trade.SourceUser.UserId == this.ViewModel.CurrentUser.UserId;
-                    User tradePartner = isCurrentUserSource ? trade.DestinationUser : trade.SourceUser;
-
-                    var statusColor = trade.TradeStatus == TradeStatusCompleted
-                        ? new SolidColorBrush(Colors.Green)
-                        : new SolidColorBrush(Colors.Red);
-
-                    this.TradeHistory.Add(new TradeHistoryViewModel
-                    {
-                        TradeId = trade.TradeId,
-                        PartnerName = tradePartner.UserName,
-                        TradeItems = trade.SourceUserItems.Concat(trade.DestinationUserItems).ToList(),
-                        TradeDescription = trade.TradeDescription,
-                        TradeStatus = trade.TradeStatus,
-                        TradeDate = trade.TradeDate.ToString(TradeDateTimeDisplayFormat),
-                        StatusColor = statusColor,
-                        IsSourceUser = isCurrentUserSource,
-                    });
-                }
-            }
-            catch (System.Exception exception)
-            {
-                this.ErrorMessage.Text = LoadTradeHistoryErrorMessage;
-                System.Diagnostics.Debug.WriteLine($"{LoadTradeHistoryDebugMessagePrefix}{exception.Message}");
-            }
-        }
-
-
         private void AddSourceItem_Click(object sender, RoutedEventArgs eventArgs)
         {
             var selectedItems = this.SourceItemsListView.SelectedItems.Cast<Item>().ToList();
@@ -142,18 +99,19 @@ namespace CtrlAltElite.Pages
             }
         }
 
-        private async void CreateTradeOffer_Click(object sender, RoutedEventArgs e)
-        {
-            await this.ViewModel.CreateTradeOfferAsync();
-
-            //await this.LoadTradeHistoryAsync();
-        }
-
         private void ActiveTradesListView_SelectionChanged(object sender, SelectionChangedEventArgs eventArgs)
         {
             if (sender is ListView listView && listView.SelectedItem is ItemTrade selectedTrade)
             {
                 this.ViewModel.SelectedTrade = selectedTrade;
+            }
+        }
+
+        private async void CreateTradeOffer_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.ViewModel != null)
+            {
+                await this.ViewModel.TrySendTradeAsync(this.XamlRoot);
             }
         }
 
@@ -164,8 +122,11 @@ namespace CtrlAltElite.Pages
                 return;
             }
 
-            await this.ViewModel.AcceptTrade(this.ViewModel.SelectedTrade);
-            this.ViewModel.SelectedTrade = null;
+            if (this.ViewModel != null)
+            {
+                await this.ViewModel.TryAcceptTradeAsync(this.ViewModel.SelectedTrade, this.XamlRoot);
+                this.ViewModel.SelectedTrade = null;
+            }
         }
 
         private async void DeclineTrade_Click(object sender, RoutedEventArgs eventArgs)
@@ -175,8 +136,11 @@ namespace CtrlAltElite.Pages
                 return;
             }
 
-            await this.ViewModel.DeclineTradeAsync(this.ViewModel.SelectedTrade);
-            this.ViewModel.SelectedTrade = null;
+            if (this.ViewModel != null)
+            {
+                await this.ViewModel.TryDeclineTradeAsync(this.ViewModel.SelectedTrade, this.XamlRoot);
+                this.ViewModel.SelectedTrade = null;
+            }
         }
 
         private class TradeHistoryViewModel

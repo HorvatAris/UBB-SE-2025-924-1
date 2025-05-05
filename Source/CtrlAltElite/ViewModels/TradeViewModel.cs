@@ -248,6 +248,7 @@ namespace CtrlAltElite.ViewModels
                 if (this.selectedUser != value)
                 {
                     this.selectedUser = value;
+                    this.ErrorMessage = string.Empty;
                     this.OnPropertyChanged();
                     if (this.selectedUser != null)
                     {
@@ -265,10 +266,12 @@ namespace CtrlAltElite.ViewModels
                 if (this.selectedGame != value)
                 {
                     this.selectedGame = value;
+                    this.ErrorMessage = string.Empty;
                     this.OnPropertyChanged();
                     if (this.CurrentUser != null)
                     {
                         _ = this.LoadUserInventoryAsync();
+                        _ = this.LoadDestinationUserInventoryAsync();
                     }
                 }
             }
@@ -342,117 +345,6 @@ namespace CtrlAltElite.ViewModels
         {
             await this.LoadUsersAsync();
             await this.LoadGamesAsync();
-            await this.LoadActiveTradesAsync();
-            await this.LoadTradeHistoryAsync();
-        }
-
-        public async Task LoadUsersAsync()
-        {
-            try
-            {
-                var loggedInUser = this.tradeService.GetCurrentUser();
-                this.Users.Clear();
-                this.Users.Add(loggedInUser);
-                this.CurrentUser = loggedInUser;
-
-                var allUsers = await this.userService.GetAllUsersAsync();
-                this.AvailableUsers.Clear();
-                foreach (var user in allUsers)
-                {
-                    this.AvailableUsers.Add(user);
-                }
-            }
-            catch (System.Exception exception)
-            {
-                this.ErrorMessage = LoadUsersErrorMessage;
-                System.Diagnostics.Debug.WriteLine($"{LoadUsersDebugMessagePrefix}{exception.Message}");
-            }
-        }
-
-        public async Task LoadGamesAsync()
-        {
-            try
-            {
-                var allGames = await this.gameService.GetAllGamesAsync();
-
-                this.Games.Clear();
-                foreach (var game in allGames)
-                {
-                    this.Games.Add(game);
-                }
-            }
-            catch (System.Exception loadingGamesException)
-            {
-                var errorMessage = $"{LoadGamesErrorPrefix}{loadingGamesException.Message}";
-
-                if (loadingGamesException.InnerException != null)
-                {
-                    errorMessage += $"\n{LoadGamesInnerErrorPrefix}{loadingGamesException.InnerException.Message}";
-                }
-
-                this.ErrorMessage = errorMessage;
-                System.Diagnostics.Debug.WriteLine(errorMessage);
-                System.Diagnostics.Debug.WriteLine($"Stack trace: {loadingGamesException.StackTrace}");
-            }
-        }
-
-        private async Task LoadUserInventoryAsync()
-        {
-            this.SelectedSourceItems.Clear();
-
-            if (this.CurrentUser == null)
-            {
-                return;
-            }
-
-            try
-            {
-                var userInventoryItems = await this.tradeService.GetUserInventoryAsync(this.CurrentUser.UserId);
-
-
-                this.SourceUserItems.Clear();
-                foreach (var item in userInventoryItems.Where(itemInner => !itemInner.IsListed))
-                {
-                    if (this.SelectedGame == null || item.Game.GameId == this.SelectedGame.GameId)
-                    {
-                        this.SourceUserItems.Add(item);
-                    }
-                }
-            }
-            catch (System.Exception loadingUserInventoryException)
-            {
-                this.ErrorMessage = LoadUserItemsErrorMessage;
-                System.Diagnostics.Debug.WriteLine($"{LoadUserItemsDebugMessagePrefix}{loadingUserInventoryException.Message}");
-            }
-        }
-
-        private async Task LoadDestinationUserInventoryAsync()
-        {
-            this.SelectedDestinationItems.Clear();
-
-            if (this.SelectedUser == null)
-            {
-                return;
-            }
-
-            try
-            {
-                var userInventoryItems = await this.tradeService.GetUserInventoryAsync(this.SelectedUser.UserId);
-
-                this.DestinationUserItems.Clear();
-                foreach (var item in userInventoryItems.Where(itemInner => !itemInner.IsListed))
-                {
-                    if (this.SelectedGame == null || item.Game.GameId == this.SelectedGame.GameId)
-                    {
-                        this.DestinationUserItems.Add(item);
-                    }
-                }
-            }
-            catch (System.Exception loadingDestinationUserInventoryException)
-            {
-                this.ErrorMessage = LoadRecipientItemsErrorMessage;
-                System.Diagnostics.Debug.WriteLine($"{LoadRecipientItemsDebugMessagePrefix}{loadingDestinationUserInventoryException.Message}");
-            }
         }
 
         public void AddSourceItems(IEnumerable<Item> selectedItems)
@@ -562,15 +454,216 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        public async Task CreateTradeOfferAsync()
+        public async Task TryAcceptTradeAsync(ItemTrade trade, XamlRoot root)
         {
-            this.ErrorMessage = string.Empty;
-            this.SuccessMessage = string.Empty;
+            var result = await this.ShowDialogAsync(
+                root,
+                AcceptTradeTitle,
+                AcceptTradeMessage,
+                AcceptButtonText,
+                CancelButtonText);
 
-            if (!this.CanSendTradeOffer)
+            if (result == ContentDialogResult.Primary)
+            {
+                this.AcceptTrade(trade);
+            }
+        }
+
+        public async Task TryDeclineTradeAsync(ItemTrade trade, XamlRoot root)
+        {
+            var result = await this.ShowDialogAsync(
+                root,
+                DeclineTradeTitle,
+                DeclineTradeMessage,
+                DeclineButtonText,
+                CancelButtonText);
+
+            if (result == ContentDialogResult.Primary)
+            {
+                await this.DeclineTradeAsync(trade);
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private async Task LoadUsersAsync()
+        {
+            try
+            {
+                var loggedInUser = this.tradeService.GetCurrentUser();
+                this.Users.Clear();
+                this.Users.Add(loggedInUser);
+                this.CurrentUser = loggedInUser;
+
+                var allUsers = await this.userService.GetAllUsersAsync();
+                this.AvailableUsers.Clear();
+                foreach (var user in allUsers)
+                {
+                    if (user.UserId != this.CurrentUser.UserId)
+                    {
+                        this.AvailableUsers.Add(user);
+                    }
+                }
+
+                await this.LoadActiveTradesAsync();
+                await this.LoadTradeHistoryAsync();
+            }
+            catch (System.Exception exception)
+            {
+                this.ErrorMessage = LoadUsersErrorMessage;
+                System.Diagnostics.Debug.WriteLine($"{LoadUsersDebugMessagePrefix}{exception.Message}");
+
+                this.AvailableUsers.Clear();
+            }
+        }
+
+        private async Task LoadGamesAsync()
+        {
+            try
+            {
+                var allGames = await this.gameService.GetAllGamesAsync();
+
+                this.Games.Clear();
+                foreach (var game in allGames)
+                {
+                    this.Games.Add(game);
+                }
+            }
+            catch (System.Exception loadingGamesException)
+            {
+                var errorMessage = $"{LoadGamesErrorPrefix}{loadingGamesException.Message}";
+
+                if (loadingGamesException.InnerException != null)
+                {
+                    errorMessage += $"\n{LoadGamesInnerErrorPrefix}{loadingGamesException.InnerException.Message}";
+                }
+
+                this.ErrorMessage = errorMessage;
+                System.Diagnostics.Debug.WriteLine(errorMessage);
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {loadingGamesException.StackTrace}");
+
+                this.Games.Clear();
+            }
+        }
+
+        private async Task LoadUserInventoryAsync()
+        {
+            this.SelectedSourceItems.Clear();
+
+            if (this.CurrentUser == null)
             {
                 return;
             }
+
+            try
+            {
+                this.SourceUserItems.Clear();
+                var userInventoryItems = await this.tradeService.GetUserInventoryAsync(this.CurrentUser.UserId);
+
+                foreach (var item in userInventoryItems.Where(itemInner => !itemInner.IsListed))
+                {
+                    if (this.SelectedGame == null || item.Game.GameId == this.SelectedGame.GameId)
+                    {
+                        this.SourceUserItems.Add(item);
+                    }
+                }
+            }
+            catch (System.Exception loadingUserInventoryException)
+            {
+                this.ErrorMessage = LoadUserItemsErrorMessage;
+                System.Diagnostics.Debug.WriteLine($"{LoadUserItemsDebugMessagePrefix}{loadingUserInventoryException.Message}");
+            }
+        }
+
+        private async Task LoadDestinationUserInventoryAsync()
+        {
+            this.SelectedDestinationItems.Clear();
+
+            if (this.SelectedUser == null)
+            {
+                return;
+            }
+
+            try
+            {
+                this.DestinationUserItems.Clear();
+                var userInventoryItems = await this.tradeService.GetUserInventoryAsync(this.SelectedUser.UserId);
+
+                foreach (var item in userInventoryItems.Where(itemInner => !itemInner.IsListed))
+                {
+                    if (this.SelectedGame == null || item.Game.GameId == this.SelectedGame.GameId)
+                    {
+                        this.DestinationUserItems.Add(item);
+                    }
+                }
+            }
+            catch (System.Exception loadingDestinationUserInventoryException)
+            {
+                this.ErrorMessage = LoadRecipientItemsErrorMessage;
+                System.Diagnostics.Debug.WriteLine($"{LoadRecipientItemsDebugMessagePrefix}{loadingDestinationUserInventoryException.Message}");
+            }
+        }
+
+        private async Task LoadActiveTradesAsync()
+        {
+            if (this.CurrentUser == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var activeTrades = await this.tradeService.GetActiveTradesAsync(this.CurrentUser.UserId);
+                this.ActiveTrades.Clear();
+                foreach (var trade in activeTrades)
+                {
+                    this.ActiveTrades.Add(trade);
+                }
+            }
+            catch (System.Exception loadingActiveTradesException)
+            {
+                this.ErrorMessage = LoadActiveTradesErrorMessage;
+                System.Diagnostics.Debug.WriteLine($"{LoadActiveTradesDebugMessagePrefix}{loadingActiveTradesException.Message}");
+            }
+        }
+
+        private async Task LoadTradeHistoryAsync()
+        {
+            if (this.CurrentUser == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var historyTrades = await this.tradeService.GetTradeHistoryAsync(this.CurrentUser.UserId);
+                this.TradeHistory.Clear();
+                foreach (var trade in historyTrades)
+                {
+                    // Only add trades where the current user is involved
+                    if (trade.SourceUser.UserId == this.CurrentUser.UserId ||
+                        trade.DestinationUser.UserId == this.CurrentUser.UserId)
+                    {
+                        this.TradeHistory.Add(trade);
+                    }
+                }
+
+                this.OnPropertyChanged(nameof(this.TradeHistory));
+            }
+            catch (System.Exception loadingTradeHistoryException)
+            {
+                this.ErrorMessage = LoadTradeHistoryErrorMessage;
+                System.Diagnostics.Debug.WriteLine($"{LoadTradeHistoryDebugMessagePrefix}{loadingTradeHistoryException.Message}");
+            }
+        }
+
+        private async Task CreateTradeOfferAsync()
+        {
+            this.ErrorMessage = string.Empty;
+            this.SuccessMessage = string.Empty;
 
             try
             {
@@ -640,7 +733,7 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        public async Task AcceptTrade(ItemTrade trade)
+        private async Task AcceptTrade(ItemTrade trade)
         {
             try
             {
@@ -672,7 +765,7 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        public async Task DeclineTradeAsync(ItemTrade trade)
+        private async Task DeclineTradeAsync(ItemTrade trade)
         {
             if (trade == null)
             {
@@ -702,93 +795,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        public async Task TryAcceptTradeAsync(ItemTrade trade, XamlRoot root)
-        {
-            var result = await this.ShowDialogAsync(
-                root,
-                AcceptTradeTitle,
-                AcceptTradeMessage,
-                AcceptButtonText,
-                CancelButtonText);
-
-            if (result == ContentDialogResult.Primary)
-            {
-                this.AcceptTrade(trade);
-            }
-        }
-
-        public async Task TryDeclineTradeAsync(ItemTrade trade, XamlRoot root)
-        {
-            var result = await this.ShowDialogAsync(
-                root,
-                DeclineTradeTitle,
-                DeclineTradeMessage,
-                DeclineButtonText,
-                CancelButtonText);
-
-            if (result == ContentDialogResult.Primary)
-            {
-                await this.DeclineTradeAsync(trade);
-            }
-        }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private async Task LoadActiveTradesAsync()
-        {
-            if (this.CurrentUser == null)
-            {
-                return;
-            }
-
-            try
-            {
-                var activeTrades = await this.tradeService.GetActiveTradesAsync(this.CurrentUser.UserId);
-                this.ActiveTrades.Clear();
-                foreach (var trade in activeTrades)
-                {
-                    this.ActiveTrades.Add(trade);
-                }
-            }
-            catch (System.Exception loadingActiveTradesException)
-            {
-                this.ErrorMessage = LoadActiveTradesErrorMessage;
-                System.Diagnostics.Debug.WriteLine($"{LoadActiveTradesDebugMessagePrefix}{loadingActiveTradesException.Message}");
-            }
-        }
-
-        private async Task LoadTradeHistoryAsync()
-        {
-            if (this.CurrentUser == null)
-            {
-                return;
-            }
-
-            try
-            {
-                var historyTrades = await this.tradeService.GetTradeHistoryAsync(this.CurrentUser.UserId);
-                this.TradeHistory.Clear();
-                foreach (var trade in historyTrades)
-                {
-                    // Only add trades where the current user is involved
-                    if (trade.SourceUser.UserId == this.CurrentUser.UserId ||
-                        trade.DestinationUser.UserId == this.CurrentUser.UserId)
-                    {
-                        this.TradeHistory.Add(trade);
-                    }
-                }
-
-                this.OnPropertyChanged(nameof(this.TradeHistory));
-            }
-            catch (System.Exception loadingTradeHistoryException)
-            {
-                this.ErrorMessage = LoadTradeHistoryErrorMessage;
-                System.Diagnostics.Debug.WriteLine($"{LoadTradeHistoryDebugMessagePrefix}{loadingTradeHistoryException.Message}");
-            }
-        }
 
         private async Task<ContentDialogResult> ShowDialogAsync(XamlRoot root, string title, string content, string? primaryButton = null, string closeButton = "OK")
         {
