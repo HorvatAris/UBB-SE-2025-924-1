@@ -103,7 +103,7 @@ public class UserGameService : IUserGameService
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
-                .Select(g => g.GameId)
+                .Select(game => game.GameId)
                 .ToList();
             if (gameIds.Count == 0)
             {
@@ -120,9 +120,9 @@ public class UserGameService : IUserGameService
 
             return games;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
             return new Collection<Game>();
         }
     }
@@ -296,7 +296,7 @@ public class UserGameService : IUserGameService
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
-                .Select(g => g.GameId)
+                .Select(game => game.GameId)
                 .ToList();
             if (gameIds.Count == 0)
             {
@@ -314,9 +314,9 @@ public class UserGameService : IUserGameService
 
             return games;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
             return new Collection<Game>();
         }
     }
@@ -389,7 +389,7 @@ public class UserGameService : IUserGameService
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
-                .Select(g => g.GameId)
+                .Select(game => game.GameId)
                 .ToList();
             if (gameIds.Count == 0)
             {
@@ -406,9 +406,9 @@ public class UserGameService : IUserGameService
 
             return games;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
             return new Collection<Game>();
         }
     }

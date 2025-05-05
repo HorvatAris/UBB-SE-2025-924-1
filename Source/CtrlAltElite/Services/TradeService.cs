@@ -271,7 +271,7 @@ namespace CtrlAltElite.Services
             foreach (var trade in result)
             {
                 var tradeDetailsForThisTrade = allTradeDetails
-                    .Where(d => d.TradeId == trade.TradeId);
+                    .Where(tradeDetail => tradeDetail.TradeId == trade.TradeId);
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
@@ -294,11 +294,11 @@ namespace CtrlAltElite.Services
                     }
                 }
             }
-            foreach (var r in result)
+            foreach (var tradeFromHistory in result)
             {
-                System.Diagnostics.Debug.WriteLine($"Trade ID: {r.TradeId}, Source User: {r.SourceUser.UserName}, Destination User: {r.DestinationUser.UserName}, Game: {r.GameOfTrade}");
-                System.Diagnostics.Debug.WriteLine(r.SourceUserItems);
-                System.Diagnostics.Debug.WriteLine(r.DestinationUserItems);
+                System.Diagnostics.Debug.WriteLine($"Trade ID: {tradeFromHistory.TradeId}, Source User: {tradeFromHistory.SourceUser.UserName}, Destination User: {tradeFromHistory.DestinationUser.UserName}, Game: {tradeFromHistory.GameOfTrade}");
+                System.Diagnostics.Debug.WriteLine(tradeFromHistory.SourceUserItems);
+                System.Diagnostics.Debug.WriteLine(tradeFromHistory.DestinationUserItems);
             }
             return result;
         }
@@ -308,22 +308,22 @@ namespace CtrlAltElite.Services
             var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
-                .Where(t => (t.SourceUserId == userId || t.DestinationUserId == userId)
-                         && t.TradeStatus == TradeStatusEnum.Pending) // Fixed comparison to use the enum directly
+                .Where(trade => (trade.SourceUserId == userId || trade.DestinationUserId == userId)
+                         && trade.TradeStatus == TradeStatusEnum.Pending) // Fixed comparison to use the enum directly
                 .ToList();
 
             var allUsersApi = (await this.userServiceProxy.GetUsersAsync()).Users;
             var allUsers = allUsersApi
-                .Select(u =>
+                .Select(tradeUser =>
                 {
                     var user = new User
                     {
-                        UserId = u.UserId,
-                        UserName = u.UserName,
-                        Email = u.Email,
-                        UserRole = (User.Role)u.Role,
-                        WalletBalance = u.WalletBalance,
-                        PointsBalance = u.PointsBalance,
+                        UserId = tradeUser.UserId,
+                        UserName = tradeUser.UserName,
+                        Email = tradeUser.Email,
+                        UserRole = (User.Role)tradeUser.Role,
+                        WalletBalance = tradeUser.WalletBalance,
+                        PointsBalance = tradeUser.PointsBalance,
                     };
                     return user;
                 })
@@ -335,10 +335,10 @@ namespace CtrlAltElite.Services
             var result = new List<ItemTrade>();
             foreach (var tradeDto in filteredTrades)
             {
-                var sourceUser = allUsers.First(u => u.UserId == tradeDto.SourceUserId);
-                var destinationUser = allUsers.First(u => u.UserId == tradeDto.DestinationUserId);
+                var sourceUser = allUsers.First(currentUser => currentUser.UserId == tradeDto.SourceUserId);
+                var destinationUser = allUsers.First(currentUser => currentUser.UserId == tradeDto.DestinationUserId);
 
-                var game = allGames.FirstOrDefault(g => g.GameId == tradeDto.GameOfTradeId);
+                var game = allGames.FirstOrDefault(currentGame => currentGame.GameId == tradeDto.GameOfTradeId);
                 if (game == null)
                 {
                     continue; // Skip if game not found
@@ -397,11 +397,11 @@ namespace CtrlAltElite.Services
                 }
             }
 
-            foreach (var r in result)
+            foreach (var activeTrade in result)
             {
-                System.Diagnostics.Debug.WriteLine($"Trade ID: {r.TradeId}, Source User: {r.SourceUser.UserName}, Destination User: {r.DestinationUser.UserName}, Game: {r.GameOfTrade}");
-                System.Diagnostics.Debug.WriteLine(r.SourceUserItems);
-                System.Diagnostics.Debug.WriteLine(r.DestinationUserItems);
+                System.Diagnostics.Debug.WriteLine($"Trade ID: {activeTrade.TradeId}, Source User: {activeTrade.SourceUser.UserName}, Destination User: {activeTrade.DestinationUser.UserName}, Game: {activeTrade.GameOfTrade}");
+                System.Diagnostics.Debug.WriteLine(activeTrade.SourceUserItems);
+                System.Diagnostics.Debug.WriteLine(activeTrade.DestinationUserItems);
             }
 
             return result;
@@ -502,9 +502,9 @@ namespace CtrlAltElite.Services
             var allGames = allGamesResponse.Select(GameMapper.MapToGame).ToList();
             foreach (var inventoryItem in inventoryResponse.Items)
             {
-                var matchingGame = allGames.FirstOrDefault(g =>
+                var matchingGame = allGames.FirstOrDefault(game =>
 
-                string.Equals(g.GameTitle, inventoryItem.GameName, StringComparison.OrdinalIgnoreCase));
+                string.Equals(game.GameTitle, inventoryItem.GameName, StringComparison.OrdinalIgnoreCase));
                 var item = new Item(inventoryItem.ItemName, matchingGame, (float)inventoryItem.Price, inventoryItem.Description);
                 item.SetItemId(inventoryItem.ItemId);
                 item.SetIsListed(inventoryItem.IsListed);

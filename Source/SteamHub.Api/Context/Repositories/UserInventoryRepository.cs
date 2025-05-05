@@ -49,14 +49,35 @@ namespace SteamHub.Api.Context.Repositories
 
         public async Task<InventoryItemResponse?> GetItemFromUserInventoryAsync(int userId, int itemId)
         {
-            var userInventory = await _context.UserInventories
-                .Include(ui => ui.Item)
-                .Include(ui => ui.Game)
-                .FirstOrDefaultAsync(ui => ui.UserId == userId && ui.ItemId == itemId);
+            var currentUserInventory = await _context.UserInventories
+                .Include(userInventory => userInventory.Item)
+                .Include(userInventory => userInventory.Game)
+                .FirstOrDefaultAsync(userInventory => userInventory.UserId == userId && userInventory.ItemId == itemId);
 
-            if (userInventory == null) return null;
+            if (currentUserInventory == null) return null;
 
             return new InventoryItemResponse
+            {
+                ItemId = currentUserInventory.ItemId,
+                ItemName = currentUserInventory.Item.ItemName,
+                Price = currentUserInventory.Item.Price,
+                Description = currentUserInventory.Item.Description,
+                IsListed = currentUserInventory.Item.IsListed,
+                GameName = currentUserInventory.Game.Name,
+                GameId = currentUserInventory.Game.GameId,
+                ImagePath = currentUserInventory.Item.ImagePath
+            };
+        }
+
+        public async Task<UserInventoryResponse> GetUserInventoryAsync(int userId)
+        {
+            var userInventories = await _context.UserInventories
+                .Where(userInventory => userInventory.UserId == userId)
+                .Include(userInventory => userInventory.Item)
+                .Include(userInventory => userInventory.Game)
+                .ToListAsync();
+
+            var items = userInventories.Select(userInventory => new InventoryItemResponse
             {
                 ItemId = userInventory.ItemId,
                 ItemName = userInventory.Item.ItemName,
@@ -66,27 +87,6 @@ namespace SteamHub.Api.Context.Repositories
                 GameName = userInventory.Game.Name,
                 GameId = userInventory.Game.GameId,
                 ImagePath = userInventory.Item.ImagePath
-            };
-        }
-
-        public async Task<UserInventoryResponse> GetUserInventoryAsync(int userId)
-        {
-            var userInventories = await _context.UserInventories
-                .Where(ui => ui.UserId == userId)
-                .Include(ui => ui.Item)
-                .Include(ui => ui.Game)
-                .ToListAsync();
-
-            var items = userInventories.Select(ui => new InventoryItemResponse
-            {
-                ItemId = ui.ItemId,
-                ItemName = ui.Item.ItemName,
-                Price = ui.Item.Price,
-                Description = ui.Item.Description,
-                IsListed = ui.Item.IsListed,
-                GameName = ui.Game.Name,
-                GameId = ui.Game.GameId,
-                ImagePath = ui.Item.ImagePath
             }).ToList();
 
             return new UserInventoryResponse
@@ -100,12 +100,12 @@ namespace SteamHub.Api.Context.Repositories
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var userInventory = await _context.UserInventories
-                .FirstOrDefaultAsync(ui => ui.UserId == request.UserId && ui.ItemId == request.ItemId && ui.GameId == request.GameId);
+            var currentUserInventory = await _context.UserInventories
+                .FirstOrDefaultAsync(userInventory => userInventory.UserId == request.UserId && userInventory.ItemId == request.ItemId && userInventory.GameId == request.GameId);
 
-            if (userInventory == null) throw new ArgumentException("Item not found in user's inventory");
+            if (currentUserInventory == null) throw new ArgumentException("Item not found in user's inventory");
 
-            _context.UserInventories.Remove(userInventory);
+            _context.UserInventories.Remove(currentUserInventory);
             await _context.SaveChangesAsync();
         }
     }

@@ -15,26 +15,26 @@ public class UsersGamesRepository : IUsersGamesRepository
 
     public async Task AddToCartAsync(UserGameRequest usersGames)
     {
-        var userGame = await _context.UsersGames
-            .FirstOrDefaultAsync(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
+        var userGames = await _context.UsersGames
+            .FirstOrDefaultAsync(userGame => userGame.UserId == usersGames.UserId && userGame.GameId == usersGames.GameId);
 
-        if (userGame != null)
+        if (userGames != null)
         {
-            if(userGame.IsPurchased)
+            if(userGames.IsPurchased)
                 throw new Exception("Game already purchased");
-            userGame.IsInCart = true;
+            userGames.IsInCart = true;
             await _context.SaveChangesAsync();
         }
         else
         {
-            var userExists = await _context.Users.AnyAsync(u => u.UserId == usersGames.UserId);
+            var userExists = await _context.Users.AnyAsync(user => user.UserId == usersGames.UserId);
             if (!userExists) throw new Exception("User not found");
 
-            var gameExists = await _context.Games.AnyAsync(g => g.GameId == usersGames.GameId);
+            var gameExists = await _context.Games.AnyAsync(game => game.GameId == usersGames.GameId);
             if (!gameExists) throw new Exception("Game not found");
 
 
-            userGame = new UsersGames
+            userGames = new UsersGames
             {
                 UserId = usersGames.UserId,
                 GameId = usersGames.GameId,
@@ -43,33 +43,33 @@ public class UsersGamesRepository : IUsersGamesRepository
                 IsInWishlist = false
             };
 
-            await _context.UsersGames.AddAsync(userGame);
+            await _context.UsersGames.AddAsync(userGames);
             await _context.SaveChangesAsync();
         }
     }
 
     public async Task AddToWishlistAsync(UserGameRequest usersGames)
     {
-        var userGame = await _context.UsersGames
-            .FirstOrDefaultAsync(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
+        var currentUserGame = await _context.UsersGames
+            .FirstOrDefaultAsync(userGame => userGame.UserId == usersGames.UserId && userGame.GameId == usersGames.GameId);
 
-        if (userGame != null)
+        if (currentUserGame != null)
         {
-            if (userGame.IsPurchased)
+            if (currentUserGame.IsPurchased)
                 throw new Exception("Game already purchased");
-            userGame.IsInWishlist = true;
+            currentUserGame.IsInWishlist = true;
             await _context.SaveChangesAsync();
         }
         else
         {
-            var userExists = await _context.Users.AnyAsync(u => u.UserId == usersGames.UserId);
+            var userExists = await _context.Users.AnyAsync(user => user.UserId == usersGames.UserId);
             if (!userExists) throw new Exception("User not found");
 
-            var gameExists = await _context.Games.AnyAsync(g => g.GameId == usersGames.GameId);
+            var gameExists = await _context.Games.AnyAsync(game => game.GameId == usersGames.GameId);
             if (!gameExists) throw new Exception("Game not found");
 
 
-            userGame = new UsersGames
+            currentUserGame = new UsersGames
             {
                 UserId = usersGames.UserId,
                 GameId = usersGames.GameId,
@@ -78,7 +78,7 @@ public class UsersGamesRepository : IUsersGamesRepository
                 IsInWishlist = true
             };
 
-            await _context.UsersGames.AddAsync(userGame);
+            await _context.UsersGames.AddAsync(currentUserGame);
             await _context.SaveChangesAsync();
         }
     }
@@ -89,14 +89,14 @@ public class UsersGamesRepository : IUsersGamesRepository
         if (user == null) throw new Exception("User not found");
 
         var userGames = await _context.UsersGames
-            .Where(ug => ug.UserId == userId && ug.IsInCart)
-            .Include(ug => ug.Game)
-            .Select(ug => new UserGamesResponse
+            .Where(userGame => userGame.UserId == userId && userGame.IsInCart)
+            .Include(userGame => userGame.Game)
+            .Select(userGame => new UserGamesResponse
             {
-                GameId = ug.Game.GameId,
-                IsInCart = ug.IsInCart,
-                IsPurchased = ug.IsPurchased,
-                IsInWishlist = ug.IsInWishlist
+                GameId = userGame.Game.GameId,
+                IsInCart = userGame.IsInCart,
+                IsPurchased = userGame.IsPurchased,
+                IsInWishlist = userGame.IsInWishlist
             })
             .ToListAsync();
 
@@ -112,14 +112,14 @@ public class UsersGamesRepository : IUsersGamesRepository
         if (user == null) throw new Exception("User not found");
 
         var userGames = await _context.UsersGames
-            .Where(ug => ug.UserId == userId)
-            .Include(ug => ug.Game)
-            .Select(ug => new UserGamesResponse
+            .Where(userGame => userGame.UserId == userId)
+            .Include(userGame => userGame.Game)
+            .Select(userGame => new UserGamesResponse
             {
-                GameId = ug.Game.GameId,
-                IsInCart = ug.IsInCart,
-                IsPurchased = ug.IsPurchased,
-                IsInWishlist = ug.IsInWishlist
+                GameId = userGame.Game.GameId,
+                IsInCart = userGame.IsInCart,
+                IsPurchased = userGame.IsPurchased,
+                IsInWishlist = userGame.IsInWishlist
             })
             .ToListAsync();
 
@@ -135,14 +135,14 @@ public class UsersGamesRepository : IUsersGamesRepository
         if (user == null) throw new Exception("User not found");
 
         var userGames = await _context.UsersGames
-            .Where(ug => ug.UserId == userId && ug.IsPurchased)
-            .Include(ug => ug.Game)
-            .Select(ug => new UserGamesResponse
+            .Where(userGame => userGame.UserId == userId && userGame.IsPurchased)
+            .Include(userGame => userGame.Game)
+            .Select(userGame => new UserGamesResponse
             {
-                GameId = ug.Game.GameId,
-                IsInCart = ug.IsInCart,
-                IsPurchased = ug.IsPurchased,
-                IsInWishlist = ug.IsInWishlist
+                GameId = userGame.Game.GameId,
+                IsInCart = userGame.IsInCart,
+                IsPurchased = userGame.IsPurchased,
+                IsInWishlist = userGame.IsInWishlist
 
             })
             .ToListAsync();
@@ -159,14 +159,14 @@ public class UsersGamesRepository : IUsersGamesRepository
         if (user == null) throw new Exception("User not found");
 
         var userGames = await _context.UsersGames
-            .Where(ug => ug.UserId == userId && ug.IsInWishlist)
-            .Include(ug => ug.Game)
-            .Select(ug => new UserGamesResponse
+            .Where(userGame => userGame.UserId == userId && userGame.IsInWishlist)
+            .Include(userGame => userGame.Game)
+            .Select(userGame => new UserGamesResponse
             {
-                GameId = ug.Game.GameId,
-                IsInCart = ug.IsInCart,
-                IsPurchased = ug.IsPurchased,
-                IsInWishlist = ug.IsInWishlist
+                GameId = userGame.Game.GameId,
+                IsInCart = userGame.IsInCart,
+                IsPurchased = userGame.IsPurchased,
+                IsInWishlist = userGame.IsInWishlist
             })
             .ToListAsync();
 
@@ -178,14 +178,14 @@ public class UsersGamesRepository : IUsersGamesRepository
 
     public async Task PurchaseGameAsync(UserGameRequest usersGames)
     {
-        var userGame = await _context.UsersGames
-            .FirstOrDefaultAsync(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
+        var selectedGame = await _context.UsersGames
+            .FirstOrDefaultAsync(userGame => userGame.UserId == usersGames.UserId && userGame.GameId == usersGames.GameId);
 
-        if (userGame != null)
+        if (selectedGame != null)
         {
-            userGame.IsInCart = false;
-            userGame.IsPurchased = true;
-            userGame.IsInWishlist = false;
+            selectedGame.IsInCart = false;
+            selectedGame.IsPurchased = true;
+            selectedGame.IsInWishlist = false;
             await _context.SaveChangesAsync();
         }
         else
@@ -197,7 +197,7 @@ public class UsersGamesRepository : IUsersGamesRepository
             if (!gameExists) throw new Exception("Game not found");
 
 
-            userGame = new UsersGames
+            selectedGame = new UsersGames
             {
                 UserId = usersGames.UserId,
                 GameId = usersGames.GameId,
@@ -206,24 +206,24 @@ public class UsersGamesRepository : IUsersGamesRepository
                 IsInWishlist = false
             };
 
-            await _context.UsersGames.AddAsync(userGame);
+            await _context.UsersGames.AddAsync(selectedGame);
             await _context.SaveChangesAsync();
         }
     }
 
     public async Task RemoveFromCartAsync(UserGameRequest usersGames)
     {
-        var userExists = await _context.Users.AnyAsync(u => u.UserId == usersGames.UserId);
+        var userExists = await _context.Users.AnyAsync(user => user.UserId == usersGames.UserId);
         if (!userExists) throw new Exception("User not found");
 
-        var gameExists = await _context.Games.AnyAsync(g => g.GameId == usersGames.GameId);
+        var gameExists = await _context.Games.AnyAsync(game => game.GameId == usersGames.GameId);
         if (!gameExists) throw new Exception("Game not found");
 
-        var userGame = await _context.UsersGames
-            .FirstOrDefaultAsync(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
-        if (userGame != null && userGame.IsInCart)
+        var deleteGame = await _context.UsersGames
+            .FirstOrDefaultAsync(userGame => userGame.UserId == usersGames.UserId && userGame.GameId == usersGames.GameId);
+        if (deleteGame != null && deleteGame.IsInCart)
         {
-            userGame.IsInCart = false;
+            deleteGame.IsInCart = false;
             await _context.SaveChangesAsync();
         }
         else
@@ -240,11 +240,11 @@ public class UsersGamesRepository : IUsersGamesRepository
         var gameExists = await _context.Games.AnyAsync(g => g.GameId == usersGames.GameId);
         if (!gameExists) throw new Exception("Game not found");
 
-        var userGame = _context.UsersGames
-            .FirstOrDefault(ug => ug.UserId == usersGames.UserId && ug.GameId == usersGames.GameId);
-        if (userGame != null && userGame.IsInWishlist)
+        var removeGame = _context.UsersGames
+            .FirstOrDefault(userGame => userGame.UserId == usersGames.UserId && userGame.GameId == usersGames.GameId);
+        if (removeGame != null && removeGame.IsInWishlist)
         {
-            userGame.IsInWishlist = false;
+            removeGame.IsInWishlist = false;
             await _context.SaveChangesAsync();
         }
         else
