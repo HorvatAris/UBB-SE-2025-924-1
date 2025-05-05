@@ -302,25 +302,40 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteItemAsync_ValidId_DeletesItemAndRelatedData()
+        public async Task DeleteItemAsync_WithValidId_DeletesItem()
         {
-            await _repository.DeleteItemAsync(1);
+            var validIdValue = 1;
+            await _repository.DeleteItemAsync(validIdValue);
 
-            var item = await _context.Items.FindAsync(1);
+            var item = await _context.Items.FindAsync(validIdValue);
             Assert.Null(item);
+        }
 
-            var inventory = await _context.UserInventories.FirstOrDefaultAsync(i => i.ItemId == 1);
+        [Fact]
+        public async Task DeleteItemAsync_WithValidId_DeletesItemFromUserInventories()
+        {
+            var validIdValue = 1;
+            await _repository.DeleteItemAsync(validIdValue);
+
+            var inventory = await _context.UserInventories.FirstOrDefaultAsync(inventoryItem => inventoryItem.ItemId == validIdValue);
             Assert.Null(inventory);
+        }
+        [Fact]
+        public async Task DeleteItemAsync_WithValidId_DeletesRelatedTradeDetails()
+        {
+            var validIdValue = 1;
+            await _repository.DeleteItemAsync(validIdValue);
 
-            var tradeDetails = await _context.ItemTradeDetails.FirstOrDefaultAsync(t => t.ItemId == 1);
+            var tradeDetails = await _context.ItemTradeDetails.FirstOrDefaultAsync(tradeDetail => tradeDetail.ItemId == validIdValue);
             Assert.Null(tradeDetails);
         }
 
         [Fact]
-        public async Task DeleteItemAsync_InvalidId_ThrowsKeyNotFoundException()
+        public async Task DeleteItemAsync_WithInvalidId_ThrowsKeyNotFoundException()
         {
+            var invalidId = 999;
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                _repository.DeleteItemAsync(999));
+                _repository.DeleteItemAsync(invalidId));
         }
     }
 }
