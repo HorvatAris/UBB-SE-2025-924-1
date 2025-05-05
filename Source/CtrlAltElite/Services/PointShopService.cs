@@ -17,8 +17,6 @@ namespace SteamStore.Services
     using SteamStore.Constants;
     using SteamStore.Data;
     using SteamStore.Models;
-    using SteamStore.Repositories;
-    using SteamStore.Repositories.Interfaces;
     using SteamStore.Services.Interfaces;
 
     public class PointShopService : IPointShopService

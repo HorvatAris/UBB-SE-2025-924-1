@@ -20,8 +20,6 @@ namespace SteamStore.Services.Interfaces
 
         Task AddItemToInventoryAsync(Game game, Item item);
 
-        Task RemoveItemFromInventoryAsync(Game game, Item item);
-
         Task<List<Item>> GetUserInventoryAsync(int userId);
 
         User GetAllUsers();
