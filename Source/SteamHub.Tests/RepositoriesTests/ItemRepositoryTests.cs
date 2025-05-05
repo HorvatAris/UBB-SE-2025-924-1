@@ -163,7 +163,7 @@ namespace SteamHub.Tests.Repositories
         [Fact]
         public async Task GetItemsAsync_WhenCalled_ReturnsNonNullItemList()
         {
-            int firstItemIndex = 0;
+            var items = await _repository.GetItemsAsync();
 
             Assert.NotNull(items);
         }
@@ -201,9 +201,7 @@ namespace SteamHub.Tests.Repositories
         [Fact]
         public async Task GetItemByIdAsync_InvalidId_ReturnsNull()
         {
-            int invalidItemId = 999;
-
-            var item = await _repository.GetItemByIdAsync(invalidItemId);
+            var item = await _repository.GetItemByIdAsync(999);
 
             Assert.Null(item);
         }
@@ -267,46 +265,40 @@ namespace SteamHub.Tests.Repositories
 
 
         [Fact]
-        public async Task UpdateItemByIdAsync_ValidId_UpdatesItem()
+        public async Task UpdateItemAsync_ValidId_UpdatesItem()
         {
-            int itemId = 1;
-
             var updateRequest = new UpdateItemRequest
             {
                 ItemName = "Updated Item",
-                GameId = itemId,
+                GameId = 1,
                 Price = 10.99f,
                 Description = "Updated description",
                 IsListed = false,
                 ImagePath = "/images/updated.png"
             };
 
-            await _repository.UpdateItemAsync(itemId, updateRequest);
-            var updatedItem = await _context.Items.FindAsync(itemId);
+            await _repository.UpdateItemAsync(1, updateRequest);
 
+            var updatedItem = await _context.Items.FindAsync(1);
             Assert.Equal("Updated Item", updatedItem.ItemName);
             Assert.False(updatedItem.IsListed);
         }
 
         [Fact]
-        public async Task UpdateItemByIdAsync_InvalidId_ThrowsKeyNotFoundException()
+        public async Task UpdateItemAsync_InvalidId_ThrowsKeyNotFoundException()
         {
-            int inexistentItemId = 999;
-            int gameId = 1;
-            int price = 1;
-
             var request = new UpdateItemRequest
             {
                 ItemName = "Non-existing",
-                GameId = gameId,
-                Price = price,
+                GameId = 1,
+                Price = 1,
                 Description = "None",
                 IsListed = false,
                 ImagePath = "/nope.png"
             };
 
             await Assert.ThrowsAsync<KeyNotFoundException>(() =>
-                _repository.UpdateItemAsync(inexistentItemId, request));
+                _repository.UpdateItemAsync(999, request));
         }
 
         [Fact]
@@ -341,8 +333,7 @@ namespace SteamHub.Tests.Repositories
         [Fact]
         public async Task DeleteItemAsync_WithInvalidId_ThrowsKeyNotFoundException()
         {
-            int invalidId = 999;
-
+            var invalidId = 999;
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 _repository.DeleteItemAsync(invalidId));
         }
