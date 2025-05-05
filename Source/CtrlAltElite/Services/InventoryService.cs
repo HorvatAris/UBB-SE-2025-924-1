@@ -14,13 +14,11 @@ namespace SteamStore.Services
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.UserInventory;
-    using SteamStore.Repositories.Interfaces;
     using SteamStore.Services.Interfaces;
     using SteamStore.Utils;
 
     public class InventoryService : IInventoryService
     {
-        private readonly IInventoryRepository inventoryRepository;
         private readonly InventoryValidator inventoryValidator;
 
         private readonly IUserInventoryServiceProxy userInventoryServiceProxy;
@@ -93,13 +91,6 @@ namespace SteamStore.Services
                 GameId = game.GameId,
             };
             await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(itemFromInventoryRequest);
-        }
-
-        public async Task RemoveItemFromInventoryAsync(Game game, Item item)
-        {
-            // Validate the inventory operation.
-            this.inventoryValidator.ValidateInventoryOperation(game, item, this.user);
-            await this.inventoryRepository.RemoveItemFromInventoryAsync(game, item, this.user);
         }
 
         public async Task<List<Item>> GetUserInventoryAsync(int userId)

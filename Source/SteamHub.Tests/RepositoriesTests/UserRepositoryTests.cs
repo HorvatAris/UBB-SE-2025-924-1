@@ -67,7 +67,7 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task GetUsersAsync_ReturnsAllUsers()
+        public async Task GetUsersAsync_WhenNoREstrictions_ReturnsAllUsers()
         {
             var result = await _repository.GetUsersAsync();
 
@@ -93,7 +93,7 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task CreateUserAsync_AddsNewUserSuccessfully()
+        public async Task CreateUserAsync_WhenValidInput_AddsNewUserSuccessfully()
         {
             var request = new CreateUserRequest
             {

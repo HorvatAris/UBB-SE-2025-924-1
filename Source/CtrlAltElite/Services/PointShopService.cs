@@ -17,8 +17,6 @@ namespace SteamStore.Services
     using SteamStore.Constants;
     using SteamStore.Data;
     using SteamStore.Models;
-    using SteamStore.Repositories;
-    using SteamStore.Repositories.Interfaces;
     using SteamStore.Services.Interfaces;
 
     public class PointShopService : IPointShopService
@@ -27,7 +25,7 @@ namespace SteamStore.Services
         private const int IncrementingValue = 1;
         private const int InitialIndexAllItems = 0;
         private const int InitialIndexUserItems = 0;
-        private const string FILTERTYPEALL = "All";
+        private const string FilterTypeAll = "All";
 
         public PointShopService(IPointShopItemServiceProxy pointShopItemServiceProxy, IUserPointShopItemInventoryServiceProxy userPointShopItemInventoryServiceProxy, IUserServiceProxy userServiceProxy, User user)
         {
@@ -231,7 +229,7 @@ namespace SteamStore.Services
                 }
 
                 // Apply type filter
-                if (!string.IsNullOrEmpty(filterType) && filterType != FILTERTYPEALL)
+                if (!string.IsNullOrEmpty(filterType) && filterType != FilterTypeAll)
                 {
                     var filteredByType = new List<PointShopItem>();
                     foreach (var item in availableItems)

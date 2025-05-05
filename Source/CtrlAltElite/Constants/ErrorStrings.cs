@@ -12,7 +12,7 @@ namespace SteamStore.Constants
 
     public static class ErrorStrings
     {
-        public const string SQLNONQUERYFAILUREINDICATOR = "ExecuteNonQuery";
-        public const string ADDTOWISHLISTALREADYEXISTSMESSAGE = "Failed to add {0} to your wishlist: Already in wishlist";
+        public const string SqlNonQUeryFailure = "ExecuteNonQuery";
+        public const string AddToWishlistAlreadyExistsError = "Failed to add {0} to your wishlist: Already in wishlist";
     }
 }

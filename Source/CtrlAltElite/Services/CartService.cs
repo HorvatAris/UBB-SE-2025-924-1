@@ -13,7 +13,6 @@ using CtrlAltElite.ServiceProxies;
 using CtrlAltElite.Services;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.ApiContract.Models.UsersGames;
-using SteamStore.Repositories.Interfaces;
 using SteamStore.Services.Interfaces;
 
 public class CartService : ICartService

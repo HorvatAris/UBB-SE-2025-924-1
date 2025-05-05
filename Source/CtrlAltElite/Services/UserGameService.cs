@@ -14,8 +14,6 @@ using SteamHub.ApiContract.Models.Game;
 using SteamHub.ApiContract.Models.UsersGames;
 using SteamStore.Constants;
 using SteamStore.Models;
-using SteamStore.Repositories;
-using SteamStore.Repositories.Interfaces;
 using SteamStore.Services.Interfaces;
 
 public class UserGameService : IUserGameService

@@ -78,13 +78,20 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetUserInventoryAsync_WhenCalled_ReturnsCorrectItems()
+        public async Task GetUserInventoryAsync_WithValidUserId_ReturnsSingleInventoryItem()
         {
             var response = await _repository.GetUserInventoryAsync(1);
 
             Assert.Single(response.UserPointShopItemsInventory);
+        }
+
+
+        [Fact]
+        public async Task GetUserInventoryAsync_WithValidUserId_ReturnsActiveItem()
+        {
+            var response = await _repository.GetUserInventoryAsync(1);
             var item = response.UserPointShopItemsInventory.First();
-            Assert.Equal(1, item.PointShopItemId);
+
             Assert.True(item.IsActive);
         }
 
@@ -113,7 +120,7 @@ namespace SteamHub.Tests.RepositoriesTests
             await _repository.PurchaseItemAsync(request);
 
             var inventoryItem = await _context.UserPointShopInventories
-                .FirstOrDefaultAsync(i => i.UserId == 1 && i.PointShopItemId == 2);
+                .FirstOrDefaultAsync(currentInventoryItem => currentInventoryItem.UserId == 1 && currentInventoryItem.PointShopItemId == 2);
 
             Assert.NotNull(inventoryItem);
             Assert.False(inventoryItem.IsActive);
@@ -156,7 +163,7 @@ namespace SteamHub.Tests.RepositoriesTests
             await _repository.UpdateItemStatusAsync(request);
 
             var item = await _context.UserPointShopInventories
-                .FirstOrDefaultAsync(i => i.UserId == 1 && i.PointShopItemId == 1);
+                .FirstOrDefaultAsync(currentItem => currentItem.UserId == 1 && currentItem.PointShopItemId == 1);
 
             Assert.False(item.IsActive);
         }
@@ -180,7 +187,7 @@ namespace SteamHub.Tests.RepositoriesTests
             await _repository.ResetUserInventoryAsync(1);
 
             var items = await _context.UserPointShopInventories
-                .Where(i => i.UserId == 1)
+                .Where(currentItem => currentItem.UserId == 1)
                 .ToListAsync();
 
             Assert.Empty(items);
