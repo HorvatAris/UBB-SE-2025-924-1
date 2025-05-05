@@ -107,7 +107,7 @@ namespace SteamStore.ViewModels
         WishListSearchStrings.SORTPRICEASCENDING, WishListSearchStrings.SORTPRICEDESCENDING, WishListSearchStrings.SORTRATINGDESCENDING, WishListSearchStrings.SORTDISCOUNTDESCENDING,
     };
 
-        public void HandleSearchWishListGames()
+        public async Task HandleSearchWishListGames()
         {
             if (string.IsNullOrWhiteSpace(this.SearchText))
             {
@@ -117,7 +117,7 @@ namespace SteamStore.ViewModels
 
             try
             {
-                var games = this.userGameService.SearchWishListByName(this.SearchText);
+                var games = await this.userGameService.SearchWishListByNameAsync(this.SearchText);
                 this.WishListGames = new ObservableCollection<Game>(games);
             }
             catch (Exception exception)
@@ -127,11 +127,11 @@ namespace SteamStore.ViewModels
             }
         }
 
-        public void FilterWishListGames(string criteria)
+        public async Task FilterWishListGames(string criteria)
         {
             try
             {
-                var games = this.userGameService.FilterWishListGames(criteria);
+                var games = await this.userGameService.FilterWishListGamesAsync(criteria);
                 this.WishListGames = new ObservableCollection<Game>(games);
             }
             catch (Exception exception)
@@ -141,11 +141,11 @@ namespace SteamStore.ViewModels
             }
         }
 
-        public void SortWishListGames(string criteria, bool ascending)
+        public async Task SortWishListGames(string criteria, bool ascending)
         {
             try
             {
-                var games = this.userGameService.SortWishListGames(criteria, ascending);
+                var games = await this.userGameService.SortWishListGamesAsync(criteria, ascending);
                 this.WishListGames = new ObservableCollection<Game>(games);
             }
             catch (Exception exception)
@@ -155,11 +155,11 @@ namespace SteamStore.ViewModels
             }
         }
 
-        public void RemoveFromWishlist(Game game)
+        public async Task RemoveFromWishlist(Game game)
         {
             try
             {
-                this.userGameService.RemoveGameFromWishlist(game);
+                await this.userGameService.RemoveGameFromWishlistAsync(game);
                 this.WishListGames.Remove(game);
             }
             catch (Exception exception)
@@ -240,11 +240,11 @@ namespace SteamStore.ViewModels
             }
         }
 
-        private void LoadWishListGames()
+        private async Task LoadWishListGames()
         {
             try
             {
-                var games = this.userGameService.GetWishListGames();
+                var games = await this.userGameService.GetWishListGamesAsync();
                 this.WishListGames = new ObservableCollection<Game>(games);
             }
             catch (Exception exception)

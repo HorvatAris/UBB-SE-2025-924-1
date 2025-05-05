@@ -69,7 +69,7 @@ namespace SteamStore.Services
         public async Task<List<Item>> GetAllItemsFromInventoryAsync()
         {
             // Validate the user.
-            this.inventoryValidator.ValidateUser(user);
+            this.inventoryValidator.ValidateUser(this.user);
 
             int userId = this.user.UserId;
             var userInventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
@@ -144,8 +144,8 @@ namespace SteamStore.Services
             // set isListed to 1
             item.IsListed = true;
             var allItems = await this.itemServiceProxy.GetItemsAsync();
-            var foundItem = allItems.FirstOrDefault(i => i.ItemId == item.ItemId);
-            var foundItemGameId = allItems.FirstOrDefault(i => i.ItemId == item.ItemId).GameId;
+            var foundItem = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId);
+            var foundItemGameId = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId).GameId;
 
             // Create a request object for the item.
             var itemFromInventoryRequest = new UpdateItemRequest
@@ -163,10 +163,10 @@ namespace SteamStore.Services
             {
                 await this.itemServiceProxy.UpdateItemAsync(item.ItemId, itemFromInventoryRequest);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 // Handle exceptions (e.g., log them).
-                Console.WriteLine($"Error selling item: {ex.Message}");
+                Console.WriteLine($"Error selling item: {exception.Message}");
                 return false;
             }
             // return await this.inventoryRepository.SellItemAsync(item);
@@ -237,7 +237,7 @@ namespace SteamStore.Services
             var allGames = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
             foreach (var gameName in gameNames)
             {
-                var foundGame = allGames.FirstOrDefault(g => g.Name == gameName);
+                var foundGame = allGames.FirstOrDefault(currentGame => currentGame.Name == gameName);
                 if (foundGame != null)
                 {
                     games.Add(GameMapper.MapToGame(foundGame)); 
@@ -246,26 +246,22 @@ namespace SteamStore.Services
             return games;
         }
 
-        /// <inheritdoc/>
         public async Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText)
         {
             var allItems = await this.GetUserInventoryAsync(userId);
             return this.FilterInventoryItems(allItems, selectedGame, searchText);
         }
 
-        /// <summary>
-        /// Provides a custom comparer for <see cref="Game"/> objects based on the GameId.
-        /// </summary>
         private class GameComparer : IEqualityComparer<Game>
         {
-            public bool Equals(Game x, Game y)
+            public bool Equals(Game firstGame, Game secondGame)
             {
-                if (x == null || y == null)
+                if (firstGame == null || secondGame == null)
                 {
                     return false;
                 }
 
-                return x.GameId == y.GameId;
+                return firstGame.GameId == secondGame.GameId;
             }
 
             public int GetHashCode(Game objectTGetHashCodeFrom)

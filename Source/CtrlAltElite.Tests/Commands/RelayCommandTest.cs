@@ -1,13 +1,9 @@
 ﻿namespace SteamStore.Tests.Commands
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using SteamStore.ViewModels;
+	using System;
+	using SteamStore.ViewModels;
 
-    public class RelayCommandTest : IDisposable
+	public class RelayCommandTest : IDisposable
     {
         private bool executeCalled;
         private bool canExecuteCalled;

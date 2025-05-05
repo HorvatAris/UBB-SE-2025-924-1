@@ -19,14 +19,14 @@ using SteamStore.Services.Interfaces;
 public class CartService : ICartService
 {
     private const int InitialZeroSum = 0;
-    private ICartServiceProxy cartServiceProxy;
+    private IUserGameServiceProxy userGameServiceProxy;
     private User user;
     private IGameServiceProxy gameServiceProxy;
 
-    public CartService( ICartServiceProxy serviceProxy, User user,IGameServiceProxy gserviceProxy)
+    public CartService( IUserGameServiceProxy userGameServiceProxy, User user,IGameServiceProxy gameServiceProxy)
     {
-        this.cartServiceProxy = serviceProxy;
-        this.gameServiceProxy = gserviceProxy;
+        this.userGameServiceProxy = userGameServiceProxy;
+        this.gameServiceProxy = gameServiceProxy;
 
         this.user = user;
     }
@@ -35,14 +35,17 @@ public class CartService : ICartService
     {
         try
         {
-            var response = await this.cartServiceProxy.GetUserCartAsync(this.user.UserId);
+            var response = await this.userGameServiceProxy.GetUserCartAsync(this.user.UserId);
             var userGamesResponses = response.UserGames; // Access the actual list her
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
-        .Select(g => g.GameId)
+        .Select(game => game.GameId)
         .ToList();
             if (gameIds.Count == 0)
+            {
                 return new List<Game>();
+            }
+
             var games = new List<Game>();
             foreach (var gameId in gameIds)
             {
@@ -53,49 +56,68 @@ public class CartService : ICartService
             }
             return games;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error fetching user games: {exception.Message}");
             return new List<Game>();
         }
-        //System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses}");
 
     }
 
-    public async Task<List<int>> GetAllPurchasedGames()
+    public async Task<List<Game>> GetAllPurchasedGames()
     {
+        //try
+        //{
+        //    var response = await this.userGameServiceProxy.GetUserGamesAsync(this.user.UserId);
+        //    var userGamesResponses = response.UserGames; // Access the actual list here
+        //    var gameIds = userGamesResponses
+        //.Where(currentGame => currentGame.IsPurchased)
+        //.Select(currentGame => currentGame.GameId)
+        //.ToList();
+        //    return gameIds;
+        //    //System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses}");
+        //}
+        //catch (Exception ex)
+        //{
+        //    System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
+        //    return new List<int>();
+        //}
+        var purchasedGames = new List<Game>();
         try
         {
-            var response = await this.cartServiceProxy.GetUserGamesAsync(this.user.UserId);
+            var response = await this.userGameServiceProxy.GetUserPurchasedGamesAsync(this.user.UserId);
             var userGamesResponses = response.UserGames; // Access the actual list here
-            var gameIds = userGamesResponses
-        .Where(g => g.IsPurchased)
-        .Select(g => g.GameId)
-        .ToList();
-            return gameIds;
-            //System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses}");
+            foreach (var userGame in userGamesResponses)
+            {
+                var actualGame = await this.gameServiceProxy.GetGameByIdAsync(userGame.GameId);
+                var game = GameMapper.MapToGame(actualGame);
+                purchasedGames.Add(game);
+            }
+            return purchasedGames;
+
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
-            return new List<int>();
+            //System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
+            return new List<Game>();
         }
     }
+
     public async Task<List<int>> GetAllCartGamesIds()
     {
         try
         {
-            var response = await this.cartServiceProxy.GetUserCartAsync(this.user.UserId);
+            var response = await this.userGameServiceProxy.GetUserCartAsync(this.user.UserId);
             var userGamesResponses = response.UserGames; // Access the actual list here
             var gameIds = userGamesResponses
-        .Where(g => g.IsInCart)
-        .Select(g => g.GameId)
+        .Where(currentGame => currentGame.IsInCart)
+        .Select(currentGame => currentGame.GameId)
         .ToList();
             return gameIds;
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {exception.Message}");
             return new List<int>();
         }
     }
@@ -111,14 +133,14 @@ public class CartService : ICartService
             var request = new UserGameRequest
             {
                 UserId = this.user.UserId,
-                GameId = game.GameId
+                GameId = game.GameId,
             };
 
-            await this.cartServiceProxy.RemoveFromCartAsync(request);
+            await this.userGameServiceProxy.RemoveFromCartAsync(request);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            System.Diagnostics.Debug.WriteLine($"Error removing game from cart: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error removing game from cart: {exception.Message}");
         }
     }
 
@@ -150,17 +172,18 @@ public class CartService : ICartService
     //}
     public async Task AddGameToCart(Game game)
     {
-        var purchasedGamesIds = await this.GetAllPurchasedGames();
+        var purchasedGames = await this.GetAllPurchasedGames();
         var cartGamesIds = await this.GetAllCartGamesIds();
-        foreach (var gameId in purchasedGamesIds)
+        foreach(var purchasedGame in purchasedGames)
         {
-            if(game.GameId == gameId)
+            if (game.GameId == purchasedGame.GameId)
             {
                 //System.Diagnostics.Debug.WriteLine("The game is already purchased.");
                 throw new Exception("The game is already purchased.");
             }
         }
-        foreach(var gameId in cartGamesIds)
+
+        foreach (var gameId in cartGamesIds)
         {
             if (game.GameId == gameId)
             {
@@ -190,15 +213,14 @@ public class CartService : ICartService
             GameId = game.GameId,
         };
 
-        await this.cartServiceProxy.AddToCartAsync(request);
+        await this.userGameServiceProxy.AddToCartAsync(request);
     }
 
     public async Task RemoveGamesFromCart(List<Game> games)
     {
         foreach (var game in games)
         {
-
-            this.RemoveGameFromCart(game);
+            await this.RemoveGameFromCart(game);
         }
     }
 

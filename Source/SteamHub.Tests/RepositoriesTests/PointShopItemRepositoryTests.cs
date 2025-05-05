@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using SteamHub.Api.Context;
+﻿using SteamHub.Api.Context;
 using SteamHub.Api.Context.Repositories;
 using SteamHub.Api.Entities;
-using SteamHub.ApiContract.Models.Game;
-using SteamHub.ApiContract.Models.Item;
+using SteamHub.ApiContract.Models.PointShopItem;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Threading.Tasks;
 using Xunit;
+using SteamHub.ApiContract.Models.Game;
 
-namespace SteamHub.Tests.Repositories
+namespace SteamHub.Tests.RepositoriesTests
 {
-    public class ItemRepositoryTests : IDisposable
+    public class PointShopItemRepositoryTests
     {
         private readonly DataContext _context;
-        private readonly ItemRepository _repository;
+        private readonly PointShopItemRepository _repository;
 
-        public ItemRepositoryTests()
+        public PointShopItemRepositoryTests()
         {
             var options = new DbContextOptionsBuilder<DataContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
-
             var inMemorySettings = new Dictionary<string, string>
             {
                 { "SomeSetting", "SomeValue" }
@@ -33,7 +30,7 @@ namespace SteamHub.Tests.Repositories
                 .Build();
 
             _context = new DataContext(options, configuration);
-            _repository = new ItemRepository(_context);
+            _repository = new PointShopItemRepository(_context);
 
             SeedData();
         }
@@ -126,6 +123,18 @@ namespace SteamHub.Tests.Repositories
             };
             _context.ItemTrades.Add(itemTrade);
 
+            // ItemTradeDetail
+            var itemTradeDetail = new ItemTradeDetail
+            {
+                TradeId = 1,
+                ItemId = 1,
+                IsSourceUserItem = true,
+                ItemTrade = itemTrade,
+                Item = item
+            };
+            _context.ItemTradeDetails.Add(itemTradeDetail);
+            item.ItemTradeDetails.Add(itemTradeDetail);
+
             // UserInventory
             var userInventory = new UserInventory
             {
@@ -153,121 +162,121 @@ namespace SteamHub.Tests.Repositories
             };
             _context.UsersGames.Add(usersGames);
 
+
+            _context.PointShopItems.AddRange(
+                new PointShopItem { PointShopItemId = 1, Name = "CSGO", Description = "ex", ImagePath = "csgo.png", PointPrice = 100, ItemType = "ex" },
+                new PointShopItem { PointShopItemId = 2, Name = "Sword", Description = "Sharp sword", ImagePath = "sword.png", PointPrice = 200, ItemType = "Weapon" }
+            );
+            // StoreTransaction
+            var storeTransaction = new StoreTransaction
+            {
+                StoreTransactionId = 1,
+                UserId = 1,
+                GameId = 1,
+                Date = DateTime.Now,
+                Amount = 59.99f,
+                WithMoney = true,
+                User = user,
+                Game = game
+            };
+            _context.StoreTransactions.Add(storeTransaction);
+
+
             _context.SaveChanges();
-        }
 
-        public void Dispose()
-        {
-            _context.Dispose();
         }
 
         [Fact]
-        public async Task GetItemsAsync_Always_ReturnsItems()
+        public async Task GetPointShopItemsAsync_WhenCalled_ReturnsAllItems()
         {
-            var items = await _repository.GetItemsAsync();
+            var result = await _repository.GetPointShopItemsAsync();
 
-            Assert.NotNull(items);
-            var itemList = items.ToList();
-            Assert.Single(itemList);
-            Assert.Equal("Mock Item", itemList[0].ItemName);
+            Assert.NotNull(result);
+            Assert.Equal(2, result.PointShopItems.Count);
         }
 
         [Fact]
-        public async Task GetItemByIdAsync_ValidId_ReturnsItem()
+        public async Task GetPointShopItemByIdAsync_WhenCalledWithExistingId_ReturnsItem()
         {
-            var item = await _repository.GetItemByIdAsync(1);
+            var result = await _repository.GetPointShopItemByIdAsync(1);
 
-            Assert.NotNull(item);
-            Assert.Equal("Mock Item", item.ItemName);
+            Assert.NotNull(result);
+            Assert.Equal("CSGO", result.Name);
         }
 
         [Fact]
-        public async Task GetItemByIdAsync_InvalidId_ReturnsNull()
+        public async Task GetPointShopItemByIdAsync_WhenCalledWithInvalidId_ReturnsNull()
         {
-            var item = await _repository.GetItemByIdAsync(999);
+            var result = await _repository.GetPointShopItemByIdAsync(999);
 
-            Assert.Null(item);
+            Assert.Null(result);
         }
 
         [Fact]
-        public async Task CreateItemAsync_ValidRequest_CreatesItem()
+        public async Task CreatePointShopItemAsync_WhenCalledWithValidRequest_CreatesItem()
         {
-            var request = new CreateItemRequest
+            var request = new CreatePointShopItemRequest
             {
-                ItemName = "New Item",
-                GameId = 1,
-                Price = 5.5f,
-                Description = "A new test item",
-                IsListed = true,
-                ImagePath = "/images/new.png"
+                Name = "ex1",
+                Description = "ex1",
+                ImagePath = "ex1.png",
+                PointPrice = 300,
+                ItemType = "ex1"
             };
 
-            var response = await _repository.CreateItemAsync(request);
+            var response = await _repository.CreatePointShopItemAsync(request);
+            var created = await _context.PointShopItems.FindAsync(response.PointShopItemId);
 
-            Assert.NotNull(response);
-            Assert.Equal("New Item", response.ItemName);
-
-            var created = await _context.Items.FindAsync(response.ItemId);
             Assert.NotNull(created);
+            Assert.Equal("ex1", created.Name);
         }
 
         [Fact]
-        public async Task UpdateItemAsync_ValidId_UpdatesItem()
+        public async Task UpdatePointShopItemAsync_WhenCalledWithValidRequest_UpdatesItem()
         {
-            var updateRequest = new UpdateItemRequest
+            var request = new UpdatePointShopItemRequest
             {
-                ItemName = "Updated Item",
-                GameId = 1,
-                Price = 10.99f,
-                Description = "Updated description",
-                IsListed = false,
-                ImagePath = "/images/updated.png"
+                Name = "ex2",
+                Description = "ex",
+                ImagePath = "ex2.png",
+                PointPrice = 120,
+                ItemType = "ex"
             };
 
-            await _repository.UpdateItemAsync(1, updateRequest);
+            await _repository.UpdatePointShopItemAsync(1, request);
 
-            var updatedItem = await _context.Items.FindAsync(1);
-            Assert.Equal("Updated Item", updatedItem.ItemName);
-            Assert.False(updatedItem.IsListed);
+            var updated = await _context.PointShopItems.FindAsync(1);
+            Assert.Equal("ex2", updated.Name);
         }
 
         [Fact]
-        public async Task UpdateItemAsync_InvalidId_ThrowsKeyNotFoundException()
+        public async Task UpdatePointShopItemAsync_WhenCalledWithInvalidId_ThrowsException()
         {
-            var request = new UpdateItemRequest
+            var request = new UpdatePointShopItemRequest
             {
-                ItemName = "Non-existing",
-                GameId = 1,
-                Price = 1,
-                Description = "None",
-                IsListed = false,
-                ImagePath = "/nope.png"
+                Name = "Ghost",
+                Description = "Invisible",
+                ImagePath = "ghost.png",
+                PointPrice = 50,
+                ItemType = "Effect"
             };
 
-            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
-                _repository.UpdateItemAsync(999, request));
+            await Assert.ThrowsAsync<Exception>(() => _repository.UpdatePointShopItemAsync(999, request));
         }
 
         [Fact]
-        public async Task DeleteItemAsync_ValidId_DeletesItemAndRelatedData()
+        public async Task DeletePointShopItemAsync_WhenCalledWithValidId_DeletesItem()
         {
-            await _repository.DeleteItemAsync(1);
+            await _repository.DeletePointShopItemAsync(2);
 
-            var item = await _context.Items.FindAsync(1);
-            Assert.Null(item);
-
-            var inventory = await _context.UserInventories.FirstOrDefaultAsync(i => i.ItemId == 1);
-            Assert.Null(inventory);
-
-            var tradeDetails = await _context.ItemTradeDetails.FirstOrDefaultAsync(t => t.ItemId == 1);
-            Assert.Null(tradeDetails);
+            var deleted = await _context.PointShopItems.FindAsync(2);
+            Assert.Null(deleted);
         }
 
         [Fact]
-        public async Task DeleteItemAsync_InvalidId_ThrowsKeyNotFoundException()
+        public async Task DeletePointShopItemAsync_WhenCalledWithInvalidId_ThrowsException()
         {
-            await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                _repository.DeleteItemAsync(999));
+            await Assert.ThrowsAsync<Exception>(() => _repository.DeletePointShopItemAsync(999));
         }
     }
 }

@@ -212,6 +212,40 @@ namespace SteamHub.Api.Migrations
                             RecommendedRequirements = "Intel Core i7, 16GB RAM, GTX 1060",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=0u8g1c2v4xE"
+                        },
+                        new
+                        {
+                            GameId = 5,
+                            Description = "A puzzle game where you change the rules to solve challenges.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
+                            ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple113/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
+                            MinimumRequirements = "2GB RAM, 1.0GHz Processor",
+                            Name = "Baba is You",
+                            NumberOfRecentPurchases = 1500,
+                            Price = 14.99m,
+                            PublisherUserId = 1,
+                            Rating = 4.8m,
+                            RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
+                        },
+                        new
+                        {
+                            GameId = 6,
+                            Description = "A farming simulation game where players can grow crops, raise animals, and build their farm.",
+                            Discount = 0.20m,
+                            GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
+                            ImagePath = "https://is5-ssl.mzstatic.com/image/thumb/Purple123/v4/9e/30/61/9e3061a5-b2f0-87ad-9e90-563f37729be5/source/256x256bb.jpg",
+                            MinimumRequirements = "2GB RAM, 1.0GHz Processor",
+                            Name = "Stardew Valley",
+                            NumberOfRecentPurchases = 1500,
+                            Price = 14.99m,
+                            PublisherUserId = 2,
+                            Rating = 4.8m,
+                            RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
+                            StatusId = 0,
+                            TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
                         });
                 });
 
@@ -407,7 +441,7 @@ namespace SteamHub.Api.Migrations
                             GameOfTradeId = 1,
                             SourceUserId = 1,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                            TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
                             TradeStatus = 0
                         },
                         new
@@ -419,7 +453,7 @@ namespace SteamHub.Api.Migrations
                             GameOfTradeId = 2,
                             SourceUserId = 3,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                            TradeDescription = "Trade 2: Jane Doe offers Game2 to Maria Elena",
                             TradeStatus = 0
                         },
                         new
@@ -431,7 +465,7 @@ namespace SteamHub.Api.Migrations
                             GameOfTradeId = 1,
                             SourceUserId = 1,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                            TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
                             TradeStatus = 2
                         });
                 });
@@ -802,37 +836,37 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             UserId = 1,
-                            Email = "user1@gmail.com",
+                            Email = "johndoe@gmail.com",
                             PointsBalance = 100f,
                             RoleId = 0,
-                            UserName = "User1",
+                            UserName = "John Doe",
                             WalletBalance = 56f
                         },
                         new
                         {
                             UserId = 2,
-                            Email = "user2@gmail.com",
+                            Email = "michaeljohn@gmail.com",
                             PointsBalance = 45f,
                             RoleId = 0,
-                            UserName = "User2",
+                            UserName = "Michael John",
                             WalletBalance = 78f
                         },
                         new
                         {
                             UserId = 3,
-                            Email = "user3@gmail.com",
+                            Email = "janedoe@gmail.com",
                             PointsBalance = 234f,
                             RoleId = 1,
-                            UserName = "User3",
+                            UserName = "Jane Doe",
                             WalletBalance = 21f
                         },
                         new
                         {
                             UserId = 4,
-                            Email = "user4@gmail.com",
+                            Email = "mariaelena@gmail.com",
                             PointsBalance = 34f,
                             RoleId = 1,
-                            UserName = "User4",
+                            UserName = "Maria Elena",
                             WalletBalance = 455f
                         });
                 });

@@ -15,7 +15,7 @@ namespace SteamStore.Services.Interfaces
     {
         Task<List<int>> GetAllCartGamesIds();
 
-        Task<List<int>> GetAllPurchasedGames();
+        Task<List<Game>> GetAllPurchasedGames();
 
         Task<decimal> GetTotalSumToBePaidAsync();
 

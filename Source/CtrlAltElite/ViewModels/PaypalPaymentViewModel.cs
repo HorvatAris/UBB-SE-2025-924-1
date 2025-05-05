@@ -82,8 +82,8 @@ namespace SteamStore.ViewModels
             bool paymentSuccess = await this.paypalProcessor.ProcessPaymentAsync(this.Email, this.Password, this.amountToPay);
             if (paymentSuccess)
             {
-                this.cartService.RemoveGamesFromCart(this.purchasedGames);
-                this.userGameService.PurchaseGames(this.purchasedGames);
+                await this.cartService.RemoveGamesFromCart(this.purchasedGames);
+                await this.userGameService.PurchaseGamesAsync(this.purchasedGames);
 
                 // Get points earned from the purchase
                 int pointsEarned = this.userGameService.LastEarnedPoints;
