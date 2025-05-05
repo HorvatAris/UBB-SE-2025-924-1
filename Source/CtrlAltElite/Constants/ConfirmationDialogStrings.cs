@@ -12,7 +12,7 @@ namespace SteamStore.Constants
 
     public static class ConfirmationDialogStrings
     {
-        public const string CONFIRM_PURCHASETITLE = "Confirm Purchase";
+        public const string CONFIRMPURCHASETITLE = "Confirm Purchase";
         public const string CONFIRMPURCHASEASSURANCE = "Are you sure you want to proceed with the purchase using your Steam Wallet?";
         public const string OKBUTTONTEXT = "OK";
         public const string YESBUTTONTEXT = "Yes";

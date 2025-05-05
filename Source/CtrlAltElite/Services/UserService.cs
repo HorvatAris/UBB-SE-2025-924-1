@@ -12,6 +12,7 @@ namespace CtrlAltElite.Services
     using CtrlAltElite.Models;
     using CtrlAltElite.ServiceProxies;
     using CtrlAltElite.Services.Interfaces;
+    using SteamHub.ApiContract.Models.User;
     using Windows.Networking.Proximity;
 
     public class UserService : IUserService
@@ -39,7 +40,9 @@ namespace CtrlAltElite.Services
                     Email = user.Email,
                     WalletBalance = user.WalletBalance,
                     PointsBalance = user.PointsBalance,
-                    UserRole = (User.Role)user.Role,
+                    UserRole = user.Role == RoleEnum.Developer
+                        ? User.Role.Developer
+                        : User.Role.User,
                 };
                 result.Add(currentUser);
             }

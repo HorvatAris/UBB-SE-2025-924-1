@@ -1,10 +1,14 @@
-﻿using CtrlAltElite.Models;
-using SteamStore.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿// <copyright file="IMarketplaceService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Services.Interfaces
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using SteamStore.Models;
+
     public interface IMarketplaceService
     {
         User User { get; set; }

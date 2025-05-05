@@ -1,18 +1,19 @@
-using CtrlAltElite.Models;
-using CtrlAltElite.ViewModels;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using SteamStore.Models;
-using SteamStore.Services.Interfaces;
-using SteamStore.ViewModels;
-using System;
-using System.Linq;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+// <copyright file="InventoryPage.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Pages
 {
+    using System;
+    using System.Linq;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.ViewModels;
+    using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
+    using SteamStore.Models;
+    using SteamStore.Services.Interfaces;
+    using SteamStore.ViewModels;
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -31,13 +32,14 @@ namespace CtrlAltElite.Pages
         public InventoryPage(IInventoryService inventoryService)
         {
             this.InitializeComponent();
-            //IDataLink databaseConnector = new DataLink(new ConfigurationBuilder()
+
+            // IDataLink databaseConnector = new DataLink(new ConfigurationBuilder()
             //   .SetBasePath(AppContext.BaseDirectory)
             //   .AddJsonFile("appsettings.json")
             //   .Build());
 
-            //IInventoryRepository inventoryRepository = new InventoryRepository(databaseConnector, user);
-            //var inventoryService = new InventoryService(inventoryRepository);
+            // IInventoryRepository inventoryRepository = new InventoryRepository(databaseConnector, user);
+            // var inventoryService = new InventoryService(inventoryRepository);
             this.ViewModel = new InventoryViewModel(inventoryService);
             this.DataContext = this;
 
@@ -66,7 +68,7 @@ namespace CtrlAltElite.Pages
 
         private void OnCreateTradeOfferButtonClicked(object sender, RoutedEventArgs e)
         {
-            //this.Frame.Navigate(typeof(TradingPage));
+            // this.Frame.Navigate(typeof(TradingPage));
         }
 
         private void OnInventoryItemClicked(object sender, ItemClickEventArgs e)
@@ -93,9 +95,6 @@ namespace CtrlAltElite.Pages
             }
         }
 
-        /// <summary>
-        /// Handles the sell button click, displaying a confirmation dialog and delegating the sale logic to the view-model.
-        /// </summary>
         private async void OnSellItemButtonClicked(object sender, RoutedEventArgs e)
         {
             // Retrieve the selected item from the button's DataContext.
@@ -138,5 +137,4 @@ namespace CtrlAltElite.Pages
             }
         }
     }
-
 }

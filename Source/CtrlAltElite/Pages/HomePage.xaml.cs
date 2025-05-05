@@ -2,8 +2,6 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System.Threading.Tasks;
-
 namespace SteamStore.Pages
 {
     using System;
@@ -11,6 +9,7 @@ namespace SteamStore.Pages
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -24,9 +23,6 @@ namespace SteamStore.Pages
     using Windows.Foundation;
     using Windows.Foundation.Collections;
 
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class HomePage : Page
     {
         private const int MINIMUMPRICEFILTERVALUE = 0;
@@ -48,7 +44,7 @@ namespace SteamStore.Pages
 
         private async void SearchBox_TextChanged(object searchBox, TextChangedEventArgs textChangedEventArgument)
         {
-            this.HomePageViewModel.SearchGames(this.SearchBox.Text);
+            await this.HomePageViewModel.SearchGames(this.SearchBox.Text);
         }
 
         private void FilterButton_Click(object filterButton, RoutedEventArgs filterClickEventArgument)
@@ -72,7 +68,7 @@ namespace SteamStore.Pages
                 }
             }
 
-            this.HomePageViewModel.ApplyFilters();
+            await this.HomePageViewModel.ApplyFilters();
 
             // Close the popup
             this.FilterPopup.IsOpen = false;
