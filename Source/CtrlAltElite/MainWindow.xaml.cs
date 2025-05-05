@@ -163,7 +163,7 @@ namespace SteamStore
             this.gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
 
             this.cartService = new CartService(userGameServiceProxy, loggedInUser, gameServiceProxy);
-            var userGameRepository = new UserGameRepository(dataLink, loggedInUser);
+
             this.userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
 
             this.developerService = new DeveloperService(

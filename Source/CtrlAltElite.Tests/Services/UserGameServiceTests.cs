@@ -46,9 +46,10 @@
         }
 
         [Fact]
-        public async Task RemoveGameFromWishlistAsync_CallsProxyCorrectly()
+        public async Task RemoveGameFromWishlistAsync_ValidGameId_CallsProxyCorrectly()
         {
             var game = new Game { GameId = 1 };
+
             await this.userGameService.RemoveGameFromWishlistAsync(game);
 
             this.userGameServiceProxyMock.Verify(proxy => proxy.RemoveFromWishlistAsync(
@@ -56,7 +57,7 @@
         }
 
         [Fact]
-        public async Task AddGameToWishlistAsync_Valid_CallsProxy()
+        public async Task AddGameToWishlistAsync_ValidId_CallsProxy()
         {
             var game = new Game { GameId = 2, GameTitle = "Not Owned Game" };
 
@@ -96,7 +97,7 @@
         }
 
         [Fact]
-        public async Task PurchaseGamesAsync_UpdatesLastEarnedPoints()
+        public async Task PurchaseGamesAsync_ValidGames_UpdatesLastEarnedPoints()
         {
             var initialPoints = testUser.PointsBalance;
             var games = new List<Game> { new Game { GameId = 1 }, new Game { GameId = 2 } };
@@ -109,7 +110,7 @@
         }
 
         [Fact]
-        public async Task SearchWishListByNameAsync_FindsMatchingGames()
+        public async Task SearchWishListByNameAsync_ValidExistingName_FindsMatchingGames()
         {
             var games = new Collection<Game>
             {
@@ -137,32 +138,69 @@
             Assert.Equal("Cool Game", result[0].GameTitle);
         }
 
-        [Theory]
-        [InlineData(FilterCriteria.OVERWHELMINGLYPOSITIVE, 5)]
-        [InlineData(FilterCriteria.VERYPOSITIVE, 4.1)]
-        [InlineData(FilterCriteria.MIXED, 3)]
-        [InlineData(FilterCriteria.NEGATIVE, 1)]
-        public async Task FilterWishListGamesAsync_FiltersByRatingCriteria(string criteria, decimal rating)
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs5AndFilterIsOverwhelminglyPositive_ReturnsGame()
         {
             var games = new Collection<Game>
             {
-                new Game { GameId = 1, GameTitle = "Test Game", Rating = rating }
+                new Game { GameId = 1, GameTitle = "Test Game", Rating = 5 }
             };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
-                {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
-                });
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
-                {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse { Identifier = id, Name = game.GameTitle, Rating = (decimal)game.Rating };
-                });
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.OVERWHELMINGLYPOSITIVE);
 
-            var result = await this.userGameService.FilterWishListGamesAsync(criteria);
+            Assert.Single(result);
+            Assert.Equal("Test Game", result[0].GameTitle);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs4Point1AndFilterIsVeryPositive_ReturnsGame()
+        {
+            var games = new Collection<Game>
+            {
+                new Game { GameId = 2, GameTitle = "Test Game", Rating = 4.1m }
+            };
+
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
+
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.VERYPOSITIVE);
+
+            Assert.Single(result);
+            Assert.Equal("Test Game", result[0].GameTitle);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs3AndFilterIsMixed_ReturnsGame()
+        {
+            var games = new Collection<Game>
+            {
+                new Game { GameId = 3, GameTitle = "Test Game", Rating = 3m }
+            };
+
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
+
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.MIXED);
+
+            Assert.Single(result);
+            Assert.Equal("Test Game", result[0].GameTitle);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs1AndFilterIsNegative_ReturnsGame()
+        {
+            var games = new Collection<Game>
+            {
+                new Game { GameId = 4, GameTitle = "Test Game", Rating = 1m }
+            };
+
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
+
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.NEGATIVE);
 
             Assert.Single(result);
             Assert.Equal("Test Game", result[0].GameTitle);
@@ -195,23 +233,15 @@
             Assert.Equal(2, result.Count);
         }
 
-        [Theory]
-        [InlineData(FilterCriteria.PRICE, true)]
-        [InlineData(FilterCriteria.PRICE, false)]
-        [InlineData(FilterCriteria.RATING, true)]
-        [InlineData(FilterCriteria.RATING, false)]
-        [InlineData(FilterCriteria.DISCOUNT, true)]
-        [InlineData(FilterCriteria.DISCOUNT, false)]
-        [InlineData("NAME", true)]
-        [InlineData("NAME", false)]
-        public async Task SortWishListGamesAsync_SortsCorrectly(string criteria, bool ascending)
+        [Fact]
+        public async Task SortWishListGamesAsync_WhenSortedByPrice_AndAscendingOrder_ReturnsCorrectOrder()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
-                new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
-                new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
-            };
+    {
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+    };
 
             this.userGameServiceProxyMock.Setup(proxy =>
                 proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
@@ -233,9 +263,190 @@
                     };
                 });
 
-            var sorted = await this.userGameService.SortWishListGamesAsync(criteria, ascending);
+            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.PRICE, true);
 
             Assert.Equal(3, sorted.Count);
+            Assert.Equal("Halo", sorted.First().GameTitle);  // Expecting lowest price first
+        }
+
+        [Fact]
+        public async Task SortWishListGamesAsync_WhenSortedByPrice_AndDescendingOrder_ReturnsCorrectOrder()
+        {
+            var games = new Collection<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+    };
+
+            this.userGameServiceProxyMock.Setup(proxy =>
+                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var game = games.First(game => game.GameId == id);
+                    return new GameDetailedResponse
+                    {
+                        Identifier = id,
+                        Name = game.GameTitle,
+                        Price = game.Price,
+                        Rating = (decimal)game.Rating,
+                        Discount = game.Discount
+                    };
+                });
+
+            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.PRICE, false);
+
+            Assert.Equal(3, sorted.Count);
+            Assert.Equal("Zelda", sorted.First().GameTitle);  // Expecting highest price first
+        }
+
+        [Fact]
+        public async Task SortWishListGamesAsync_WhenSortedByRating_AndAscendingOrder_ReturnsCorrectOrder()
+        {
+            var games = new Collection<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+    };
+
+            this.userGameServiceProxyMock.Setup(proxy =>
+                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var game = games.First(game => game.GameId == id);
+                    return new GameDetailedResponse
+                    {
+                        Identifier = id,
+                        Name = game.GameTitle,
+                        Price = game.Price,
+                        Rating = (decimal)game.Rating,
+                        Discount = game.Discount
+                    };
+                });
+
+            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.RATING, true);
+
+            Assert.Equal(3, sorted.Count);
+            Assert.Equal("Among Us", sorted.First().GameTitle);  // Expecting lowest rating first
+        }
+
+        [Fact]
+        public async Task SortWishListGamesAsync_WhenSortedByRating_AndDescendingOrder_ReturnsCorrectOrder()
+        {
+            var games = new Collection<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+    };
+
+            this.userGameServiceProxyMock.Setup(proxy =>
+                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var game = games.First(game => game.GameId == id);
+                    return new GameDetailedResponse
+                    {
+                        Identifier = id,
+                        Name = game.GameTitle,
+                        Price = game.Price,
+                        Rating = (decimal)game.Rating,
+                        Discount = game.Discount
+                    };
+                });
+
+            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.RATING, false);
+
+            Assert.Equal(3, sorted.Count);
+            Assert.Equal("Halo", sorted.First().GameTitle);  // Expecting highest rating first
+        }
+
+        [Fact]
+        public async Task SortWishListGamesAsync_WhenSortedByDiscount_AndAscendingOrder_ReturnsCorrectOrder()
+        {
+            var games = new Collection<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+    };
+
+            this.userGameServiceProxyMock.Setup(proxy =>
+                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var game = games.First(game => game.GameId == id);
+                    return new GameDetailedResponse
+                    {
+                        Identifier = id,
+                        Name = game.GameTitle,
+                        Price = game.Price,
+                        Rating = (decimal)game.Rating,
+                        Discount = game.Discount
+                    };
+                });
+
+            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.DISCOUNT, true);
+
+            Assert.Equal(3, sorted.Count);
+            Assert.Equal("Halo", sorted.First().GameTitle);  // Expecting lowest discount first
+        }
+
+        [Fact]
+        public async Task SortWishListGamesAsync_WhenSortedByDiscount_AndDescendingOrder_ReturnsCorrectOrder()
+        {
+            var games = new Collection<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+    };
+
+            this.userGameServiceProxyMock.Setup(proxy =>
+                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var game = games.First(game => game.GameId == id);
+                    return new GameDetailedResponse
+                    {
+                        Identifier = id,
+                        Name = game.GameTitle,
+                        Price = game.Price,
+                        Rating = (decimal)game.Rating,
+                        Discount = game.Discount
+                    };
+                });
+
+            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.DISCOUNT, false);
+
+            Assert.Equal(3, sorted.Count);
+            Assert.Equal("Among Us", sorted.First().GameTitle);  // Expecting highest discount first
         }
 
         [Fact]
@@ -256,7 +467,7 @@
         }
 
         [Fact]
-        public async Task ComputeTagScoreForGamesAsync_AddsScore()
+        public async Task ComputeTagScoreForGamesAsync_ValidComputingFormula_AddsScore()
         {
             var games = new Collection<Game>
             {
@@ -303,7 +514,7 @@
         }
 
         [Fact]
-        public async Task GetFavoriteUserTagsAsync_ReturnsTopTags()
+        public async Task GetFavoriteUserTagsAsync_ValidIds_ReturnsTopTags()
         {
             var allTags = new List<TagSummaryResponse>
             {
@@ -348,7 +559,7 @@
         }
 
         [Fact]
-        public async Task AddGameToWishlistAsync_Successful()
+        public async Task AddGameToWishlistAsync_ValidGame_Successful()
         {
             var game = new Game { GameId = 7, GameTitle = "NewGame" };
 
@@ -365,7 +576,7 @@
         }
 
         [Fact]
-        public async Task RemoveGameFromWishlistAsync_RemovesSuccessfully()
+        public async Task RemoveGameFromWishlistAsync_ValidGameId_RemovesSuccessfully()
         {
             var game = new Game { GameId = 5 };
 
@@ -376,7 +587,7 @@
         }
 
         [Fact]
-        public async Task PurchaseGamesAsync_BuysCorrectGames()
+        public async Task PurchaseGamesAsync_ValidGames_BuysCorrectGames()
         {
             var game1 = new Game { GameId = 10 };
             var game2 = new Game { GameId = 11 };
@@ -391,7 +602,7 @@
         }
 
         [Fact]
-        public async Task SearchWishListByNameAsync_ReturnsMatchingGames()
+        public async Task SearchWishListByNameAsync_ExistingName_ReturnsMatchingGames()
         {
             var searchText = "halo";
             var games = new Collection<Game>
@@ -419,14 +630,10 @@
             Assert.Contains(results, game => game.GameTitle.ToLower().Contains(searchText));
         }
 
-        [Theory]
-        [InlineData(FilterCriteria.OVERWHELMINGLYPOSITIVE, 4.5)]
-        [InlineData(FilterCriteria.VERYPOSITIVE, 4.1)]
-        [InlineData(FilterCriteria.MIXED, 3.0)]
-        [InlineData(FilterCriteria.NEGATIVE, 1.5)]
-        public async Task FilterWishListGamesAsync_FiltersCorrectly(string criteria, decimal rating)
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs4Point5AndCriteriaIsOverwhelminglyPositive_ReturnsGame()
         {
-            var game = new Game { GameId = 1, GameTitle = "Game1", Rating = rating };
+            var game = new Game { GameId = 1, GameTitle = "Game1", Rating = 4.5m };
 
             this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
                 .ReturnsAsync(new GetUserGamesResponse
@@ -439,10 +646,82 @@
                 {
                     Identifier = game.GameId,
                     Name = game.GameTitle,
-                    Rating = (decimal)game.Rating
+                    Rating = game.Rating
                 });
 
-            var result = await this.userGameService.FilterWishListGamesAsync(criteria);
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.OVERWHELMINGLYPOSITIVE);
+
+            Assert.Single(result);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs4Point1AndCriteriaIsVeryPositive_ReturnsGame()
+        {
+            var game = new Game { GameId = 2, GameTitle = "Game1", Rating = 4.1m };
+
+            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(game.GameId))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Identifier = game.GameId,
+                    Name = game.GameTitle,
+                    Rating = game.Rating
+                });
+
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.VERYPOSITIVE);
+
+            Assert.Single(result);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs3Point0AndCriteriaIsMixed_ReturnsGame()
+        {
+            var game = new Game { GameId = 3, GameTitle = "Game1", Rating = 3.0m };
+
+            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(game.GameId))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Identifier = game.GameId,
+                    Name = game.GameTitle,
+                    Rating = game.Rating
+                });
+
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.MIXED);
+
+            Assert.Single(result);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenRatingIs1Point5AndCriteriaIsNegative_ReturnsGame()
+        {
+            var game = new Game { GameId = 4, GameTitle = "Game1", Rating = 1.5m };
+
+            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
+                });
+
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(game.GameId))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Identifier = game.GameId,
+                    Name = game.GameTitle,
+                    Rating = game.Rating
+                });
+
+            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.NEGATIVE);
 
             Assert.Single(result);
         }
@@ -493,6 +772,25 @@
             var result = await this.userGameService.IsGamePurchasedAsync(game);
 
             Assert.False(result);
+        }
+
+        private void SetupUserWishlistWithGames(Collection<Game> games)
+        {
+            this.userGameServiceProxyMock.Setup(proxy =>
+                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                });
+        }
+
+        private void SetupGameServiceMock(Collection<Game> games)
+        {
+            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var game = games.First(game => game.GameId == id);
+                    return new GameDetailedResponse { Identifier = id, Name = game.GameTitle, Rating = game.Rating };
+                });
         }
     }
 }

@@ -49,14 +49,14 @@
         }
 
         [Fact]
-        public void GetCurrentUser_ShouldReturnUser()
+        public void GetCurrentUser_ValidExistingUser_ShouldReturnUser()
         {
             var user = tradeService.GetCurrentUser();
             Assert.Equal(testUser, user);
         }
 
         [Fact]
-        public async Task MarkTradeAsCompleted_ShouldCallUpdateTrade()
+        public async Task MarkTradeAsCompleted_ValidTradeId_ShouldCallUpdateTrade()
         {
             var tradeId = 123;
             await tradeService.MarkTradeAsCompletedAsync(tradeId);
@@ -68,7 +68,7 @@
         }
 
         [Fact]
-        public async Task TransferItemAsync_ShouldCallAddAndRemove()
+        public async Task TransferItemAsync_ValidTransferDetails_ShouldCallAddAndRemove()
         {
             var itemId = 10;
             var fromUserId = 1;
@@ -85,7 +85,7 @@
         }
 
         [Fact]
-        public async Task AddItemTradeAsync_ShouldCreateTradeAndDetails()
+        public async Task AddItemTradeAsync_ValidTradeDetails_ShouldCreateTradeAndDetails()
         {
             var trade = new ItemTrade
             {
@@ -113,7 +113,7 @@
         }
 
         [Fact]
-        public async Task CreateTradeAsync_ShouldCallAddItemTrade()
+        public async Task CreateTradeAsync_ValidTradeId_ShouldCallAddItemTrade()
         {
             var trade = new ItemTrade
             {
@@ -135,7 +135,7 @@
         }
 
         [Fact]
-        public async Task UpdateTradeAsync_ShouldCallUpdateItemTradeAsync()
+        public async Task UpdateTradeAsync_ValidTradeId_ShouldCallUpdateItemTradeAsync()
         {
             var trade = new ItemTrade
             {
@@ -177,7 +177,7 @@
         }
 
         [Fact]
-        public async Task GetUserInventoryAsync_ShouldReturnItems()
+        public async Task GetUserInventoryAsync_WithExistingItems_ShouldReturnItems()
         {
             var gameTitle = "GameX";
 

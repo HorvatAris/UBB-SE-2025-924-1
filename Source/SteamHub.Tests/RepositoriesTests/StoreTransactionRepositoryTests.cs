@@ -44,7 +44,7 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetStoreTransactionsAsync_WhenCalled_ReturnsAllTransactions()
+        public async Task GetStoreTransactionsAsync_WhenGenerallyCalled_ReturnsAllTransactions()
         {
             var result = await _repository.GetStoreTransactionsAsync();
 
@@ -64,7 +64,8 @@ namespace SteamHub.Tests.RepositoriesTests
         [Fact]
         public async Task GetStoreTransactionByIdAsync_WhenCalledWithInvalidId_ReturnsNull()
         {
-            var result = await _repository.GetStoreTransactionByIdAsync(999);
+            int invalidIdValue = 999;
+            var result = await _repository.GetStoreTransactionByIdAsync(invalidIdValue);
 
             Assert.Null(result);
         }
@@ -91,6 +92,7 @@ namespace SteamHub.Tests.RepositoriesTests
         [Fact]
         public async Task UpdateStoreTransactionAsync_WhenCalledWithValidRequest_UpdatesTransaction()
         {
+            var expectedAmount = 29.99f;
             var request = new UpdateStoreTransactionRequest
             {
                 Date = new DateTime(2024, 3, 3),
@@ -101,13 +103,14 @@ namespace SteamHub.Tests.RepositoriesTests
             await _repository.UpdateStoreTransactionAsync(1, request);
 
             var updated = await _context.StoreTransactions.FindAsync(1);
-            Assert.Equal(29.99f, updated.Amount);
+            Assert.Equal(expectedAmount, updated.Amount);
             Assert.False(updated.WithMoney);
         }
 
         [Fact]
         public async Task UpdateStoreTransactionAsync_WhenCalledWithInvalidId_ThrowsException()
         {
+            var transactionIdValue = 999;
             var request = new UpdateStoreTransactionRequest
             {
                 Date = DateTime.UtcNow,
@@ -115,7 +118,7 @@ namespace SteamHub.Tests.RepositoriesTests
                 WithMoney = true
             };
 
-            await Assert.ThrowsAsync<Exception>(() => _repository.UpdateStoreTransactionAsync(999, request));
+            await Assert.ThrowsAsync<Exception>(() => _repository.UpdateStoreTransactionAsync(transactionIdValue, request));
         }
 
         [Fact]
@@ -130,7 +133,8 @@ namespace SteamHub.Tests.RepositoriesTests
         [Fact]
         public async Task DeleteStoreTransactionAsync_WhenCalledWithInvalidId_ThrowsException()
         {
-            await Assert.ThrowsAsync<Exception>(() => _repository.DeleteStoreTransactionAsync(999));
+            var invalidIdValue = 999;  
+            await Assert.ThrowsAsync<Exception>(() => _repository.DeleteStoreTransactionAsync(invalidIdValue));
         }
     }
 }

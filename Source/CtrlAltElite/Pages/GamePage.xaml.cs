@@ -80,7 +80,7 @@ namespace SteamStore.Pages
             {
                 this.ShowNotification(
                     NotificationStrings.AddToCartErrorTitle,
-                    $"{NotificationStrings.AddToCartErrorMessage} {exception.Message}");
+                    string.Format(NotificationStrings.AddToCartErrorMessage, this.ViewModel.Game.GameTitle) + " " + exception.Message);
             }
         }
 
@@ -95,8 +95,8 @@ namespace SteamStore.Pages
             }
             catch (Exception exception)
             {
-                var message = exception.Message.Contains(ErrorStrings.SQLNONQUERYFAILUREINDICATOR)
-                    ? string.Format(ErrorStrings.ADDTOWISHLISTALREADYEXISTSMESSAGE, this.ViewModel.Game.GameTitle)
+                var message = exception.Message.Contains(ErrorStrings.SqlNonQUeryFailure)
+                    ? string.Format(ErrorStrings.AddToWishlistAlreadyExistsError, this.ViewModel.Game.GameTitle)
                     : exception.Message;
 
                 this.ShowNotification(NotificationStrings.AddToWishlistErrorTitle, message);
