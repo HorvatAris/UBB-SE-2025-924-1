@@ -14,13 +14,13 @@ public class UserPointShopItemInventoryRepository : IUserPointShopItemInventoryR
         public async Task<GetUserPointShopItemInventoryResponse> GetUserInventoryAsync(int userId)
         {
             var items = await context.UserPointShopInventories
-                .Where(inv => inv.UserId == userId)
-                .Include(inv => inv.PointShopItem)
-                .Select(inv => new UserPointShopItemInventoryResponse
+                .Where(inventory => inventory.UserId == userId)
+                .Include(inventory => inventory.PointShopItem)
+                .Select(inventory => new UserPointShopItemInventoryResponse
                 {
-                    PointShopItemId = inv.PointShopItem.PointShopItemId,
-                    PurchaseDate = inv.PurchaseDate,
-                    IsActive = inv.IsActive
+                    PointShopItemId = inventory.PointShopItem.PointShopItemId,
+                    PurchaseDate = inventory.PurchaseDate,
+                    IsActive = inventory.IsActive
                 })
                 .ToListAsync();
 
@@ -56,7 +56,7 @@ public class UserPointShopItemInventoryRepository : IUserPointShopItemInventoryR
         public async Task UpdateItemStatusAsync(UpdateUserPointShopItemInventoryRequest request)
         {
             var inventoryItem = await context.UserPointShopInventories
-                .FirstOrDefaultAsync(inv => inv.UserId == request.UserId && inv.PointShopItemId == request.PointShopItemId);
+                .FirstOrDefaultAsync(inventory => inventory.UserId == request.UserId && inventory.PointShopItemId == request.PointShopItemId);
 
             if (inventoryItem == null)
                 throw new Exception("Inventory item not found");

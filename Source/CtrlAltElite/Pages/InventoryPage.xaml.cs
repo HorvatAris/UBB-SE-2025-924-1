@@ -95,9 +95,6 @@ namespace CtrlAltElite.Pages
             }
         }
 
-        /// <summary>
-        /// Handles the sell button click, displaying a confirmation dialog and delegating the sale logic to the view-model.
-        /// </summary>
         private async void OnSellItemButtonClicked(object sender, RoutedEventArgs e)
         {
             // Retrieve the selected item from the button's DataContext.

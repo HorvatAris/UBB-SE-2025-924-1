@@ -84,10 +84,10 @@ namespace CtrlAltElite.Services
 
             var result = new List<Item>();
 
-            var userItems = (await this.UserInventoryServiceProxy.GetUserInventoryAsync(userId)).Items;
-            foreach (var u in userItems)
+            var userItems = (await userInventoryServiceProxy.GetUserInventoryAsync(userId)).Items;
+            foreach (var userItem in userItems)
             {
-                var item = await this.ItemServiceProxy.GetItemByIdAsync(u.ItemId);
+                var item = await this.itemServiceProxy.GetItemByIdAsync(userItem.ItemId);
                 if (item.IsListed && item.GameId == game.GameId)
                 {
                     var resultGame = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(item.GameId));

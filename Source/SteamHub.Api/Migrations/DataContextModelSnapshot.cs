@@ -441,7 +441,7 @@ namespace SteamHub.Api.Migrations
                             GameOfTradeId = 1,
                             SourceUserId = 1,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                            TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
                             TradeStatus = 0
                         },
                         new
@@ -453,7 +453,7 @@ namespace SteamHub.Api.Migrations
                             GameOfTradeId = 2,
                             SourceUserId = 3,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                            TradeDescription = "Trade 2: Jane Doe offers Game2 to Maria Elena",
                             TradeStatus = 0
                         },
                         new
@@ -465,7 +465,7 @@ namespace SteamHub.Api.Migrations
                             GameOfTradeId = 1,
                             SourceUserId = 1,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                            TradeDescription = "Trade 1: John Doe offers Game1 to Michael John",
                             TradeStatus = 2
                         });
                 });
@@ -836,37 +836,37 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             UserId = 1,
-                            Email = "user1@gmail.com",
+                            Email = "johndoe@gmail.com",
                             PointsBalance = 100f,
                             RoleId = 0,
-                            UserName = "User1",
+                            UserName = "John Doe",
                             WalletBalance = 56f
                         },
                         new
                         {
                             UserId = 2,
-                            Email = "user2@gmail.com",
+                            Email = "michaeljohn@gmail.com",
                             PointsBalance = 45f,
                             RoleId = 0,
-                            UserName = "User2",
+                            UserName = "Michael John",
                             WalletBalance = 78f
                         },
                         new
                         {
                             UserId = 3,
-                            Email = "user3@gmail.com",
+                            Email = "janedoe@gmail.com",
                             PointsBalance = 234f,
                             RoleId = 1,
-                            UserName = "User3",
+                            UserName = "Jane Doe",
                             WalletBalance = 21f
                         },
                         new
                         {
                             UserId = 4,
-                            Email = "user4@gmail.com",
+                            Email = "mariaelena@gmail.com",
                             PointsBalance = 34f,
                             RoleId = 1,
-                            UserName = "User4",
+                            UserName = "Maria Elena",
                             WalletBalance = 455f
                         });
                 });

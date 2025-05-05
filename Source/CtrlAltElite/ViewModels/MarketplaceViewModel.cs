@@ -206,10 +206,6 @@ namespace CtrlAltElite.ViewModels
             }
         }
 
-        /// <summary>
-        /// Initializes the ViewModel by asynchronously loading the items and users, as well as initializing the ObservableCollections.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         internal async Task InitializeViewModelAsync()
         {
             await this.LoadUsersAsync();

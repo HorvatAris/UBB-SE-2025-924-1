@@ -95,7 +95,7 @@ public class CartService : ICartService
 
             return purchasedGames;
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             // System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
             return new List<Game>();

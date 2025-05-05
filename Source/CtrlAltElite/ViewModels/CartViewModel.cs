@@ -186,7 +186,7 @@ public class CartViewModel : INotifyPropertyChanged
         {
             Title = title,
             Content = message,
-            CloseButtonText = DialogStrings.OKBUTTONTEXT,
+            CloseButtonText = ConfirmationDialogStrings.OKBUTTONTEXT,
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
 
@@ -197,10 +197,10 @@ public class CartViewModel : INotifyPropertyChanged
     {
         ContentDialog confirmDialog = new ContentDialog
         {
-            Title = DialogStrings.CONFIRMPURCHASETITLE,
-            Content = DialogStrings.CONFIRMPURCHASEMESSAGE,
-            PrimaryButtonText = DialogStrings.YESBUTTONTEXT,
-            CloseButtonText = DialogStrings.NOBUTTONTEXT,
+            Title = ConfirmationDialogStrings.CONFIRM_PURCHASETITLE,
+            Content = ConfirmationDialogStrings.CONFIRMPURCHASEASSURANCE,
+            PrimaryButtonText = ConfirmationDialogStrings.YESBUTTONTEXT,
+            CloseButtonText = ConfirmationDialogStrings.NOBUTTONTEXT,
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
@@ -213,9 +213,9 @@ public class CartViewModel : INotifyPropertyChanged
     {
         ContentDialog pointsDialog = new ContentDialog
         {
-            Title = DialogStrings.POINTSEARNEDTITLE,
-            Content = string.Format(DialogStrings.POINTSEARNEDMESSAGE, pointsEarned),
-            CloseButtonText = DialogStrings.OKBUTTONTEXT,
+            Title = ConfirmationDialogStrings.POINTSEARNEDTITLE,
+            Content = string.Format(ConfirmationDialogStrings.POINTSEARNEDMESSAGE, pointsEarned),
+            CloseButtonText = ConfirmationDialogStrings.OKBUTTONTEXT,
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = App.MainWindow.Content.XamlRoot,
         };
