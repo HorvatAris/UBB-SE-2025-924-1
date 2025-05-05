@@ -176,7 +176,7 @@
 
 			var result = await subject.FilterGamesAsync(4, 10, 30, new[] { TEST_TAG_1 });
 
-			Assert.True(result.All(g => g.Tags.Contains(TEST_TAG_1)));
+			Assert.True(result.All(game => game.Tags.Contains(TEST_TAG_1)));
 		}
 
 		[Fact]
@@ -232,7 +232,8 @@
 		[Fact]
 		public async Task GetSimilarGamesAsync_WhenCalledWithGameId_ShouldReturnOtherGames()
 		{
-			var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", TagScore = Game.NOTCOMPUTED };
+			int gameId = 1;
+            var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", TagScore = Game.NOTCOMPUTED };
 			var game2 = new Game { GameId = 2, GameTitle = "Game2", Status = "Approved", TagScore = Game.NOTCOMPUTED };
 			var game3 = new Game { GameId = 3, GameTitle = "Game3", Status = "Approved", TagScore = Game.NOTCOMPUTED };
 
@@ -249,7 +250,7 @@
 					new GameDetailedResponse { Identifier = game3.GameId, Name = game3.GameTitle, Status = GameStatusEnum.Approved }
 				});
 
-			var similarGames = await subject.GetSimilarGamesAsync(1);
+			var similarGames = await subject.GetSimilarGamesAsync(gameId);
 
 			Assert.Equal(similarGames.Count, expectedGames.Count());
 		}

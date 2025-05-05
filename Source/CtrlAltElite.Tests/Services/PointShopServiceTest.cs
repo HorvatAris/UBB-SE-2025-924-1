@@ -50,6 +50,7 @@
 		public void GetCurrentUser_WhenCalled_ShouldReturnInjectedUser()
 		{
 			var user = service.GetCurrentUser();
+
 			Assert.Equal(testUser.UserId, user.UserId);
 		}
 
@@ -166,14 +167,15 @@
 		[Fact]
 		public async Task ToggleActivationForItem_WhenItemIsActive_ShouldDeactivateIt()
 		{
-			var activeItem = new PointShopItem { ItemIdentifier = 1, IsActive = true };
+			int itemId = 1;
+            var activeItem = new PointShopItem { ItemIdentifier = itemId, IsActive = true };
 			var userItems = new ObservableCollection<PointShopItem> { activeItem };
 
 			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>())).Returns(Task.CompletedTask);
 
-			var toggledItem = await service.ToggleActivationForItemAsync(1, userItems);
+			var toggledItem = await service.ToggleActivationForItemAsync(itemId, userItems);
 
-			Assert.Equal(1, toggledItem.ItemIdentifier);
+			Assert.Equal(itemId, toggledItem.ItemIdentifier);
 		}
 
 		[Fact]

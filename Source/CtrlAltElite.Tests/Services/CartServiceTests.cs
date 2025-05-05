@@ -131,7 +131,8 @@
 		[Fact]
 		public void GetTheTotalSumOfItemsInCart_WhenCalled_ShouldReturnCorrectSum()
 		{
-			var games = new List<Game>
+            float expectedSum = 30.5f;
+            var games = new List<Game>
 			{
 				new Game { Price = 10.5m },
 				new Game { Price = 20.0m }
@@ -139,7 +140,7 @@
 
 			var total = cartService.GetTheTotalSumOfItemsInCart(games);
 
-			Assert.Equal(30.5f, total);
+			Assert.Equal(expectedSum, total);
 		}
 	}
 }

@@ -62,7 +62,7 @@
         }
 
         [Fact]
-        public async Task GetListingsByGameAsync_ReturnsOnlyListedItemsForGame()
+        public async Task GetListingsByGameAsync_ValidGame_ReturnsOnlyListedItemsForGame()
         {
             var game1 = new Game { GameId = 1, GameTitle = "Halo" };
             var game2 = new Game { GameId = 2, GameTitle = "Zelda" };
@@ -278,29 +278,29 @@
                .ReturnsAsync(new UserInventoryResponse { Items = userInventory });
 
             userInventoryServiceProxyMock
-                .Setup(x => x.RemoveItemFromUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()))
+                .Setup(items => items.RemoveItemFromUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()))
                 .Returns(Task.CompletedTask);
 
             userInventoryServiceProxyMock
-                .Setup(x => x.AddItemToUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()))
+                .Setup(items => items.AddItemToUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()))
                 .Returns(Task.CompletedTask);
 
             itemServiceProxyMock
-                .Setup(x => x.UpdateItemAsync(testItemId, It.IsAny<UpdateItemRequest>()))
+                .Setup(item => item.UpdateItemAsync(testItemId, It.IsAny<UpdateItemRequest>()))
                 .Returns(Task.CompletedTask);
 
             var result = await marketplaceService.BuyItemAsync(itemToBuy, testUser.UserId);
 
             Assert.True(result);
 
-            userInventoryServiceProxyMock.Verify(x =>
-                x.RemoveItemFromUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()), Times.Once);
+            userInventoryServiceProxyMock.Verify(item =>
+                item.RemoveItemFromUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()), Times.Once);
 
-            userInventoryServiceProxyMock.Verify(x =>
-                x.AddItemToUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()), Times.Once);
+            userInventoryServiceProxyMock.Verify(item =>
+                item.AddItemToUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()), Times.Once);
 
-            itemServiceProxyMock.Verify(x =>
-                x.UpdateItemAsync(testItemId, It.IsAny<UpdateItemRequest>()), Times.Once);
+            itemServiceProxyMock.Verify(item =>
+                item.UpdateItemAsync(testItemId, It.IsAny<UpdateItemRequest>()), Times.Once);
         }
 
         [Fact]
@@ -315,10 +315,12 @@
         [Fact]
         public async Task GetListingsByGameAsync_NullGame_ThrowsArgumentNullException()
         {
+            string parameterGame = "game";
+
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 marketplaceService.GetListingsByGameAsync(null, testUser.UserId));
 
-            Assert.Equal("game", exception.ParamName);
+            Assert.Equal(parameterGame, exception.ParamName);
         }
     }
 }
