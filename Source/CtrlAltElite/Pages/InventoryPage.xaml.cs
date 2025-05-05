@@ -18,6 +18,16 @@ namespace CtrlAltElite.Pages
     /// </summary>
     public sealed partial class InventoryPage : Page
     {
+        private const string ConfirmSaleTitle = "Confirm Sale";
+        private const string ConfirmSaleMessageFormat = "Are you sure you want to sell {0}?";
+        private const string SuccessDialogTitle = "Success";
+        private const string SuccessDialogMessageFormat = "{0} has been successfully listed for sale!";
+        private const string ErrorDialogTitle = "Error";
+        private const string ErrorDialogMessage = "Failed to sell the item. Please try again.";
+        private const string OkButtonText = "OK";
+        private const string YesButtonText = "Yes";
+        private const string NoButtonText = "No";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="InventoryPage"/> class.
         /// </summary>
@@ -64,10 +74,10 @@ namespace CtrlAltElite.Pages
                 var confirmationDialog = new ContentDialog
                 {
                     XamlRoot = this.XamlRoot,
-                    Title = "Confirm Sale",
-                    Content = $"Are you sure you want to sell {selectedItem.ItemName}?",
-                    PrimaryButtonText = "Yes",
-                    CloseButtonText = "No",
+                    Title = ConfirmSaleTitle,
+                    Content = string.Format(ConfirmSaleMessageFormat, selectedItem.ItemName),
+                    PrimaryButtonText = YesButtonText,
+                    CloseButtonText = NoButtonText,
                     DefaultButton = ContentDialogButton.Close,
                 };
 

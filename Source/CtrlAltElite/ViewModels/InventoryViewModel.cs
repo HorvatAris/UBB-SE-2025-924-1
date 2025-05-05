@@ -236,7 +236,7 @@ namespace CtrlAltElite.ViewModels
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task<bool> SellItemAsync(Item selectedItem)
         {
-            return await inventoryService.SellItemAsync(selectedItem);
+            return await this.inventoryService.SellItemAsync(selectedItem);
         }
 
         /// <summary>
