@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="InventoryValidator.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace SteamStore.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
     using CtrlAltElite.Models;
     using SteamStore.Models;
-    using System;
 
     public class InventoryValidator
     {
@@ -28,6 +30,7 @@ namespace SteamStore.Utils
             {
                 throw new ArgumentException("Game price cannot be negative.", nameof(game));
             }
+
             if (game.GameId <= 0)
             {
                 throw new ArgumentException("Game must have a valid positive ID.", nameof(game));

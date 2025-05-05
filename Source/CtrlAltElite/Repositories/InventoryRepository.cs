@@ -1,16 +1,20 @@
-﻿using SteamStore.Models;
-using SteamStore.Repositories.Interfaces;
-using SteamStore.Data;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CtrlAltElite.Models;
+﻿// <copyright file="InventoryRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Repositories
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using SteamStore.Data;
+    using SteamStore.Models;
+    using SteamStore.Repositories.Interfaces;
+
     public class InventoryRepository : IInventoryRepository
     {
         private readonly IDataLink dataLink;
@@ -129,23 +133,22 @@ namespace CtrlAltElite.Repositories
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
                             System.Diagnostics.Debug.WriteLine($"Found item: {reader.GetString(reader.GetOrdinal("ItemName"))}");
-                            //var game = new Game(
+
+                            // var game = new Game(
                             //    reader.GetString(reader.GetOrdinal("GameTitle")),
                             //    (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
                             //    reader.GetString(reader.GetOrdinal("Genre")),
                             //    reader.GetString(reader.GetOrdinal("GameDescription")));
-
                             var game = new Game
                             {
                                 GameId = reader.GetInt32(reader.GetOrdinal("game_id")),
                                 GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
-                                //Genre = reader.GetString(reader.GetOrdinal("Genre")),
+
+                                // Genre = reader.GetString(reader.GetOrdinal("Genre")),
                                 GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
                                 Price = (decimal)reader.GetDecimal(reader.GetOrdinal("GamePrice")),
                                 Status = reader.GetString(reader.GetOrdinal("GameStatus")),
                             };
-
-
                             var item = new Item(
                                 reader.GetString(reader.GetOrdinal("ItemName")),
                                 game,
@@ -220,19 +223,19 @@ namespace CtrlAltElite.Repositories
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
-                            //var game = new Game(
+                            // var game = new Game(
                             //    reader.GetString(reader.GetOrdinal("GameTitle")),
                             //    (float)reader.GetDouble(reader.GetOrdinal("GamePrice")),
                             //    reader.GetString(reader.GetOrdinal("Genre")),
                             //    reader.GetString(reader.GetOrdinal("GameDescription")));
-                            //game.SetGameId(reader.GetInt32(reader.GetOrdinal("GameId")));
-                            //game.SetStatus(reader.GetString(reader.GetOrdinal("GameStatus")));
-
+                            // game.SetGameId(reader.GetInt32(reader.GetOrdinal("GameId")));
+                            // game.SetStatus(reader.GetString(reader.GetOrdinal("GameStatus")));
                             var game = new Game
                             {
                                 GameId = reader.GetInt32(reader.GetOrdinal("game_id")),
                                 GameTitle = reader.GetString(reader.GetOrdinal("GameTitle")),
-                                //Genre = reader.GetString(reader.GetOrdinal("Genre")),
+
+                                // Genre = reader.GetString(reader.GetOrdinal("Genre")),
                                 GameDescription = reader.GetString(reader.GetOrdinal("GameDescription")),
                                 Price = (decimal)reader.GetDouble(reader.GetOrdinal("GamePrice")),
                                 Status = reader.GetString(reader.GetOrdinal("GameStatus")),

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="MarketplaceViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ViewModels
 {
-    using CtrlAltElite.Models;
-    using CtrlAltElite.Services.Interfaces;
-    using SteamStore.Models;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -16,7 +11,12 @@ namespace CtrlAltElite.ViewModels
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.Services.Interfaces;
 
+    /// <summary>
+    /// Viewmodel for the Marketplace Page.
+    /// </summary>
     public partial class MarketplaceViewModel : INotifyPropertyChanged
     {
         private IMarketplaceService marketplaceService;
@@ -29,6 +29,9 @@ namespace CtrlAltElite.ViewModels
         private Item selectedItem;
         private User currentUser;
         private ObservableCollection<User> availableUsers;
+        private ObservableCollection<string> availableGames;
+        private ObservableCollection<string> availableTypes;
+        private ObservableCollection<string> availableRarities;
 
         public MarketplaceViewModel(IMarketplaceService marketplaceService)
         {
@@ -37,47 +40,41 @@ namespace CtrlAltElite.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private ObservableCollection<string> _availableGames;
-
         public ObservableCollection<string> AvailableGames
         {
-            get => _availableGames;
+            get => this.availableGames;
             set
             {
-                if (_availableGames != value)
+                if (this.availableGames != value)
                 {
-                    _availableGames = value;
-                    OnPropertyChanged(nameof(AvailableGames)); // Notify the UI about changes
+                    this.availableGames = value;
+                    this.OnPropertyChanged(nameof(this.AvailableGames)); // Notify the UI about changes
                 }
             }
         }
-
-        private ObservableCollection<string> _availableTypes;
 
         public ObservableCollection<string> AvailableTypes
         {
-            get => _availableTypes;
+            get => this.availableTypes;
             set
             {
-                if (_availableTypes != value)
+                if (this.availableTypes != value)
                 {
-                    _availableTypes = value;
-                    OnPropertyChanged(nameof(AvailableTypes)); // Notify the UI about changes
+                    this.availableTypes = value;
+                    this.OnPropertyChanged(nameof(this.AvailableTypes)); // Notify the UI about changes
                 }
             }
         }
 
-        private ObservableCollection<string> _availableRarities;
-
         public ObservableCollection<string> AvailableRarities
         {
-            get => _availableRarities;
+            get => this.availableRarities;
             set
             {
-                if (_availableRarities != value)
+                if (this.availableRarities != value)
                 {
-                    _availableRarities = value;
-                    OnPropertyChanged(nameof(AvailableRarities)); // Notify the UI about changes
+                    this.availableRarities = value;
+                    this.OnPropertyChanged(nameof(this.AvailableRarities)); // Notify the UI about changes
                 }
             }
         }

@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+namespace CtrlAltElite.Services;
+
 using System.Linq;
 using SteamHub.ApiContract.Models.Game;
-
-namespace CtrlAltElite.Services;
 
 public class GameMapper
 {
@@ -31,5 +31,4 @@ public class GameMapper
             TagScore = Game.NOTCOMPUTED,
         };
     }
-
 }

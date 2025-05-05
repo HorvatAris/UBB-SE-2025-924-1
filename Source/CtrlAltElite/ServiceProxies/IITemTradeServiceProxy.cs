@@ -1,15 +1,19 @@
-﻿using Refit;
-using SteamHub.ApiContract.Models.ItemTrade;
-using SteamHub.ApiContract.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="IITemTradeServiceProxy.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ServiceProxies
 {
-    public interface IITemTradeServiceProxy :IItemTradeRepository
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Refit;
+    using SteamHub.ApiContract.Models.ItemTrade;
+    using SteamHub.ApiContract.Repositories;
+
+    public interface IITemTradeServiceProxy : IItemTradeRepository
     {
         [Get("/api/ItemTrades")]
         Task<GetItemTradesResponse> GetAllItemTradesAsync();

@@ -1,18 +1,22 @@
-﻿using CtrlAltElite.Models;
-using SteamStore.Models;
-using SteamStore.Services;
-using SteamStore.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="InventoryViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.ViewModels
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using SteamStore.Models;
+    using SteamStore.Services;
+    using SteamStore.Services.Interfaces;
+
     public class InventoryViewModel : INotifyPropertyChanged
     {
         private readonly IInventoryService inventoryService;
@@ -27,12 +31,12 @@ namespace CtrlAltElite.ViewModels
 
         public InventoryViewModel(IInventoryService inventoryS)
         {
-            //this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
+            // this.inventoryService = inventoryService ?? throw new ArgumentNullException(nameof(inventoryService));
             System.Diagnostics.Debug.WriteLine(inventoryS.ToString());
-            inventoryService = inventoryS;
-            inventoryItems = new ObservableCollection<Item>();
-            availableGames = new ObservableCollection<Game>();
-            availableUsers = new ObservableCollection<User>();
+            this.inventoryService = inventoryS;
+            this.inventoryItems = new ObservableCollection<Item>();
+            this.availableGames = new ObservableCollection<Game>();
+            this.availableUsers = new ObservableCollection<User>();
 
             // Load users and initialize data.
 
@@ -43,52 +47,52 @@ namespace CtrlAltElite.ViewModels
 
         public ObservableCollection<Item> InventoryItems
         {
-            get => inventoryItems;
+            get => this.inventoryItems;
             private set
             {
-                if (inventoryItems != value)
+                if (this.inventoryItems != value)
                 {
-                    inventoryItems = value;
-                    OnPropertyChanged();
+                    this.inventoryItems = value;
+                    this.OnPropertyChanged();
                 }
             }
         }
 
         public ObservableCollection<Game> AvailableGames
         {
-            get => availableGames;
+            get => this.availableGames;
             private set
             {
-                if (availableGames != value)
+                if (this.availableGames != value)
                 {
-                    availableGames = value;
-                    OnPropertyChanged();
+                    this.availableGames = value;
+                    this.OnPropertyChanged();
                 }
             }
         }
 
         public ObservableCollection<User> AvailableUsers
         {
-            get => availableUsers;
+            get => this.availableUsers;
             private set
             {
-                if (availableUsers != value)
+                if (this.availableUsers != value)
                 {
-                    availableUsers = value;
-                    OnPropertyChanged();
+                    this.availableUsers = value;
+                    this.OnPropertyChanged();
                 }
             }
         }
 
         public Game SelectedGame
         {
-            get => selectedGame;
+            get => this.selectedGame;
             set
             {
-                if (selectedGame != value)
+                if (this.selectedGame != value)
                 {
-                    selectedGame = value;
-                    OnPropertyChanged();
+                    this.selectedGame = value;
+                    this.OnPropertyChanged();
 
                     // Update the filtered inventory when the game filter changes.
                     _ = this.UpdateInventoryItemsAsync();
@@ -98,16 +102,16 @@ namespace CtrlAltElite.ViewModels
 
         public User SelectedUser
         {
-            get => selectedUser;
+            get => this.selectedUser;
             set
             {
-                if (selectedUser != value && !isUpdating)
+                if (this.selectedUser != value && !this.isUpdating)
                 {
-                    selectedUser = value;
-                    OnPropertyChanged();
+                    this.selectedUser = value;
+                    this.OnPropertyChanged();
 
                     // When a user is selected, load their inventory.
-                    if (selectedUser != null)
+                    if (this.selectedUser != null)
                     {
                         _ = this.LoadInventoryItemsAsync();
                     }
@@ -117,16 +121,16 @@ namespace CtrlAltElite.ViewModels
 
         public string SearchText
         {
-            get => searchText;
+            get => this.searchText;
             set
             {
-                if (searchText != value)
+                if (this.searchText != value)
                 {
-                    searchText = value;
-                    OnPropertyChanged();
+                    this.searchText = value;
+                    this.OnPropertyChanged();
 
                     // Update the filtered inventory when the search text changes.
-                    this.updateAsyncVoid();
+                    this.UpdateAsyncVoid();
                 }
             }
         }
@@ -138,107 +142,112 @@ namespace CtrlAltElite.ViewModels
 
         public Item SelectedItem
         {
-            get => selectedItem;
+            get => this.selectedItem;
             set
             {
-                if (selectedItem != value)
+                if (this.selectedItem != value)
                 {
-                    selectedItem = value;
-                    OnPropertyChanged();
+                    this.selectedItem = value;
+                    this.OnPropertyChanged();
                 }
             }
         }
 
         public async Task InitializeAsync()
         {
-            await LoadUsersAsync();
+            await this.LoadUsersAsync();
         }
 
         public async Task LoadInventoryItemsAsync()
         {
-            if (SelectedUser == null)
+            if (this.SelectedUser == null)
             {
                 return;
             }
 
             try
             {
-                isUpdating = true;
+                this.isUpdating = true;
 
                 // Retrieve filtered inventory based on the current game filter and search text.
-                var filteredItems = await inventoryService.GetUserFilteredInventoryAsync(
-                    SelectedUser.UserId,
-                    SelectedGame,
-                    SearchText);
+                var filteredItems = await this.inventoryService.GetUserFilteredInventoryAsync(
+                    this.SelectedUser.UserId,
+                    this.SelectedGame,
+                    this.SearchText);
 
                 // Update the inventory items collection.
-                InventoryItems.Clear();
+                this.InventoryItems.Clear();
                 foreach (var item in filteredItems)
                 {
-                    InventoryItems.Add(item);
+                    this.InventoryItems.Add(item);
                 }
 
                 // Retrieve all inventory items to rebuild the games filter.
-                var allItems = await inventoryService.GetUserInventoryAsync(SelectedUser.UserId);
-                var availableGames = await inventoryService.GetAvailableGames(allItems);
-                AvailableGames.Clear();
+                var allItems = await this.inventoryService.GetUserInventoryAsync(this.SelectedUser.UserId);
+                var availableGames = await this.inventoryService.GetAvailableGamesAsync(allItems);
+                this.AvailableGames.Clear();
                 foreach (var game in availableGames)
                 {
-                    AvailableGames.Add(game);
+                    this.AvailableGames.Add(game);
                 }
             }
             catch (Exception loadingInventoryItemException)
             {
                 // Log exception details as needed.
                 System.Diagnostics.Debug.WriteLine($"Error loading inventory items: {loadingInventoryItemException.Message}");
-                InventoryItems.Clear();
+                this.InventoryItems.Clear();
             }
             finally
             {
-                isUpdating = false;
+                this.isUpdating = false;
             }
         }
 
         public async Task<bool> SellItemAsync(Item selectedItem)
         {
-            return await inventoryService.SellItemAsync(selectedItem);
+            return await this.inventoryService.SellItemAsync(selectedItem);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private async void UpdateAsyncVoid()
+        {
+            await this.UpdateInventoryItemsAsync();
         }
 
         private async Task UpdateInventoryItemsAsync()
         {
-            if (SelectedUser == null)
+            if (this.SelectedUser == null)
             {
                 return;
             }
 
             try
             {
-                isUpdating = true;
+                this.isUpdating = true;
 
-                var filteredItems = await inventoryService.GetUserFilteredInventoryAsync(
-                    SelectedUser.UserId,
-                    SelectedGame,
-                    SearchText);
+                var filteredItems = await this.inventoryService.GetUserFilteredInventoryAsync(
+                    this.SelectedUser.UserId,
+                    this.SelectedGame,
+                    this.SearchText);
 
-                InventoryItems.Clear();
+                this.InventoryItems.Clear();
                 foreach (var item in filteredItems)
                 {
-                    InventoryItems.Add(item);
+                    this.InventoryItems.Add(item);
                 }
             }
             catch (Exception updatingInventoryItemsException)
             {
                 System.Diagnostics.Debug.WriteLine($"Error updating inventory items: {updatingInventoryItemsException.Message}");
-                InventoryItems.Clear();
+                this.InventoryItems.Clear();
             }
             finally
             {
-                isUpdating = false;
+                this.isUpdating = false;
             }
         }
 
@@ -246,16 +255,16 @@ namespace CtrlAltElite.ViewModels
         {
             try
             {
-                var user = inventoryService.GetAllUsersAsync();
-                AvailableUsers.Clear();
-                AvailableUsers.Add(user);
-                SelectedUser = user;
+                var user = this.inventoryService.GetAllUsers();
+                this.AvailableUsers.Clear();
+                this.AvailableUsers.Add(user);
+                this.SelectedUser = user;
             }
             catch (Exception loadingUsersException)
             {
                 // Log exception details as needed.
                 System.Diagnostics.Debug.WriteLine($"Error loading users: {loadingUsersException.Message}");
-                AvailableUsers.Clear();
+                this.AvailableUsers.Clear();
             }
         }
     }

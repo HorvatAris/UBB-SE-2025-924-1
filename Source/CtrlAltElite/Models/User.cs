@@ -1,5 +1,7 @@
 ﻿// <copyright file="User.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace CtrlAltElite.Models
 {
     public class User
@@ -20,7 +22,14 @@ namespace CtrlAltElite.Models
 
         public enum Role
         {
+            /// <summary>
+            /// User is a developer.
+            /// </summary>
             Developer,
+
+            /// <summary>
+            /// User is not a developer.
+            /// </summary>
             User,
         }
 

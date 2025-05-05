@@ -10,7 +10,6 @@ namespace Steampunks.Services.TradeService
 
     public interface ITradeService
     {
-
         Task AcceptTradeAsync(ItemTrade trade, bool isSourceUser);
 
         Task CreateTradeAsync(ItemTrade trade);

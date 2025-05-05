@@ -19,6 +19,9 @@ namespace CtrlAltElite.ViewModels
     using Microsoft.UI.Xaml.Controls;
     using SteamStore.Services.Interfaces;
 
+    /// <summary>
+    /// Viewmodel for Trade page.
+    /// </summary>
     public partial class TradeViewModel : INotifyPropertyChanged
     {
         public const string CannotSendTradeTitle = "Cannot Send Trade";
@@ -66,7 +69,16 @@ namespace CtrlAltElite.ViewModels
         private readonly IGameService gameService;
 
         private User? currentUser;
-        private User? recipientUser;
+        private User? selectedUser;
+        private Game? selectedGame;
+        private string? tradeDescription;
+        private string errorMessage;
+        private string successMessage;
+        private ItemTrade? selectedTrade;
+
+        private ObservableCollection<Game> games;
+        private ObservableCollection<User> users;
+        private ObservableCollection<User> availableUsers;
         private ObservableCollection<Item> itemsOfferedByCurrentUser;
         private ObservableCollection<Item> itemsOfferedByRecipientUser;
         private ObservableCollection<Item> selectedItemsFromCurrentUserInventory;
@@ -78,16 +90,6 @@ namespace CtrlAltElite.ViewModels
         private ObservableCollection<Item> selectedDestinationItems;
         private ObservableCollection<ItemTrade> activeTrades;
         private ObservableCollection<ItemTrade> tradeHistory;
-
-        private User? selectedUser;
-        private Game? selectedGame;
-        private string? tradeDescription;
-        private string errorMessage;
-        private string successMessage;
-        private ItemTrade? selectedTrade;
-        private ObservableCollection<Game> games;
-        private ObservableCollection<User> users;
-        private ObservableCollection<User> availableUsers;
 
         public TradeViewModel(ITradeService tradeService, IUserService userService, IGameService gameService)
         {
@@ -371,7 +373,7 @@ namespace CtrlAltElite.ViewModels
         {
             try
             {
-                var allGames = await this.gameService.GetAllGames();
+                var allGames = await this.gameService.GetAllGamesAsync();
 
                 this.Games.Clear();
                 foreach (var game in allGames)
@@ -517,6 +519,22 @@ namespace CtrlAltElite.ViewModels
         public async Task CreateTradeAsync(ItemTrade trade)
         {
             await this.tradeService.CreateTradeAsync(trade);
+        }
+
+        public async Task<List<Game>> GetAllGamesAsync()
+        {
+            var gamesCollection = await this.gameService.GetAllGamesAsync();
+            return gamesCollection.ToList(); // Convert Collection<Game> to List<Game>
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await this.userService.GetAllUsersAsync();
+        }
+
+        public User GetCurrentUserAsync()
+        {
+            return this.tradeService.GetCurrentUser();
         }
 
         public async Task TrySendTradeAsync(XamlRoot root)

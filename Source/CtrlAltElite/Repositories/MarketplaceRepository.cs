@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="MarketplaceRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Repositories
 {
-    using CtrlAltElite.Models;
-    using CtrlAltElite.Repositories.Interfaces;
-    using SteamStore.Data;
-    using SteamStore.Models;
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Diagnostics;
     using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+    using CtrlAltElite.Repositories.Interfaces;
+    using SteamStore.Data;
 
     public class MarketplaceRepository : IMarketplaceRepository
     {
@@ -85,8 +82,6 @@ namespace CtrlAltElite.Repositories
                     throw new Exception(exception.Message);
                 }
             }
-
-
         }
 
         public async Task RemoveItemFromUserInventoryAsync(Item item, SqlTransaction transaction)
@@ -284,6 +279,7 @@ namespace CtrlAltElite.Repositories
                 }
             }
         }
+
         public User? GetCurrentUser()
         {
             return this.user;
@@ -305,7 +301,6 @@ namespace CtrlAltElite.Repositories
                             {
                                 UserName = reader.GetString(reader.GetOrdinal("UserName")),
                                 UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-
                             };
 
                             users.Add(user);
@@ -315,10 +310,11 @@ namespace CtrlAltElite.Repositories
                         {
                             // If no users exist, create test users
 
-                            //NU AR TREBUI SA INTRE DELOC AICI
+                            // NU AR TREBUI SA INTRE DELOC AICI
                             this.dataLink.CloseConnection();
-                            //this.InsertTestUsers();
-                            //return await this.GetAllUsersAsync(); // Recursive call to get the newly inserted users
+
+                            // this.InsertTestUsers();
+                            // return await this.GetAllUsersAsync(); // Recursive call to get the newly inserted users
                         }
                     }
                 }

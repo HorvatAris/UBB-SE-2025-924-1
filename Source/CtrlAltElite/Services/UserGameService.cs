@@ -35,24 +35,24 @@ public class UserGameService : IUserGameService
     private const int ValueToDecrementPositionWith = 1;
     private const int ValueToIncrementPositionWith = 1;
 
+    private User user;
+
+    public UserGameService(IUserGameServiceProxy userGameServiceProxy, IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, User user)
+    {
+        this.UserGameServiceProxy = userGameServiceProxy;
+        this.GameServiceProxy = gameServiceProxy;
+        this.TagServiceProxy = tagServiceProxy;
+        this.user = user;
+    }
+
+    // Property to track points earned in the last purchase
+    public int LastEarnedPoints { get; private set; }
+
     private IUserGameServiceProxy UserGameServiceProxy { get; set; }
 
     private IGameServiceProxy GameServiceProxy { get; set; }
 
     private ITagServiceProxy TagServiceProxy { get; set; }
-
-    private User user;
-
-    // Property to track points earned in the last purchase
-    public int LastEarnedPoints { get; private set; }
-
-    public UserGameService(IUserGameServiceProxy userGameServiceProxy, IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, User user)
-    {
-        UserGameServiceProxy = userGameServiceProxy;
-        GameServiceProxy = gameServiceProxy;
-        TagServiceProxy = tagServiceProxy;
-        this.user = user;
-    }
 
     public async Task RemoveGameFromWishlistAsync(Game game)
     {
@@ -144,7 +144,8 @@ public class UserGameService : IUserGameService
                 GameId = game.GameId,
             };
             await this.UserGameServiceProxy.PurchaseGameAsync(request);
-            //await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
+
+            // await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
         }
 
         // Calculate earned points by comparing balances
@@ -244,7 +245,6 @@ public class UserGameService : IUserGameService
     {
         var games = await this.GameServiceProxy.GetGamesAsync(
             new GetGamesRequest());
-   
         var allGames = new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
         var approvedGames = new Collection<Game>();
         foreach (var game in allGames)
@@ -306,7 +306,6 @@ public class UserGameService : IUserGameService
             var games = new Collection<Game>();
             foreach (var gameId in gameIds)
             {
-
                 System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
                 var game = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
                 games.Add(game);

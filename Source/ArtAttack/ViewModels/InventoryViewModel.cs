@@ -213,7 +213,7 @@ namespace Steampunks.ViewModels
                     GameId = 0, // Use a unique ID for "All games".
                     GameTitle = "All games",
                     GameDescription = "Show items from all games",
-                    Price = 0
+                    Price = 0,
                 };
 
                 // Retrieve all inventory items to rebuild the games filter.
@@ -275,7 +275,7 @@ namespace Steampunks.ViewModels
 
                 var filteredItems = await this.inventoryService.GetUserFilteredInventoryAsync(
                     this.SelectedUser.UserId,
-                    this.SelectedGame?.GameTitle == "All games" ? null : SelectedGame,
+                    this.SelectedGame?.GameTitle == "All games" ? null : this.SelectedGame,
                     this.SearchText);
 
                 this.InventoryItems.Clear();

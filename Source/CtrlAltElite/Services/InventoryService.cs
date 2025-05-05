@@ -1,28 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="InventoryService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace SteamStore.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using CtrlAltElite.Models;
     using CtrlAltElite.ServiceProxies;
     using CtrlAltElite.Services;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.UserInventory;
-    using SteamHub.ApiContract.Repositories;
-    using SteamStore.Models;
     using SteamStore.Repositories.Interfaces;
     using SteamStore.Services.Interfaces;
     using SteamStore.Utils;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection.PortableExecutable;
-    using System.Threading.Tasks;
-    using Windows.Security.Authentication.OnlineId;
 
     public class InventoryService : IInventoryService
     {
@@ -104,8 +98,8 @@ namespace SteamStore.Services
         public async Task RemoveItemFromInventoryAsync(Game game, Item item)
         {
             // Validate the inventory operation.
-            this.inventoryValidator.ValidateInventoryOperation(game, item, user);
-            await this.inventoryRepository.RemoveItemFromInventoryAsync(game, item, user);
+            this.inventoryValidator.ValidateInventoryOperation(game, item, this.user);
+            await this.inventoryRepository.RemoveItemFromInventoryAsync(game, item, this.user);
         }
 
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
@@ -114,6 +108,7 @@ namespace SteamStore.Services
             {
                 throw new ArgumentException("UserId must be positive.", nameof(userId));
             }
+
             var userInventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
             var filteredItems = userInventoryResponse.Items
                 .Select(item => new Item
@@ -131,7 +126,7 @@ namespace SteamStore.Services
             return filteredItems;
         }
 
-        public User GetAllUsersAsync()
+        public User GetAllUsers()
         {
             return this.user;
         }
@@ -176,6 +171,7 @@ namespace SteamStore.Services
                 Console.WriteLine($"Error selling item: {exception.Message}");
                 return false;
             }
+
             // return await this.inventoryRepository.SellItemAsync(item);
             return true;
         }
@@ -213,10 +209,7 @@ namespace SteamStore.Services
             return filtered.ToList();
         }
 
-        // Fix for CS1061: Replace the incorrect usage of 'GameId' with 'GameName' since 'InventoryItemResponse' does not have a 'GameId' property.
-        // Update the relevant code block in the `GetAvailableGames` method.
-
-        public async Task<List<Game>> GetAvailableGames(List<Item> items)
+        public async Task<List<Game>> GetAvailableGamesAsync(List<Item> items)
         {
             if (items == null)
             {
@@ -247,9 +240,10 @@ namespace SteamStore.Services
                 var foundGame = allGames.FirstOrDefault(currentGame => currentGame.Name == gameName);
                 if (foundGame != null)
                 {
-                    games.Add(GameMapper.MapToGame(foundGame)); 
+                    games.Add(GameMapper.MapToGame(foundGame));
                 }
             }
+
             return games;
         }
 
@@ -282,5 +276,4 @@ namespace SteamStore.Services
             }
         }
     }
-
 }
