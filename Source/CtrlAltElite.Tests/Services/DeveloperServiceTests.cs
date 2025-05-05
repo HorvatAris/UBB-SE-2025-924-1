@@ -128,7 +128,7 @@ namespace SteamStore.Tests.Services
 
             gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ReturnsAsync(new GameDetailedResponse());
 
-            var result = await developerService.IsGameIdInUse(expectedGameIdentifier);
+            var result = await developerService.IsGameIdInUseAsync(expectedGameIdentifier);
 
             Assert.True(result);
         }
@@ -146,7 +146,7 @@ namespace SteamStore.Tests.Services
 
             gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ThrowsAsync(exception);
 
-            var result = await developerService.IsGameIdInUse(expectedGameIdentifier);
+            var result = await developerService.IsGameIdInUseAsync(expectedGameIdentifier);
 
             Assert.False(result);
         }
@@ -186,7 +186,7 @@ namespace SteamStore.Tests.Services
                     }
                 });
 
-            var result = await developerService.GetGameOwnerCount(expectedGameIdentifier);
+            var result = await developerService.GetGameOwnerCountAsync(expectedGameIdentifier);
 
             Assert.Equal(expectedGameOwnerCount, result);
         }
@@ -219,7 +219,7 @@ namespace SteamStore.Tests.Services
             gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ReturnsAsync(new GameDetailedResponse());
 
             await Assert.ThrowsAsync<Exception>(() =>
-                developerService.CreateValidatedGame(gameIdText, name, priceText, description, imageUrl, tralerUrl, gameplayUrl, minimumRequirement, recommendedRequirement, dicountText, tags));
+                developerService.CreateValidatedGameAsync(gameIdText, name, priceText, description, imageUrl, tralerUrl, gameplayUrl, minimumRequirement, recommendedRequirement, dicountText, tags));
         }
 
         [Fact]
@@ -228,7 +228,7 @@ namespace SteamStore.Tests.Services
             var gameList = new ObservableCollection<Game> { new Game() { GameId = TestGameId } };
             var expectedIdentifier = TestGameId;
 
-            await developerService.DeleteGame(expectedIdentifier, gameList);
+            await developerService.DeleteGameAsync(expectedIdentifier, gameList);
 
             Assert.Empty(gameList);
         }
@@ -240,7 +240,7 @@ namespace SteamStore.Tests.Services
             var updated = new Game { GameId = TestGameId, GameTitle = "Updated" };
             var games = new ObservableCollection<Game> { existing };
 
-            await developerService.UpdateGameAndRefreshList(updated, games);
+            await developerService.UpdateGameAndRefreshListAsync(updated, games);
 
             Assert.Contains(updated, games);
         }
@@ -251,7 +251,7 @@ namespace SteamStore.Tests.Services
             var games = new ObservableCollection<Game> { new Game { GameId = TestGameId } };
             var expectedIdentifier = TestGameId;
 
-            await developerService.RejectGameAndRemoveFromUnvalidated(expectedIdentifier, games);
+            await developerService.RejectGameAndRemoveFromUnvalidatedAsync(expectedIdentifier, games);
 
             Assert.Empty(games);
         }
@@ -274,7 +274,7 @@ namespace SteamStore.Tests.Services
                 }
                 }
             });
-            var actualMatchingTags = await developerService.GetMatchingTagsForGame(expectedIdentifier, allTags);
+            var actualMatchingTags = await developerService.GetMatchingTagsForGameAsync(expectedIdentifier, allTags);
 
             Assert.Equal(expectedMatchingTagsCount, actualMatchingTags.Count);
         }

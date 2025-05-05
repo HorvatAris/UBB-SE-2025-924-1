@@ -59,7 +59,7 @@
         public async Task MarkTradeAsCompleted_ShouldCallUpdateTrade()
         {
             var tradeId = 123;
-            await tradeService.MarkTradeAsCompleted(tradeId);
+            await tradeService.MarkTradeAsCompletedAsync(tradeId);
 
             itemTradeServiceMock.Verify(proxy => proxy.UpdateItemTradeAsync(tradeId, It.Is<UpdateItemTradeRequest>(request =>
                 request.TradeStatus == TradeStatusEnum.Completed &&
