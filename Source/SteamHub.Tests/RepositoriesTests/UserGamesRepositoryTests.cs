@@ -178,30 +178,70 @@ namespace SteamHub.Tests.RepositoriesTests
             await _repository.AddToWishlistAsync(request);
 
             var entry = await _mockContext.UsersGames
-                .FirstOrDefaultAsync(x => x.UserId == 1 && x.GameId == 1);
+                .FirstOrDefaultAsync(userGame => userGame.UserId == 1 && userGame.GameId == 1);
 
             Assert.NotNull(entry);
             Assert.True(entry.IsInWishlist);
         }
 
         [Fact]
-        public async Task PurchaseGameAsync_MarksGameAsPurchased()
+        public async Task PurchaseGameAsync_WithValidRequest_MarksGameAsPurchased()
         {
             var request = new UserGameRequest { UserId = 1, GameId = 1 };
 
             await _repository.PurchaseGameAsync(request);
 
             var entry = await _mockContext.UsersGames
-                .FirstOrDefaultAsync(x => x.UserId == 1 && x.GameId == 1);
+                .FirstOrDefaultAsync(userGame => userGame.UserId == 1 && userGame.GameId == 1);
 
             Assert.NotNull(entry);
             Assert.True(entry.IsPurchased);
-            Assert.False(entry.IsInCart);
-            Assert.False(entry.IsInWishlist);
         }
 
         [Fact]
-        public async Task RemoveFromCartAsync_RemovesSuccessfully()
+        public async Task PurchaseGameAsync_WithValidRequest_RemovesGameFromCart()
+        {
+            var request = new UserGameRequest { UserId = 1, GameId = 1 };
+
+            await _repository.PurchaseGameAsync(request);
+
+            var entry = await _mockContext.UsersGames
+                .FirstOrDefaultAsync(userGame => userGame.UserId == 1 && userGame.GameId == 1);
+
+            Assert.NotNull(entry);
+            Assert.False(entry.IsInCart);
+        }
+
+        [Fact]
+        public async Task PurchaseGameAsync_WithValidRequest_RemovesGameFromWishlist()
+        {
+            var request = new UserGameRequest { UserId = 1, GameId = 1 };
+
+            await _repository.PurchaseGameAsync(request);
+
+            var entry = await _mockContext.UsersGames
+                .FirstOrDefaultAsync(userGame => userGame.UserId == 1 && userGame.GameId == 1);
+
+            Assert.NotNull(entry);
+            Assert.False(entry.IsInWishlist);
+        }
+
+
+
+        [Fact]
+        public async Task RemoveFromCartAsync_WithValidRequest_ItemIsInitiallyInCart()
+        {
+            var entry = await _mockContext.UsersGames.FirstAsync();
+            entry.IsInCart = true;
+            await _mockContext.SaveChangesAsync();
+
+            var updated = await _mockContext.UsersGames.FirstAsync();
+
+            Assert.True(updated.IsInCart);  // Assert that the item is initially in the cart
+        }
+
+        [Fact]
+        public async Task RemoveFromCartAsync_WithValidRequest_RemovesItemFromCart()
         {
             var entry = await _mockContext.UsersGames.FirstAsync();
             entry.IsInCart = true;
@@ -211,11 +251,25 @@ namespace SteamHub.Tests.RepositoriesTests
             await _repository.RemoveFromCartAsync(request);
 
             var updated = await _mockContext.UsersGames.FirstAsync();
-            Assert.False(updated.IsInCart);
+
+            Assert.False(updated.IsInCart);  // Assert that the item is removed from the cart
+        }
+
+
+        [Fact]
+        public async Task RemoveFromWishlistAsync_WithValidRequest_ItemIsInitiallyInWishlist()
+        {
+            var entry = await _mockContext.UsersGames.FirstAsync();
+            entry.IsInWishlist = true;
+            await _mockContext.SaveChangesAsync();
+
+            var updated = await _mockContext.UsersGames.FirstAsync();
+
+            Assert.True(updated.IsInWishlist);  // Assert that the item is initially in the wishlist
         }
 
         [Fact]
-        public async Task RemoveFromWishlistAsync_RemovesSuccessfully()
+        public async Task RemoveFromWishlistAsync_WithValidRequest_RemovesItemFromWishlist()
         {
             var entry = await _mockContext.UsersGames.FirstAsync();
             entry.IsInWishlist = true;
@@ -225,11 +279,13 @@ namespace SteamHub.Tests.RepositoriesTests
             await _repository.RemoveFromWishlistAsync(request);
 
             var updated = await _mockContext.UsersGames.FirstAsync();
-            Assert.False(updated.IsInWishlist);
+
+            Assert.False(updated.IsInWishlist);  // Assert that the item is removed from the wishlist
         }
 
+
         [Fact]
-        public async Task GetUserCartAsync_ReturnsCorrectGames()
+        public async Task GetUserCartAsync_WithValidUser_ReturnsCorrectNumberOfGamesInCart()
         {
             var entry = await _mockContext.UsersGames.FirstAsync();
             entry.IsInCart = true;
@@ -237,12 +293,24 @@ namespace SteamHub.Tests.RepositoriesTests
 
             var result = await _repository.GetUserCartAsync(1);
 
-            Assert.Single(result.UserGames);
-            Assert.True(result.UserGames.First().IsInCart);
+            Assert.Single(result.UserGames);  // Assert that there is only one game in the cart
+        }
+
+
+        [Fact]
+        public async Task GetUserCartAsync_WithValidUser_ReturnsGamesMarkedAsInCart()
+        {
+            var entry = await _mockContext.UsersGames.FirstAsync();
+            entry.IsInCart = true;
+            await _mockContext.SaveChangesAsync();
+
+            var result = await _repository.GetUserCartAsync(1);
+
+            Assert.True(result.UserGames.First().IsInCart);  // Assert that the game in the cart is marked as "InCart"
         }
 
         [Fact]
-        public async Task GetUserWishlistAsync_ReturnsCorrectGames()
+        public async Task GetUserWishlistAsync_WithValidUser_ReturnsCorrectNumberOfGamesInWishlist()
         {
             var entry = await _mockContext.UsersGames.FirstAsync();
             entry.IsInWishlist = true;
@@ -250,12 +318,24 @@ namespace SteamHub.Tests.RepositoriesTests
 
             var result = await _repository.GetUserWishlistAsync(1);
 
-            Assert.Single(result.UserGames);
-            Assert.True(result.UserGames.First().IsInWishlist);
+            Assert.Single(result.UserGames);  // Assert that there is only one game in the wishlist
         }
 
         [Fact]
-        public async Task GetUserPurchasedGamesAsync_ReturnsCorrectGames()
+        public async Task GetUserWishlistAsync_WithValidUser_ReturnsGamesMarkedAsInWishlist()
+        {
+            var entry = await _mockContext.UsersGames.FirstAsync();
+            entry.IsInWishlist = true;
+            await _mockContext.SaveChangesAsync();
+
+            var result = await _repository.GetUserWishlistAsync(1);
+
+            Assert.True(result.UserGames.First().IsInWishlist);  // Assert that the game in the wishlist is marked as "InWishlist"
+        }
+
+
+        [Fact]
+        public async Task GetUserPurchasedGamesAsync_WithValidUser_ReturnsCorrectNumberOfPurchasedGames()
         {
             var entry = await _mockContext.UsersGames.FirstAsync();
             entry.IsPurchased = true;
@@ -263,17 +343,38 @@ namespace SteamHub.Tests.RepositoriesTests
 
             var result = await _repository.GetUserPurchasedGamesAsync(1);
 
-            Assert.Single(result.UserGames);
-            Assert.True(result.UserGames.First().IsPurchased);
+            Assert.Single(result.UserGames);  // Assert that there is only one purchased game
         }
 
         [Fact]
-        public async Task GetUserGamesAsync_ReturnsAllGames()
+        public async Task GetUserPurchasedGamesAsync_WithValidUser_ReturnsPurchasedGames()
+        {
+            var entry = await _mockContext.UsersGames.FirstAsync();
+            entry.IsPurchased = true;
+            await _mockContext.SaveChangesAsync();
+
+            var result = await _repository.GetUserPurchasedGamesAsync(1);
+
+            Assert.True(result.UserGames.First().IsPurchased);  // Assert that the returned game is marked as "Purchased"
+        }
+
+        [Fact]
+        public async Task GetUserGamesAsync_WithValidUser_ReturnsAtLeastOneGame()
         {
             var result = await _repository.GetUserGamesAsync(1);
 
-            Assert.Single(result.UserGames);
-            Assert.Equal(1, result.UserGames.First().GameId);
+            Assert.Single(result.UserGames);  // Assert that there is at least one game returned
         }
+
+        [Fact]
+        public async Task GetUserGamesAsync_WithValidUser_ReturnsCorrectGameId()
+        {
+            var result = await _repository.GetUserGamesAsync(1);
+
+            Assert.Equal(1, result.UserGames.First().GameId);  // Assert that the game ID is 1
+        }
+
+
+
     }
 }

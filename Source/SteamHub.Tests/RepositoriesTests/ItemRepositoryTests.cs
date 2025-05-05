@@ -160,22 +160,39 @@ namespace SteamHub.Tests.Repositories
         {
             _context.Dispose();
         }
-
         [Fact]
-        public async Task GetItemsAsync_Always_ReturnsItems()
+        public async Task GetItemsAsync_WhenCalled_ReturnsNonNullItemList()
         {
             var items = await _repository.GetItemsAsync();
 
             Assert.NotNull(items);
+        }
+
+        [Fact]
+        public async Task GetItemsAsync_WhenCalled_ReturnsItemWithCorrectName()
+        {
+            var items = await _repository.GetItemsAsync();
+
             var itemList = items.ToList();
-            Assert.Single(itemList);
             Assert.Equal("Mock Item", itemList[0].ItemName);
         }
+
+
+        [Fact]
+        public async Task GetItemsAsync_WhenCalled_ReturnsSingleItem()
+        {
+            var items = await _repository.GetItemsAsync();
+
+            var itemList = items.ToList();
+            Assert.Single(itemList);
+        }
+
 
         [Fact]
         public async Task GetItemByIdAsync_ValidId_ReturnsItem()
         {
-            var item = await _repository.GetItemByIdAsync(1);
+            var validId = 1;
+            var item = await _repository.GetItemByIdAsync(validId);
 
             Assert.NotNull(item);
             Assert.Equal("Mock Item", item.ItemName);
@@ -190,7 +207,7 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task CreateItemAsync_ValidRequest_CreatesItem()
+        public async Task CreateItemAsync_WithValidRequest_ReturnsNonNullResponse()
         {
             var request = new CreateItemRequest
             {
@@ -205,11 +222,47 @@ namespace SteamHub.Tests.Repositories
             var response = await _repository.CreateItemAsync(request);
 
             Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task CreateItemAsync_WithValidRequest_SetsCorrectItemName()
+        {
+            var request = new CreateItemRequest
+            {
+                ItemName = "New Item",
+                GameId = 1,
+                Price = 5.5f,
+                Description = "A new test item",
+                IsListed = true,
+                ImagePath = "/images/new.png"
+            };
+
+            var response = await _repository.CreateItemAsync(request);
+
             Assert.Equal("New Item", response.ItemName);
+        }
+
+        [Fact]
+        public async Task CreateItemAsync_WithValidRequest_SavesItemToDatabase()
+        {
+            var request = new CreateItemRequest
+            {
+                ItemName = "New Item",
+                GameId = 1,
+                Price = 5.5f,
+                Description = "A new test item",
+                IsListed = true,
+                ImagePath = "/images/new.png"
+            };
+
+            var response = await _repository.CreateItemAsync(request);
 
             var created = await _context.Items.FindAsync(response.ItemId);
             Assert.NotNull(created);
         }
+
+
+
 
         [Fact]
         public async Task UpdateItemAsync_ValidId_UpdatesItem()

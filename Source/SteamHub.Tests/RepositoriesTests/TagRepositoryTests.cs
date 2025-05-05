@@ -44,13 +44,23 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetAllTagsAsync_WhenCalled_ReturnsAllTags()
+        public async Task GetAllTagsAsync_WhenCalled_ReturnsNonNullResult()
         {
             var result = await _repository.GetAllTagsAsync();
 
             Assert.NotNull(result);
-            Assert.Equal(2, result.Tags.Count);
         }
+
+        [Fact]
+        public async Task GetAllTagsAsync_WhenCalled_ReturnsCorrectNumberOfTags()
+        {
+            int ExpectedTagsCount = 2;
+            var result = await _repository.GetAllTagsAsync();
+
+            Assert.Equal(ExpectedTagsCount, result.Tags.Count);
+        }
+
+
 
         [Fact]
         public async Task GetTagByIdAsync_WhenCalledWithExistingId_ReturnsTag()
@@ -70,7 +80,7 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task CreateTagAsync_WhenCalledWithNewName_CreatesTag()
+        public async Task CreateTagAsync_WhenCalledWithNewName_CreatesTagInDatabase()
         {
             var request = new CreateTagRequest
             {
@@ -78,11 +88,26 @@ namespace SteamHub.Tests.RepositoriesTests
             };
 
             var response = await _repository.CreateTagAsync(request);
-
             var created = await _context.Tags.FindAsync(response.TagId);
+
             Assert.NotNull(created);
+        }
+
+        [Fact]
+        public async Task CreateTagAsync_WhenCalledWithNewName_SetsCorrectTagName()
+        {
+            var request = new CreateTagRequest
+            {
+                TagName = "RPG"
+            };
+
+            var response = await _repository.CreateTagAsync(request);
+            var created = await _context.Tags.FindAsync(response.TagId);
+
             Assert.Equal("RPG", created.TagName);
         }
+
+
 
         [Fact]
         public async Task CreateTagAsync_WhenCalledWithExistingName_ThrowsException()
@@ -121,7 +146,7 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task DeleteTagAsync_henCalledWithValidId_DeletesTag()
+        public async Task DeleteTagAsync_WhenCalledWithValidId_DeletesTag()
         {
             await _repository.DeleteTagAsync(2);
 
