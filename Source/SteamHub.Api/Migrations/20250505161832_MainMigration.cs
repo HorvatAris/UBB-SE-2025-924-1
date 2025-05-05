@@ -519,9 +519,9 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "TradeId", "AcceptedByDestinationUser", "AcceptedBySourceUser", "DestinationUserId", "GameOfTradeId", "SourceUserId", "TradeDate", "TradeDescription", "TradeStatus" },
                 values: new object[,]
                 {
-                    { 1, false, false, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 0 },
-                    { 2, false, true, 4, 2, 3, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: User3 offers Game2 to User4", 0 },
-                    { 3, true, true, 2, 1, 1, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: User1 offers Game1 to User2", 2 }
+                    { 1, false, false, 8, 6, 4, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 1: AliceJ offers Legend of Zelda to EmilyB", 0 },
+                    { 2, false, true, 4, 19, 5, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 2: LiamG offers Cyberstrike 2077 to AliceJ", 0 },
+                    { 3, true, true, 6, 20, 7, new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Trade 3: NoahS offers Shadow of Valhalla to SophieW", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -550,8 +550,9 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "StoreTransactionId", "Amount", "Date", "GameId", "UserId", "WithMoney" },
                 values: new object[,]
                 {
-                    { 1, 49.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 5, 4, true },
-                    { 2, 59.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 20, 7, false }
+                    { 1, 14.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 5, 4, true },
+                    { 2, 34.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 20, 7, false },
+                    { 3, 29.99f, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), 15, 4, true }
                 });
 
             migrationBuilder.InsertData(
@@ -561,8 +562,10 @@ namespace SteamHub.Api.Migrations
                 {
                     { 3, 4, false, true, false },
                     { 5, 4, false, false, true },
+                    { 6, 4, false, false, true },
                     { 15, 4, false, false, true },
                     { 6, 5, true, false, false },
+                    { 19, 5, false, false, true },
                     { 20, 7, false, false, true },
                     { 15, 8, true, false, false }
                 });
@@ -572,8 +575,8 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "ItemId", "TradeId", "IsSourceUserItem" },
                 values: new object[,]
                 {
-                    { 1, 1, true },
-                    { 2, 2, false }
+                    { 7, 1, true },
+                    { 12, 2, false }
                 });
 
             migrationBuilder.InsertData(
@@ -581,15 +584,14 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "GameId", "ItemId", "UserId", "AcquiredDate", "IsActive" },
                 values: new object[,]
                 {
-                    { 1, 1, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 1, 2, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 2, 3, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 2, 4, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 3, 6, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 1, 7, 1, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 3, 5, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 3, 6, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 1, 7, 2, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
+                    { 5, 5, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 5, 6, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 15, 9, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 15, 10, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 6, 7, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 6, 8, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 19, 12, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 20, 13, 7, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
                 });
 
             migrationBuilder.CreateIndex(

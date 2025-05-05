@@ -959,6 +959,14 @@ namespace SteamHub.Api.Context
                 new UsersGames
                 {
                     UserId = 4,
+                    GameId = 6,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 4,
                     GameId = 15,
                     IsInWishlist = false,
                     IsPurchased = true,
@@ -971,6 +979,14 @@ namespace SteamHub.Api.Context
                     IsInWishlist = false,
                     IsPurchased = false,
                     IsInCart = true
+                },
+                new UsersGames
+                {
+                    UserId = 5,
+                    GameId = 19,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
                 },
                 new UsersGames
                 {
@@ -1012,7 +1028,7 @@ namespace SteamHub.Api.Context
                     UserId = 4,
                     GameId = 5,
                     Date = new DateTime(2025, 4, 27, 14, 30, 0),
-                    Amount = (float)49.99,
+                    Amount = (float)14.99,
                     WithMoney = true
                 },
                 new StoreTransaction
@@ -1021,9 +1037,18 @@ namespace SteamHub.Api.Context
                     UserId = 7,
                     GameId = 20,
                     Date = new DateTime(2025, 4, 27, 14, 30, 0),
-                    Amount = (float)59.99,
+                    Amount = (float)34.99,
                     WithMoney = false
-                }
+                },
+                new StoreTransaction
+                {
+                    StoreTransactionId = 3,
+                    UserId = 4,
+                    GameId = 15,
+                    Date = new DateTime(2025, 4, 27, 14, 30, 0),
+                    Amount = (float)29.99,
+                    WithMoney = true
+                },
             };
 
             builder.Entity<StoreTransaction>().HasData(storeTransactionsSeed);
@@ -1051,10 +1076,10 @@ namespace SteamHub.Api.Context
                 new ItemTrade
                 {
                     TradeId = 1,
-                    SourceUserId = 1,
-                    DestinationUserId = 2,
-                    GameOfTradeId = 1,
-                    TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                    SourceUserId = 4,
+                    DestinationUserId = 8,
+                    GameOfTradeId = 6,
+                    TradeDescription = "Trade 1: AliceJ offers Legend of Zelda to EmilyB",
                     TradeDate = new DateTime(2025, 4, 28),
                     TradeStatus = TradeStatus.Pending,
                     AcceptedBySourceUser = false,
@@ -1063,10 +1088,10 @@ namespace SteamHub.Api.Context
                 new ItemTrade
                 {
                     TradeId = 2,
-                    SourceUserId = 3,
+                    SourceUserId = 5,
                     DestinationUserId = 4,
-                    GameOfTradeId = 2,
-                    TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                    GameOfTradeId = 19,
+                    TradeDescription = "Trade 2: LiamG offers Cyberstrike 2077 to AliceJ",
                     TradeDate = new DateTime(2025, 4, 28),
                     TradeStatus = TradeStatus.Pending,
                     AcceptedBySourceUser = true,
@@ -1075,16 +1100,15 @@ namespace SteamHub.Api.Context
                 new ItemTrade
                 {
                     TradeId = 3,
-                    SourceUserId = 1,
-                    DestinationUserId = 2,
-                    GameOfTradeId = 1,
-                    TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                    SourceUserId = 7,
+                    DestinationUserId = 6,
+                    GameOfTradeId = 20,
+                    TradeDescription = "Trade 3: NoahS offers Shadow of Valhalla to SophieW",
                     TradeDate = new DateTime(2025, 4, 28),
-                    TradeStatus = TradeStatus.Declined,
+                    TradeStatus = TradeStatus.Completed,
                     AcceptedBySourceUser = true,
                     AcceptedByDestinationUser = true
                 },
-
             };
 
             builder.Entity<ItemTrade>().HasData(itemTradesSeed);
@@ -1093,65 +1117,58 @@ namespace SteamHub.Api.Context
             {
                 new UserInventory
                 {
-                    UserId = 1,
-                    ItemId = 1,
-                    GameId = 1,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                },
-                new UserInventory
-                {
-                    UserId = 1,
-                    ItemId = 2,
-                    GameId = 1,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                },
-                new UserInventory
-                {
-                    UserId = 1,
-                    ItemId = 3,
-                    GameId = 2,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                },
-                new UserInventory
-                {
-                    UserId = 1,
-                    ItemId = 4,
-                    GameId = 2,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                },
-                new UserInventory
-                {
-                    UserId = 1,
-                    ItemId = 6,
-                    GameId = 3,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                },
-                new UserInventory
-                {
-                    UserId = 1,
-                    ItemId = 7,
-                    GameId = 1,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                },
-                new UserInventory
-                {
-                    UserId = 2,
-                    ItemId = 6,
-                    GameId = 3,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
-                },
-                new UserInventory
-                {
-                    UserId = 2,
+                    UserId = 4,
                     ItemId = 5,
-                    GameId = 3,
+                    GameId = 5,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
                 },
                 new UserInventory
                 {
-                    UserId = 2,
+                    UserId = 4,
+                    ItemId = 6,
+                    GameId = 5,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 4,
+                    ItemId = 9,
+                    GameId = 15,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 5,
                     ItemId = 7,
-                    GameId = 1,
+                    GameId = 6,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 5,
+                    ItemId = 8,
+                    GameId = 6,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 5,
+                    ItemId = 12,
+                    GameId = 19,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 7,
+                    ItemId = 13,
+                    GameId = 20,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
+                },
+                new UserInventory
+                {
+                    UserId = 4,
+                    ItemId = 10,
+                    GameId = 15,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0)
                 },
             };
@@ -1182,8 +1199,8 @@ namespace SteamHub.Api.Context
 
             var itemTradeDetailsSeed = new List<ItemTradeDetail>
             { 
-                new ItemTradeDetail { TradeId = 1, ItemId = 1, IsSourceUserItem = true },
-                new ItemTradeDetail { TradeId = 2, ItemId = 2, IsSourceUserItem = false },
+                new ItemTradeDetail { TradeId = 1, ItemId = 7, IsSourceUserItem = true },
+                new ItemTradeDetail { TradeId = 2, ItemId = 12, IsSourceUserItem = false },
             };
 
             builder.Entity<ItemTradeDetail>().HasData(itemTradeDetailsSeed);

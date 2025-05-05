@@ -12,7 +12,7 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250504214329_MainMigration")]
+    [Migration("20250505161832_MainMigration")]
     partial class MainMigration
     {
         /// <inheritdoc />
@@ -898,11 +898,11 @@ namespace SteamHub.Api.Migrations
                             TradeId = 1,
                             AcceptedByDestinationUser = false,
                             AcceptedBySourceUser = false,
-                            DestinationUserId = 2,
-                            GameOfTradeId = 1,
-                            SourceUserId = 1,
+                            DestinationUserId = 8,
+                            GameOfTradeId = 6,
+                            SourceUserId = 4,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
+                            TradeDescription = "Trade 1: AliceJ offers Legend of Zelda to EmilyB",
                             TradeStatus = 0
                         },
                         new
@@ -911,10 +911,10 @@ namespace SteamHub.Api.Migrations
                             AcceptedByDestinationUser = false,
                             AcceptedBySourceUser = true,
                             DestinationUserId = 4,
-                            GameOfTradeId = 2,
-                            SourceUserId = 3,
+                            GameOfTradeId = 19,
+                            SourceUserId = 5,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 2: User3 offers Game2 to User4",
+                            TradeDescription = "Trade 2: LiamG offers Cyberstrike 2077 to AliceJ",
                             TradeStatus = 0
                         },
                         new
@@ -922,12 +922,12 @@ namespace SteamHub.Api.Migrations
                             TradeId = 3,
                             AcceptedByDestinationUser = true,
                             AcceptedBySourceUser = true,
-                            DestinationUserId = 2,
-                            GameOfTradeId = 1,
-                            SourceUserId = 1,
+                            DestinationUserId = 6,
+                            GameOfTradeId = 20,
+                            SourceUserId = 7,
                             TradeDate = new DateTime(2025, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TradeDescription = "Trade 1: User1 offers Game1 to User2",
-                            TradeStatus = 2
+                            TradeDescription = "Trade 3: NoahS offers Shadow of Valhalla to SophieW",
+                            TradeStatus = 1
                         });
                 });
 
@@ -952,13 +952,13 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             TradeId = 1,
-                            ItemId = 1,
+                            ItemId = 7,
                             IsSourceUserItem = true
                         },
                         new
                         {
                             TradeId = 2,
-                            ItemId = 2,
+                            ItemId = 12,
                             IsSourceUserItem = false
                         });
                 });
@@ -1146,7 +1146,7 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             StoreTransactionId = 1,
-                            Amount = 49.99f,
+                            Amount = 14.99f,
                             Date = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             GameId = 5,
                             UserId = 4,
@@ -1155,11 +1155,20 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             StoreTransactionId = 2,
-                            Amount = 59.99f,
+                            Amount = 34.99f,
                             Date = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             GameId = 20,
                             UserId = 7,
                             WithMoney = false
+                        },
+                        new
+                        {
+                            StoreTransactionId = 3,
+                            Amount = 29.99f,
+                            Date = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            GameId = 15,
+                            UserId = 4,
+                            WithMoney = true
                         });
                 });
 
@@ -1401,73 +1410,65 @@ namespace SteamHub.Api.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
-                            ItemId = 1,
-                            GameId = 1,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 2,
-                            GameId = 1,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 3,
-                            GameId = 2,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 4,
-                            GameId = 2,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 6,
-                            GameId = 3,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 1,
-                            ItemId = 7,
-                            GameId = 1,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            ItemId = 6,
-                            GameId = 3,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 2,
+                            UserId = 4,
                             ItemId = 5,
-                            GameId = 3,
+                            GameId = 5,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         },
                         new
                         {
-                            UserId = 2,
+                            UserId = 4,
+                            ItemId = 6,
+                            GameId = 5,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            ItemId = 9,
+                            GameId = 15,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 5,
                             ItemId = 7,
-                            GameId = 1,
+                            GameId = 6,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            ItemId = 8,
+                            GameId = 6,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            ItemId = 12,
+                            GameId = 19,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 7,
+                            ItemId = 13,
+                            GameId = 20,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            ItemId = 10,
+                            GameId = 15,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         });
@@ -1588,6 +1589,14 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             UserId = 4,
+                            GameId = 6,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 4,
                             GameId = 15,
                             IsInCart = false,
                             IsInWishlist = false,
@@ -1600,6 +1609,14 @@ namespace SteamHub.Api.Migrations
                             IsInCart = true,
                             IsInWishlist = false,
                             IsPurchased = false
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            GameId = 19,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
                         },
                         new
                         {

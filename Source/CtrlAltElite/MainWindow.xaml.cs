@@ -11,9 +11,10 @@ namespace SteamStore
     using Microsoft.Extensions.Configuration;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Refit;
+    using Refit; 
     using SteamStore.Pages;
     using SteamStore.Services;
+    using static CtrlAltElite.Models.User;
 
     public sealed partial class MainWindow : Window
     {
@@ -32,11 +33,18 @@ namespace SteamStore
         {
             this.InitializeComponent();
 
-            //initiate the user
+            // initiate the user
             // this will need to be changed when we conenct with a database query to get the user
-            User loggedInUser = new User(1, "John Doe", "johnyDoe@gmail.com", 999999.99f, 6000f, User.Role.Developer);
-
-            // Assign to the class field so it can be used in navigation
+            User loggedInUser = new User
+            {
+                UserId = 4,
+                Email = "alice.johnson@example.com",
+                PointsBalance = 45,
+                UserName = "AliceJ",
+                UserRole = Role.User,
+                WalletBalance = 78,
+            };
+            //// Assign to the class field so it can be used in navigation
             this.user = loggedInUser;
 
             var dataLink = new DataLink(
@@ -64,17 +72,17 @@ namespace SteamStore
             var itemTradeDetailServiceProxy = RestService.For<IItemTradeDetailServiceProxy>(httpClient);
             var userInventoryServiceProxy = RestService.For<IUserInventoryServiceProxy>(httpClient);
 
-            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy,userServiceProxy, gameServiceProxy,itemServiceProxy,userInventoryServiceProxy);
-            this.tradeService = tradeService;
-
             var userService = new UserService(userServiceProxy);
             this.userService = userService;
+
+            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy, userServiceProxy, gameServiceProxy, itemServiceProxy, userInventoryServiceProxy);
+            this.tradeService = tradeService;
+
             var trade = new ItemTrade(
                 sourceUser: loggedInUser,
                 destinationUser: new User { UserId = 2 }, // the user you want to trade with
                 gameOfTrade: new Game { GameId = 1 }, // the game the items belong to
-                description: "Test trade from user 1 to user 2"
-            );
+                description: "Test trade from user 1 to user 2");
             trade.SetTradeId(1); // Set the trade ID to 1 for testing purposes
 
             // Add source user items
@@ -92,10 +100,10 @@ namespace SteamStore
                 User = loggedInUser,
             };
 
-            //var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
+            // var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
             var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
 
-            //var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
+            // var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
             var userGameServiceProxy = RestService.For<IUserGameServiceProxy>(httpClient);
 
             pointShopService = new PointShopService(
