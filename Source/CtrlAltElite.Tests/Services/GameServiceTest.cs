@@ -34,7 +34,7 @@
 		}
 
 		[Fact]
-		public async Task SearchGames_WhenQueryMatchesGames_ShouldReturnMatchingGames()
+		public async Task SearchGamesAsync_WhenQueryMatchesGames_ShouldReturnMatchingGames()
 		{
 			var expectedGame1 = new Game { GameTitle = TEST_GAME_1 };
 			var expectedGame2 = new Game { GameTitle = TEST_GAME_2 };
@@ -48,7 +48,7 @@
 			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
 				.ReturnsAsync(allGames);
 
-			var actualGames = await subject.SearchGames(TEST_NAME);
+			var actualGames = await subject.SearchGamesAsync(TEST_NAME);
 
 			var expectedGames = new[]
 			{
@@ -60,7 +60,7 @@
 		}
 
 		[Fact]
-		public async Task SearchGames_WhenQueryDoesNotMatchAnyGames_ShouldReturnEmptyList()
+		public async Task SearchGamesAsync_WhenQueryDoesNotMatchAnyGames_ShouldReturnEmptyList()
 		{
 			var allGames = new List<GameDetailedResponse>
 			{
@@ -71,13 +71,13 @@
 			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
 				.ReturnsAsync(allGames);
 
-			var foundGames = await subject.SearchGames(NOT_MATCH_NAME);
+			var foundGames = await subject.SearchGamesAsync(NOT_MATCH_NAME);
 
 			Assert.Empty(foundGames);
 		}
 
 		[Fact]
-		public async Task GetAllTags_WhenCalled_ShouldReturnMappedTags()
+		public async Task GetAllTagsAsync_WhenCalled_ShouldReturnMappedTags()
 		{
 			var apiTags = new GetTagsResponse
 			{
@@ -95,13 +95,13 @@
 			tagProxyMock.Setup(proxy => proxy.GetAllTagsAsync())
 				.ReturnsAsync(apiTags);
 
-			var actualTags = await subject.GetAllTags();
+			var actualTags = await subject.GetAllTagsAsync();
 
 			AssertUtils.AssertContainsEquivalent(actualTags, expectedTags);
 		}
 
 		[Fact]
-		public async Task GetAllGameTags_WhenGameHasMatchingTags_ShouldReturnOnlyMatchingTags()
+		public async Task GetAllGameTagsAsync_WhenGameHasMatchingTags_ShouldReturnOnlyMatchingTags()
 		{
 			var game = new Game { Tags = new[] { TEST_TAG_1, TEST_TAG_2 } };
 			var apiTags = new GetTagsResponse
@@ -119,13 +119,13 @@
 			tagProxyMock.Setup(proxy => proxy.GetAllTagsAsync())
 				.ReturnsAsync(apiTags);
 
-			var actualTags = await subject.GetAllGameTags(game);
+			var actualTags = await subject.GetAllGameTagsAsync(game);
 
 			AssertUtils.AssertContainsEquivalent(actualTags, expectedTags);
 		}
 
 		[Fact]
-		public async Task FilterGames_WhenCalledWithMatchingCriteria_ShouldReturnFilteredGames()
+		public async Task FilterGamesAsync_WhenCalledWithMatchingCriteria_ShouldReturnFilteredGames()
 		{
 			var game1 = new Game { Rating = 5, Price = 20, Tags = new[] { TEST_TAG_1 } };
 			var game2 = new Game { Rating = 4, Price = 25, Tags = new[] { TEST_TAG_1, TEST_TAG_2 } };
@@ -174,13 +174,13 @@
 					}
 				});
 
-			var result = await subject.FilterGames(4, 10, 30, new[] { TEST_TAG_1 });
+			var result = await subject.FilterGamesAsync(4, 10, 30, new[] { TEST_TAG_1 });
 
 			Assert.True(result.All(g => g.Tags.Contains(TEST_TAG_1)));
 		}
 
 		[Fact]
-		public async Task GetTrendingGames_WhenCalled_ShouldReturnTopTrendingGames()
+		public async Task GetTrendingGamesAsync_WhenCalled_ShouldReturnTopTrendingGames()
 		{
 			var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", NumberOfRecentPurchases = 5, TrendingScore = 0.5m, TagScore = Game.NOTCOMPUTED };
 			var game2 = new Game { GameId = 2, GameTitle = "Game2", Status = "Approved", NumberOfRecentPurchases = 10, TrendingScore = 1, TagScore = Game.NOTCOMPUTED };
@@ -201,13 +201,13 @@
 					NumberOfRecentPurchases = game.NumberOfRecentPurchases
 				}).ToList());
 
-			var trendingGames = await subject.GetTrendingGames();
+			var trendingGames = await subject.GetTrendingGamesAsync();
 
 			AssertUtils.AssertContainsEquivalent(trendingGames, expectedResult);
 		}
 
 		[Fact]
-		public async Task GetDiscountedGames_WhenGamesHaveDiscounts_ShouldReturnOnlyDiscounted()
+		public async Task GetDiscountedGamesAsync_WhenGamesHaveDiscounts_ShouldReturnOnlyDiscounted()
 		{
 			var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", Discount = 5, TagScore = Game.NOTCOMPUTED };
 			var game2 = new Game { GameId = 2, GameTitle = "Game2", Status = "Approved", Discount = 0 };
@@ -224,13 +224,13 @@
 					new GameDetailedResponse { Identifier = game2.GameId, Name = game2.GameTitle, Status = GameStatusEnum.Approved, Discount = 0 }
 				});
 
-			var discountedGames = await subject.GetDiscountedGames();
+			var discountedGames = await subject.GetDiscountedGamesAsync();
 
 			AssertUtils.AssertContainsEquivalent(discountedGames, expectedGames);
 		}
 
 		[Fact]
-		public async Task GetSimilarGames_WhenCalledWithGameId_ShouldReturnOtherGames()
+		public async Task GetSimilarGamesAsync_WhenCalledWithGameId_ShouldReturnOtherGames()
 		{
 			var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", TagScore = Game.NOTCOMPUTED };
 			var game2 = new Game { GameId = 2, GameTitle = "Game2", Status = "Approved", TagScore = Game.NOTCOMPUTED };
@@ -249,7 +249,7 @@
 					new GameDetailedResponse { Identifier = game3.GameId, Name = game3.GameTitle, Status = GameStatusEnum.Approved }
 				});
 
-			var similarGames = await subject.GetSimilarGames(1);
+			var similarGames = await subject.GetSimilarGamesAsync(1);
 
 			Assert.Equal(similarGames.Count, expectedGames.Count());
 		}
@@ -263,7 +263,7 @@
 			gameProxyMock.Setup(proxy => proxy.GetGameByIdAsync(gameId))
 				.ReturnsAsync(detailedResponse);
 
-			var result = await subject.GetGameById(gameId);
+			var result = await subject.GetGameByIdAsync(gameId);
 
 			Assert.Equal(gameId, result.GameId);
 			Assert.Equal("Sample Game", result.GameTitle);

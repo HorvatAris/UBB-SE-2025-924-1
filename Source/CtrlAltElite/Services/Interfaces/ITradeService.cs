@@ -1,12 +1,16 @@
-﻿using CtrlAltElite.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="ITradeService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace CtrlAltElite.Services.Interfaces
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using CtrlAltElite.Models;
+
     public interface ITradeService
     {
         Task<List<ItemTrade>> GetActiveTradesAsync(int userId);
@@ -15,9 +19,9 @@ namespace CtrlAltElite.Services.Interfaces
 
         Task AddItemTradeAsync(ItemTrade trade);
 
-        Task MarkTradeAsCompleted(int tradeId);
+        Task MarkTradeAsCompletedAsync(int tradeId);
 
-        Task DeclineTradeRequest();
+        void DeclineTradeRequest();
 
         Task UpdateItemTradeAsync(ItemTrade trade);
 
@@ -31,7 +35,7 @@ namespace CtrlAltElite.Services.Interfaces
 
         Task AcceptTradeAsync(ItemTrade trade, bool isSourceUser);
 
-        void CompleteTrade(ItemTrade trade);
+        Task CompleteTradeAsync(ItemTrade trade);
 
         Task<List<Item>> GetUserInventoryAsync(int userId);
     }

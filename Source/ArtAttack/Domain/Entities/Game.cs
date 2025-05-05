@@ -67,7 +67,7 @@ namespace Steampunks.Domain.Entities
         /// <summary>
         /// Initializes a new instance of the <see cref="Game"/> class for EF Core.
         /// </summary>
-        private Game()
+        public Game()
         {
             this.GameTitle = string.Empty;
             this.Genre = string.Empty;
@@ -86,49 +86,49 @@ namespace Steampunks.Domain.Entities
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets the unique numeric identifier for the game.
+        /// Gets or sets the unique numeric identifier for the game.
         /// </summary>
-        public int GameId { get; private set; }
+        public int GameId { get; set; }
 
         /// <summary>
-        /// Gets the title of the game.
+        /// Gets or sets the title of the game.
         /// </summary>
-        public string GameTitle { get; private set; }
+        public string GameTitle { get; set; }
 
         /// <summary>
-        /// Gets the price of the game.
+        /// Gets or sets the price of the game.
         /// </summary>
-        public float Price { get; private set; }
+        public float Price { get; set; }
 
         /// <summary>
-        /// Gets the genre of the game.
+        /// Gets or sets the genre of the game.
         /// </summary>
-        public string Genre { get; private set; }
+        public string Genre { get; set; }
 
         /// <summary>
-        /// Gets the description of the game.
+        /// Gets or sets the description of the game.
         /// </summary>
-        public string GameDescription { get; private set; }
+        public string GameDescription { get; set; }
 
         /// <summary>
-        /// Gets the list of reviews associated with the game.
+        /// Gets or sets the list of reviews associated with the game.
         /// </summary>
-        public ICollection<Review> GameReviews { get; private set; }
+        public ICollection<Review> GameReviews { get; set; }
 
         /// <summary>
-        /// Gets the status of the game.
+        /// Gets or sets the status of the game.
         /// </summary>
-        public string Status { get; private set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets the recommended system specifications for the game.
+        /// Gets or sets the recommended system specifications for the game.
         /// </summary>
-        public float RecommendedSpecifications { get; private set; }
+        public float RecommendedSpecifications { get; set; }
 
         /// <summary>
-        /// Gets the minimum system specifications required to run the game.
+        /// Gets or sets the minimum system specifications required to run the game.
         /// </summary>
-        public float MinimumSpecifications { get; private set; }
+        public float MinimumSpecifications { get; set; }
 
         /// <summary>
         /// Sets the unique identifier of the game.

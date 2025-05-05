@@ -162,7 +162,7 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task GetItemsAsync_ReturnsItems()
+        public async Task GetItemsAsync_Always_ReturnsItems()
         {
             var items = await _repository.GetItemsAsync();
 

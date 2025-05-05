@@ -35,7 +35,7 @@ namespace Steampunks.Services.TradeService
             return await this.tradeRepository.GetTradeHistoryAsync(userId);
         }
 
-        /// <inheritdoc/> moved 
+        /// <inheritdoc/> moved
         public async Task CreateTradeAsync(ItemTrade trade)
         {
             try
@@ -119,7 +119,7 @@ namespace Steampunks.Services.TradeService
             return await this.tradeRepository.GetUserInventoryAsync(userId);
         }
 
-        //moved
+        // moved
         public async void CompleteTrade(ItemTrade trade)
         {
             try
