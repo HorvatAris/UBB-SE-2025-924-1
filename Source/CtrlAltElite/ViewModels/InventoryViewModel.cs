@@ -305,5 +305,21 @@ namespace CtrlAltElite.ViewModels
                 AvailableUsers.Clear();
             }
         }
+
+        /// <summary>
+        /// Attempts to sell the specified item and returns a message indicating the result.
+        /// </summary>
+        /// <param name="item">The item to be sold.</param>
+        /// <returns>A tuple indicating whether the sale was successful and the message to show.</returns>
+        public async Task<(bool IsSuccess, string Message)> TrySellItemAsync(Item item)
+        {
+            bool success = await this.SellItemAsync(item);
+            string message = success
+                ? string.Format("{0} has been successfully listed for sale!", item.ItemName)
+                : "Failed to sell the item. Please try again.";
+
+            return (success, message);
+        }
+
     }
 }

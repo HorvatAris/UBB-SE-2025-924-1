@@ -18,32 +18,20 @@ namespace CtrlAltElite.Pages
     /// </summary>
     public sealed partial class InventoryPage : Page
     {
-        private const string ConfirmSaleTitle = "Confirm Sale";
-        private const string ConfirmSaleMessageFormat = "Are you sure you want to sell {0}?";
-        private const string SuccessDialogTitle = "Success";
-        private const string SuccessDialogMessageFormat = "{0} has been successfully listed for sale!";
-        private const string ErrorDialogTitle = "Error";
-        private const string ErrorDialogMessage = "Failed to sell the item. Please try again.";
-        private const string OkButtonText = "OK";
-        private const string YesButtonText = "Yes";
-        private const string NoButtonText = "No";
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InventoryPage"/> class.
+        /// </summary>
         public InventoryPage(IInventoryService inventoryService)
         {
             this.InitializeComponent();
-            //IDataLink databaseConnector = new DataLink(new ConfigurationBuilder()
-            //   .SetBasePath(AppContext.BaseDirectory)
-            //   .AddJsonFile("appsettings.json")
-            //   .Build());
-
-            //IInventoryRepository inventoryRepository = new InventoryRepository(databaseConnector, user);
-            //var inventoryService = new InventoryService(inventoryRepository);
             this.ViewModel = new InventoryViewModel(inventoryService);
             this.DataContext = this;
-
             this.Loaded += this.InventoryPage_Loaded;
         }
 
+        /// <summary>
+        /// Gets the view model for this page.
+        /// </summary>
         public InventoryViewModel? ViewModel { get; private set; }
 
         private async void InventoryPage_Loaded(object sender, RoutedEventArgs e)
@@ -55,20 +43,9 @@ namespace CtrlAltElite.Pages
             }
         }
 
-        private async void OnUserSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Delegate business logic to the view-model.
-            if (this.ViewModel?.SelectedUser is User)
-            {
-                await this.ViewModel.LoadInventoryItemsAsync();
-            }
-        }
-
-        private void OnCreateTradeOfferButtonClicked(object sender, RoutedEventArgs e)
-        {
-            //this.Frame.Navigate(typeof(TradingPage));
-        }
-
+        /// <summary>
+        /// Updates the view model with the selected inventory item.
+        /// </summary>
         private void OnInventoryItemClicked(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is Item selectedItem && this.ViewModel != null)
@@ -77,60 +54,35 @@ namespace CtrlAltElite.Pages
             }
         }
 
-        private void OnItemImageLoadFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            if (sender is Image itemImage && itemImage.Parent is Grid parentGrid)
-            {
-                var defaultImage = parentGrid.Children
-                    .OfType<Image>()
-                    .FirstOrDefault(image => image.Name == "DefaultImage");
-
-                if (defaultImage != null)
-                {
-                    itemImage.Visibility = Visibility.Collapsed;
-                    defaultImage.Visibility = Visibility.Visible;
-                }
-            }
-        }
-
         /// <summary>
         /// Handles the sell button click, displaying a confirmation dialog and delegating the sale logic to the view-model.
         /// </summary>
         private async void OnSellItemButtonClicked(object sender, RoutedEventArgs e)
         {
-            // Retrieve the selected item from the button's DataContext.
             if (sender is Button sellButton && sellButton.DataContext is Item selectedItem)
             {
-                // Show a confirmation dialog.
                 var confirmationDialog = new ContentDialog
                 {
                     XamlRoot = this.XamlRoot,
-                    Title = ConfirmSaleTitle,
-                    Content = string.Format(ConfirmSaleMessageFormat, selectedItem.ItemName),
-                    PrimaryButtonText = YesButtonText,
-                    CloseButtonText = NoButtonText,
+                    Title = "Confirm Sale",
+                    Content = $"Are you sure you want to sell {selectedItem.ItemName}?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No",
                     DefaultButton = ContentDialogButton.Close,
                 };
 
-                var userResponse = await confirmationDialog.ShowAsync();
-
-                if (userResponse == ContentDialogResult.Primary && this.ViewModel != null)
+                var result = await confirmationDialog.ShowAsync();
+                if (result == ContentDialogResult.Primary && this.ViewModel != null)
                 {
-                    // Delegate the sale operation to the view-model.
-                    bool success = await this.ViewModel.SellItemAsync(selectedItem);
-
-                    // Refresh inventory after selling.
+                    var (isSuccess, message) = await this.ViewModel.TrySellItemAsync(selectedItem);
                     await this.ViewModel.LoadInventoryItemsAsync();
 
-                    // Prepare the result dialog.
-                    ContentDialog resultDialog = new ContentDialog
+                    var resultDialog = new ContentDialog
                     {
                         XamlRoot = this.XamlRoot,
-                        Title = success ? SuccessDialogTitle : ErrorDialogTitle,
-                        Content = success
-                            ? string.Format(SuccessDialogMessageFormat, selectedItem.ItemName)
-                            : ErrorDialogMessage,
-                        CloseButtonText = OkButtonText,
+                        Title = isSuccess ? "Success" : "Error",
+                        Content = message,
+                        CloseButtonText = "OK",
                     };
 
                     await resultDialog.ShowAsync();
@@ -138,5 +90,4 @@ namespace CtrlAltElite.Pages
             }
         }
     }
-
 }
