@@ -1,4 +1,8 @@
-﻿namespace CtrlAltElite.ServiceProxies
+﻿// <copyright file="IUserGameServiceProxy.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace CtrlAltElite.ServiceProxies
 {
     using System.Threading.Tasks;
     using Refit;
@@ -33,6 +37,5 @@
 
         [Get("/api/UsersGames/Purchased/{userId}")]
         Task<GetUserGamesResponse> GetUserPurchasedGamesAsync(int userId);
-
     }
 }

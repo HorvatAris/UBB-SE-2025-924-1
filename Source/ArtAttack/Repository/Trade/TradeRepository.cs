@@ -449,7 +449,7 @@ namespace Steampunks.Repository.Trade
             }
         }
 
-        /// <inheritdoc/>  moved 
+        /// <inheritdoc/>  moved
         public async Task TransferItemAsync(int itemId, int fromUserId, int toUserId)
         {
             const string query = @"

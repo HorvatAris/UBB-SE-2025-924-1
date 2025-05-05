@@ -2,10 +2,10 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+namespace CtrlAltElite.Services;
+
 using System.Linq;
 using SteamHub.ApiContract.Models.Game;
-
-namespace CtrlAltElite.Services;
 
 public class GameMapper
 {
@@ -27,9 +27,8 @@ public class GameMapper
             TrailerPath = game.TrailerPath,
             GameplayPath = game.GameplayPath,
             PublisherIdentifier = game.PublisherUserIdentifier,
-            Tags = game.Tags?.Select(t => t.TagName).ToArray(),
+            Tags = game.Tags?.Select(tag => tag.TagName).ToArray(),
             TagScore = Game.NOTCOMPUTED,
         };
     }
-
 }

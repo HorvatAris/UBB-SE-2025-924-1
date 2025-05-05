@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="InventoryValidator.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace SteamStore.Utils
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
     using CtrlAltElite.Models;
     using SteamStore.Models;
-    using System;
 
     public class InventoryValidator
     {
-        /// <inheritdoc/>
         public void ValidateGame(Game game)
         {
             if (game == null)
@@ -29,13 +30,13 @@ namespace SteamStore.Utils
             {
                 throw new ArgumentException("Game price cannot be negative.", nameof(game));
             }
+
             if (game.GameId <= 0)
             {
                 throw new ArgumentException("Game must have a valid positive ID.", nameof(game));
             }
         }
 
-        /// <inheritdoc/>
         public void ValidateItem(Item item)
         {
             if (item == null)
@@ -55,7 +56,6 @@ namespace SteamStore.Utils
             }
         }
 
-        /// <inheritdoc/>
         public void ValidateUser(User user)
         {
             if (user == null)
@@ -75,7 +75,6 @@ namespace SteamStore.Utils
             }
         }
 
-        /// <inheritdoc/>
         public void ValidateInventoryOperation(Game game, Item item, User user)
         {
             // Reuse the individual validations.
@@ -84,7 +83,6 @@ namespace SteamStore.Utils
             this.ValidateUser(user);
         }
 
-        /// <inheritdoc/>
         public void ValidateSellableItem(Item item)
         {
             // First, validate the basic properties of the item.

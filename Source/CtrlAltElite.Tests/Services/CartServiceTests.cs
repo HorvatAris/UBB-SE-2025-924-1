@@ -37,7 +37,7 @@
 			cartServiceProxyMock.Setup(proxy => proxy.GetUserCartAsync(It.IsAny<int>()))
 				.ThrowsAsync(new Exception());
 
-			var foundGames = await cartService.GetCartGames();
+			var foundGames = await cartService.GetCartGamesAsync();
 
 			Assert.Empty(foundGames);
 		}
@@ -123,7 +123,7 @@
 			cartServiceProxyMock.Setup(proxy => proxy.RemoveFromCartAsync(It.IsAny<UserGameRequest>()))
 							 .Returns(Task.CompletedTask);
 
-			await cartService.RemoveGamesFromCart(games);
+			await cartService.RemoveGamesFromCartAsync(games);
 
 			cartServiceProxyMock.Verify(proxy => proxy.RemoveFromCartAsync(It.IsAny<UserGameRequest>()), Times.Exactly(games.Count));
 		}

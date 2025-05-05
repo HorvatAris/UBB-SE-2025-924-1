@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="IInventoryService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace SteamStore.Services.Interfaces
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
     using CtrlAltElite.Models;
     using SteamStore.Models;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+
     public interface IInventoryService
     {
         Task<List<Item>> GetItemsFromInventoryAsync(Game game);
@@ -22,14 +24,13 @@ namespace SteamStore.Services.Interfaces
 
         Task<List<Item>> GetUserInventoryAsync(int userId);
 
-        User GetAllUsersAsync();
+        User GetAllUsers();
 
         Task<bool> SellItemAsync(Item item);
 
         List<Item> FilterInventoryItems(List<Item> items, Game selectedGame, string searchText);
 
-        Task<List<Game>> GetAvailableGames(List<Item> items);
-
+        Task<List<Game>> GetAvailableGamesAsync(List<Item> items);
 
         Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText);
     }

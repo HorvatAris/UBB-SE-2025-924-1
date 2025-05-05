@@ -147,7 +147,9 @@ public class UserGameRepository : IUserGameRepository
         var ownerCountParameters = new SqlParameter[] { new (SqlConstants.GameIdParameter, gameId) };
         var result = this.dataLink.ExecuteReader(SqlConstants.GetGameOwnerCountProcedure, ownerCountParameters);
 
+        #pragma warning disable SA1101 // Prefix local calls with this
         return result is { Rows.Count: > ZeroRowsCount } ? Convert.ToInt32(result.Rows[FirstRowIndex][OwnerCountColumn]) : DefaultValueOfOwners;
+        #pragma warning restore SA1101 // Prefix local calls with this
     }
 
     public Collection<Game> GetAllUserGames()

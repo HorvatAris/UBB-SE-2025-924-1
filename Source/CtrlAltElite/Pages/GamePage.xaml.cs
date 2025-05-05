@@ -2,8 +2,6 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System.Threading.Tasks;
-
 namespace SteamStore.Pages
 {
     using System;
@@ -13,6 +11,7 @@ namespace SteamStore.Pages
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Threading.Tasks;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Controls.Primitives;
@@ -26,6 +25,9 @@ namespace SteamStore.Pages
     using Windows.Foundation;
     using Windows.Foundation.Collections;
 
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
     public sealed partial class GamePage : Page
     {
         public GamePage(
@@ -69,7 +71,7 @@ namespace SteamStore.Pages
         {
             try
             {
-                await this.ViewModel.AddToCart();
+                await this.ViewModel.AddToCartAsync();
                 this.ShowNotification(
                     NotificationStrings.AddToCartSuccessTitle,
                     string.Format(NotificationStrings.AddToCartSuccessMessage, this.ViewModel.Game.GameTitle));
@@ -82,11 +84,11 @@ namespace SteamStore.Pages
             }
         }
 
-        private void WishlistButton_Click(object wishListButtonSender, RoutedEventArgs wishListClickEventArgument)
+        private async void WishlistButton_Click(object wishListButtonSender, RoutedEventArgs wishListClickEventArgument)
         {
             try
             {
-                this.ViewModel.AddToWishlist();
+                await this.ViewModel.AddToWishlistAsync();
                 this.ShowNotification(
                     NotificationStrings.AddToWishlistSuccessTitle,
                     string.Format(NotificationStrings.AddToWishlistSuccessMessage, this.ViewModel.Game.GameTitle));
