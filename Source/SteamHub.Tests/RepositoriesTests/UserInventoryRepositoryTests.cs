@@ -111,7 +111,7 @@ namespace SteamHub.Tests.RepositoriesTests
 
             // Assert
             var userInventory = await _context.UserInventories
-                .FirstOrDefaultAsync(ui => ui.UserId == 1 && ui.ItemId == 2);
+                .FirstOrDefaultAsync(userInventoryElement => userInventoryElement.UserId == 1 && userInventoryElement.ItemId == 2);
             Assert.NotNull(userInventory);
             Assert.True(userInventory.IsActive);
         }
@@ -203,8 +203,17 @@ namespace SteamHub.Tests.RepositoriesTests
             // Assert
             Assert.NotNull(response);
             Assert.Single(response.Items);
-            Assert.Equal(1, response.Items.First().ItemId);
         }
+
+        [Fact]
+        public async Task GetUserInventoryAsync_WithValidUser_ReturnsItemWithCorrectId()
+        {
+            var response = await _repository.GetUserInventoryAsync(1);
+            var item = response.Items.First();
+
+            Assert.Equal(1, item.ItemId);
+        }
+
 
         [Fact]
         public async Task RemoveItemFromUserInventoryAsync_WithValidData_RemovesItemFromInventory()
@@ -222,7 +231,7 @@ namespace SteamHub.Tests.RepositoriesTests
 
             // Assert
             var userInventory = await _context.UserInventories
-                .FirstOrDefaultAsync(ui => ui.UserId == 1 && ui.ItemId == 1 && ui.GameId == 1);
+                .FirstOrDefaultAsync(userInventoryItem => userInventoryItem.UserId == 1 && userInventoryItem.ItemId == 1 && userInventoryItem.GameId == 1);
             Assert.Null(userInventory);
         }
 
