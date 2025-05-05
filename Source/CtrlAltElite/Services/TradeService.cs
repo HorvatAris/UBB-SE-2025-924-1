@@ -300,18 +300,21 @@ namespace CtrlAltElite.Services
                     }
                 }
             }
+
             foreach (var tradeFromHistory in result)
             {
                 System.Diagnostics.Debug.WriteLine($"Trade ID: {tradeFromHistory.TradeId}, Source User: {tradeFromHistory.SourceUser.UserName}, Destination User: {tradeFromHistory.DestinationUser.UserName}, Game: {tradeFromHistory.GameOfTrade}");
                 System.Diagnostics.Debug.WriteLine(tradeFromHistory.SourceUserItems);
                 System.Diagnostics.Debug.WriteLine(tradeFromHistory.DestinationUserItems);
             }
+
             return result;
         }
 
         public async Task<List<ItemTrade>> GetActiveTradesAsync(int userId)
         {
             var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
+            
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
                 .Where(trade => (trade.SourceUserId == userId || trade.DestinationUserId == userId)
@@ -334,9 +337,11 @@ namespace CtrlAltElite.Services
                     return user;
                 })
                 .ToList();
+
             // 3. Get all games
             var gamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
             var allGames = new Collection<Game>(gamesResponse.Select(GameMapper.MapToGame).ToList());
+
             // 4. Map to domain model
             var result = new List<ItemTrade>();
             foreach (var tradeDto in filteredTrades)
@@ -496,13 +501,6 @@ namespace CtrlAltElite.Services
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
             var inventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
-
-            // foreach(var item in inventoryResponse.Items)
-            // {
-            //    System.Diagnostics.Debug.WriteLine($"IS LISTED:{item.IsListed}");
-            //    System.Diagnostics.Debug.WriteLine($"Item ID: {item.ItemId}, Game Name: {item.GameName}, Item Name: {item.ItemName}, Price: {item.Price}, Description: {item.Description}");
-            // }
-
             var allGamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
             var result = new List<Item>();
             var allGames = allGamesResponse.Select(GameMapper.MapToGame).ToList();
@@ -516,7 +514,7 @@ namespace CtrlAltElite.Services
                 item.SetIsListed(inventoryItem.IsListed);
                 result.Add(item);
             }
-            
+
             return result;
         }
     }

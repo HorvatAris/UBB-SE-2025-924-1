@@ -69,7 +69,16 @@ namespace CtrlAltElite.ViewModels
         private readonly IGameService gameService;
 
         private User? currentUser;
-        private User? recipientUser;
+        private User? selectedUser;
+        private Game? selectedGame;
+        private string? tradeDescription;
+        private string errorMessage;
+        private string successMessage;
+        private ItemTrade? selectedTrade;
+
+        private ObservableCollection<Game> games;
+        private ObservableCollection<User> users;
+        private ObservableCollection<User> availableUsers;
         private ObservableCollection<Item> itemsOfferedByCurrentUser;
         private ObservableCollection<Item> itemsOfferedByRecipientUser;
         private ObservableCollection<Item> selectedItemsFromCurrentUserInventory;
@@ -81,16 +90,6 @@ namespace CtrlAltElite.ViewModels
         private ObservableCollection<Item> selectedDestinationItems;
         private ObservableCollection<ItemTrade> activeTrades;
         private ObservableCollection<ItemTrade> tradeHistory;
-
-        private User? selectedUser;
-        private Game? selectedGame;
-        private string? tradeDescription;
-        private string errorMessage;
-        private string successMessage;
-        private ItemTrade? selectedTrade;
-        private ObservableCollection<Game> games;
-        private ObservableCollection<User> users;
-        private ObservableCollection<User> availableUsers;
 
         public TradeViewModel(ITradeService tradeService, IUserService userService, IGameService gameService)
         {
@@ -536,24 +535,6 @@ namespace CtrlAltElite.ViewModels
         public User GetCurrentUserAsync()
         {
             return this.tradeService.GetCurrentUser();
-        }
-
-        public void AddSelectedSourceItems(IList<object> selectedItems)
-        {
-            foreach (var currentItem in selectedItems.OfType<Item>())
-            {
-                this.AddSourceItem(currentItem);
-            }
-        }
-
-        public void AddSelectedDestinationItems(IList<object> selectedItems)
-        {
-            foreach (var currentItem in selectedItems.OfType<Item>())
-            {
-                this.AddDestinationItem(currentItem);
-            }
-
-            this.SelectedDestinationItems.Clear();
         }
 
         public async Task TrySendTradeAsync(XamlRoot root)

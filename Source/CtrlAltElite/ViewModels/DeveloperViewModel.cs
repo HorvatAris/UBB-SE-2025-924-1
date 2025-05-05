@@ -52,8 +52,6 @@ public class DeveloperViewModel : INotifyPropertyChanged
         this.DeveloperGames = new ObservableCollection<Game>();
         this.UnvalidatedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
-        this.LoadGames();
-        this.LoadTags();
         this.PageTitle = DeveloperPageTitles.MYGAMES;
     }
 
@@ -65,12 +63,6 @@ public class DeveloperViewModel : INotifyPropertyChanged
 
     public ObservableCollection<Tag> Tags { get; set; }
 
-    public async Task InitAsync()
-    {
-        await this.LoadGamesAsync();
-        await this.LoadTagsAsync();
-    }
-    
     public string EditGameId
     {
         get => this.editGameId;
@@ -334,6 +326,12 @@ public class DeveloperViewModel : INotifyPropertyChanged
         }
     }
 
+    public async Task InitAsync()
+    {
+        await this.LoadGamesAsync();
+        await this.LoadTagsAsync();
+    }
+
     public Game GetGameByIdInDeveloperGameList(int gameId)
     {
         return this.developerService.FindGameInObservableCollectionById(gameId, this.DeveloperGames);
@@ -425,7 +423,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
 
             await this.LoadUnvalidatedAsync();
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             await this.ShowErrorMessageAsync("Error", $"Failed to reject game: {exception.Message}");
         }
@@ -529,7 +527,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
 
     private async Task ShowErrorMessageAsync(string title, string message)
     {
-        ContentDialog errorDialog = new ContentDialog
+        ContentDialog errorDialog = new ()
         {
             Title = title,
             Content = message,

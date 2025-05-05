@@ -9,6 +9,7 @@ namespace SteamStore.Pages
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
+    using CtrlAltElite.Constants;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using SteamStore.Constants;
@@ -20,7 +21,6 @@ namespace SteamStore.Pages
     /// </summary>
     public sealed partial class DeveloperModePage : Page
     {
-
         private DeveloperViewModel viewModel;
 
         public DeveloperModePage(IDeveloperService developerService)
@@ -163,7 +163,6 @@ namespace SteamStore.Pages
         {
             if (rejectButton is Button button && button.CommandParameter is int gameId)
             {
-
                 try
                 {
                     string rejectionMessage = await this.viewModel.GetRejectionMessageAsync(gameId);

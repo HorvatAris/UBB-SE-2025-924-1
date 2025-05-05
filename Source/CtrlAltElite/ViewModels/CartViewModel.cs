@@ -197,7 +197,7 @@ public class CartViewModel : INotifyPropertyChanged
     {
         ContentDialog confirmDialog = new ContentDialog
         {
-            Title = ConfirmationDialogStrings.CONFIRM_PURCHASETITLE,
+            Title = ConfirmationDialogStrings.CONFIRMPURCHASETITLE,
             Content = ConfirmationDialogStrings.CONFIRMPURCHASEASSURANCE,
             PrimaryButtonText = ConfirmationDialogStrings.YESBUTTONTEXT,
             CloseButtonText = ConfirmationDialogStrings.NOBUTTONTEXT,
