@@ -183,8 +183,10 @@
         }
 
         [Fact]
-        public void FilterInventoryItems_OnlyReturnsUnlistedItems()
+        public void FilterInventoryItems_AllItems_OnlyReturnsUnlistedItems()
         {
+            int resultCount = 2;
+
             var items = new List<Item>
             {
                 new Item
@@ -218,61 +220,14 @@
 
             var result = inventoryService.FilterInventoryItems(items, null, null);
 
-            Assert.Equal(2, result.Count);
+            Assert.Equal(resultCount, result.Count);
             Assert.All(result, item => Assert.False(item.IsListed));
         }
 
         [Fact]
-        public void FilterInventoryItems_FiltersBySelectedGame()
+        public void FilterInventoryItems_NotFilteredByGameName_ReturnAllItems()
         {
-            var game1 = new Game { GameTitle = "Zelda" };
-            var game2 = new Game { GameTitle = "Halo" };
-
-            var items = new List<Item>
-            {
-                new Item
-                {
-                    ItemId = testItemId,
-                    ItemName = testItemName,
-                    Description = testItemDescription,
-                    Price = testItemPrice,
-                    IsListed = testItemListed,
-                    ImagePath = testItemImagePath,
-                    Game = game1
-                },
-                new Item
-                {
-                    ItemId = testItemId2,
-                    ItemName = testItemName2,
-                    Description = testItemDescription2,
-                    Price = testItemPrice2,
-                    IsListed = testItemNotListed,
-                    ImagePath = testItemImagePath2,
-                    Game = game1
-                },
-                new Item
-                {
-                    ItemId = testItemId3,
-                    ItemName = testItemName3,
-                    Description = testItemDescription3,
-                    Price = testItemPrice3,
-                    IsListed = testItemNotListed,
-                    ImagePath = testItemImagePath3,
-                    Game = game2
-                },
-            };
-
-            var selectedGame = game1;
-
-            var result = inventoryService.FilterInventoryItems(items, selectedGame, null);
-
-            Assert.Single(result);
-            Assert.All(result, item => Assert.Equal("Zelda", item.Game.GameTitle, ignoreCase: true));
-        }
-
-        [Fact]
-        public void FilterInventoryItems_AllGames_NotFilteredByGameName()
-        {
+            int resultCount = 2;
             var game1 = new Game { GameTitle = "Zelda" };
             var game2 = new Game { GameTitle = "Halo" };
 
@@ -314,12 +269,15 @@
 
             var result = inventoryService.FilterInventoryItems(items, selectedGame, null);
 
-            Assert.Equal(2, result.Count);
+            Assert.Equal(resultCount, result.Count);
         }
 
         [Fact]
-        public void FilterInventoryItems_FiltersBySearchText()
+        public void FilterInventoryItems_FiltersBySearchText_ReturnsMatchingItems()
         {
+            int resultCount = 2;
+            string comparingStringDescription = "cool";
+            string comparingStringTitle = "Cool";
             var game1 = new Game { GameTitle = "Zelda" };
             var game2 = new Game { GameTitle = "Halo" };
 
@@ -357,64 +315,17 @@
                 },
             };
 
-            var result = inventoryService.FilterInventoryItems(items, null, "cool");
+            var result = inventoryService.FilterInventoryItems(items, null, comparingStringDescription);
 
-            Assert.Equal(2, result.Count);
-            Assert.Contains(result, item => item.ItemName.Contains("Cool", StringComparison.OrdinalIgnoreCase));
-            Assert.Contains(result, item => item.Description.Contains("cool", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [Fact]
-        public void FilterInventoryItems_FiltersByGameAndSearchText()
-        {
-            var game1 = new Game { GameTitle = "Zelda" };
-            var game2 = new Game { GameTitle = "Halo" };
-
-            var items = new List<Item>
-            {
-                new Item
-                {
-                    ItemId = testItemId,
-                    ItemName = testItemName,
-                    Description = testItemDescription,
-                    Price = testItemPrice,
-                    IsListed = testItemListed,
-                    ImagePath = testItemImagePath,
-                    Game = game1
-                },
-                new Item
-                {
-                    ItemId = testItemId2,
-                    ItemName = testItemName2,
-                    Description = testItemDescription2,
-                    Price = testItemPrice2,
-                    IsListed = testItemNotListed,
-                    ImagePath = testItemImagePath2,
-                    Game = game1
-                },
-                new Item
-                {
-                    ItemId = testItemId3,
-                    ItemName = testItemName3,
-                    Description = testItemDescription3,
-                    Price = testItemPrice3,
-                    IsListed = testItemNotListed,
-                    ImagePath = testItemImagePath3,
-                    Game = game2
-                },
-            };
-
-            var selectedGame = game1;
-            var result = inventoryService.FilterInventoryItems(items, selectedGame, "cool");
-
-            Assert.Single(result);
-            Assert.All(result, item => Assert.Equal("Zelda", item.Game.GameTitle, ignoreCase: true));
-            Assert.All(result, item => Assert.Contains("cool", item.ItemName, StringComparison.OrdinalIgnoreCase));
+            Assert.Equal(resultCount, result.Count);
+            Assert.Contains(result, item => item.ItemName.Contains(comparingStringTitle, StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(result, item => item.Description.Contains(comparingStringDescription, StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]
         public async Task GetAvailableGames_EmptyUserInventory_ReturnsOnlyAllGamesOption()
         {
+            int firstItemIndex = 0;
             var items = new List<Item>();
 
             userInventoryServiceProxyMock
@@ -428,12 +339,13 @@
             var result = await inventoryService.GetAvailableGamesAsync(items);
 
             Assert.Single(result);
-            Assert.Equal("All Games", result[0].GameTitle);
+            Assert.Equal("All Games", result[firstItemIndex].GameTitle);
         }
 
         [Fact]
         public async Task GetAvailableGames_UserInventoryHasGames_ReturnsMatchingGames()
         {
+            int resultCount = 3;
             var items = new List<Item>();
             var game1 = new Game { GameTitle = "Zelda" };
             var game2 = new Game { GameTitle = "Halo" };
@@ -503,9 +415,9 @@
             var result = await inventoryService.GetAvailableGamesAsync(items);
 
             Assert.Equal(3, result.Count);
-            Assert.Contains(result, g => g.GameTitle == "All Games");
-            Assert.Contains(result, g => g.GameTitle == "Halo");
-            Assert.Contains(result, g => g.GameTitle == "Zelda");
+            Assert.Contains(result, game => game.GameTitle == "All Games");
+            Assert.Contains(result, game => game.GameTitle == "Halo");
+            Assert.Contains(result, game => game.GameTitle == "Zelda");
         }
     }
 }

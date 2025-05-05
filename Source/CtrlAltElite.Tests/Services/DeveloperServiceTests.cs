@@ -107,18 +107,46 @@ namespace SteamStore.Tests.Services
             Assert.Equivalent(expectedGame, returnedGame);
         }
 
-        [Theory]
-        [InlineData("", "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "5")]
-        [InlineData("1", "", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "5")]
-        [InlineData("abc", "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "5")]
-        [InlineData("1", "name", "-10", "desc", "img", "trailer", "gameplay", "min", "rec", "5")]
-        [InlineData("1", "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "abc")]
-        [InlineData("1", "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "150")]
-        public void ValidateInputForAddingAGame_WhenInvalid_ShouldThrow(
-            string gameIdentifier, string gameName, string gamePrice, string gameDescription, string gameImageUrl, string gameTrailerUrl, string gameGameplayUrl, string gameMinimumRequirement, string gameRecommendedRequirement, string gameDiscountText)
+        [Fact]
+        public void ValidateInputForAddingAGame_WhenGameIdentifierEmpty_ShouldThrow()
         {
             Assert.Throws<Exception>(() =>
-                developerService.ValidateInputForAddingAGame(gameIdentifier, gameName, gamePrice, gameDescription, gameImageUrl, gameTrailerUrl, gameGameplayUrl, gameMinimumRequirement, gameRecommendedRequirement, gameDiscountText, new List<Tag> { new Tag() }));
+                developerService.ValidateInputForAddingAGame(string.Empty, "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "5", new List<Tag> { new Tag() }));
+        }
+
+        [Fact]
+        public void ValidateInputForAddingAGame_WhenGameNameEmpty_ShouldThrow()
+        {
+            Assert.Throws<Exception>(() =>
+                developerService.ValidateInputForAddingAGame("1", string.Empty, "10", "desc", "img", "trailer", "gameplay", "min", "rec", "5", new List<Tag> { new Tag() }));
+        }
+
+        [Fact]
+        public void ValidateInputForAddingAGame_WhenGameIdentifierNonNumeric_ShouldThrow()
+        {
+            Assert.Throws<Exception>(() =>
+                developerService.ValidateInputForAddingAGame("abc", "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "5", new List<Tag> { new Tag() }));
+        }
+
+        [Fact]
+        public void ValidateInputForAddingAGame_WhenPriceNegative_ShouldThrow()
+        {
+            Assert.Throws<Exception>(() =>
+                developerService.ValidateInputForAddingAGame("1", "name", "-10", "desc", "img", "trailer", "gameplay", "min", "rec", "5", new List<Tag> { new Tag() }));
+        }
+
+        [Fact]
+        public void ValidateInputForAddingAGame_WhenDiscountNotNumeric_ShouldThrow()
+        {
+            Assert.Throws<Exception>(() =>
+                developerService.ValidateInputForAddingAGame("1", "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "abc", new List<Tag> { new Tag() }));
+        }
+
+        [Fact]
+        public void ValidateInputForAddingAGame_WhenDiscountTooHigh_ShouldThrow()
+        {
+            Assert.Throws<Exception>(() =>
+                developerService.ValidateInputForAddingAGame("1", "name", "10", "desc", "img", "trailer", "gameplay", "min", "rec", "150", new List<Tag> { new Tag() }));
         }
 
         [Fact]
