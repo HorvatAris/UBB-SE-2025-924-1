@@ -12,7 +12,6 @@ namespace SteamStore.Utils
 
     public class InventoryValidator
     {
-        /// <inheritdoc/>
         public void ValidateGame(Game game)
         {
             if (game == null)
@@ -35,7 +34,6 @@ namespace SteamStore.Utils
             }
         }
 
-        /// <inheritdoc/>
         public void ValidateItem(Item item)
         {
             if (item == null)
@@ -55,7 +53,6 @@ namespace SteamStore.Utils
             }
         }
 
-        /// <inheritdoc/>
         public void ValidateUser(User user)
         {
             if (user == null)
@@ -75,7 +72,6 @@ namespace SteamStore.Utils
             }
         }
 
-        /// <inheritdoc/>
         public void ValidateInventoryOperation(Game game, Item item, User user)
         {
             // Reuse the individual validations.
@@ -84,7 +80,6 @@ namespace SteamStore.Utils
             this.ValidateUser(user);
         }
 
-        /// <inheritdoc/>
         public void ValidateSellableItem(Item item)
         {
             // First, validate the basic properties of the item.
