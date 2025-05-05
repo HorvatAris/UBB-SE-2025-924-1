@@ -53,10 +53,10 @@
             testUser = new User { UserId = 1, WalletBalance = 50f };
             marketplaceService = new MarketplaceService
             {
-                gameServiceProxy = gameServiceProxyMock.Object,
-                userInventoryServiceProxy = userInventoryServiceProxyMock.Object,
-                userServiceProxy = userServiceProxyMock.Object,
-                itemServiceProxy = itemServiceProxyMock.Object,
+                GameServiceProxy = gameServiceProxyMock.Object,
+                UserInventoryServiceProxy = userInventoryServiceProxyMock.Object,
+                UserServiceProxy = userServiceProxyMock.Object,
+                ItemServiceProxy = itemServiceProxyMock.Object,
                 User = testUser,
             };
         }

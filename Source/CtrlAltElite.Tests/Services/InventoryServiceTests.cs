@@ -425,7 +425,7 @@
                 .Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
                 .ReturnsAsync(new List<GameDetailedResponse>()); // No games
 
-            var result = await inventoryService.GetAvailableGames(items);
+            var result = await inventoryService.GetAvailableGamesAsync(items);
 
             Assert.Single(result);
             Assert.Equal("All Games", result[0].GameTitle);
@@ -500,7 +500,7 @@
                     }
                 });
 
-            var result = await inventoryService.GetAvailableGames(items);
+            var result = await inventoryService.GetAvailableGamesAsync(items);
 
             Assert.Equal(3, result.Count);
             Assert.Contains(result, g => g.GameTitle == "All Games");
