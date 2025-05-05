@@ -187,7 +187,7 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetPointShopItemsAsync_WhenCalled_ReturnsAllItems()
+        public async Task GetPointShopItemsAsync_WhenGenerallyCalled_ReturnsAllItems()
         {
             var result = await _repository.GetPointShopItemsAsync();
 
@@ -196,13 +196,22 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetPointShopItemByIdAsync_WhenCalledWithExistingId_ReturnsItem()
+        public async Task GetPointShopItemByIdAsync_WhenCalledWithExistingId_ReturnsNonNullItem()
         {
             var result = await _repository.GetPointShopItemByIdAsync(1);
 
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task GetPointShopItemByIdAsync_WhenCalledWithExistingId_ReturnsItemWithCorrectName()
+        {
+            var result = await _repository.GetPointShopItemByIdAsync(1);
+
             Assert.Equal("CSGO", result.Name);
         }
+
+
 
         [Fact]
         public async Task GetPointShopItemByIdAsync_WhenCalledWithInvalidId_ReturnsNull()
@@ -243,7 +252,9 @@ namespace SteamHub.Tests.RepositoriesTests
                 ItemType = "ex"
             };
 
-            await _repository.UpdatePointShopItemAsync(1, request);
+            var idOfItemToBeUpdated = 1;
+
+            await _repository.UpdatePointShopItemAsync(idOfItemToBeUpdated, request);
 
             var updated = await _context.PointShopItems.FindAsync(1);
             Assert.Equal("ex2", updated.Name);
@@ -252,6 +263,7 @@ namespace SteamHub.Tests.RepositoriesTests
         [Fact]
         public async Task UpdatePointShopItemAsync_WhenCalledWithInvalidId_ThrowsException()
         {
+            var invalidId = 999;
             var request = new UpdatePointShopItemRequest
             {
                 Name = "Ghost",
@@ -261,13 +273,14 @@ namespace SteamHub.Tests.RepositoriesTests
                 ItemType = "Effect"
             };
 
-            await Assert.ThrowsAsync<Exception>(() => _repository.UpdatePointShopItemAsync(999, request));
+            await Assert.ThrowsAsync<Exception>(() => _repository.UpdatePointShopItemAsync(invalidId, request));
         }
 
         [Fact]
         public async Task DeletePointShopItemAsync_WhenCalledWithValidId_DeletesItem()
         {
-            await _repository.DeletePointShopItemAsync(2);
+            var invalidIdValue = 2;
+            await _repository.DeletePointShopItemAsync(invalidIdValue);
 
             var deleted = await _context.PointShopItems.FindAsync(2);
             Assert.Null(deleted);

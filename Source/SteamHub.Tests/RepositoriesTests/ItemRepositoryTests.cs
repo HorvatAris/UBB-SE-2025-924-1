@@ -160,22 +160,39 @@ namespace SteamHub.Tests.Repositories
         {
             _context.Dispose();
         }
-
         [Fact]
-        public async Task GetItemsAsync_Always_ReturnsItems()
+        public async Task GetItemsAsync_WhenCalled_ReturnsNonNullItemList()
         {
             var items = await _repository.GetItemsAsync();
 
             Assert.NotNull(items);
+        }
+
+        [Fact]
+        public async Task GetItemsAsync_WhenCalled_ReturnsItemWithCorrectName()
+        {
+            var items = await _repository.GetItemsAsync();
+
             var itemList = items.ToList();
-            Assert.Single(itemList);
             Assert.Equal("Mock Item", itemList[0].ItemName);
         }
+
+
+        [Fact]
+        public async Task GetItemsAsync_WhenCalled_ReturnsSingleItem()
+        {
+            var items = await _repository.GetItemsAsync();
+
+            var itemList = items.ToList();
+            Assert.Single(itemList);
+        }
+
 
         [Fact]
         public async Task GetItemByIdAsync_ValidId_ReturnsItem()
         {
-            var item = await _repository.GetItemByIdAsync(1);
+            var validId = 1;
+            var item = await _repository.GetItemByIdAsync(validId);
 
             Assert.NotNull(item);
             Assert.Equal("Mock Item", item.ItemName);
@@ -190,7 +207,7 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task CreateItemAsync_ValidRequest_CreatesItem()
+        public async Task CreateItemAsync_WithValidRequest_ReturnsNonNullResponse()
         {
             var request = new CreateItemRequest
             {
@@ -205,11 +222,47 @@ namespace SteamHub.Tests.Repositories
             var response = await _repository.CreateItemAsync(request);
 
             Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task CreateItemAsync_WithValidRequest_SetsCorrectItemName()
+        {
+            var request = new CreateItemRequest
+            {
+                ItemName = "New Item",
+                GameId = 1,
+                Price = 5.5f,
+                Description = "A new test item",
+                IsListed = true,
+                ImagePath = "/images/new.png"
+            };
+
+            var response = await _repository.CreateItemAsync(request);
+
             Assert.Equal("New Item", response.ItemName);
+        }
+
+        [Fact]
+        public async Task CreateItemAsync_WithValidRequest_SavesItemToDatabase()
+        {
+            var request = new CreateItemRequest
+            {
+                ItemName = "New Item",
+                GameId = 1,
+                Price = 5.5f,
+                Description = "A new test item",
+                IsListed = true,
+                ImagePath = "/images/new.png"
+            };
+
+            var response = await _repository.CreateItemAsync(request);
 
             var created = await _context.Items.FindAsync(response.ItemId);
             Assert.NotNull(created);
         }
+
+
+
 
         [Fact]
         public async Task UpdateItemAsync_ValidId_UpdatesItem()
@@ -249,25 +302,40 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task DeleteItemAsync_ValidId_DeletesItemAndRelatedData()
+        public async Task DeleteItemAsync_WithValidId_DeletesItem()
         {
-            await _repository.DeleteItemAsync(1);
+            var validIdValue = 1;
+            await _repository.DeleteItemAsync(validIdValue);
 
-            var item = await _context.Items.FindAsync(1);
+            var item = await _context.Items.FindAsync(validIdValue);
             Assert.Null(item);
+        }
 
-            var inventory = await _context.UserInventories.FirstOrDefaultAsync(i => i.ItemId == 1);
+        [Fact]
+        public async Task DeleteItemAsync_WithValidId_DeletesItemFromUserInventories()
+        {
+            var validIdValue = 1;
+            await _repository.DeleteItemAsync(validIdValue);
+
+            var inventory = await _context.UserInventories.FirstOrDefaultAsync(inventoryItem => inventoryItem.ItemId == validIdValue);
             Assert.Null(inventory);
+        }
+        [Fact]
+        public async Task DeleteItemAsync_WithValidId_DeletesRelatedTradeDetails()
+        {
+            var validIdValue = 1;
+            await _repository.DeleteItemAsync(validIdValue);
 
-            var tradeDetails = await _context.ItemTradeDetails.FirstOrDefaultAsync(t => t.ItemId == 1);
+            var tradeDetails = await _context.ItemTradeDetails.FirstOrDefaultAsync(tradeDetail => tradeDetail.ItemId == validIdValue);
             Assert.Null(tradeDetails);
         }
 
         [Fact]
-        public async Task DeleteItemAsync_InvalidId_ThrowsKeyNotFoundException()
+        public async Task DeleteItemAsync_WithInvalidId_ThrowsKeyNotFoundException()
         {
+            var invalidId = 999;
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                _repository.DeleteItemAsync(999));
+                _repository.DeleteItemAsync(invalidId));
         }
     }
 }

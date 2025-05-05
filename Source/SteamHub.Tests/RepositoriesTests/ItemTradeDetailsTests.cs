@@ -59,29 +59,58 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task GetItemTradeDetailsAsync_Always_ReturnAllItemTradeDetails()
+        public async Task GetItemTradeDetailsAsync_WhenCalled_ReturnsNonNullResult()
         {
-            const int expectedItemTradeDetailCount = 2;
             var result = await _repository.GetItemTradeDetailsAsync();
 
             Assert.NotNull(result);
-            Assert.NotNull(result.ItemTradeDetails);
-
-            int actualItemTradeDetailCount = result.ItemTradeDetails.Count;
-
-            Assert.Equal(expectedItemTradeDetailCount, actualItemTradeDetailCount);
         }
 
         [Fact]
-        public async Task GetItemTradeDetailAsync_ValidTradeIdAndItemId_ReturnsItemTradeDetail()
+        public async Task GetItemTradeDetailsAsync_WhenCalled_ReturnsExpectedNumberOfItemTradeDetails()
+        {
+            const int expectedItemTradeDetailCount = 2;
+
+            var result = await _repository.GetItemTradeDetailsAsync();
+
+            Assert.NotNull(result.ItemTradeDetails);
+            Assert.Equal(expectedItemTradeDetailCount, result.ItemTradeDetails.Count);
+        }
+
+        [Fact]
+        public async Task GetItemTradeDetailAsync_WithValidTradeIdAndItemId_ReturnsNonNullDetail()
+        {
+            var result = await _repository.GetItemTradeDetailAsync(1, 1);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task GetItemTradeDetailAsync_WithValidTradeIdAndItemId_ReturnsItemMarkedAsSourceUserItem()
+        {
+            var result = await _repository.GetItemTradeDetailAsync(1, 1);
+
+            Assert.True(result.IsSourceUserItem);
+        }
+
+
+        [Fact]
+        public async Task GetItemTradeDetailAsync_WithValidTradeIdAndItemId_ReturnsCorrectItemId()
+        {
+            var itemId = 1;
+            var result = await _repository.GetItemTradeDetailAsync(1, itemId);
+
+            Assert.Equal(itemId, result.ItemId);
+        }
+
+
+        [Fact]
+        public async Task GetItemTradeDetailAsync_WithValidTradeIdAndItemId_ReturnsCorrectTradeId()
         {
             var tradeId = 1;
-            var itemId = 1;
-            var result = await _repository.GetItemTradeDetailAsync(tradeId, itemId);
-            Assert.NotNull(result);
+            var result = await _repository.GetItemTradeDetailAsync(tradeId, 1);
+
             Assert.Equal(tradeId, result.TradeId);
-            Assert.Equal(itemId, result.ItemId);
-            Assert.True(result.IsSourceUserItem);
         }
 
         [Fact]
@@ -94,7 +123,7 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task CreateItemTradeDetailAsync_ValidRequest_ReturnsCreatedItemTradeDetail()
+        public async Task CreateItemTradeDetailAsync_WithValidRequest_ReturnsNonNullItemTradeDetail()
         {
             var request = new CreateItemTradeDetailRequest
             {
@@ -102,14 +131,44 @@ namespace SteamHub.Tests.RepositoriesTests
                 ItemId = 3,
                 IsSourceUserItem = true
             };
+
             var result = await _repository.CreateItemTradeDetailAsync(request);
+
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task CreateItemTradeDetailAsync_WithValidRequest_SetsCorrectTradeId()
+        {
+            var request = new CreateItemTradeDetailRequest
+            {
+                TradeId = 3,
+                ItemId = 3,
+                IsSourceUserItem = true
+            };
+
+            var result = await _repository.CreateItemTradeDetailAsync(request);
+
             Assert.Equal(request.TradeId, result.TradeId);
+        }
+
+        [Fact]
+        public async Task CreateItemTradeDetailAsync_WithValidRequest_SetsCorrectItemId()
+        {
+            var request = new CreateItemTradeDetailRequest
+            {
+                TradeId = 3,
+                ItemId = 3,
+                IsSourceUserItem = true
+            };
+
+            var result = await _repository.CreateItemTradeDetailAsync(request);
+
             Assert.Equal(request.ItemId, result.ItemId);
         }
 
         [Fact]
-        public async Task DeleteItemTradeDetailAsync_ValidTradeIdAndItemID_RemovesTradeDetails()
+        public async Task DeleteItemTradeDetailAsync_WithValidTradeIdAndItemID_RemovesTradeDetails()
         {
             var tradeId = 1;
             var itemId = 1;
