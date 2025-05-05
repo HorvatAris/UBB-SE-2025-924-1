@@ -269,6 +269,7 @@ namespace CtrlAltElite.ViewModels
                     if (this.CurrentUser != null)
                     {
                         _ = this.LoadUserInventoryAsync();
+                        _ = this.LoadDestinationUserInventoryAsync();
                     }
                 }
             }
@@ -342,8 +343,6 @@ namespace CtrlAltElite.ViewModels
         {
             await this.LoadUsersAsync();
             await this.LoadGamesAsync();
-            await this.LoadActiveTradesAsync();
-            await this.LoadTradeHistoryAsync();
         }
 
         public async Task LoadUsersAsync()
@@ -359,13 +358,21 @@ namespace CtrlAltElite.ViewModels
                 this.AvailableUsers.Clear();
                 foreach (var user in allUsers)
                 {
-                    this.AvailableUsers.Add(user);
+                    if (user.UserId != this.CurrentUser.UserId)
+                    {
+                        this.AvailableUsers.Add(user);
+                    }
                 }
+
+                await this.LoadActiveTradesAsync();
+                await this.LoadTradeHistoryAsync();
             }
             catch (System.Exception exception)
             {
                 this.ErrorMessage = LoadUsersErrorMessage;
                 System.Diagnostics.Debug.WriteLine($"{LoadUsersDebugMessagePrefix}{exception.Message}");
+
+                this.AvailableUsers.Clear();
             }
         }
 
@@ -393,6 +400,8 @@ namespace CtrlAltElite.ViewModels
                 this.ErrorMessage = errorMessage;
                 System.Diagnostics.Debug.WriteLine(errorMessage);
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {loadingGamesException.StackTrace}");
+
+                this.Games.Clear();
             }
         }
 
@@ -408,7 +417,6 @@ namespace CtrlAltElite.ViewModels
             try
             {
                 var userInventoryItems = await this.tradeService.GetUserInventoryAsync(this.CurrentUser.UserId);
-
 
                 this.SourceUserItems.Clear();
                 foreach (var item in userInventoryItems.Where(itemInner => !itemInner.IsListed))
@@ -566,11 +574,6 @@ namespace CtrlAltElite.ViewModels
         {
             this.ErrorMessage = string.Empty;
             this.SuccessMessage = string.Empty;
-
-            if (!this.CanSendTradeOffer)
-            {
-                return;
-            }
 
             try
             {

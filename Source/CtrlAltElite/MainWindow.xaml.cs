@@ -44,12 +44,12 @@ namespace SteamStore
             // this will need to be changed when we conenct with a database query to get the user
             User loggedInUser = new User
             {
-                UserId = 5,
-                Email = "liam.garcia@example.com",
-                PointsBalance = 67,
-                UserName = "LiamG",
+                UserId = 7,
+                Email = "noah.smith@example.com",
+                PointsBalance = 38,
+                UserName = "NoahS",
                 UserRole = User.Role.User,
-                WalletBalance = 55
+                WalletBalance = 33,
             };
 
             // Assign to the class field so it can be used in navigation

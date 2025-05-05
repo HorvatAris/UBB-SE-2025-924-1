@@ -280,7 +280,7 @@ namespace CtrlAltElite.Services
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
-                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.ItemId);
+                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.TradeId);
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
@@ -388,7 +388,7 @@ namespace CtrlAltElite.Services
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
-                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.ItemId);
+                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.TradeId);
                     var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
                     var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
