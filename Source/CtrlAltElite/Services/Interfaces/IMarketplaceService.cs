@@ -7,22 +7,19 @@ namespace CtrlAltElite.Services.Interfaces
 {
     public interface IMarketplaceService
     {
+        User User { get; set; }
 
         Task AddListingAsync(Game game, Item item);
 
-        Task<bool> BuyItemAsync(Item item);
+        Task<bool> BuyItemAsync(Item item, int userId);
 
         Task<List<Item>> GetAllListingsAsync();
 
         Task<List<User>> GetAllUsersAsync();
 
-        User GetCurrentUser();
-
-        Task<List<Item>> GetListingsByGameAsync(Game game);
+        Task<List<Item>> GetListingsByGameAsync(Game game, int userId);
 
         Task RemoveListingAsync(Game game, Item item);
-
-        void SetCurrentUser(User user);
 
         Task UpdateListingAsync(Game game, Item item);
     }

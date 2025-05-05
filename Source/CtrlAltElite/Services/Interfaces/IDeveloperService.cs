@@ -64,7 +64,7 @@ namespace SteamStore.Services.Interfaces
 
         Task DeleteGameTags(int gameId);
 
-        int GetGameOwnerCount(int game_id);
+        Task<int> GetGameOwnerCount(int gameId);
 
         User GetCurrentUser();
 

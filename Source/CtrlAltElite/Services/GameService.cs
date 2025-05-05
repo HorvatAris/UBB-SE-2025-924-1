@@ -66,16 +66,14 @@ public class GameService : IGameService
                         tagsResponse.Tags.Select(TagMapper.MapToTag).ToList()
                     );
         }
-        catch (Refit.ApiException ex)
+        catch (Refit.ApiException exception)
         {
-            string rawContent = ex.Content; // Removed ReadAsStringAsync as 'Content' is already a string
+            string rawContent = exception.Content; // Removed ReadAsStringAsync as 'Content' is already a string
             Console.WriteLine("Raw API Response:");
             Console.WriteLine(rawContent);
             throw; // rethrow the exception or handle it appropriately
         }
     }
-
-
 
     public async Task<Collection<Tag>> GetAllGameTags(Game game)
     {
