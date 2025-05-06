@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="SteamHub.Pages.PaypalPaymentPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SteamHub.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <StackPanel Padding="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="PayPal Payment" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <TextBox x:Name="EmailTextBox" Header="Email" Text="{Binding Email, Mode=TwoWay}" PlaceholderText="Enter your PayPal email" Margin="0,0,0,10"/>
+            <PasswordBox x:Name="PasswordBox" Header="Password" Password="{Binding Password, Mode=TwoWay}" PlaceholderText="Enter your PayPal password" Margin="0,0,0,20"/>
+
+            <Button x:Name="ValidateButton" Content="Validate Payment" Click="ValidateButton_Click" HorizontalAlignment="Center"/>
+        </StackPanel>
+        <ContentDialog x:Name="NotificationDialog"
+                      Title="Notification"
+                      CloseButtonText="OK"
+                      Opened="NotificationDialog_Opened"/>
+    </Grid>
+</Page>

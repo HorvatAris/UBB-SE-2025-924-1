@@ -5,12 +5,12 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>0e9ca207-f589-41e1-8f8c-e7b3f2a6ae7a</UserSecretsId>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<CodeAnalysisRuleSet>../CtrlAltElite/SE924.ruleset</CodeAnalysisRuleSet>
+		<CodeAnalysisRuleSet>../SteamHub/SE924.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
-	
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">

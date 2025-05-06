@@ -1,4 +1,4 @@
-﻿namespace SteamStore.Tests.Repositories
+﻿namespace SteamHub.Tests.RepositoriesTests
 {
     using System;
     using System.Collections.Generic;
@@ -200,35 +200,6 @@
         }
 
         [Fact]
-        public async Task CreateGameAsync_WithValidRequest_CreatesGame()
-        {
-            var request = new CreateGameRequest
-            {
-                Name = "New Test Game",
-                Description = "New Test Description",
-                Price = 49.99m,
-                PublisherUserIdentifier = 2,
-                MinimumRequirements = "Min",
-                RecommendedRequirements = "Rec",
-                ImagePath = "path.jpg",
-                TrailerPath = "trailer.mp4",
-                GameplayPath = "gameplay.mp4",
-                Discount = 0.1m,
-                Rating = 4.5m,
-                NumberOfRecentPurchases = 100
-            };
-
-            var result = await _repository.CreateGameAsync(request);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(request.Name, result.Name);
-            var gameInDb = await _mockContext.Games.FirstOrDefaultAsync(g => g.GameId == result.Identifier);
-            Assert.NotNull(gameInDb);
-            Assert.Equal(request.Description, gameInDb.Description);
-        }
-
-        [Fact]
         public async Task GetGameByIdAsync_WithExistingId_ReturnsGame()
         {
             var result = await _repository.GetGameByIdAsync(1);
@@ -283,6 +254,38 @@
             // Assert
             Assert.Equal(2, result.Count);
             Assert.All(result, g => Assert.Equal(2, g.PublisherUserIdentifier));
+        }
+
+        [Fact]
+        public async Task CreateGameAsync_WithValidRequest_CreatesGame()
+        {
+            _mockContext.Games.RemoveRange(_mockContext.Games);
+            await _mockContext.SaveChangesAsync();
+
+            var request = new CreateGameRequest
+            {
+                Name = "New Test Game",
+                Description = "New Test Description",
+                Price = 49.99m,
+                PublisherUserIdentifier = 2,
+                MinimumRequirements = "Min",
+                RecommendedRequirements = "Rec",
+                ImagePath = "path.jpg",
+                TrailerPath = "trailer.mp4",
+                GameplayPath = "gameplay.mp4",
+                Discount = 0.1m,
+                Rating = 4.5m,
+                NumberOfRecentPurchases = 100
+            };
+
+            var result = await _repository.CreateGameAsync(request);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(request.Name, result.Name);
+            var gameInDb = await _mockContext.Games.FirstOrDefaultAsync(g => g.GameId == result.Identifier);
+            Assert.NotNull(gameInDb);
+            Assert.Equal(request.Description, gameInDb.Description);
         }
 
         [Fact]

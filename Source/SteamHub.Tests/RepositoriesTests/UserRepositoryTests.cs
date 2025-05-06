@@ -95,6 +95,9 @@ namespace SteamHub.Tests.Repositories
         [Fact]
         public async Task CreateUserAsync_WhenValidInput_AddsNewUserSuccessfully()
         {
+            _mockContext.Users.RemoveRange(_mockContext.Users);
+            await _mockContext.SaveChangesAsync();
+
             var request = new CreateUserRequest
             {
                 UserName = "Charlie",

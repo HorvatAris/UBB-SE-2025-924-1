@@ -5,10 +5,11 @@
         <LangVersion>10</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <CodeAnalysisRuleSet>../CtrlAltElite/SE924.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>../SteamHub/SE924.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SteamHub.ApiContract.Models.ItemTrade;
+using Xunit;
 
 namespace SteamHub.Tests.Repositories
 {
@@ -69,27 +70,6 @@ namespace SteamHub.Tests.Repositories
         }
 
         [Fact]
-        public async Task CreateItemTradeAsync_CreatesTradeSuccessfully()
-        {
-            var request = new CreateItemTradeRequest
-            {
-                SourceUserId = 4,
-                DestinationUserId = 5,
-                GameOfTradeId = 12,
-                TradeDescription = "New trade",
-                TradeStatus = TradeStatusEnum.Pending,
-                AcceptedBySourceUser = false,
-                AcceptedByDestinationUser = false
-            };
-
-            var result = await _repository.CreateItemTradeAsync(request);
-
-            Assert.NotNull(result);
-            var createdTrade = await _mockContext.ItemTrades.FindAsync(result.TradeId);
-            Assert.Equal("New trade", createdTrade.TradeDescription);
-        }
-
-        [Fact]
         public async Task GetItemTradesAsync_ReturnsAllTrades()
         {
             var result = await _repository.GetItemTradesAsync();
@@ -133,6 +113,30 @@ namespace SteamHub.Tests.Repositories
             Assert.Equal(TradeStatus.Declined, updatedTrade.TradeStatus);
             Assert.False(updatedTrade.AcceptedBySourceUser);
             Assert.True(updatedTrade.AcceptedByDestinationUser);
+        }
+
+        [Fact]
+        public async Task CreateItemTradeAsync_CreatesTradeSuccessfully()
+        {
+            _mockContext.ItemTrades.RemoveRange(_mockContext.ItemTrades);
+            await _mockContext.SaveChangesAsync();
+
+            var request = new CreateItemTradeRequest
+            {
+                SourceUserId = 4,
+                DestinationUserId = 5,
+                GameOfTradeId = 12,
+                TradeDescription = "New trade",
+                TradeStatus = TradeStatusEnum.Pending,
+                AcceptedBySourceUser = false,
+                AcceptedByDestinationUser = false
+            };
+
+            var result = await _repository.CreateItemTradeAsync(request);
+
+            Assert.NotNull(result);
+            var createdTrade = await _mockContext.ItemTrades.FindAsync(result.TradeId);
+            Assert.Equal("New trade", createdTrade.TradeDescription);
         }
 
         [Fact]

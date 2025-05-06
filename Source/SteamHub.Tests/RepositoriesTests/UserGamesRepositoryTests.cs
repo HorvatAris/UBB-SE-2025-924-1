@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GameEntity = SteamHub.Api.Entities.Game;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,12 +62,12 @@ namespace SteamHub.Tests.RepositoriesTests
             {
                 TagId = 1,
                 TagName = "Action",
-                Games = new List<Game>()
+                Games = new List<GameEntity>()
             };
             _mockContext.Tags.Add(tag);
 
             // Game
-            var game = new Game
+            var game = new GameEntity
             {
                 GameId = 1,
                 Name = "Mock Game",

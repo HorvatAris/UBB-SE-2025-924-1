@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GameEntity = SteamHub.Api.Entities.Game;
+
+using Microsoft.EntityFrameworkCore;
 using SteamHub.Api.Entities;
 using SteamHub.ApiContract.Models.UserInventory;
 using SteamHub.ApiContract.Repositories;
@@ -40,7 +42,7 @@ namespace SteamHub.Tests.RepositoriesTests
                 RoleId = RoleEnum.User
             };
 
-            var game = new Game
+            var game = new GameEntity
             {
                 GameId = 1,
                 Name = "Mock Game",

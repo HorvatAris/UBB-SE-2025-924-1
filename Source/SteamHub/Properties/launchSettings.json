@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SteamHub (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "SteamHub (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

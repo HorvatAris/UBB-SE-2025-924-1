@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SteamHub.ApiContract.Models.ItemTradeDetails;
+using Xunit;
 
 namespace SteamHub.Tests.RepositoriesTests
 {

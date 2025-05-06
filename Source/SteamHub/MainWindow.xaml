@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="SteamHub.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SteamHub"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Steam Store">
+
+    <Grid>
+        <NavigationView x:Name="NavView"
+                        PaneTitle="Menu"
+                        IsBackButtonVisible="Collapsed"
+                        IsSettingsVisible="False"
+                        PaneDisplayMode="Left"
+                        SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Homepage" Tag="HomePage" Icon="Home" />
+                <NavigationViewItem Content="Cart" Tag="CartPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BF;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Points Shop" Tag="PointsShopPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE1CB;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Wishlist" Tag="WishlistPage" Icon="Favorite" />
+                <NavigationViewItem Content="Developer Mode" Tag="DeveloperModePage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE943;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Icon="Shop" Content="Marketplace" Tag="marketplace" />
+                <NavigationViewItem Icon="List" Content="Inventory" Tag="inventory" />
+                <NavigationViewItem Icon="Switch" Content="Trading" Tag="trading" />
+                
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+    </Grid>
+</Window>

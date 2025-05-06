@@ -1,4 +1,6 @@
-﻿using SteamHub.Api.Context;
+﻿using GameEntity = SteamHub.Api.Entities.Game;
+
+using SteamHub.Api.Context;
 using SteamHub.Api.Context.Repositories;
 using SteamHub.Api.Entities;
 using SteamHub.ApiContract.Models.PointShopItem;
@@ -59,12 +61,12 @@ namespace SteamHub.Tests.RepositoriesTests
             {
                 TagId = 1,
                 TagName = "Action",
-                Games = new List<Game>()
+                Games = new List<GameEntity>()
             };
             _context.Tags.Add(tag);
 
             // Game
-            var game = new Game
+            var game = new GameEntity
             {
                 GameId = 1,
                 Name = "Mock Game",
@@ -222,25 +224,6 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task CreatePointShopItemAsync_WhenCalledWithValidRequest_CreatesItem()
-        {
-            var request = new CreatePointShopItemRequest
-            {
-                Name = "ex1",
-                Description = "ex1",
-                ImagePath = "ex1.png",
-                PointPrice = 300,
-                ItemType = "ex1"
-            };
-
-            var response = await _repository.CreatePointShopItemAsync(request);
-            var created = await _context.PointShopItems.FindAsync(response.PointShopItemId);
-
-            Assert.NotNull(created);
-            Assert.Equal("ex1", created.Name);
-        }
-
-        [Fact]
         public async Task UpdatePointShopItemAsync_WhenCalledWithValidRequest_UpdatesItem()
         {
             var request = new UpdatePointShopItemRequest
@@ -274,6 +257,28 @@ namespace SteamHub.Tests.RepositoriesTests
             };
 
             await Assert.ThrowsAsync<Exception>(() => _repository.UpdatePointShopItemAsync(invalidId, request));
+        }
+
+        [Fact]
+        public async Task CreatePointShopItemAsync_WhenCalledWithValidRequest_CreatesItem()
+        {
+            _context.PointShopItems.RemoveRange(_context.PointShopItems);
+            await _context.SaveChangesAsync();
+
+            var request = new CreatePointShopItemRequest
+            {
+                Name = "ex1",
+                Description = "ex1",
+                ImagePath = "ex1.png",
+                PointPrice = 300,
+                ItemType = "ex1"
+            };
+
+            var response = await _repository.CreatePointShopItemAsync(request);
+            var created = await _context.PointShopItems.FindAsync(response.PointShopItemId);
+
+            Assert.NotNull(created);
+            Assert.Equal("ex1", created.Name);
         }
 
         [Fact]

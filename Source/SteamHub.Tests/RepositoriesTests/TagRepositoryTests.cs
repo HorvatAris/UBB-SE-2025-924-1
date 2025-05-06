@@ -94,33 +94,6 @@ namespace SteamHub.Tests.RepositoriesTests
         }
 
         [Fact]
-        public async Task CreateTagAsync_WhenCalledWithNewName_SetsCorrectTagName()
-        {
-            var request = new CreateTagRequest
-            {
-                TagName = "RPG"
-            };
-
-            var response = await _repository.CreateTagAsync(request);
-            var created = await _context.Tags.FindAsync(response.TagId);
-
-            Assert.Equal("RPG", created.TagName);
-        }
-
-
-
-        [Fact]
-        public async Task CreateTagAsync_WhenCalledWithExistingName_ThrowsException()
-        {
-            var request = new CreateTagRequest
-            {
-                TagName = "Action"
-            };
-
-            await Assert.ThrowsAsync<ArgumentException>(() => _repository.CreateTagAsync(request));
-        }
-
-        [Fact]
         public async Task UpdateTagAsync_WhenCalledWithExistingId_UpdatesTag()
         {
             var request = new UpdateTagRequest
@@ -143,6 +116,34 @@ namespace SteamHub.Tests.RepositoriesTests
             };
 
             await Assert.ThrowsAsync<ArgumentException>(() => _repository.UpdateTagAsync(999, request));
+        }
+
+        [Fact]
+        public async Task CreateTagAsync_WhenCalledWithNewName_SetsCorrectTagName()
+        {
+            _context.Tags.RemoveRange(_context.Tags);
+            await _context.SaveChangesAsync();
+
+            var request = new CreateTagRequest
+            {
+                TagName = "RPG"
+            };
+
+            var response = await _repository.CreateTagAsync(request);
+            var created = await _context.Tags.FindAsync(response.TagId);
+
+            Assert.Equal("RPG", created.TagName);
+        }
+
+        [Fact]
+        public async Task CreateTagAsync_WhenCalledWithExistingName_ThrowsException()
+        {
+            var request = new CreateTagRequest
+            {
+                TagName = "Action"
+            };
+
+            await Assert.ThrowsAsync<ArgumentException>(() => _repository.CreateTagAsync(request));
         }
 
         [Fact]
