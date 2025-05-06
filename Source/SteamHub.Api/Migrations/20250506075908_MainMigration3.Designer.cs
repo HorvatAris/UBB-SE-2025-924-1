@@ -12,8 +12,8 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250505170752_MainMigration")]
-    partial class MainMigration
+    [Migration("20250506075908_MainMigration3")]
+    partial class MainMigration3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -309,7 +309,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 24.99m,
                             PublisherUserId = 1,
-                            Rating = 0m,
+                            Rating = 4.2m,
                             RecommendedRequirements = "8GB RAM, 3.0GHz Processor, GTX 680",
                             RejectMessage = "Minimum requirements are too high",
                             StatusId = 2,
@@ -327,7 +327,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 19.99m,
                             PublisherUserId = 1,
-                            Rating = 0m,
+                            Rating = 4.8m,
                             RecommendedRequirements = "16GB RAM, i5-6500, GTX 1060",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=JGhIXLO3ul8"
@@ -344,7 +344,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 20.99m,
                             PublisherUserId = 1,
-                            Rating = 0m,
+                            Rating = 4.9m,
                             RecommendedRequirements = "16GB RAM, i7-7700K, GTX 1060",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=c80dVYcL69E"
@@ -361,7 +361,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 9.99m,
                             PublisherUserId = 1,
-                            Rating = 0m,
+                            Rating = 4.1m,
                             RecommendedRequirements = "1GB RAM, 3.0GHz Processor, DirectX 9 GPU",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=UKA7JkV51Jw"
@@ -378,7 +378,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 59.99m,
                             PublisherUserId = 1,
-                            Rating = 0m,
+                            Rating = 5.0m,
                             RecommendedRequirements = "N/A",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=TnGl01FkMMo"
@@ -395,7 +395,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 59.99m,
                             PublisherUserId = 1,
-                            Rating = 0m,
+                            Rating = 4.5m,
                             RecommendedRequirements = "N/A",
                             StatusId = 1,
                             TrailerPath = "https://www.youtube.com/watch?v=_X2h3SF7gd4"
@@ -412,7 +412,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 14.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 3.9m,
                             RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs"
@@ -429,7 +429,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 9.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.2m,
                             RecommendedRequirements = "4GB RAM, 3.0GHz Processor, GTX 760",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=tax4e4hBBZc"
@@ -446,7 +446,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 24.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.8m,
                             RecommendedRequirements = "8GB RAM, i7-6700, GTX 970",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=d9u6KYVq5kw"
@@ -463,7 +463,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 24.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.0m,
                             RecommendedRequirements = "8GB RAM, Dual Core 3.0GHz, GTX 760",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=91sW0DMkZzI"
@@ -480,7 +480,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 19.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.0m,
                             RecommendedRequirements = "4GB RAM, 3.0GHz Processor",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=75qT5KOs-Ew"
@@ -497,7 +497,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 19.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 3.8m,
                             RecommendedRequirements = "4GB RAM, 2.4GHz Processor",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=iofYDsP2vhQ"
@@ -514,7 +514,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 14.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.1m,
                             RecommendedRequirements = "8GB RAM, 3.2GHz Processor",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=UAO2urG23S4"
@@ -531,7 +531,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 14.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.1m,
                             RecommendedRequirements = "4GB RAM, 3.0GHz Processor",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=ot7uXNQskhs"
@@ -565,7 +565,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 9.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 3.6m,
                             RecommendedRequirements = "2.0GHz Processor, 2GB RAM",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=ochPlhMFk84"
@@ -582,7 +582,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 19.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.8m,
                             RecommendedRequirements = "4GB RAM, i3-3240",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=NN-9SQXoi50"
@@ -599,7 +599,7 @@ namespace SteamHub.Api.Migrations
                             NumberOfRecentPurchases = 0,
                             Price = 9.99m,
                             PublisherUserId = 2,
-                            Rating = 0m,
+                            Rating = 4.6m,
                             RecommendedRequirements = "2GB RAM, 2.0GHz Processor",
                             StatusId = 0,
                             TrailerPath = "https://www.youtube.com/watch?v=Y4HSyVXKYz8"
@@ -792,7 +792,7 @@ namespace SteamHub.Api.Migrations
                             ItemId = 9,
                             CorrespondingGameId = 15,
                             Description = "Miniature version of the famous mining tool.",
-                            ImagePath = "https://cdn.example.com/minecraft/diamond-pickaxe.jphttps://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Diamond_Pickaxe_JE1_BE1.png/revision/latest?cb=20190518122739g",
+                            ImagePath = "https://static.posters.cz/image/1300/merch/replica-minecraft-diamond-pickaxe-i94007.jpg",
                             IsListed = false,
                             ItemName = "Diamond Pickaxe",
                             Price = 9.99f
@@ -1312,7 +1312,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 1,
                             Email = "gabe.newell@valvestudio.com",
-                            PointsBalance = 100f,
+                            PointsBalance = 6000f,
                             RoleId = 1,
                             UserName = "GabeN",
                             WalletBalance = 500f
@@ -1321,7 +1321,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 2,
                             Email = "mathias.new@cdprojektred.com",
-                            PointsBalance = 85f,
+                            PointsBalance = 5000f,
                             RoleId = 1,
                             UserName = "MattN",
                             WalletBalance = 420f
@@ -1330,7 +1330,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 3,
                             Email = "john.chen@thatgamecompany.com",
-                            PointsBalance = 92f,
+                            PointsBalance = 5000f,
                             RoleId = 1,
                             UserName = "JohnC",
                             WalletBalance = 390f
@@ -1339,7 +1339,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 4,
                             Email = "alice.johnson@example.com",
-                            PointsBalance = 45f,
+                            PointsBalance = 6000f,
                             RoleId = 0,
                             UserName = "AliceJ",
                             WalletBalance = 78f
@@ -1348,7 +1348,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 5,
                             Email = "liam.garcia@example.com",
-                            PointsBalance = 67f,
+                            PointsBalance = 7000f,
                             RoleId = 0,
                             UserName = "LiamG",
                             WalletBalance = 55f
@@ -1357,7 +1357,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 6,
                             Email = "sophie.williams@example.com",
-                            PointsBalance = 120f,
+                            PointsBalance = 6000f,
                             RoleId = 0,
                             UserName = "SophieW",
                             WalletBalance = 95f
@@ -1366,7 +1366,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 7,
                             Email = "noah.smith@example.com",
-                            PointsBalance = 38f,
+                            PointsBalance = 4000f,
                             RoleId = 0,
                             UserName = "NoahS",
                             WalletBalance = 33f
@@ -1375,7 +1375,7 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 8,
                             Email = "emily.brown@example.com",
-                            PointsBalance = 84f,
+                            PointsBalance = 5000f,
                             RoleId = 0,
                             UserName = "EmilyB",
                             WalletBalance = 110f
@@ -1419,14 +1419,6 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             UserId = 4,
-                            ItemId = 6,
-                            GameId = 5,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 4,
                             ItemId = 9,
                             GameId = 15,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1437,6 +1429,14 @@ namespace SteamHub.Api.Migrations
                             UserId = 5,
                             ItemId = 7,
                             GameId = 6,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            ItemId = 6,
+                            GameId = 5,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         },
@@ -1598,6 +1598,14 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 4,
                             GameId = 15,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            GameId = 5,
                             IsInCart = false,
                             IsInWishlist = false,
                             IsPurchased = true

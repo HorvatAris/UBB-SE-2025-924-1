@@ -31,17 +31,6 @@ public class GamePageViewModel : INotifyPropertyChanged
     private ObservableCollection<string> gameTags;
     private ObservableCollection<string> mediaLinks;
 
-    // TODO: Implement Reviews feature later when Review model is available
-    // private ObservableCollection<Review> userReviews = new();
-    // public ObservableCollection<Review> UserReviews
-    // {
-    //     get => this.userReviews;
-    //     private set
-    //     {
-    //         this.userReviews = value;
-    //         this.OnPropertyChanged();
-    //     }
-    // }
     public GamePageViewModel(IGameService gameService, ICartService cartService, IUserGameService userGameService)
     {
         this.cartService = cartService;
@@ -66,7 +55,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
     public string ImagePath => this.Game?.ImagePath ?? string.Empty;
 
-    public double Rating => Convert.ToDouble(this.Game?.Rating ?? 0);
+    public double Rating => Convert.ToDouble(this.Game?.Rating ?? 5);
 
     public string OwnedStatus => this.IsOwned ? "Owned" : "Not Owned";
 
@@ -80,8 +69,6 @@ public class GamePageViewModel : INotifyPropertyChanged
             this.UpdateIsOwnedStatusAsync();
             this.UpdateGameTagsAsync();
             this.UpdateMediaLinks();
-
-            // TODO: LoadReviews(); // Uncomment when Review model is ready
         }
     }
 
@@ -135,6 +122,7 @@ public class GamePageViewModel : INotifyPropertyChanged
     {
         this.Game = game;
         this.OnPropertyChanged(nameof(this.Game));
+        this.OnPropertyChanged(nameof(this.Rating));
         await this.LoadSimilarGamesAsync();
     }
 
@@ -272,14 +260,4 @@ public class GamePageViewModel : INotifyPropertyChanged
         var similarGames = await this.gameService.GetSimilarGamesAsync(this.Game.GameId);
         this.SimilarGames = new ObservableCollection<Game>(similarGames.Take(MaxSimilarGamesToDisplay));
     }
-
-    // TODO: Implement Reviews when Review model is available
-    // private void LoadReviews()
-    // {
-    //     if (this.Game == null)
-    //         return;
-    //
-    //     var reviews = this.reviewService.GetReviewsForGame(this.Game.GameId);
-    //     this.UserReviews = new ObservableCollection<Review>(reviews);
-    // }
 }

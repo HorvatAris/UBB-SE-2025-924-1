@@ -50,7 +50,7 @@ namespace SteamStore
                 {
                     UserId = 3,
                     Email = "john.chen@thatgamecompany.com",
-                    PointsBalance = 92,
+                    PointsBalance = 5000,
                     UserName = "JohnC",
                     UserRole = User.Role.Developer,
                     WalletBalance = 390,
@@ -60,7 +60,7 @@ namespace SteamStore
                 {
                     UserId = 4,
                     Email = "alice.johnson@example.com",
-                    PointsBalance = 45,
+                    PointsBalance = 6000,
                     UserName = "AliceJ",
                     UserRole = User.Role.User,
                     WalletBalance = 78,
@@ -70,7 +70,7 @@ namespace SteamStore
                 {
                     UserId = 5,
                     Email = "liam.garcia@example.com",
-                    PointsBalance = 67,
+                    PointsBalance = 7000,
                     UserName = "LiamG",
                     UserRole = User.Role.User,
                     WalletBalance = 55,
@@ -80,7 +80,7 @@ namespace SteamStore
                 {
                     UserId = 7,
                     Email = "noah.smith@example.com",
-                    PointsBalance = 38,
+                    PointsBalance = 4000,
                     UserName = "NoahS",
                     UserRole = User.Role.User,
                     WalletBalance = 33,

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SteamHub.Api.Context;
 
@@ -11,9 +12,11 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250506075040_MainMigration")]
+    partial class MainMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -789,7 +792,7 @@ namespace SteamHub.Api.Migrations
                             ItemId = 9,
                             CorrespondingGameId = 15,
                             Description = "Miniature version of the famous mining tool.",
-                            ImagePath = "https://static.posters.cz/image/1300/merch/replica-minecraft-diamond-pickaxe-i94007.jpg",
+                            ImagePath = "https://cdn.example.com/minecraft/diamond-pickaxe.jphttps://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Diamond_Pickaxe_JE1_BE1.png/revision/latest?cb=20190518122739g",
                             IsListed = false,
                             ItemName = "Diamond Pickaxe",
                             Price = 9.99f
@@ -1595,14 +1598,6 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 4,
                             GameId = 15,
-                            IsInCart = false,
-                            IsInWishlist = false,
-                            IsPurchased = true
-                        },
-                        new
-                        {
-                            UserId = 5,
-                            GameId = 5,
                             IsInCart = false,
                             IsInWishlist = false,
                             IsPurchased = true

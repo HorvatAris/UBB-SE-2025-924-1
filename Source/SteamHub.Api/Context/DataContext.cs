@@ -85,7 +85,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 1,
                     Email = "gabe.newell@valvestudio.com",
-                    PointsBalance = 100,
+                    PointsBalance = 6000,
                     UserName = "GabeN",
                     RoleId = RoleEnum.Developer,
                     WalletBalance = 500
@@ -94,7 +94,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 2,
                     Email = "mathias.new@cdprojektred.com",
-                    PointsBalance = 85,
+                    PointsBalance = 5000,
                     UserName = "MattN",
                     RoleId = RoleEnum.Developer,
                     WalletBalance = 420
@@ -103,7 +103,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 3,
                     Email = "john.chen@thatgamecompany.com",
-                    PointsBalance = 92,
+                    PointsBalance = 5000,
                     UserName = "JohnC",
                     RoleId = RoleEnum.Developer,
                     WalletBalance = 390
@@ -112,7 +112,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 4,
                     Email = "alice.johnson@example.com",
-                    PointsBalance = 45,
+                    PointsBalance = 6000,
                     UserName = "AliceJ",
                     RoleId = RoleEnum.User,
                     WalletBalance = 78
@@ -121,7 +121,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 5,
                     Email = "liam.garcia@example.com",
-                    PointsBalance = 67,
+                    PointsBalance = 7000,
                     UserName = "LiamG",
                     RoleId = RoleEnum.User,
                     WalletBalance = 55
@@ -130,7 +130,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 6,
                     Email = "sophie.williams@example.com",
-                    PointsBalance = 120,
+                    PointsBalance = 6000,
                     UserName = "SophieW",
                     RoleId = RoleEnum.User,
                     WalletBalance = 95
@@ -139,7 +139,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 7,
                     Email = "noah.smith@example.com",
-                    PointsBalance = 38,
+                    PointsBalance = 4000,
                     UserName = "NoahS",
                     RoleId = RoleEnum.User,
                     WalletBalance = 33
@@ -148,7 +148,7 @@ namespace SteamHub.Api.Context
                 {
                     UserId = 8,
                     Email = "emily.brown@example.com",
-                    PointsBalance = 84,
+                    PointsBalance = 5000,
                     UserName = "EmilyB",
                     RoleId = RoleEnum.User,
                     WalletBalance = 110
@@ -182,7 +182,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "8GB RAM, 3.0GHz Processor, GTX 680",
                     StatusId = GameStatusEnum.Rejected,
                     RejectMessage = "Minimum requirements are too high",
-                    Rating = 0m,
+                    Rating = 4.2m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=pJ-aR--gScM",
                     GameplayPath = "https://www.youtube.com/watch?v=Cwk3qmD28CE",
@@ -200,7 +200,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "16GB RAM, i5-6500, GTX 1060",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.8m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=JGhIXLO3ul8",
                     GameplayPath = "https://www.youtube.com/watch?v=3wUHKO0ieyY",
@@ -218,7 +218,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "16GB RAM, i7-7700K, GTX 1060",
                     StatusId = GameStatusEnum.Approved,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.9m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=c80dVYcL69E",
                     GameplayPath = "https://www.youtube.com/watch?v=P22HqM9w500",
@@ -236,7 +236,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "1GB RAM, 3.0GHz Processor, DirectX 9 GPU",
                     StatusId = GameStatusEnum.Approved,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.1m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=UKA7JkV51Jw",
                     GameplayPath = "https://www.youtube.com/watch?v=jElU1mD8JnI",
@@ -254,7 +254,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "N/A",
                     StatusId = GameStatusEnum.Approved,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 5.0m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=TnGl01FkMMo",
                     GameplayPath = "https://www.youtube.com/watch?v=rLl9XBg7wSs",
@@ -272,7 +272,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "N/A",
                     StatusId = GameStatusEnum.Approved,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.5m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=_X2h3SF7gd4",
                     GameplayPath = "https://www.youtube.com/watch?v=wW7jkBJ_yK0",
@@ -290,7 +290,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "4GB RAM, 2.0GHz Processor",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 3.9m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=z3_yA4HTJfs",
                     GameplayPath = "https://www.youtube.com/watch?v=dAiX8s-Eu7w",
@@ -308,7 +308,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "4GB RAM, 3.0GHz Processor, GTX 760",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.2m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=tax4e4hBBZc",
                     GameplayPath = "https://www.youtube.com/watch?v=ts-j0nFf2e0",
@@ -326,7 +326,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "8GB RAM, i7-6700, GTX 970",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.8m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=d9u6KYVq5kw",
                     GameplayPath = "https://www.youtube.com/watch?v=huL_TawYrMs",
@@ -344,7 +344,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "8GB RAM, Dual Core 3.0GHz, GTX 760",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.0m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=91sW0DMkZzI",
                     GameplayPath = "https://www.youtube.com/watch?v=4fVO0qUBe4E",
@@ -362,7 +362,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "4GB RAM, 3.0GHz Processor",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.0m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=75qT5KOs-Ew",
                     GameplayPath = "https://www.youtube.com/watch?v=JO3EIPtw-4I",
@@ -380,7 +380,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "4GB RAM, 2.4GHz Processor",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 3.8m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=iofYDsP2vhQ",
                     GameplayPath = "https://www.youtube.com/watch?v=FfRjHZWSYqY",
@@ -398,7 +398,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "8GB RAM, 3.2GHz Processor",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.1m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=UAO2urG23S4",
                     GameplayPath = "https://www.youtube.com/watch?v=UAO2urG23S4",
@@ -416,7 +416,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "4GB RAM, 3.0GHz Processor",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.1m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=ot7uXNQskhs",
                     GameplayPath = "https://www.youtube.com/watch?v=ot7uXNQskhs",
@@ -452,7 +452,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "2.0GHz Processor, 2GB RAM",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 3.6m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=ochPlhMFk84",
                     GameplayPath = "https://www.youtube.com/watch?v=htXgxyLpPMg",
@@ -470,7 +470,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "4GB RAM, i3-3240",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.8m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=NN-9SQXoi50",
                     GameplayPath = "https://www.youtube.com/watch?v=DNIMD8ZpMSQ",
@@ -488,7 +488,7 @@ namespace SteamHub.Api.Context
                     RecommendedRequirements = "2GB RAM, 2.0GHz Processor",
                     StatusId = GameStatusEnum.Pending,
                     RejectMessage = null,
-                    Rating = 0m,
+                    Rating = 4.6m,
                     NumberOfRecentPurchases = 0,
                     TrailerPath = "https://www.youtube.com/watch?v=Y4HSyVXKYz8",
                     GameplayPath = "https://www.youtube.com/watch?v=dYeuLZY7fZk",
@@ -724,7 +724,7 @@ namespace SteamHub.Api.Context
                     Price = 9.99f,
                     Description = "Miniature version of the famous mining tool.",
                     IsListed = false,
-                    ImagePath = "https://cdn.example.com/minecraft/diamond-pickaxe.jphttps://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Diamond_Pickaxe_JE1_BE1.png/revision/latest?cb=20190518122739g"
+                    ImagePath = "https://static.posters.cz/image/1300/merch/replica-minecraft-diamond-pickaxe-i94007.jpg"
                 },
                 new Item
                 {
@@ -975,6 +975,14 @@ namespace SteamHub.Api.Context
                 new UsersGames
                 {
                     UserId = 5,
+                    GameId = 5,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
+                    UserId = 5,
                     GameId = 6,
                     IsInWishlist = false,
                     IsPurchased = false,
@@ -1126,14 +1134,6 @@ namespace SteamHub.Api.Context
                 new UserInventory
                 {
                     UserId = 4,
-                    ItemId = 6,
-                    GameId = 5,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
-                    IsActive = false,
-                },
-                new UserInventory
-                {
-                    UserId = 4,
                     ItemId = 9,
                     GameId = 15,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
@@ -1144,6 +1144,14 @@ namespace SteamHub.Api.Context
                     UserId = 5,
                     ItemId = 7,
                     GameId = 6,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
+                },
+                new UserInventory
+                {
+                    UserId = 5,
+                    ItemId = 6,
+                    GameId = 5,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
                     IsActive = false,
                 },
