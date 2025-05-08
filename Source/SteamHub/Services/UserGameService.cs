@@ -15,6 +15,7 @@ using SteamHub.ApiContract.Models.UsersGames;
 using SteamHub.Constants;
 using SteamHub.Models;
 using SteamHub.Services.Interfaces;
+using SteamHub.ApiContract.Repositories;
 
 public class UserGameService : IUserGameService
 {
@@ -35,22 +36,22 @@ public class UserGameService : IUserGameService
 
     private User user;
 
-    public UserGameService(IUserGameServiceProxy userGameServiceProxy, IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, User user)
+    public UserGameService(IUsersGamesRepository userGameRepository, IGameRepository gameRepository, ITagRepository tagRepository, User user)
     {
-        this.UserGameServiceProxy = userGameServiceProxy;
-        this.GameServiceProxy = gameServiceProxy;
-        this.TagServiceProxy = tagServiceProxy;
+        this.UserGameRepository = userGameRepository;
+        this.GameRepository = gameRepository;
+        this.TagRepository = tagRepository;
         this.user = user;
     }
 
     // Property to track points earned in the last purchase
     public int LastEarnedPoints { get; private set; }
 
-    private IUserGameServiceProxy UserGameServiceProxy { get; set; }
+    private IUsersGamesRepository UserGameRepository { get; set; }
 
-    private IGameServiceProxy GameServiceProxy { get; set; }
+    private IGameRepository GameRepository { get; set; }
 
-    private ITagServiceProxy TagServiceProxy { get; set; }
+    private ITagRepository TagRepository { get; set; }
 
     public async Task RemoveGameFromWishlistAsync(Game game)
     {
@@ -59,7 +60,7 @@ public class UserGameService : IUserGameService
             UserId = this.user.UserId,
             GameId = game.GameId,
         };
-        await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
+        await this.UserGameRepository.RemoveFromWishlistAsync(request);
     }
 
     public async Task AddGameToWishlistAsync(Game game)
@@ -78,7 +79,7 @@ public class UserGameService : IUserGameService
                 GameId = game.GameId,
             };
 
-            await this.UserGameServiceProxy.AddToWishlistAsync(request);
+            await this.UserGameRepository.AddToWishlistAsync(request);
         }
         catch (Exception exception)
         {
@@ -97,7 +98,7 @@ public class UserGameService : IUserGameService
     {
         try
         {
-            var response = await this.UserGameServiceProxy.GetUserGamesAsync(this.user.UserId);
+            var response = await this.UserGameRepository.GetUserGamesAsync(this.user.UserId);
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -112,7 +113,7 @@ public class UserGameService : IUserGameService
             foreach (var gameId in gameIds)
             {
                 System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
-                var game = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
+                var game = GameMapper.MapToGame(await this.GameRepository.GetGameByIdAsync(gameId));
                 games.Add(game);
             }
 
@@ -141,7 +142,7 @@ public class UserGameService : IUserGameService
                 UserId = this.user.UserId,
                 GameId = game.GameId,
             };
-            await this.UserGameServiceProxy.PurchaseGameAsync(request);
+            await this.UserGameRepository.PurchaseGameAsync(request);
 
             // await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
         }
@@ -184,7 +185,7 @@ public class UserGameService : IUserGameService
 
     public async Task<Collection<Tag>> GetFavoriteUserTagsAsync()
     {
-        var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+        var tagsResponse = await this.TagRepository.GetAllTagsAsync();
         var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
         await this.ComputeNoOfUserGamesForEachTagAsync(allTags);
 
@@ -241,7 +242,7 @@ public class UserGameService : IUserGameService
 
     public async Task<Collection<Game>> GetRecommendedGamesAsync()
     {
-        var games = await this.GameServiceProxy.GetGamesAsync(
+        var games = await this.GameRepository.GetGamesAsync(
             new GetGamesRequest());
         var allGames = new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
         var approvedGames = new Collection<Game>();
@@ -290,7 +291,7 @@ public class UserGameService : IUserGameService
     {
         try
         {
-            var response = await this.UserGameServiceProxy.GetUserWishlistAsync(this.user.UserId);
+            var response = await this.UserGameRepository.GetUserWishlistAsync(this.user.UserId);
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -305,7 +306,7 @@ public class UserGameService : IUserGameService
             foreach (var gameId in gameIds)
             {
                 System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
-                var game = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
+                var game = GameMapper.MapToGame(await this.GameRepository.GetGameByIdAsync(gameId));
                 games.Add(game);
             }
 
@@ -382,7 +383,7 @@ public class UserGameService : IUserGameService
     {
         try
         {
-            var response = await this.UserGameServiceProxy.GetUserPurchasedGamesAsync(this.user.UserId);
+            var response = await this.UserGameRepository.GetUserPurchasedGamesAsync(this.user.UserId);
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -397,7 +398,7 @@ public class UserGameService : IUserGameService
             foreach (var gameId in gameIds)
             {
                 System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
-                var game = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
+                var game = GameMapper.MapToGame(await this.GameRepository.GetGameByIdAsync(gameId));
                 games.Add(game);
             }
 

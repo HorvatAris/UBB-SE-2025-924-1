@@ -14,18 +14,19 @@ using SteamHub.Services;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.ApiContract.Models.UsersGames;
 using SteamHub.Services.Interfaces;
+using SteamHub.ApiContract.Repositories;
 
 public class CartService : ICartService
 {
     private const int InitialZeroSum = 0;
-    private IUserGameServiceProxy userGameServiceProxy;
+    private IUsersGamesRepository userGameRepository;
     private User user;
-    private IGameServiceProxy gameServiceProxy;
+    private IGameRepository gameRepository;
 
-    public CartService(IUserGameServiceProxy userGameServiceProxy, User user, IGameServiceProxy gameServiceProxy)
+    public CartService(IUsersGamesRepository userGameRepository, User user, IGameRepository gameRepository)
     {
-        this.userGameServiceProxy = userGameServiceProxy;
-        this.gameServiceProxy = gameServiceProxy;
+        this.userGameRepository = userGameRepository;
+        this.gameRepository = gameRepository;
 
         this.user = user;
     }
@@ -34,7 +35,7 @@ public class CartService : ICartService
     {
         try
         {
-            var response = await this.userGameServiceProxy.GetUserCartAsync(this.user.UserId);
+            var response = await this.userGameRepository.GetUserCartAsync(this.user.UserId);
             var userGamesResponses = response.UserGames; // Access the actual list her
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -49,7 +50,7 @@ public class CartService : ICartService
             foreach (var gameId in gameIds)
             {
                 System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
-                var game = GameMapper.MapToGame(await this.gameServiceProxy.GetGameByIdAsync(gameId));
+                var game = GameMapper.MapToGame(await this.gameRepository.GetGameByIdAsync(gameId));
                 games.Add(game);
             }
 
@@ -64,30 +65,14 @@ public class CartService : ICartService
 
     public async Task<List<Game>> GetAllPurchasedGamesAsync()
     {
-        // try
-        // {
-        //    var response = await this.userGameServiceProxy.GetUserGamesAsync(this.user.UserId);
-        //    var userGamesResponses = response.UserGames; // Access the actual list here
-        //    var gameIds = userGamesResponses
-        // .Where(currentGame => currentGame.IsPurchased)
-        // .Select(currentGame => currentGame.GameId)
-        // .ToList();
-        //    return gameIds;
-        //    //System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses}");
-        // }
-        // catch (Exception ex)
-        // {
-        //    System.Diagnostics.Debug.WriteLine($"Error fetching purchased games: {ex.Message}");
-        //    return new List<int>();
-        // }
         var purchasedGames = new List<Game>();
         try
         {
-            var response = await this.userGameServiceProxy.GetUserPurchasedGamesAsync(this.user.UserId);
+            var response = await this.userGameRepository.GetUserPurchasedGamesAsync(this.user.UserId);
             var userGamesResponses = response.UserGames; // Access the actual list here
             foreach (var userGame in userGamesResponses)
             {
-                var actualGame = await this.gameServiceProxy.GetGameByIdAsync(userGame.GameId);
+                var actualGame = await this.gameRepository.GetGameByIdAsync(userGame.GameId);
                 var game = GameMapper.MapToGame(actualGame);
                 purchasedGames.Add(game);
             }
@@ -105,7 +90,7 @@ public class CartService : ICartService
     {
         try
         {
-            var response = await this.userGameServiceProxy.GetUserCartAsync(this.user.UserId);
+            var response = await this.userGameRepository.GetUserCartAsync(this.user.UserId);
             var userGamesResponses = response.UserGames; // Access the actual list here
             var gameIds = userGamesResponses
         .Where(currentGame => currentGame.IsInCart)
@@ -120,10 +105,6 @@ public class CartService : ICartService
         }
     }
 
-    // public void RemoveGameFromCart(Game game)
-    // {
-    //    this.cartRepository.RemoveGameFromCart(game);
-    // }
     public async Task RemoveGameFromCartAsync(Game game)
     {
         try
@@ -134,7 +115,7 @@ public class CartService : ICartService
                 GameId = game.GameId,
             };
 
-            await this.userGameServiceProxy.RemoveFromCartAsync(request);
+            await this.userGameRepository.RemoveFromCartAsync(request);
         }
         catch (Exception exception)
         {
@@ -142,31 +123,6 @@ public class CartService : ICartService
         }
     }
 
-    // public void AddGameToCart(Game game)
-    // {
-    //    this.cartRepository.AddGameToCart(game);
-    // }
-    // public async Task AddGameToCart(Game game)
-    // {
-    //    try
-    //    {
-    //        // Create the UserGameRequest object with userId and gameId
-    //        System.Diagnostics.Debug.WriteLine($"UserId: {this.user.UserId}, GameId: {game.GameId}");
-
-    // var request = new UserGameRequest
-    //        {
-    //            UserId = this.user.UserId, // Get the userId from the current user object
-    //            GameId = game.GameId, // GameId is the identifier for the game to be added
-    //        };
-
-    //// Call the proxy method to add the game to the cart
-    //        await this.cartServiceProxy.AddToCartAsync(request);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        System.Diagnostics.Debug.WriteLine($"Error adding game to cart: {ex.Message}");
-    //    }
-    // }
     public async Task AddGameToCartAsync(Game game)
     {
         var purchasedGames = await this.GetAllPurchasedGamesAsync();
@@ -189,27 +145,13 @@ public class CartService : ICartService
             }
         }
 
-        // var userGames = games.UserGames; // Access the actual list here
-        // foreach (var userGame in userGames)
-        // {
-        //    System.Diagnostics.Debug.WriteLine($" GameId: {userGame.GameId}, IsInCart: {userGame.IsInCart}, IsPurchased: {userGame.IsPurchased}");
-        //    if (userGame.IsInCart)
-        //    {
-        //        System.Diagnostics.Debug.WriteLine("Exception thrown!");
-        //        throw new Exception("The game is already in the cart.");
-        //    }
-        //    if (userGame.IsPurchased)
-        //    {
-        //        throw new Exception("The game is already purchased.");
-        //    }
-        // }
         var request = new UserGameRequest
         {
             UserId = this.user.UserId,
             GameId = game.GameId,
         };
 
-        await this.userGameServiceProxy.AddToCartAsync(request);
+        await this.userGameRepository.AddToCartAsync(request);
     }
 
     public async Task RemoveGamesFromCartAsync(List<Game> games)
@@ -222,7 +164,6 @@ public class CartService : ICartService
 
     public float GetUserFunds()
     {
-        // return this.cartRepository.GetUserFunds();
         return this.user.WalletBalance;
     }
 

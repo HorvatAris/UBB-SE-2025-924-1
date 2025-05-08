@@ -37,9 +37,9 @@
         private readonly string testItemImagePath3 = "img3";
 
         private readonly InventoryService inventoryService;
-        private readonly Mock<IUserInventoryServiceProxy> userInventoryServiceProxyMock;
-        private readonly Mock<IItemServiceProxy> itemServiceProxyMock;
-        private readonly Mock<IGameServiceProxy> gameServiceProxyMock;
+        private readonly Mock<IUserInventoryRepositoryProxy> userInventoryServiceProxyMock;
+        private readonly Mock<IItemRepositoryProxy> itemServiceProxyMock;
+        private readonly Mock<IGameRepositoryProxy> gameServiceProxyMock;
 
         private readonly InventoryValidator inventoryValidator;
 
@@ -47,9 +47,9 @@
 
         public InventoryServiceTests()
         {
-            userInventoryServiceProxyMock = new Mock<IUserInventoryServiceProxy>();
-            itemServiceProxyMock = new Mock<IItemServiceProxy>();
-            gameServiceProxyMock = new Mock<IGameServiceProxy>();
+            userInventoryServiceProxyMock = new Mock<IUserInventoryRepositoryProxy>();
+            itemServiceProxyMock = new Mock<IItemRepositoryProxy>();
+            gameServiceProxyMock = new Mock<IGameRepositoryProxy>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
             inventoryService = new InventoryService(userInventoryServiceProxyMock.Object, itemServiceProxyMock.Object, gameServiceProxyMock.Object, testUser);
             inventoryValidator = new InventoryValidator();

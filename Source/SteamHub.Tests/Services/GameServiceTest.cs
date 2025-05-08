@@ -23,14 +23,14 @@
 		private const string TEST_GAME_2 = "TEST Game 2";
 		private const string TEST_GAME_3 = "Game 2";
 		private readonly GameService subject;
-		private readonly Mock<IGameServiceProxy> gameProxyMock;
-		private readonly Mock<ITagServiceProxy> tagProxyMock;
+		private readonly Mock<IGameRepositoryProxy> gameProxyMock;
+		private readonly Mock<ITagRepositoryProxy> tagProxyMock;
 
 		public GameServiceTest()
 		{
-			gameProxyMock = new Mock<IGameServiceProxy>();
-			tagProxyMock = new Mock<ITagServiceProxy>();
-			subject = new GameService { GameServiceProxy = gameProxyMock.Object, TagServiceProxy = tagProxyMock.Object };
+			gameProxyMock = new Mock<IGameRepositoryProxy>();
+			tagProxyMock = new Mock<ITagRepositoryProxy>();
+			subject = new GameService { GameRepository = gameProxyMock.Object, TagRepository = tagProxyMock.Object };
 		}
 
 		[Fact]

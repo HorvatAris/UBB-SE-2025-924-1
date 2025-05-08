@@ -16,6 +16,7 @@ using SteamHub.Constants;
 using SteamHub.Models;
 using SteamHub.Services.Interfaces;
 using static SteamHub.Constants.NotificationStrings;
+using SteamHub.ApiContract.Repositories;
 
 public class DeveloperService : IDeveloperService
 {
@@ -25,35 +26,34 @@ public class DeveloperService : IDeveloperService
     private const int EmptyListLength = 0;
     private const string PendingState = "Pending";
 
-    public DeveloperService(IGameServiceProxy gameServiceProxy, ITagServiceProxy tagServiceProxy, IUserGameServiceProxy userGameServiceProxy, IUserServiceProxy userServiceProxy, IItemServiceProxy itemServiceProxy, IItemTradeDetailServiceProxy itemTradeDetailServiceProxy, User user)
+    public DeveloperService(IGameRepository gameRepository, ITagRepository tagRepository, IUsersGamesRepository userGameRepository, IUserRepository userRepository, IItemRepository itemRepository, IItemTradeDetailRepository itemTradeDetailRepository, User user)
     {
-        this.GameServiceProxy = gameServiceProxy;
-        this.TagServiceProxy = tagServiceProxy;
-        this.UserGameServiceProxy = userGameServiceProxy;
-        this.UserServiceProxy = userServiceProxy;
-        this.ItemServiceProxy = itemServiceProxy;
-        this.ItemTradeDetailServiceProxy = itemTradeDetailServiceProxy;
+        this.GameRepository = gameRepository;
+        this.TagRepository = tagRepository;
+        this.UserGameRepository = userGameRepository;
+        this.UserRepository = userRepository;
+        this.ItemRepository = itemRepository;
+        this.ItemTradeDetailRepository = itemTradeDetailRepository;
         this.User = user;
     }
 
-    public IGameServiceProxy GameServiceProxy { get; set; }
+    public IGameRepository GameRepository { get; set; }
 
-    // public ITagRepository TagRepository { get; set; }
-    public ITagServiceProxy TagServiceProxy { get; set; }
+    public ITagRepository TagRepository { get; set; }
 
-    public IUserGameServiceProxy UserGameServiceProxy { get; set; }
+    public IUsersGamesRepository UserGameRepository { get; set; }
 
-    public IUserServiceProxy UserServiceProxy { get; set; }
+    public IUserRepository UserRepository { get; set; }
 
-    public IItemServiceProxy ItemServiceProxy { get; set; }
+    public IItemRepository ItemRepository { get; set; }
 
-    public IItemTradeDetailServiceProxy ItemTradeDetailServiceProxy { get; set; }
+    public IItemTradeDetailRepository ItemTradeDetailRepository { get; set; }
 
     public User User { get; set; }
 
     public async Task ValidateGameAsync(int game_id)
     {
-        await this.GameServiceProxy.UpdateGameAsync(
+        await this.GameRepository.UpdateGameAsync(
             game_id,
             new UpdateGameRequest
             {
@@ -139,7 +139,7 @@ public class DeveloperService : IDeveloperService
     {
         game.PublisherIdentifier = this.User.UserId;
 
-        await this.GameServiceProxy.CreateGameAsync(
+        await this.GameRepository.CreateGameAsync(
             new CreateGameRequest
             {
                 Description = game.GameDescription,
@@ -182,7 +182,7 @@ public class DeveloperService : IDeveloperService
     {
         game.PublisherIdentifier = this.User.UserId;
 
-        await this.GameServiceProxy.UpdateGameAsync(
+        await this.GameRepository.UpdateGameAsync(
             game.GameId,
             new UpdateGameRequest
             {
@@ -203,7 +203,7 @@ public class DeveloperService : IDeveloperService
     public async Task UpdateGameWithTagsAsync(Game game, IList<Tag> selectedTags)
     {
         game.PublisherIdentifier = this.User.UserId;
-        await this.GameServiceProxy.UpdateGameAsync(
+        await this.GameRepository.UpdateGameAsync(
             game.GameId,
             new UpdateGameRequest
             {
@@ -220,7 +220,7 @@ public class DeveloperService : IDeveloperService
                 GameplayPath = game.GameplayPath,
             });
 
-        await this.GameServiceProxy.PatchGameTagsAsync(
+        await this.GameRepository.PatchGameTagsAsync(
             game.GameId,
             new PatchGameTagsRequest
             {
@@ -231,7 +231,7 @@ public class DeveloperService : IDeveloperService
 
     public async Task DeleteGameAsync(int game_id)
     {
-        var allItemsFromThisGame = await this.ItemServiceProxy.GetItemsAsync();
+        var allItemsFromThisGame = await this.ItemRepository.GetItemsAsync();
         List<int> allItemsFromThisGameIds = new List<int>();
         foreach (var item in allItemsFromThisGame)
         {
@@ -243,7 +243,7 @@ public class DeveloperService : IDeveloperService
 
         System.Diagnostics.Debug.WriteLine(allItemsFromThisGameIds.Count);
 
-        var itemTradeDetails = await this.ItemTradeDetailServiceProxy.GetAllItemTradeDetailsAsync();
+        var itemTradeDetails = await this.ItemTradeDetailRepository.GetItemTradeDetailsAsync();
         List<(int, int)> tradeItemPairs = new List<(int, int)>();
         foreach (var itemId in allItemsFromThisGameIds)
         {
@@ -260,7 +260,7 @@ public class DeveloperService : IDeveloperService
         {
             try
             {
-                await this.ItemTradeDetailServiceProxy.DeleteItemTradeDetailAsync(pair.Item1, pair.Item2);
+                await this.ItemTradeDetailRepository.DeleteItemTradeDetailAsync(pair.Item1, pair.Item2);
             }
             catch (ApiException)
             {
@@ -269,12 +269,12 @@ public class DeveloperService : IDeveloperService
         }
 
         System.Diagnostics.Debug.WriteLine(game_id);
-        await this.GameServiceProxy.DeleteGameAsync(game_id);
+        await this.GameRepository.DeleteGameAsync(game_id);
     }
 
     public async Task<List<Game>> GetDeveloperGamesAsync()
     {
-        var games = await this.GameServiceProxy.GetGamesAsync(
+        var games = await this.GameRepository.GetGamesAsync(
             new GetGamesRequest
             {
                 PublisherIdentifierIs = this.User.UserId,
@@ -284,7 +284,7 @@ public class DeveloperService : IDeveloperService
 
     public async Task<List<Game>> GetUnvalidatedAsync()
     {
-        var games = await this.GameServiceProxy.GetGamesAsync(
+        var games = await this.GameRepository.GetGamesAsync(
             new GetGamesRequest
             {
                 StatusIs = GameStatusEnum.Pending,
@@ -295,7 +295,7 @@ public class DeveloperService : IDeveloperService
 
     public async Task RejectGameAsync(int gameId)
     {
-        await this.GameServiceProxy.UpdateGameAsync(
+        await this.GameRepository.UpdateGameAsync(
             gameId,
             new UpdateGameRequest
             {
@@ -305,7 +305,7 @@ public class DeveloperService : IDeveloperService
 
     public async Task RejectGameWithMessageAsync(int gameId, string message)
     {
-        await this.GameServiceProxy.UpdateGameAsync(
+        await this.GameRepository.UpdateGameAsync(
             gameId,
             new UpdateGameRequest
             {
@@ -316,7 +316,7 @@ public class DeveloperService : IDeveloperService
 
     public async Task<string> GetRejectionMessageAsync(int gameId)
     {
-        return (await this.GameServiceProxy.GetGameByIdAsync(gameId)) !.RejectMessage;
+        return (await this.GameRepository.GetGameByIdAsync(gameId)) !.RejectMessage;
     }
 
     public async Task InsertGameTagAsync(int gameId, int tagId)
@@ -324,7 +324,7 @@ public class DeveloperService : IDeveloperService
         try
         {
             System.Diagnostics.Debug.WriteLine(gameId + tagId);
-            await this.GameServiceProxy.PatchGameTagsAsync(
+            await this.GameRepository.PatchGameTagsAsync(
                 gameId,
                 new PatchGameTagsRequest
                 {
@@ -341,14 +341,14 @@ public class DeveloperService : IDeveloperService
 
     public async Task<Collection<Tag>> GetAllTagsAsync()
     {
-        var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+        var tagsResponse = await this.TagRepository.GetAllTagsAsync();
         return new Collection<Tag>(
                     tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
     }
 
     public async Task<List<Tag>> GetGameTagsAsync(int gameId)
     {
-        var game = (await this.GameServiceProxy.GetGameByIdAsync(gameId)) !;
+        var game = (await this.GameRepository.GetGameByIdAsync(gameId)) !;
         return game.Tags.Select(
             tag => new Tag
             {
@@ -362,7 +362,7 @@ public class DeveloperService : IDeveloperService
     {
         try
         {
-            await this.GameServiceProxy.GetGameByIdAsync(gameId);
+            await this.GameRepository.GetGameByIdAsync(gameId);
             return true;
         }
         catch (ApiException exception) when (exception.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -373,7 +373,7 @@ public class DeveloperService : IDeveloperService
 
     public async Task DeleteGameTagsAsync(int gameId)
     {
-        await this.GameServiceProxy.PatchGameTagsAsync(
+        await this.GameRepository.PatchGameTagsAsync(
             gameId,
             new PatchGameTagsRequest
             {
@@ -387,7 +387,7 @@ public class DeveloperService : IDeveloperService
         // SELECT COUNT(*) AS OwnerCount
         // FROM games_users
         // WHERE game_id = @game_id;
-        var allUsers = await this.UserServiceProxy.GetUsersAsync();
+        var allUsers = await this.UserRepository.GetUsersAsync();
         int ownedCount = 0;
         System.Diagnostics.Debug.WriteLine(allUsers.Users.Count);
         foreach (var userResponse in allUsers.Users)
@@ -395,7 +395,7 @@ public class DeveloperService : IDeveloperService
             int userId = userResponse.UserId;
             try
             {
-                var games = await this.UserGameServiceProxy.GetUserGamesAsync(userId);
+                var games = await this.UserGameRepository.GetUserGamesAsync(userId);
                 ownedCount += games.UserGames.Count;
             }
             catch (Exception)

@@ -20,22 +20,22 @@
     public class TradeServiceTests
     {
         private readonly TradeService tradeService;
-        private readonly Mock<IITemTradeServiceProxy> itemTradeServiceMock;
-        private readonly Mock<IItemTradeDetailServiceProxy> itemTradeDetailServiceMock;
-        private readonly Mock<IUserServiceProxy> userServiceMock;
-        private readonly Mock<IGameServiceProxy> gameServiceMock;
-        private readonly Mock<IItemServiceProxy> itemServiceMock;
-        private readonly Mock<IUserInventoryServiceProxy> userInventoryServiceMock;
+        private readonly Mock<IItemTradeRepositoryProxy> itemTradeServiceMock;
+        private readonly Mock<IItemTradeDetailRepositoryProxy> itemTradeDetailServiceMock;
+        private readonly Mock<IUserRepositoryProxy> userServiceMock;
+        private readonly Mock<IGameRepositoryProxy> gameServiceMock;
+        private readonly Mock<IItemRepositoryProxy> itemServiceMock;
+        private readonly Mock<IUserInventoryRepositoryProxy> userInventoryServiceMock;
         private readonly User testUser;
 
         public TradeServiceTests()
         {
-            itemTradeServiceMock = new Mock<IITemTradeServiceProxy>();
-            itemTradeDetailServiceMock = new Mock<IItemTradeDetailServiceProxy>();
-            userServiceMock = new Mock<IUserServiceProxy>();
-            gameServiceMock = new Mock<IGameServiceProxy>();
-            itemServiceMock = new Mock<IItemServiceProxy>();
-            userInventoryServiceMock = new Mock<IUserInventoryServiceProxy>();
+            itemTradeServiceMock = new Mock<IItemTradeRepositoryProxy>();
+            itemTradeDetailServiceMock = new Mock<IItemTradeDetailRepositoryProxy>();
+            userServiceMock = new Mock<IUserRepositoryProxy>();
+            gameServiceMock = new Mock<IGameRepositoryProxy>();
+            itemServiceMock = new Mock<IItemRepositoryProxy>();
+            userInventoryServiceMock = new Mock<IUserInventoryRepositoryProxy>();
 
             testUser = new User { UserId = 1, UserName = "TestUser" };
             tradeService = new TradeService(
@@ -147,7 +147,7 @@
                 GameOfTrade = new Game { GameId = 99 },
             };
 
-            itemTradeDetailServiceMock.Setup(detailServiceProxy => detailServiceProxy.GetAllItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
+            itemTradeDetailServiceMock.Setup(detailServiceProxy => detailServiceProxy.GetItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
 
             await tradeService.UpdateTradeAsync(trade);
 
@@ -169,7 +169,7 @@
                 DestinationUserItems = new List<Item>()
             };
 
-            itemTradeDetailServiceMock.Setup(detailServiceProxy => detailServiceProxy.GetAllItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
+            itemTradeDetailServiceMock.Setup(detailServiceProxy => detailServiceProxy.GetItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
 
             await tradeService.AcceptTradeAsync(trade, true);
 

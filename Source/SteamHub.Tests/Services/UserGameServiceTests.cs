@@ -18,18 +18,18 @@
 
     public class UserGameServiceTests
     {
-        private readonly Mock<IUserGameServiceProxy> userGameServiceProxyMock;
-        private readonly Mock<IGameServiceProxy> gameServiceProxyMock;
-        private readonly Mock<ITagServiceProxy> tagServiceProxyMock;
+        private readonly Mock<IUserGameRepositoryProxy> userGameServiceProxyMock;
+        private readonly Mock<IGameRepositoryProxy> gameServiceProxyMock;
+        private readonly Mock<ITagRepositoryProxy> tagServiceProxyMock;
 
         private readonly User testUser;
         private readonly UserGameService userGameService;
 
         public UserGameServiceTests()
         {
-            this.userGameServiceProxyMock = new Mock<IUserGameServiceProxy>();
-            this.gameServiceProxyMock = new Mock<IGameServiceProxy>();
-            this.tagServiceProxyMock = new Mock<ITagServiceProxy>();
+            this.userGameServiceProxyMock = new Mock<IUserGameRepositoryProxy>();
+            this.gameServiceProxyMock = new Mock<IGameRepositoryProxy>();
+            this.tagServiceProxyMock = new Mock<ITagRepositoryProxy>();
 
             this.testUser = new User
             {

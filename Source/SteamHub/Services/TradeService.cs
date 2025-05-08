@@ -19,26 +19,27 @@ namespace SteamHub.Services
     using SteamHub.ApiContract.Models.ItemTrade;
     using SteamHub.ApiContract.Models.ItemTradeDetails;
     using SteamHub.ApiContract.Models.UserInventory;
+    using SteamHub.ApiContract.Repositories;
 
     public class TradeService : ITradeService
     {
-        private IITemTradeServiceProxy itemTradeServiceProxy;
-        private IItemTradeDetailServiceProxy itemTradeDetailServiceProxy;
-        private IUserServiceProxy userServiceProxy;
-        private IGameServiceProxy gameServiceProxy;
-        private IItemServiceProxy itemServiceProxy;
-        private IUserInventoryServiceProxy userInventoryServiceProxy;
+        private IItemTradeRepository itemTradeRepository;
+        private IItemTradeDetailRepository itemTradeDetailRepository;
+        private IUserRepository userRepository;
+        private IGameRepository gameRepository;
+        private IItemRepository itemRepository;
+        private IUserInventoryRepository userInventoryRepository;
         private User currentUser;
 
-        public TradeService(IITemTradeServiceProxy itemTradeServiceProxy, User currentUser, IItemTradeDetailServiceProxy itemTradeDetailServiceProxy, IUserServiceProxy userServiceProxy, IGameServiceProxy gameServiceProxy, IItemServiceProxy itemServiceProxy, IUserInventoryServiceProxy userInventoryServiceProxy)
+        public TradeService(IItemTradeRepository itemTradeIItemTradeRepository, User currentUser, IItemTradeDetailRepository itemTradeDetailRepository, IUserRepository userRepository, IGameRepository gameRepository, IItemRepository itemRepository, IUserInventoryRepository userInventoryRepository)
         {
-            this.itemTradeServiceProxy = itemTradeServiceProxy;
+            this.itemTradeRepository = itemTradeIItemTradeRepository;
             this.currentUser = currentUser;
-            this.itemTradeDetailServiceProxy = itemTradeDetailServiceProxy;
-            this.userServiceProxy = userServiceProxy;
-            this.gameServiceProxy = gameServiceProxy;
-            this.itemServiceProxy = itemServiceProxy;
-            this.userInventoryServiceProxy = userInventoryServiceProxy;
+            this.itemTradeDetailRepository = itemTradeDetailRepository;
+            this.userRepository = userRepository;
+            this.gameRepository = gameRepository;
+            this.itemRepository = itemRepository;
+            this.userInventoryRepository = userInventoryRepository;
         }
 
         public async Task MarkTradeAsCompletedAsync(int tradeId)
@@ -49,7 +50,7 @@ namespace SteamHub.Services
                 AcceptedBySourceUser = true,
                 AcceptedByDestinationUser = true,
             };
-            await this.itemTradeServiceProxy.UpdateItemTradeAsync(tradeId, updateRequest);
+            await this.itemTradeRepository.UpdateItemTradeAsync(tradeId, updateRequest);
         }
 
         public void DeclineTradeRequest()
@@ -68,7 +69,6 @@ namespace SteamHub.Services
             return this.currentUser;
         }
 
-        // Fix for CS1579: Convert the `itemsToTransfer` variable to its list property `ItemTradeDetails` before iterating.
         public async Task UpdateItemTradeAsync(ItemTrade trade)
         {
             var tradeStatus = TradeStatusEnum.Pending; // Default value
@@ -80,14 +80,14 @@ namespace SteamHub.Services
             // 1. Prepare the update trade request
             var updateTradeRequest = new UpdateItemTradeRequest
             {
-                TradeDescription = trade.TradeDescription, // You may or may not want to update this
+                TradeDescription = trade.TradeDescription, 
                 TradeStatus = trade.AcceptedByDestinationUser ? TradeStatusEnum.Completed : tradeStatus,
                 AcceptedBySourceUser = trade.AcceptedBySourceUser,
                 AcceptedByDestinationUser = trade.AcceptedByDestinationUser,
             };
             System.Diagnostics.Debug.WriteLine($"Updating trade with ID: {trade.TradeId} to status: {updateTradeRequest.TradeStatus}");
 
-            await this.itemTradeServiceProxy.UpdateItemTradeAsync(trade.TradeId, updateTradeRequest);
+            await this.itemTradeRepository.UpdateItemTradeAsync(trade.TradeId, updateTradeRequest);
         }
 
         public async Task TransferItemAsync(int itemId, int fromUserId, int toUserId, int gameId)
@@ -109,10 +109,10 @@ namespace SteamHub.Services
             try
             {
                 // Remove the item from the source user
-                await this.userInventoryServiceProxy.RemoveItemFromUserInventoryAsync(removeRequest);
+                await this.userInventoryRepository.RemoveItemFromUserInventoryAsync(removeRequest);
 
                 // Add the item to the destination user
-                await this.userInventoryServiceProxy.AddItemToUserInventoryAsync(addRequest);
+                await this.userInventoryRepository.AddItemToUserInventoryAsync(addRequest);
 
                 System.Diagnostics.Debug.WriteLine($"Successfully transferred item {itemId} from user {fromUserId} to user {toUserId}");
             }
@@ -134,10 +134,10 @@ namespace SteamHub.Services
                 TradeDate = trade.TradeDate,
                 TradeDescription = trade.TradeDescription,
                 TradeStatus = TradeStatusEnum.Pending,
-                AcceptedBySourceUser = true,  // was hardcoded in SQL
+                AcceptedBySourceUser = true,  
                 AcceptedByDestinationUser = false,
             };
-            var createTradeResponse = await this.itemTradeServiceProxy.CreateItemTradeAsync(createTradeRequest);
+            var createTradeResponse = await this.itemTradeRepository.CreateItemTradeAsync(createTradeRequest);
             System.Diagnostics.Debug.WriteLine($"Trade created with ID: {createTradeResponse.TradeId}");
             trade.TradeId = createTradeResponse.TradeId;
 
@@ -151,7 +151,7 @@ namespace SteamHub.Services
                     ItemId = item.ItemId,
                     IsSourceUserItem = true,
                 };
-                await this.itemTradeDetailServiceProxy.CreateItemTradeDetailAsync(detailRequest);
+                await this.itemTradeDetailRepository.CreateItemTradeDetailAsync(detailRequest);
             }
 
             // 3. Add destination user items
@@ -163,13 +163,13 @@ namespace SteamHub.Services
                     ItemId = item.ItemId,
                     IsSourceUserItem = false,
                 };
-                await this.itemTradeDetailServiceProxy.CreateItemTradeDetailAsync(detailRequest);
+                await this.itemTradeDetailRepository.CreateItemTradeDetailAsync(detailRequest);
             }
         }
 
         public async Task<List<ItemTrade>> GetTradeHistoryAsync(int userId)
         {
-            var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
+            var allTrades = await this.itemTradeRepository.GetItemTradesAsync();
 
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
@@ -177,7 +177,7 @@ namespace SteamHub.Services
                          && trade.TradeStatus == TradeStatusEnum.Completed) || trade.TradeStatus == TradeStatusEnum.Declined) // Fixed comparison to use the enum directly
                 .ToList();
 
-            var allUsersApi = (await this.userServiceProxy.GetUsersAsync()).Users;
+            var allUsersApi = (await this.userRepository.GetUsersAsync()).Users;
             var allUsers = allUsersApi
                 .Select(currentUser =>
                 {
@@ -195,7 +195,7 @@ namespace SteamHub.Services
                 .ToList();
 
             // 3. Get all games
-            var gamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
+            var gamesResponse = await this.gameRepository.GetGamesAsync(new GetGamesRequest());
             var allGames = new Collection<Game>(gamesResponse.Select(GameMapper.MapToGame).ToList());
 
             // 4. Map to domain model
@@ -235,7 +235,7 @@ namespace SteamHub.Services
             }
 
             // 5. Enrich each trade with its item details
-            var allTradeDetails = (await this.itemTradeDetailServiceProxy.GetAllItemTradeDetailsAsync()).ItemTradeDetails;
+            var allTradeDetails = (await this.itemTradeDetailRepository.GetItemTradeDetailsAsync()).ItemTradeDetails;
 
             foreach (var trade in result)
             {
@@ -244,9 +244,9 @@ namespace SteamHub.Services
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
-                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.TradeId);
-                    var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
-                    var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
+                    var itemResponse = await this.itemTradeRepository.GetItemTradeByIdAsync(detail.TradeId);
+                    var itemResponseFromItemProxy = await this.itemRepository.GetItemByIdAsync(detail.ItemId);
+                    var gameResponse = await this.gameRepository.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
 
                     // itemGame.SetGameId(gameResponse.GameId);
@@ -277,7 +277,7 @@ namespace SteamHub.Services
 
         public async Task<List<ItemTrade>> GetActiveTradesAsync(int userId)
         {
-            var allTrades = await this.itemTradeServiceProxy.GetAllItemTradesAsync();
+            var allTrades = await this.itemTradeRepository.GetItemTradesAsync();
 
             // 1. Get all trades and filter
             var filteredTrades = allTrades.ItemTrades
@@ -285,7 +285,7 @@ namespace SteamHub.Services
                          && trade.TradeStatus == TradeStatusEnum.Pending) // Fixed comparison to use the enum directly
                 .ToList();
 
-            var allUsersApi = (await this.userServiceProxy.GetUsersAsync()).Users;
+            var allUsersApi = (await this.userRepository.GetUsersAsync()).Users;
             var allUsers = allUsersApi
                 .Select(tradeUser =>
                 {
@@ -303,7 +303,7 @@ namespace SteamHub.Services
                 .ToList();
 
             // 3. Get all games
-            var gamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
+            var gamesResponse = await this.gameRepository.GetGamesAsync(new GetGamesRequest());
             var allGames = new Collection<Game>(gamesResponse.Select(GameMapper.MapToGame).ToList());
 
             // 4. Map to domain model
@@ -345,7 +345,7 @@ namespace SteamHub.Services
             }
 
             // 5. Enrich each trade with its item details
-            var allTradeDetails = (await this.itemTradeDetailServiceProxy.GetAllItemTradeDetailsAsync()).ItemTradeDetails;
+            var allTradeDetails = (await this.itemTradeDetailRepository.GetItemTradeDetailsAsync()).ItemTradeDetails;
 
             foreach (var trade in result)
             {
@@ -354,9 +354,9 @@ namespace SteamHub.Services
 
                 foreach (var detail in tradeDetailsForThisTrade)
                 {
-                    var itemResponse = await this.itemTradeServiceProxy.GetItemTradeByIdAsync(detail.TradeId);
-                    var itemResponseFromItemProxy = await this.itemServiceProxy.GetItemByIdAsync(detail.ItemId);
-                    var gameResponse = await this.gameServiceProxy.GetGameByIdAsync(itemResponse.GameOfTradeId);
+                    var itemResponse = await this.itemTradeRepository.GetItemTradeByIdAsync(detail.TradeId);
+                    var itemResponseFromItemProxy = await this.itemRepository.GetItemByIdAsync(detail.ItemId);
+                    var gameResponse = await this.gameRepository.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
 
                     var item = new Item(itemResponseFromItemProxy.ItemName, itemGame, (float)itemResponseFromItemProxy.Price, itemResponseFromItemProxy.Description);
@@ -466,8 +466,8 @@ namespace SteamHub.Services
 
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
         {
-            var inventoryResponse = await this.userInventoryServiceProxy.GetUserInventoryAsync(userId);
-            var allGamesResponse = await this.gameServiceProxy.GetGamesAsync(new GetGamesRequest());
+            var inventoryResponse = await this.userInventoryRepository.GetUserInventoryAsync(userId);
+            var allGamesResponse = await this.gameRepository.GetGamesAsync(new GetGamesRequest());
             var result = new List<Item>();
             var allGames = allGamesResponse.Select(GameMapper.MapToGame).ToList();
             foreach (var inventoryItem in inventoryResponse.Items)

@@ -14,14 +14,15 @@ namespace SteamHub.Services
     using SteamHub.Services.Interfaces;
     using SteamHub.ApiContract.Models.User;
     using Windows.Networking.Proximity;
+    using SteamHub.ApiContract.Repositories;
 
     public class UserService : IUserService
     {
-        private IUserServiceProxy userServiceProxy;
+        private IUserRepository userRepository;
 
-        public UserService(IUserServiceProxy userServiceProxy)
+        public UserService(IUserRepository userRepository)
         {
-            this.userServiceProxy = userServiceProxy;
+            this.userRepository = userRepository;
         }
 
         public async Task<List<User>> GetAllUsersAsync()
@@ -30,7 +31,7 @@ namespace SteamHub.Services
             // this.PointsBalance = pointsBalance;
             // this.UserRole = userRole;
             var result = new List<User>();
-            var response = await this.userServiceProxy.GetUsersAsync();
+            var response = await this.userRepository.GetUsersAsync();
             foreach (var user in response.Users)
             {
                 var currentUser = new User

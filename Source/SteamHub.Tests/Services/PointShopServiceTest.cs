@@ -18,9 +18,9 @@
 	public class PointShopServiceTest
 	{
 		private readonly User testUser;
-		private readonly Mock<IPointShopItemServiceProxy> itemProxyMock;
-		private readonly Mock<IUserPointShopItemInventoryServiceProxy> inventoryProxyMock;
-		private readonly Mock<IUserServiceProxy> userServiceProxyMock;
+		private readonly Mock<IPointShopItemRepositoryProxy> itemProxyMock;
+		private readonly Mock<IUserPointShopItemInventoryRepositoryProxy> inventoryProxyMock;
+		private readonly Mock<IUserRepositoryProxy> userServiceProxyMock;
 		private readonly PointShopService service;
 
 		public PointShopServiceTest()
@@ -35,9 +35,9 @@
 				UserRole = User.Role.User
 			};
 
-			itemProxyMock = new Mock<IPointShopItemServiceProxy>();
-			inventoryProxyMock = new Mock<IUserPointShopItemInventoryServiceProxy>();
-			userServiceProxyMock = new Mock<IUserServiceProxy>();
+			itemProxyMock = new Mock<IPointShopItemRepositoryProxy>();
+			inventoryProxyMock = new Mock<IUserPointShopItemInventoryRepositoryProxy>();
+			userServiceProxyMock = new Mock<IUserRepositoryProxy>();
 
 			service = new PointShopService(
 				itemProxyMock.Object,

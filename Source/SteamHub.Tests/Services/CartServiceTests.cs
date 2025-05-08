@@ -19,14 +19,14 @@
 		private const int TestSecondGamePrice = 20;
 
 		private readonly CartService cartService;
-		private readonly Mock<IUserGameServiceProxy> cartServiceProxyMock;
-		private readonly Mock<IGameServiceProxy> gameServiceProxyMock;
+		private readonly Mock<IUserGameRepositoryProxy> cartServiceProxyMock;
+		private readonly Mock<IGameRepositoryProxy> gameServiceProxyMock;
 		private readonly User testUser;
 
 		public CartServiceTests()
 		{
-			cartServiceProxyMock = new Mock<IUserGameServiceProxy>();
-			gameServiceProxyMock = new Mock<IGameServiceProxy>();
+			cartServiceProxyMock = new Mock<IUserGameRepositoryProxy>();
+			gameServiceProxyMock = new Mock<IGameRepositoryProxy>();
 			testUser = new User { UserId = 1, WalletBalance = 50f };
 			cartService = new CartService(cartServiceProxyMock.Object, testUser, gameServiceProxyMock.Object);
 		}

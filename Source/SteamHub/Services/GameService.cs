@@ -14,6 +14,7 @@ using SteamHub.Services;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.Models;
 using SteamHub.Services.Interfaces;
+using SteamHub.ApiContract.Repositories;
 
 public class GameService : IGameService
 {
@@ -27,14 +28,13 @@ public class GameService : IGameService
     private static int incrementingValue = 1;
     private static int numberOfGamesToTake = 10;
 
-    public IGameServiceProxy GameServiceProxy { get; set; }
+    public IGameRepository GameRepository { get; set; }
 
-   // public ITagRepository TagRepository { get; set; }
-    public ITagServiceProxy TagServiceProxy { get; set; }
+    public ITagRepository TagRepository { get; set; }
 
     public async Task<Collection<Game>> GetAllGamesAsync()
     {
-        var games = await this.GameServiceProxy.GetGamesAsync(new GetGamesRequest());
+        var games = await this.GameRepository.GetGamesAsync(new GetGamesRequest());
         return new Collection<Game>(games.Select(GameMapper.MapToGame).ToList());
     }
 
@@ -57,7 +57,7 @@ public class GameService : IGameService
     {
         try
         {
-            var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+            var tagsResponse = await this.TagRepository.GetAllTagsAsync();
             return new Collection<Tag>(
                         tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
         }
@@ -72,7 +72,7 @@ public class GameService : IGameService
 
     public async Task<Collection<Tag>> GetAllGameTagsAsync(Game game)
     {
-        var tagsResponse = await this.TagServiceProxy.GetAllTagsAsync();
+        var tagsResponse = await this.TagRepository.GetAllTagsAsync();
         var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
 
         // Extract the result from the task
@@ -223,7 +223,7 @@ public class GameService : IGameService
 
     public async Task<Game> GetGameByIdAsync(int gameId)
     {
-        return GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(gameId));
+        return GameMapper.MapToGame(await this.GameRepository.GetGameByIdAsync(gameId));
     }
 
     private Collection<Game> GetSortedAndFilteredVideoGames(Collection<Game> games)

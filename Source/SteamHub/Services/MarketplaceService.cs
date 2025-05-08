@@ -14,24 +14,24 @@ namespace SteamHub.Services
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UserInventory;
+    using SteamHub.ApiContract.Repositories;
 
     public class MarketplaceService : IMarketplaceService
     {
-        // private readonly IMarketplaceRepository marketplaceRepository;
-        public IGameServiceProxy GameServiceProxy { get; set; }
+        public IGameRepository GameRepository { get; set; }
 
-        public IUserInventoryServiceProxy UserInventoryServiceProxy { get; set; }
+        public IUserInventoryRepository UserInventoryRepository { get; set; }
 
-        public IUserServiceProxy UserServiceProxy { get; set; }
+        public IUserRepository UserRepository { get; set; }
 
-        public IItemServiceProxy ItemServiceProxy { get; set; }
+        public IItemRepository ItemRepository { get; set; }
 
         public User User { get; set; }
 
         public async Task<List<User>> GetAllUsersAsync()
         {
             var returnUsers = new List<User>();
-            var users = await this.UserServiceProxy.GetUsersAsync();
+            var users = await this.UserRepository.GetUsersAsync();
             foreach (var user in users.Users)
             {
                 returnUsers.Add(
@@ -52,12 +52,12 @@ namespace SteamHub.Services
         public async Task<List<Item>> GetAllListingsAsync()
         {
             var result = new List<Item>();
-            var items = await this.ItemServiceProxy.GetItemsAsync();
+            var items = await this.ItemRepository.GetItemsAsync();
             foreach (var item in items)
             {
                 if (item.IsListed)
                 {
-                    var resultGame = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(item.GameId));
+                    var resultGame = GameMapper.MapToGame(await this.GameRepository.GetGameByIdAsync(item.GameId));
                     var resultItem = new Item
                     {
                         ItemId = item.ItemId,
@@ -84,13 +84,13 @@ namespace SteamHub.Services
 
             var result = new List<Item>();
 
-            var userItems = (await this.UserInventoryServiceProxy.GetUserInventoryAsync(userId)).Items;
+            var userItems = (await this.UserInventoryRepository.GetUserInventoryAsync(userId)).Items;
             foreach (var userItem in userItems)
             {
-                var item = await this.ItemServiceProxy.GetItemByIdAsync(userItem.ItemId);
+                var item = await this.ItemRepository.GetItemByIdAsync(userItem.ItemId);
                 if (item.IsListed && item.GameId == game.GameId)
                 {
-                    var resultGame = GameMapper.MapToGame(await this.GameServiceProxy.GetGameByIdAsync(item.GameId));
+                    var resultGame = GameMapper.MapToGame(await this.GameRepository.GetGameByIdAsync(item.GameId));
                     var resultItem = new Item
                     {
                         ItemId = item.ItemId,
@@ -130,7 +130,7 @@ namespace SteamHub.Services
                 throw new ArgumentNullException(nameof(item));
             }
 
-            await this.ItemServiceProxy.UpdateItemAsync(
+            await this.ItemRepository.UpdateItemAsync(
                 item.ItemId,
                 new UpdateItemRequest
                 {
@@ -155,13 +155,12 @@ namespace SteamHub.Services
                 throw new InvalidOperationException("Item is not listed for sale");
             }
 
-            // await this.(item, transaction);
-            var entries = await this.UserInventoryServiceProxy.GetUserInventoryAsync(this.User.UserId);
+            var entries = await this.UserInventoryRepository.GetUserInventoryAsync(this.User.UserId);
             foreach (var entry in entries.Items)
             {
                 if (entry.ItemId == item.ItemId)
                 {
-                    await this.UserInventoryServiceProxy.RemoveItemFromUserInventoryAsync(
+                    await this.UserInventoryRepository.RemoveItemFromUserInventoryAsync(
                         new ItemFromInventoryRequest
                         {
                             GameId = entry.GameId,
@@ -171,11 +170,7 @@ namespace SteamHub.Services
                 }
             }
 
-            // await this.userInventoryServiceProxy.RemoveItemFromUserInventoryAsync(
-            //     new ItemFromInventoryRequest
-            //     {
-            //     });
-            await this.UserInventoryServiceProxy.AddItemToUserInventoryAsync(
+            await this.UserInventoryRepository.AddItemToUserInventoryAsync(
                 new ItemFromInventoryRequest
                 {
                     GameId = item.Game.GameId,
@@ -183,7 +178,7 @@ namespace SteamHub.Services
                     ItemId = item.ItemId,
                 });
 
-            await this.ItemServiceProxy.UpdateItemAsync(
+            await this.ItemRepository.UpdateItemAsync(
                 item.ItemId,
                 new UpdateItemRequest
                 {
@@ -195,8 +190,6 @@ namespace SteamHub.Services
                     ItemName = item.ItemName,
                 });
 
-            // item.SetIsListed(false);
-            // return await this.marketplaceRepository.BuyItemAsync(item, this.currentUser);
             return true;
         }
 
@@ -212,7 +205,7 @@ namespace SteamHub.Services
                 throw new ArgumentNullException(nameof(item));
             }
 
-            await this.ItemServiceProxy.UpdateItemAsync(
+            await this.ItemRepository.UpdateItemAsync(
                 item.ItemId,
                 new UpdateItemRequest
                 {

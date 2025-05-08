@@ -99,19 +99,20 @@ namespace SteamHub
                 BaseAddress = new Uri("https://localhost:7241"),
             };
 
-            var pointShopServiceProxy = RestService.For<IPointShopItemServiceProxy>(httpClient);
-            var userPointShopInventoryServiceProxy = RestService.For<IUserPointShopItemInventoryServiceProxy>(httpClient);
-            var gameServiceProxy = RestService.For<IGameServiceProxy>(httpClient);
-            var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
-            var itemServiceProxy = RestService.For<IItemServiceProxy>(httpClient);
-            var itemTradeServiceProxy = RestService.For<IITemTradeServiceProxy>(httpClient);
-            var itemTradeDetailServiceProxy = RestService.For<IItemTradeDetailServiceProxy>(httpClient);
-            var userInventoryServiceProxy = RestService.For<IUserInventoryServiceProxy>(httpClient);
+            var pointShopRepository = RestService.For<IPointShopItemRepositoryProxy>(httpClient);
+            var userPointShopInventoryRepository = RestService.For<IUserPointShopItemInventoryRepositoryProxy>(httpClient);
+            var gameRepository = RestService.For<IGameRepositoryProxy>(httpClient);
+            var userRepository = RestService.For<IUserRepositoryProxy>(httpClient);
+            var itemRepository = RestService.For<IItemRepositoryProxy>(httpClient);
+            var itemTradeRepository = RestService.For<IItemTradeRepositoryProxy>(httpClient);
+            var itemTradeDetailRepository = RestService.For<IItemTradeDetailRepositoryProxy>(httpClient);
+            var userInventoryRepository = RestService.For<IUserInventoryRepositoryProxy>(httpClient);
 
-            var tradeService = new TradeService(itemTradeServiceProxy, loggedInUser, itemTradeDetailServiceProxy, userServiceProxy, gameServiceProxy, itemServiceProxy, userInventoryServiceProxy);
+
+            var tradeService = new TradeService(itemTradeRepository, loggedInUser, itemTradeDetailRepository, userRepository, gameRepository, itemRepository, userInventoryRepository);
             this.tradeService = tradeService;
 
-            var userService = new UserService(userServiceProxy);
+            var userService = new UserService(userRepository);
             this.userService = userService;
             var trade = new ItemTrade
             {
@@ -130,57 +131,41 @@ namespace SteamHub
             trade.DestinationUserItems.Add(new Item { ItemId = 3 });
             this.marketplaceService = new MarketplaceService
             {
-                UserInventoryServiceProxy = userInventoryServiceProxy,
-                GameServiceProxy = gameServiceProxy,
-                UserServiceProxy = userServiceProxy,
-                ItemServiceProxy = itemServiceProxy,
+                UserInventoryRepository = userInventoryRepository,
+                GameRepository = gameRepository,
+                UserRepository = userRepository,
+                ItemRepository = itemRepository,
                 User = loggedInUser,
             };
 
             // var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
-            var tagServiceProxy = RestService.For<ITagServiceProxy>(httpClient);
+            var tagServiceProxy = RestService.For<ITagRepositoryProxy>(httpClient);
 
             // var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
-            var userGameServiceProxy = RestService.For<IUserGameServiceProxy>(httpClient);
+            var userGameServiceProxy = RestService.For<IUserGameRepositoryProxy>(httpClient);
 
             this.pointShopService = new PointShopService(
-                pointShopServiceProxy,
-                userPointShopInventoryServiceProxy,
-                userServiceProxy,
+                pointShopRepository,
+                userPointShopInventoryRepository,
+                userRepository,
                 loggedInUser);
 
-            this.inventoryService = new InventoryService(userInventoryServiceProxy, itemServiceProxy, gameServiceProxy, this.user);
+            this.inventoryService = new InventoryService(userInventoryRepository, itemRepository, gameRepository, this.user);
 
-            this.gameService = new GameService { GameServiceProxy = gameServiceProxy, TagServiceProxy = tagServiceProxy };
+            this.gameService = new GameService { GameRepository = gameRepository, TagRepository = tagServiceProxy };
 
-            this.cartService = new CartService(userGameServiceProxy, loggedInUser, gameServiceProxy);
+            this.cartService = new CartService(userGameServiceProxy, loggedInUser, gameRepository);
 
-            this.userGameService = new UserGameService(userGameServiceProxy, gameServiceProxy, tagServiceProxy, loggedInUser);
+            this.userGameService = new UserGameService(userGameServiceProxy, gameRepository, tagServiceProxy, loggedInUser);
 
             this.developerService = new DeveloperService(
-            gameServiceProxy, tagServiceProxy, userGameServiceProxy, userServiceProxy, itemServiceProxy, itemTradeDetailServiceProxy, loggedInUser);
+            gameRepository, tagServiceProxy, userGameServiceProxy, userRepository, itemRepository, itemTradeDetailRepository, loggedInUser);
 
             if (this.ContentFrame == null)
             {
                 throw new Exception("ContentFrame is not initialized.");
             }
 
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    // await tradeService.AddItemTradeAsync(trade);
-                    // await tradeService.GetActiveTradesAsync(1);
-                    // await tradeService.UpdateItemTradeAsync(trade);
-                    // await tradeService.GetUserInventoryAsync(1);
-                    await tradeService.GetUserInventoryAsync(2);
-                    Debug.WriteLine("Trade created successfully.");
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error creating trade: {ex.Message}");
-                }
-            });
             this.ContentFrame.Content = new HomePage(this.gameService, this.cartService, this.userGameService);
         }
 

@@ -12,11 +12,11 @@
     public class UserServiceTests
     {
         private readonly UserService userService;
-        private readonly Mock<IUserServiceProxy> userServiceProxyMock;
+        private readonly Mock<IUserRepositoryProxy> userServiceProxyMock;
 
         public UserServiceTests()
         {
-            this.userServiceProxyMock = new Mock<IUserServiceProxy>();
+            this.userServiceProxyMock = new Mock<IUserRepositoryProxy>();
             this.userService = new UserService(this.userServiceProxyMock.Object);
         }
 

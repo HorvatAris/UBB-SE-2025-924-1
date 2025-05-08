@@ -17,6 +17,8 @@ namespace SteamHub.Services
     using SteamHub.Constants;
     using SteamHub.Models;
     using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Repositories;
+    using SteamHub.ApiContract.Context.Repositories;
 
     public class PointShopService : IPointShopService
     {
@@ -26,20 +28,19 @@ namespace SteamHub.Services
         private const int InitialIndexUserItems = 0;
         private const string FilterTypeAll = "All";
 
-        public PointShopService(IPointShopItemServiceProxy pointShopItemServiceProxy, IUserPointShopItemInventoryServiceProxy userPointShopItemInventoryServiceProxy, IUserServiceProxy userServiceProxy, User user)
+        public PointShopService(IPointShopItemRepository pointShopItemRepository, IUserPointShopItemInventoryRepository userPointShopItemInventoryRepository, IUserRepository userRepository, User user)
         {
-            this.PointShopItemServiceProxy = pointShopItemServiceProxy;
-            this.UserPointShopItemInventoryServiceProxy = userPointShopItemInventoryServiceProxy;
-            this.UserServiceProxy = userServiceProxy;
+            this.PointShopItemRepository = pointShopItemRepository;
+            this.UserPointShopItemInventoryRepository = userPointShopItemInventoryRepository;
+            this.UserRepository = userRepository;
             this.User = user;
         }
 
-        // private readonly IPointShopRepository repository;
-        public IPointShopItemServiceProxy PointShopItemServiceProxy { get; set; }
+        public IPointShopItemRepository PointShopItemRepository { get; set; }
 
-        public IUserPointShopItemInventoryServiceProxy UserPointShopItemInventoryServiceProxy { get; set; }
+        public IUserPointShopItemInventoryRepository UserPointShopItemInventoryRepository { get; set; }
 
-        public IUserServiceProxy UserServiceProxy { get; set; }
+        public IUserRepository UserRepository { get; set; }
 
         public User User { get; set; }
 
@@ -52,7 +53,7 @@ namespace SteamHub.Services
         {
             try
             {
-                var allItems = await this.PointShopItemServiceProxy.GetPointShopItemsAsync();
+                var allItems = await this.PointShopItemRepository.GetPointShopItemsAsync();
                 return allItems.PointShopItems
                     .Select(PointShopItemMapper.MapToPointShopItem)
                     .ToList();
@@ -67,8 +68,8 @@ namespace SteamHub.Services
         {
             try
             {
-                var userItems = await this.UserPointShopItemInventoryServiceProxy.GetUserInventoryAsync(this.User.UserId);
-                var allItems = await this.PointShopItemServiceProxy.GetPointShopItemsAsync();
+                var userItems = await this.UserPointShopItemInventoryRepository.GetUserInventoryAsync(this.User.UserId);
+                var allItems = await this.PointShopItemRepository.GetPointShopItemsAsync();
                 var userPointShopItems = userItems.UserPointShopItemsInventory
                         .Select(userItem =>
                         {
@@ -119,7 +120,7 @@ namespace SteamHub.Services
                     PointShopItemId = item.ItemIdentifier,
                 };
 
-                await this.UserPointShopItemInventoryServiceProxy.PurchaseItemAsync(purchaseRequest);
+                await this.UserPointShopItemInventoryRepository.PurchaseItemAsync(purchaseRequest);
 
                 this.User.PointsBalance -= (float)item.PointPrice;
 
@@ -133,7 +134,7 @@ namespace SteamHub.Services
                     Role = (RoleEnum)this.User.UserRole,
                 };
 
-                await this.UserServiceProxy.UpdateUserAsync(this.User.UserId, updateUserRequest);
+                await this.UserRepository.UpdateUserAsync(this.User.UserId, updateUserRequest);
             }
             catch (Exception exception)
             {
@@ -163,7 +164,7 @@ namespace SteamHub.Services
                     IsActive = true,
                 };
 
-                await this.UserPointShopItemInventoryServiceProxy.UpdateItemStatusAsync(activateRequest);
+                await this.UserPointShopItemInventoryRepository.UpdateItemStatusAsync(activateRequest);
             }
             catch (Exception exception)
             {
@@ -192,7 +193,7 @@ namespace SteamHub.Services
                     IsActive = false,
                 };
 
-                await this.UserPointShopItemInventoryServiceProxy.UpdateItemStatusAsync(activateRequest);
+                await this.UserPointShopItemInventoryRepository.UpdateItemStatusAsync(activateRequest);
             }
             catch (Exception exception)
             {
@@ -401,10 +402,5 @@ namespace SteamHub.Services
                 return item;
             }
         }
-
-        // public void ResetUserInventory()
-        // {
-        //    this.repository.ResetUserInventory();
-        // }
     }
 }
