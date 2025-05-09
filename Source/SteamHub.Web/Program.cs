@@ -7,6 +7,7 @@ using SteamHub.ApiContract.Repositories;
 using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.Data;
+using SteamHub.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 

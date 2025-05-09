@@ -1,9 +1,11 @@
 ﻿@model SteamHub.ApiContract.Models.Game.Game
 
-<div class="card me-2" style="width: 160px;">
-    <img src="@Model.ImagePath" class="card-img-top" style="height: 144px; object-fit: cover;" />
-    <div class="card-body p-2">
-        <h6 class="card-title mb-1">@Model.GameTitle</h6>
-        <p class="card-text">@Model.Price.ToString("C")</p>
+<a asp-controller="GamePage" asp-action="Index" asp-route-id="@Model.GameId" class="text-decoration-none text-dark">
+    <div class="card me-2" style="width: 160px;">
+        <img src="@Model.ImagePath" class="card-img-top" style="height: 144px; object-fit: cover;" />
+        <div class="card-body p-2">
+            <h6 class="card-title mb-1">@Model.GameTitle</h6>
+            <p class="card-text">@Model.Price.ToString("C")</p>
+        </div>
     </div>
-</div>
+</a>

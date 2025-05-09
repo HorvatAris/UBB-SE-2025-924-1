@@ -1,0 +1,71 @@
+﻿@model SteamHub.Web.ViewModels.WishlistViewModel
+@{
+    ViewData["Title"] = "Wishlist";
+}
+
+<div class="container py-4">
+    <h2>Your Wishlist</h2>
+
+    <form asp-action="Index" method="get" class="row mb-3">
+        <div class="col-md-4">
+            <input name="search" value="@Model.Search" class="form-control" placeholder="Search wishlist..." />
+        </div>
+        <div class="col-md-2">
+            <select name="filter" class="form-select">
+                <option value="">All Ratings</option>
+                <option value="OVERWHELMINGLYPOSITIVE">Overwhelmingly Positive</option>
+                <option value="VERYPOSITIVE">Very Positive</option>
+                <option value="MIXED">Mixed</option>
+                <option value="NEGATIVE">Negative</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="sort" class="form-select">
+                <option value="">Sort by</option>
+                <option value="PRICE_ASC">Price ↑</option>
+                <option value="PRICE_DESC">Price ↓</option>
+                <option value="RATING_DESC">Rating ↓</option>
+                <option value="DISCOUNT_DESC">Discount ↓</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Apply</button>
+        </div>
+    </form>
+
+    @if (!Model.WishListGames.Any())
+    {
+        <p class="text-muted">No games found in wishlist.</p>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var game in Model.WishListGames)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="@game.ImagePath" class="card-img-top" style="height:200px; object-fit:cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title">@game.GameTitle</h5>
+                            <p class="card-text">@game.Price.ToString("C")</p>
+                            <p class="card-text"><small class="text-muted">Rating: @game.Rating</small></p>
+                            <p class="card-text">
+                                @if (game.Discount > 0)
+                                {
+                                    <span class="badge bg-success">-@game.Discount%</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a class="btn btn-outline-primary btn-sm" href="/GamePage/Index/@game.GameId">View</a>
+                            <form asp-action="Remove" method="post">
+                                <input type="hidden" name="gameId" value="@game.GameId" />
+                                <button class="btn btn-outline-danger btn-sm">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

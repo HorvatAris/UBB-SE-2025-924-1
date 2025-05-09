@@ -136,8 +136,11 @@ public class GameService : IGameService
             {
                 bool hasAllTags = true;
 
-                // If there are tags, check if the game has all the tags
-                if (tags.Length > lengthOfEmptyList)
+                if (tags.Length == 1 && tags[0] == null)
+                {
+                    hasAllTags = true;
+                }
+                else if (tags.Length > lengthOfEmptyList)
                 {
                     foreach (var tag in tags)
                     {
