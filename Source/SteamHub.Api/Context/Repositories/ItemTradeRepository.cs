@@ -8,6 +8,7 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using ItemTrade = SteamHub.Api.Entities.ItemTrade;
 
     public class ItemTradeRepository : IItemTradeRepository
     {

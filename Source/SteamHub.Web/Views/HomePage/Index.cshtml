@@ -1,0 +1,166 @@
+﻿@model SteamHub.Web.ViewModels.HomePageViewModel
+@{
+    ViewData["Title"] = "HomePage";
+}
+
+<div class="container py-4">
+
+    <!-- Search and Filter -->
+    <div class="d-flex mb-3">
+        <input id="SearchBox" class="form-control me-2" style="width: 300px; height: 40px; font-size: 16px;"
+               placeholder="Search for a game" oninput="onSearchChange(this.value)" />
+        <button class="btn btn-primary" onclick="toggleFilterPopup()">Filter</button>
+    </div>
+
+    <!-- All (Searched/Filtered) Games -->
+    <h3>@Model.SearchFilterText</h3>
+    <div class="horizontal-scroll mb-4 d-flex overflow-auto">
+        @foreach (var game in Model.FilteredGames)
+        {
+            @Html.Partial("_GameCard", game)
+        }
+    </div>
+
+    <!-- Recommended Games -->
+    <h3>Recommended Games</h3>
+    <div class="horizontal-scroll mb-4 d-flex overflow-auto">
+        @foreach (var game in Model.RecommendedGames)
+        {
+            @Html.Partial("_GameCard", game)
+        }
+    </div>
+
+    <!-- Trending Games -->
+    <h3>Trending Games</h3>
+    <div class="horizontal-scroll mb-4 d-flex overflow-auto">
+        @foreach (var game in Model.TrendingGames)
+        {
+            @Html.Partial("_GameCard", game)
+        }
+    </div>
+
+    <!-- Discounted Games -->
+    <h3>Discounted Games</h3>
+    <div class="horizontal-scroll mb-4 d-flex overflow-auto">
+        @foreach (var game in Model.DiscountedGames)
+        {
+            @Html.Partial("_GameCard", game)
+        }
+    </div>
+</div>
+
+<!-- Filter Modal -->
+<div id="filterModal" class="modal" tabindex="-1" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
+            <h5 class="modal-title text-center">Filter Options</h5>
+
+            <!-- Dummy sliders: implement logic if you expose properties for them -->
+            <!-- Rating -->
+            <div class="mb-3 text-center">
+                <label>Minimum Rating</label>
+                <input id="ratingFilter" type="range" min="0" max="5" step="1" class="form-range" />
+            </div>
+
+            <!-- Price Range -->
+            <div class="mb-3 text-center">
+                <label>Price Range</label>
+                <div class="d-flex justify-content-center gap-4">
+                    <div>
+                        <label>Min</label>
+                        <input id="minPriceFilter" type="range" min="0" max="200" step="10" class="form-range" />
+                    </div>
+                    <div>
+                        <label>Max</label>
+                        <input id="maxPriceFilter" type="range" min="0" max="200" step="10" class="form-range" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tag Selection -->
+            <div class="mb-3">
+                <label class="form-label">Select Tags:</label>
+                <div id="tagCheckboxList" class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="@tag.Tag_name" id="tag_@tag.TagId">
+                            <label class="form-check-label" for="tag_@tag.TagId">@tag.Tag_name</label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-secondary me-2" onclick="resetFilters()">Reset</button>
+                <button class="btn btn-primary" onclick="applyFilters()">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Show and hide filter modal
+        function toggleFilterPopup() {
+            const modal = document.getElementById('filterModal');
+            modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // AJAX search request
+        function onSearchChange(value) {
+            fetch(`/HomePage/SearchGames?query=${value}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Search result data:", data); // Log the returned data
+                    updateGameList(data);
+                });
+        }
+
+        function resetFilters() {
+            document.getElementById('ratingFilter').value = 0;
+            document.getElementById('minPriceFilter').value = 0;
+            document.getElementById('maxPriceFilter').value = 200;
+
+            // Uncheck all tag checkboxes
+            document.querySelectorAll('#tagCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const rating = document.getElementById('ratingFilter').value;
+            const minPrice = document.getElementById('minPriceFilter').value;
+            const maxPrice = document.getElementById('maxPriceFilter').value;
+
+            const selectedTags = Array.from(document.querySelectorAll('#tagCheckboxList input[type="checkbox"]:checked'))
+                                      .map(cb => cb.value);
+
+            fetch(`/HomePage/ApplyFilters?rating=${rating}&minPrice=${minPrice}&maxPrice=${maxPrice}&tags=${selectedTags.join(',')}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateGameList(data);
+                    toggleFilterPopup();
+                });
+        }
+
+        
+        function updateGameList(data) {
+            const gameContainer = document.querySelector('.horizontal-scroll');
+            gameContainer.innerHTML = '';  // Clear current content
+
+            // Loop through each game and fetch the rendered partial view
+            data.forEach(game => {
+                fetch(`/HomePage/GetGameCard?gameId=${game.gameId}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        // Insert the fetched HTML into the container
+                        gameContainer.innerHTML += html;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching game card:', error);
+                    });
+            });
+        }
+    </script>
+}

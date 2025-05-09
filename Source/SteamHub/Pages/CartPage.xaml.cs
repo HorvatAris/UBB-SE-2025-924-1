@@ -9,7 +9,7 @@ namespace SteamHub.Pages
     using System.Threading.Tasks;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Services.Interfaces;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

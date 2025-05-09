@@ -6,7 +6,8 @@
     xmlns:local="using:SteamHub.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:SteamHub.Models"
+    xmlns:pointShopItemModel="using:SteamHub.ApiContract.Models.PointShopItem"
+    xmlns:models="using:SteamHub.ApiContract.Models"
     xmlns:utils="using:SteamHub.Utils"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -184,7 +185,7 @@
                           SelectionChanged="ItemsGridView_SelectionChanged"
                           SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
                     <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="models:PointShopItem">
+                        <DataTemplate x:DataType="pointShopItemModel:PointShopItem">
                             <Grid Width="200" Height="250" Margin="10" Background="#2a3a4a">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
@@ -284,7 +285,7 @@
                 <GridView x:Name="InventoryGridView" ItemsSource="{Binding FilteredUserItems}">
 
                     <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="models:PointShopItem">
+                        <DataTemplate x:DataType="pointShopItemModel:PointShopItem">
                             <Grid Width="200" Height="250" Margin="10" Background="#2a3a4a">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>

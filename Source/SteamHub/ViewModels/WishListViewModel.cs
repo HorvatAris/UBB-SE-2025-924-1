@@ -12,10 +12,12 @@ namespace SteamHub.ViewModels
     using System.Threading.Tasks;
     using System.Windows.Input;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.Constants;
-    using SteamHub.Models;
+    using SteamHub.ApiContract.Constants;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Game;
     using SteamHub.Pages;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Services.Interfaces;
+
 
     public class WishListViewModel : INotifyPropertyChanged
     {

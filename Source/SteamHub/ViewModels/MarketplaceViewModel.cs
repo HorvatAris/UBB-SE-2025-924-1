@@ -11,8 +11,10 @@ namespace SteamHub.ViewModels
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Item;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Services.Interfaces;
 
     /// <summary>
     /// Viewmodel for the Marketplace Page.

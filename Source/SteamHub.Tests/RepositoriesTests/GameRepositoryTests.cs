@@ -7,6 +7,7 @@
     using SteamHub.Api.Entities;
     using SteamHub.Api.Context.Repositories;
     using SteamHub.ApiContract.Models.Game;
+    using Game = SteamHub.Api.Entities.Game;
     using Microsoft.EntityFrameworkCore;
     using Xunit;
     using Microsoft.Extensions.Configuration;

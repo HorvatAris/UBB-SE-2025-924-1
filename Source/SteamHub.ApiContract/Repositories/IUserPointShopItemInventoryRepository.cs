@@ -7,7 +7,9 @@
         Task<GetUserPointShopItemInventoryResponse> GetUserInventoryAsync(int userId);
 
         Task PurchaseItemAsync(PurchasePointShopItemRequest request);
+
         Task UpdateItemStatusAsync(UpdateUserPointShopItemInventoryRequest request);
+
         Task ResetUserInventoryAsync(int userId);
     }
 }

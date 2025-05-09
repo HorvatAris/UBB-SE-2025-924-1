@@ -3,13 +3,12 @@
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
-	using SteamHub.ServiceProxies;
-	using SteamHub.Services;
+	using SteamHub.ApiContract.Proxies;
+	using SteamHub.ApiContract.Services;
 	using Moq;
 	using SteamHub.ApiContract.Models.Game;
 	using SteamHub.ApiContract.Models.Tag;
-	using SteamHub.Models;
-	using SteamHub.Services;
+	using SteamHub.ApiContract.Models;
 	using SteamHub.Tests.TestUtils;
 	using Xunit;
 
@@ -23,14 +22,14 @@
 		private const string TEST_GAME_2 = "TEST Game 2";
 		private const string TEST_GAME_3 = "Game 2";
 		private readonly GameService subject;
-		private readonly Mock<IGameServiceProxy> gameProxyMock;
-		private readonly Mock<ITagServiceProxy> tagProxyMock;
+		private readonly Mock<GameRepositoryProxy> gameProxyMock;
+		private readonly Mock<TagRepositoryProxy> tagProxyMock;
 
 		public GameServiceTest()
 		{
-			gameProxyMock = new Mock<IGameServiceProxy>();
-			tagProxyMock = new Mock<ITagServiceProxy>();
-			subject = new GameService { GameServiceProxy = gameProxyMock.Object, TagServiceProxy = tagProxyMock.Object };
+			gameProxyMock = new Mock<GameRepositoryProxy>();
+			tagProxyMock = new Mock<TagRepositoryProxy>();
+			subject = new GameService(gameProxyMock.Object, tagProxyMock.Object);
 		}
 
 		[Fact]

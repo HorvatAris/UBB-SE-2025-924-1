@@ -6,13 +6,12 @@ namespace SteamHub.Pages
 {
     using System;
     using System.Linq;
-    using SteamHub.Models;
+    using SteamHub.ApiContract.Models;
     using SteamHub.ViewModels;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.Models;
-    using SteamHub.Services.Interfaces;
-    using SteamHub.ViewModels;
+    using SteamHub.ApiContract.Services.Interfaces;
+    using SteamHub.ApiContract.Models.Item;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

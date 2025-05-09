@@ -3,15 +3,13 @@ namespace SteamHub.Tests.Services
     using System.Collections.ObjectModel;
     using System.Net;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.ApiContract.Proxies;
     using Moq;
     using Refit;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Tag;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UsersGames;
-    using SteamHub.Models;
     using Xunit;
 
     public class DeveloperServiceTests
@@ -45,23 +43,23 @@ namespace SteamHub.Tests.Services
         private const int TestSecondTagId = 2;
 
         private readonly DeveloperService developerService;
-        private readonly Mock<IGameServiceProxy> gameServiceProxyMock;
-        private readonly Mock<ITagServiceProxy> tagServiceMock;
-        private readonly Mock<IUserGameServiceProxy> userGameServiceProxyMock;
-        private readonly Mock<IUserServiceProxy> userServiceProxyMock;
-        private readonly Mock<IItemServiceProxy> itemServiceProxyMock;
-        private readonly Mock<IItemTradeDetailServiceProxy> itemTradeDetailServiceProxyMock;
+        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
+        private readonly Mock<TagRepositoryProxy> tagServiceMock;
+        private readonly Mock<UserGamesRepositoryProxy> userGameServiceProxyMock;
+        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
+        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
+        private readonly Mock<ItemTradeDetailsRepositoryProxy> itemTradeDetailServiceProxyMock;
 
         private readonly User testUser;
 
         public DeveloperServiceTests()
         {
-            gameServiceProxyMock = new Mock<IGameServiceProxy>();
-            tagServiceMock = new Mock<ITagServiceProxy>();
-            userGameServiceProxyMock = new Mock<IUserGameServiceProxy>();
-            userServiceProxyMock = new Mock<IUserServiceProxy>();
-            itemServiceProxyMock = new Mock<IItemServiceProxy>();
-            itemTradeDetailServiceProxyMock = new Mock<IItemTradeDetailServiceProxy>();
+            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
+            tagServiceMock = new Mock<TagRepositoryProxy>();
+            userGameServiceProxyMock = new Mock<UserGamesRepositoryProxy>();
+            userServiceProxyMock = new Mock<UserRepositoryProxy>();
+            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
+            itemTradeDetailServiceProxyMock = new Mock<ItemTradeDetailsRepositoryProxy>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
 
             developerService = new DeveloperService(gameServiceProxyMock.Object, tagServiceMock.Object, userGameServiceProxyMock.Object,

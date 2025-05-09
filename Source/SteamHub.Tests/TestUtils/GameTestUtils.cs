@@ -1,9 +1,11 @@
 ﻿namespace SteamHub.Tests.TestUtils
 {
 	using System.Data;
-	using SteamHub.Models;
+	using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.Tag;
 
-	public static class GameTestUtils
+    public static class GameTestUtils
     {
         private const string APPROVED_STATUS = "Approved";
         private const int DISCOUNT_DECIMAL_COUNT = 0;

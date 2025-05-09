@@ -3,14 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.ServiceProxies;
-    using SteamHub.Services;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Proxies;
+    using SteamHub.ApiContract.Services;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.UserInventory;
-    using SteamHub.Services;
+    using SteamHub.ApiContract.Models.User;
     using Xunit;
 
     public class MarketplaceServiceTests
@@ -37,26 +37,26 @@
         private readonly string testItemImagePath3 = "img3";
 
         private readonly MarketplaceService marketplaceService;
-        private readonly Mock<IGameServiceProxy> gameServiceProxyMock;
-        private readonly Mock<IUserInventoryServiceProxy> userInventoryServiceProxyMock;
-        private readonly Mock<IUserServiceProxy> userServiceProxyMock;
-        private readonly Mock<IItemServiceProxy> itemServiceProxyMock;
+        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
+        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceProxyMock;
+        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
+        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
 
         private readonly User testUser;
 
         public MarketplaceServiceTests()
         {
-            gameServiceProxyMock = new Mock<IGameServiceProxy>();
-            userInventoryServiceProxyMock = new Mock<IUserInventoryServiceProxy>();
-            userServiceProxyMock = new Mock<IUserServiceProxy>();
-            itemServiceProxyMock = new Mock<IItemServiceProxy>();
+            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
+            userInventoryServiceProxyMock = new Mock<UserInventoryRepositoryProxy>();
+            userServiceProxyMock = new Mock<UserRepositoryProxy>();
+            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
             marketplaceService = new MarketplaceService
             {
-                GameServiceProxy = gameServiceProxyMock.Object,
-                UserInventoryServiceProxy = userInventoryServiceProxyMock.Object,
-                UserServiceProxy = userServiceProxyMock.Object,
-                ItemServiceProxy = itemServiceProxyMock.Object,
+                GameRepository = gameServiceProxyMock.Object,
+                UserInventoryRepository = userInventoryServiceProxyMock.Object,
+                UserRepository = userServiceProxyMock.Object,
+                ItemRepository = itemServiceProxyMock.Object,
                 User = testUser,
             };
         }

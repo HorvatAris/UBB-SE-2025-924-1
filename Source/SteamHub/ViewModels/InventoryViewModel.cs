@@ -12,10 +12,12 @@ namespace SteamHub.ViewModels
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.Models;
-    using SteamHub.Services;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.Item;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Services;
+    using SteamHub.ApiContract.Services.Interfaces;
 
     public class InventoryViewModel : INotifyPropertyChanged
     {

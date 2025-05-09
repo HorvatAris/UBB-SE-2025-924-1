@@ -3,13 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Proxies;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.UserInventory;
-    using SteamHub.Services;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Services;
     using SteamHub.Utils;
     using Xunit;
 
@@ -37,9 +38,9 @@
         private readonly string testItemImagePath3 = "img3";
 
         private readonly InventoryService inventoryService;
-        private readonly Mock<IUserInventoryServiceProxy> userInventoryServiceProxyMock;
-        private readonly Mock<IItemServiceProxy> itemServiceProxyMock;
-        private readonly Mock<IGameServiceProxy> gameServiceProxyMock;
+        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceProxyMock;
+        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
+        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
 
         private readonly InventoryValidator inventoryValidator;
 
@@ -47,9 +48,9 @@
 
         public InventoryServiceTests()
         {
-            userInventoryServiceProxyMock = new Mock<IUserInventoryServiceProxy>();
-            itemServiceProxyMock = new Mock<IItemServiceProxy>();
-            gameServiceProxyMock = new Mock<IGameServiceProxy>();
+            userInventoryServiceProxyMock = new Mock<UserInventoryRepositoryProxy>();
+            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
+            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
             inventoryService = new InventoryService(userInventoryServiceProxyMock.Object, itemServiceProxyMock.Object, gameServiceProxyMock.Object, testUser);
             inventoryValidator = new InventoryValidator();

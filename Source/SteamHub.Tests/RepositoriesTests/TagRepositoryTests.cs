@@ -7,6 +7,7 @@ using SteamHub.ApiContract.Models.Tag;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Tag = SteamHub.Api.Entities.Tag;
 
 namespace SteamHub.Tests.RepositoriesTests
 {

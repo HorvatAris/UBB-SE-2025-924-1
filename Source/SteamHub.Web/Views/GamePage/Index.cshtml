@@ -1,0 +1,98 @@
+﻿@model SteamHub.Web.ViewModels.GamePageViewModel
+
+@{
+    ViewData["Title"] = Model.Game.GameTitle;
+}
+
+<h1>@Model.Game.GameTitle</h1>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <img src="@Model.Game.ImagePath" alt="@Model.Game.GameTitle" class="img-fluid" />
+    </div>
+    <div class="col-md-8">
+        <h4>Description</h4>
+        <p>@Model.Game.GameDescription</p>
+
+        <h5>Developer</h5>
+        <p>@Model.Game.GameTitle</p>
+
+        <h5>Rating</h5>
+        <p>@Model.Game.Rating.ToString("F1") / 5</p>
+
+        <h5>Price</h5>
+        <p><strong>@($"${Model.Game.Price:F2}")</strong></p>
+
+        <h5>Status</h5>
+        <p>@(Model.IsOwned ? "Owned" : "Not Owned")</p>
+
+        <form asp-action="AddToCart" method="post">
+            <input type="hidden" name="id" value="@Model.Game.GameId" />
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+
+        <form asp-action="AddToWishlist" method="post" class="mt-2">
+            <input type="hidden" name="id" value="@Model.Game.GameId" />
+            <button type="submit" class="btn btn-secondary">Add to Wishlist</button>
+        </form>
+    </div>
+</div>
+
+@if (Model.GameTags?.Any() == true)
+{
+    <div class="mb-4">
+        <h4>Tags</h4>
+        <ul class="list-inline">
+            @foreach (var tag in Model.GameTags)
+            {
+                <li class="list-inline-item badge bg-secondary me-1">@tag</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h4>Minimum Requirements</h4>
+        <p>@Model.Game.MinimumRequirements</p>
+    </div>
+    <div class="col-md-6">
+        <h4>Recommended Requirements</h4>
+        <p>@Model.Game.RecommendedRequirements</p>
+    </div>
+</div>
+
+@if (Model.MediaLinks?.Any() == true)
+{
+    <div class="mb-4">
+        <h4>Media</h4>
+        <ul>
+            @foreach (var link in Model.MediaLinks)
+            {
+                <li><a href="@link" target="_blank">@link</a></li>
+            }
+        </ul>
+    </div>
+}
+
+@if (Model.SimilarGames?.Any() == true)
+{
+    <div class="mb-4">
+        <h4>Similar Games</h4>
+        <div class="row">
+            @foreach (var game in Model.SimilarGames)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <img src="@game.ImagePath" class="card-img-top" alt="@game.GameTitle" />
+                        <div class="card-body">
+                            <h5 class="card-title">@game.GameTitle</h5>
+                            <p class="card-text">Rating: @game.Rating.ToString("F1")</p>
+                            <a asp-action="Index" asp-route-id="@game.GameId" class="btn btn-outline-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

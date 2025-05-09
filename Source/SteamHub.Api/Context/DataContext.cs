@@ -5,8 +5,9 @@ namespace SteamHub.Api.Context
     using Microsoft.EntityFrameworkCore;
     using Microsoft.VisualBasic;
     using Models;
-    using SteamHub.ApiContract.Models.Game;
     using System.Reflection.Emit;
+    using SteamHub.ApiContract.Models.Game;
+    using Game = SteamHub.Api.Entities.Game;
 
 
     public class DataContext : DbContext

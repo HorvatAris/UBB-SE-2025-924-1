@@ -10,9 +10,10 @@ using SteamHub.ApiContract.Models.User;
 
 using EntityRoleEnum = SteamHub.Api.Entities.RoleEnum;
 using ContractRoleEnum = SteamHub.ApiContract.Models.User.RoleEnum;
-
+using User = SteamHub.Api.Entities.User;
 
 using Xunit;
+using SteamHub.ApiContract.Models.User;
 
 namespace SteamHub.Tests.Repositories
 {
