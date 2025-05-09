@@ -1,0 +1,99 @@
+﻿@model SteamHub.Api.Entities.Game
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Game</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="GameId" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagePath" class="control-label"></label>
+                <input asp-for="ImagePath" class="form-control" />
+                <span asp-validation-for="ImagePath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinimumRequirements" class="control-label"></label>
+                <input asp-for="MinimumRequirements" class="form-control" />
+                <span asp-validation-for="MinimumRequirements" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RecommendedRequirements" class="control-label"></label>
+                <input asp-for="RecommendedRequirements" class="form-control" />
+                <span asp-validation-for="RecommendedRequirements" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StatusId" class="control-label"></label>
+                <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                <span asp-validation-for="StatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RejectMessage" class="control-label"></label>
+                <input asp-for="RejectMessage" class="form-control" />
+                <span asp-validation-for="RejectMessage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rating" class="control-label"></label>
+                <input asp-for="Rating" class="form-control" />
+                <span asp-validation-for="Rating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfRecentPurchases" class="control-label"></label>
+                <input asp-for="NumberOfRecentPurchases" class="form-control" />
+                <span asp-validation-for="NumberOfRecentPurchases" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrailerPath" class="control-label"></label>
+                <input asp-for="TrailerPath" class="form-control" />
+                <span asp-validation-for="TrailerPath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GameplayPath" class="control-label"></label>
+                <input asp-for="GameplayPath" class="form-control" />
+                <span asp-validation-for="GameplayPath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Discount" class="control-label"></label>
+                <input asp-for="Discount" class="form-control" />
+                <span asp-validation-for="Discount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PublisherUserId" class="control-label"></label>
+                <select asp-for="PublisherUserId" class="form-control" asp-items="ViewBag.PublisherUserId"></select>
+                <span asp-validation-for="PublisherUserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
