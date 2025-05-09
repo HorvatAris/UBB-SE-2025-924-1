@@ -10,7 +10,7 @@ namespace SteamHub.Services
     using System.Text;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using SteamHub.Services.Interfaces;
     using SteamHub.ApiContract.Models.User;
     using Windows.Networking.Proximity;

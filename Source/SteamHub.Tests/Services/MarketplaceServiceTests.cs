@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using SteamHub.Services;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
@@ -37,19 +37,19 @@
         private readonly string testItemImagePath3 = "img3";
 
         private readonly MarketplaceService marketplaceService;
-        private readonly Mock<IGameRepositoryProxy> gameServiceProxyMock;
-        private readonly Mock<IUserInventoryRepositoryProxy> userInventoryServiceProxyMock;
-        private readonly Mock<IUserRepositoryProxy> userServiceProxyMock;
-        private readonly Mock<IItemRepositoryProxy> itemServiceProxyMock;
+        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
+        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceProxyMock;
+        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
+        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
 
         private readonly User testUser;
 
         public MarketplaceServiceTests()
         {
-            gameServiceProxyMock = new Mock<IGameRepositoryProxy>();
-            userInventoryServiceProxyMock = new Mock<IUserInventoryRepositoryProxy>();
-            userServiceProxyMock = new Mock<IUserRepositoryProxy>();
-            itemServiceProxyMock = new Mock<IItemRepositoryProxy>();
+            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
+            userInventoryServiceProxyMock = new Mock<UserInventoryRepositoryProxy>();
+            userServiceProxyMock = new Mock<UserRepositoryProxy>();
+            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
             marketplaceService = new MarketplaceService
             {

@@ -5,7 +5,7 @@
 	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
 	using SteamHub.Models;
-	using SteamHub.ServiceProxies;
+	using SteamHub.Proxies;
 	using Moq;
 	using SteamHub.ApiContract.Models.PointShopItem;
 	using SteamHub.ApiContract.Models.User;
@@ -18,9 +18,9 @@
 	public class PointShopServiceTest
 	{
 		private readonly User testUser;
-		private readonly Mock<IPointShopItemRepositoryProxy> itemProxyMock;
-		private readonly Mock<IUserPointShopItemInventoryRepositoryProxy> inventoryProxyMock;
-		private readonly Mock<IUserRepositoryProxy> userServiceProxyMock;
+		private readonly Mock<PointShopItemRepositoryProxy> itemProxyMock;
+		private readonly Mock<UserPointShopItemInventoryRepositoryProxy> inventoryProxyMock;
+		private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
 		private readonly PointShopService service;
 
 		public PointShopServiceTest()
@@ -35,9 +35,9 @@
 				UserRole = User.Role.User
 			};
 
-			itemProxyMock = new Mock<IPointShopItemRepositoryProxy>();
-			inventoryProxyMock = new Mock<IUserPointShopItemInventoryRepositoryProxy>();
-			userServiceProxyMock = new Mock<IUserRepositoryProxy>();
+			itemProxyMock = new Mock<PointShopItemRepositoryProxy>();
+			inventoryProxyMock = new Mock<UserPointShopItemInventoryRepositoryProxy>();
+			userServiceProxyMock = new Mock<UserRepositoryProxy>();
 
 			service = new PointShopService(
 				itemProxyMock.Object,

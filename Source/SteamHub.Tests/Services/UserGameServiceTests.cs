@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Tag;
@@ -18,18 +18,18 @@
 
     public class UserGameServiceTests
     {
-        private readonly Mock<IUserGameRepositoryProxy> userGameServiceProxyMock;
-        private readonly Mock<IGameRepositoryProxy> gameServiceProxyMock;
-        private readonly Mock<ITagRepositoryProxy> tagServiceProxyMock;
+        private readonly Mock<UserGamesRepositoryProxy> userGameServiceProxyMock;
+        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
+        private readonly Mock<TagRepositoryProxy> tagServiceProxyMock;
 
         private readonly User testUser;
         private readonly UserGameService userGameService;
 
         public UserGameServiceTests()
         {
-            this.userGameServiceProxyMock = new Mock<IUserGameRepositoryProxy>();
-            this.gameServiceProxyMock = new Mock<IGameRepositoryProxy>();
-            this.tagServiceProxyMock = new Mock<ITagRepositoryProxy>();
+            this.userGameServiceProxyMock = new Mock<UserGamesRepositoryProxy>();
+            this.gameServiceProxyMock = new Mock<GameRepositoryProxy>();
+            this.tagServiceProxyMock = new Mock<TagRepositoryProxy>();
 
             this.testUser = new User
             {

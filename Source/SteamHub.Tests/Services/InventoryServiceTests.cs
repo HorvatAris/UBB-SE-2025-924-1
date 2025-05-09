@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
@@ -37,9 +37,9 @@
         private readonly string testItemImagePath3 = "img3";
 
         private readonly InventoryService inventoryService;
-        private readonly Mock<IUserInventoryRepositoryProxy> userInventoryServiceProxyMock;
-        private readonly Mock<IItemRepositoryProxy> itemServiceProxyMock;
-        private readonly Mock<IGameRepositoryProxy> gameServiceProxyMock;
+        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceProxyMock;
+        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
+        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
 
         private readonly InventoryValidator inventoryValidator;
 
@@ -47,9 +47,9 @@
 
         public InventoryServiceTests()
         {
-            userInventoryServiceProxyMock = new Mock<IUserInventoryRepositoryProxy>();
-            itemServiceProxyMock = new Mock<IItemRepositoryProxy>();
-            gameServiceProxyMock = new Mock<IGameRepositoryProxy>();
+            userInventoryServiceProxyMock = new Mock<UserInventoryRepositoryProxy>();
+            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
+            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
             inventoryService = new InventoryService(userInventoryServiceProxyMock.Object, itemServiceProxyMock.Object, gameServiceProxyMock.Object, testUser);
             inventoryValidator = new InventoryValidator();

@@ -10,7 +10,7 @@ namespace SteamHub.Services
     using System.Linq;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using SteamHub.Services;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UserPointShopItemInventory;

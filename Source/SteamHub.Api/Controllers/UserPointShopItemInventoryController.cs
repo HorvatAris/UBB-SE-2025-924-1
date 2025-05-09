@@ -13,12 +13,14 @@ namespace SteamHub.Api.Controllers
         {
             _userPointShopItemInventoryRepository = userPointShopItemInventoryRepository;
         }
+
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserInventory(int userId)
         {
             var result = await _userPointShopItemInventoryRepository.GetUserInventoryAsync(userId);
             return Ok(result);
         }
+
         [HttpPost("purchase")]
         public async Task<IActionResult> PurchaseItem([FromBody] PurchasePointShopItemRequest request)
         {
@@ -32,6 +34,7 @@ namespace SteamHub.Api.Controllers
             }
             return NoContent();
         }
+
         [HttpPut("update")]
         public async Task<IActionResult> UpdateItemStatus([FromBody] UpdateUserPointShopItemInventoryRequest request)
         {

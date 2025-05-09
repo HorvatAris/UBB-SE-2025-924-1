@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using SteamHub.Services;
     using Moq;
     using SteamHub.ApiContract.Models.User;
@@ -12,11 +12,11 @@
     public class UserServiceTests
     {
         private readonly UserService userService;
-        private readonly Mock<IUserRepositoryProxy> userServiceProxyMock;
+        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
 
         public UserServiceTests()
         {
-            this.userServiceProxyMock = new Mock<IUserRepositoryProxy>();
+            this.userServiceProxyMock = new Mock<UserRepositoryProxy>();
             this.userService = new UserService(this.userServiceProxyMock.Object);
         }
 

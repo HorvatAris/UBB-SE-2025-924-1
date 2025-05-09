@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using SteamHub.Models;
 using SteamHub.Pages;
-using SteamHub.ServiceProxies;
+using SteamHub.Proxies;
 using SteamHub.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.UI.Xaml;
@@ -99,17 +99,19 @@ namespace SteamHub
                 BaseAddress = new Uri("https://localhost:7241"),
             };
 
-            var pointShopRepository = RestService.For<IPointShopItemRepositoryProxy>(httpClient);
-            var userPointShopInventoryRepository = RestService.For<IUserPointShopItemInventoryRepositoryProxy>(httpClient);
-            var gameRepository = RestService.For<IGameRepositoryProxy>(httpClient);
-            var userRepository = RestService.For<IUserRepositoryProxy>(httpClient);
-            var itemRepository = RestService.For<IItemRepositoryProxy>(httpClient);
-            var itemTradeRepository = RestService.For<IItemTradeRepositoryProxy>(httpClient);
-            var itemTradeDetailRepository = RestService.For<IItemTradeDetailRepositoryProxy>(httpClient);
-            var userInventoryRepository = RestService.For<IUserInventoryRepositoryProxy>(httpClient);
+            var pointShopRepository = new PointShopItemRepositoryProxy();
+            var userPointShopInventoryRepository = new UserPointShopItemInventoryRepositoryProxy();
+            var gameRepository = new GameRepositoryProxy();
+            var userRepository = new UserRepositoryProxy();
+            var itemRepository = new ItemRepositoryProxy();
+            var itemTradeRepository = new ItemTradeRepositoryProxy();
+            var itemTradeDetailsRepository = new ItemTradeDetailsRepositoryProxy();
+            var userInventoryRepository = new UserInventoryRepositoryProxy();
+            var tagRepository = new TagRepositoryProxy();
+            var userGamesRepository = new UserGamesRepositoryProxy();
 
 
-            var tradeService = new TradeService(itemTradeRepository, loggedInUser, itemTradeDetailRepository, userRepository, gameRepository, itemRepository, userInventoryRepository);
+            var tradeService = new TradeService(itemTradeRepository, loggedInUser, itemTradeDetailsRepository, userRepository, gameRepository, itemRepository, userInventoryRepository);
             this.tradeService = tradeService;
 
             var userService = new UserService(userRepository);
@@ -138,12 +140,6 @@ namespace SteamHub
                 User = loggedInUser,
             };
 
-            // var cartServiceProxy = RestService.For<ICartServiceProxy>(httpClient);
-            var tagServiceProxy = RestService.For<ITagRepositoryProxy>(httpClient);
-
-            // var userServiceProxy = RestService.For<IUserServiceProxy>(httpClient);
-            var userGameServiceProxy = RestService.For<IUserGameRepositoryProxy>(httpClient);
-
             this.pointShopService = new PointShopService(
                 pointShopRepository,
                 userPointShopInventoryRepository,
@@ -152,14 +148,14 @@ namespace SteamHub
 
             this.inventoryService = new InventoryService(userInventoryRepository, itemRepository, gameRepository, this.user);
 
-            this.gameService = new GameService { GameRepository = gameRepository, TagRepository = tagServiceProxy };
+            this.gameService = new GameService { GameRepository = gameRepository, TagRepository = tagRepository };
 
-            this.cartService = new CartService(userGameServiceProxy, loggedInUser, gameRepository);
+            this.cartService = new CartService(userGamesRepository, loggedInUser, gameRepository);
 
-            this.userGameService = new UserGameService(userGameServiceProxy, gameRepository, tagServiceProxy, loggedInUser);
+            this.userGameService = new UserGameService(userGamesRepository, gameRepository, tagRepository, loggedInUser);
 
             this.developerService = new DeveloperService(
-            gameRepository, tagServiceProxy, userGameServiceProxy, userRepository, itemRepository, itemTradeDetailRepository, loggedInUser);
+            gameRepository, tagRepository, userGamesRepository, userRepository, itemRepository, itemTradeDetailsRepository, loggedInUser);
 
             if (this.ContentFrame == null)
             {

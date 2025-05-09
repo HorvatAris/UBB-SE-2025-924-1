@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using SteamHub.ServiceProxies;
+using SteamHub.Proxies;
 using SteamHub.Services;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.Models;

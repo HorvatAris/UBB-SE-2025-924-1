@@ -4,7 +4,7 @@
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using SteamHub.Models;
-	using SteamHub.ServiceProxies;
+	using SteamHub.Proxies;
 	using Moq;
 	using SteamHub.ApiContract.Models.Game;
 	using SteamHub.ApiContract.Models.UsersGames;
@@ -19,14 +19,14 @@
 		private const int TestSecondGamePrice = 20;
 
 		private readonly CartService cartService;
-		private readonly Mock<IUserGameRepositoryProxy> cartServiceProxyMock;
-		private readonly Mock<IGameRepositoryProxy> gameServiceProxyMock;
+		private readonly Mock<UserGamesRepositoryProxy> cartServiceProxyMock;
+		private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
 		private readonly User testUser;
 
 		public CartServiceTests()
 		{
-			cartServiceProxyMock = new Mock<IUserGameRepositoryProxy>();
-			gameServiceProxyMock = new Mock<IGameRepositoryProxy>();
+			cartServiceProxyMock = new Mock<UserGamesRepositoryProxy>();
+			gameServiceProxyMock = new Mock<GameRepositoryProxy>();
 			testUser = new User { UserId = 1, WalletBalance = 50f };
 			cartService = new CartService(cartServiceProxyMock.Object, testUser, gameServiceProxyMock.Object);
 		}

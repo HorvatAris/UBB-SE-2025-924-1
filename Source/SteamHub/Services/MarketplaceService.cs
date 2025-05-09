@@ -8,7 +8,7 @@ namespace SteamHub.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using SteamHub.Services.Interfaces;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;

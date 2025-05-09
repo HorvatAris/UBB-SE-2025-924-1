@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using SteamHub.Models;
-    using SteamHub.ServiceProxies;
+    using SteamHub.Proxies;
     using SteamHub.Services;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
@@ -20,22 +20,22 @@
     public class TradeServiceTests
     {
         private readonly TradeService tradeService;
-        private readonly Mock<IItemTradeRepositoryProxy> itemTradeServiceMock;
-        private readonly Mock<IItemTradeDetailRepositoryProxy> itemTradeDetailServiceMock;
-        private readonly Mock<IUserRepositoryProxy> userServiceMock;
-        private readonly Mock<IGameRepositoryProxy> gameServiceMock;
-        private readonly Mock<IItemRepositoryProxy> itemServiceMock;
-        private readonly Mock<IUserInventoryRepositoryProxy> userInventoryServiceMock;
+        private readonly Mock<ItemTradeRepositoryProxy> itemTradeServiceMock;
+        private readonly Mock<ItemTradeDetailsRepositoryProxy> itemTradeDetailServiceMock;
+        private readonly Mock<UserRepositoryProxy> userServiceMock;
+        private readonly Mock<GameRepositoryProxy> gameServiceMock;
+        private readonly Mock<ItemRepositoryProxy> itemServiceMock;
+        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceMock;
         private readonly User testUser;
 
         public TradeServiceTests()
         {
-            itemTradeServiceMock = new Mock<IItemTradeRepositoryProxy>();
-            itemTradeDetailServiceMock = new Mock<IItemTradeDetailRepositoryProxy>();
-            userServiceMock = new Mock<IUserRepositoryProxy>();
-            gameServiceMock = new Mock<IGameRepositoryProxy>();
-            itemServiceMock = new Mock<IItemRepositoryProxy>();
-            userInventoryServiceMock = new Mock<IUserInventoryRepositoryProxy>();
+            itemTradeServiceMock = new Mock<ItemTradeRepositoryProxy>();
+            itemTradeDetailServiceMock = new Mock<ItemTradeDetailsRepositoryProxy>();
+            userServiceMock = new Mock<UserRepositoryProxy>();
+            gameServiceMock = new Mock<GameRepositoryProxy>();
+            itemServiceMock = new Mock<ItemRepositoryProxy>();
+            userInventoryServiceMock = new Mock<UserInventoryRepositoryProxy>();
 
             testUser = new User { UserId = 1, UserName = "TestUser" };
             tradeService = new TradeService(
