@@ -2,6 +2,7 @@
 using SteamHub.Api.Entities;
 using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Repositories;
+using User = SteamHub.Api.Entities.User;
 
 namespace SteamHub.Api.Context.Repositories;
 

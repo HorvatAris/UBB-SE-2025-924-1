@@ -1,4 +1,5 @@
 ﻿using GameEntity = SteamHub.Api.Entities.Game;
+using ItemEntity = SteamHub.Api.Entities.Item;
 
 using System;
 using System.Collections.Generic;
@@ -90,12 +91,12 @@ namespace SteamHub.Tests.Repositories
                 PublisherUserId = 1,
                 Publisher = user,
                 StoreTransactions = new List<StoreTransaction>(),
-                Items = new List<Item>()
+                Items = new List<ItemEntity>()
             };
             _context.Games.Add(game);
 
             // Item
-            var item = new Item
+            var item = new ItemEntity
             {
                 ItemId = 1,
                 ItemName = "Mock Item",

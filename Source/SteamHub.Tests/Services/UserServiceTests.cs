@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.Proxies;
-    using SteamHub.Services;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Proxies;
+    using SteamHub.ApiContract.Services;
     using Moq;
     using SteamHub.ApiContract.Models.User;
     using Xunit;

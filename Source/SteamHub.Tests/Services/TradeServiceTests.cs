@@ -5,9 +5,9 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.Proxies;
-    using SteamHub.Services;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Proxies;
+    using SteamHub.ApiContract.Services;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;

@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:entities="using:SteamHub.Models"
+    xmlns:itemModel="using:SteamHub.ApiContract.Models.Item"
     xmlns:converters="using:SteamHub.Pages.Converters"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -46,7 +46,7 @@
               IsItemClickEnabled="True"
               ItemClick="OnInventoryItemClicked">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="entities:Item">
+                <DataTemplate x:DataType="itemModel:Item">
                     <Grid Width="200" Height="250" Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

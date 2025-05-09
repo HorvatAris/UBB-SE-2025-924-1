@@ -1,13 +1,13 @@
-﻿using SteamHub.ApiContract.Models.Game;
-using SteamHub.ApiContract.Repositories;
-
-namespace SteamHub.Api.Context.Repositories;
+﻿namespace SteamHub.Api.Context.Repositories;
 
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using SteamHub.Api.Entities;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.ApiContract.Models.Tag;
+using SteamHub.ApiContract.Repositories;
+using Game = SteamHub.Api.Entities.Game;
 
 public class GameRepository : IGameRepository
 {

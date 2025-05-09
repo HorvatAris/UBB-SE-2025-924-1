@@ -7,15 +7,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SteamHub.Models;
 using SteamHub.Pages;
-using SteamHub.Proxies;
-using SteamHub.Services;
+using SteamHub.ApiContract.Services;
+using SteamHub.ApiContract.Proxies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Refit;
 using SteamHub.ApiContract.Models.User;
+using SteamHub.ApiContract.Models.Game;
 
 namespace SteamHub
 {
@@ -116,21 +116,7 @@ namespace SteamHub
 
             var userService = new UserService(userRepository);
             this.userService = userService;
-            var trade = new ItemTrade
-            {
-                TradeId = 1,
-                SourceUser = loggedInUser,
-                DestinationUser = new User { UserId = 2 },
-                GameOfTrade = new Game { GameId = 1 },
-                TradeDescription = "Test trade from user 1 to user 2",
-            };
-
-            // Add source user items
-            trade.SourceUserItems.Add(new Item { ItemId = 1 });
-            trade.SourceUserItems.Add(new Item { ItemId = 2 });
-
-            // Add destination user items
-            trade.DestinationUserItems.Add(new Item { ItemId = 3 });
+            
             this.marketplaceService = new MarketplaceService
             {
                 UserInventoryRepository = userInventoryRepository,
@@ -148,7 +134,7 @@ namespace SteamHub
 
             this.inventoryService = new InventoryService(userInventoryRepository, itemRepository, gameRepository, this.user);
 
-            this.gameService = new GameService { GameRepository = gameRepository, TagRepository = tagRepository };
+            this.gameService = new GameService(gameRepository,tagRepository);
 
             this.cartService = new CartService(userGamesRepository, loggedInUser, gameRepository);
 

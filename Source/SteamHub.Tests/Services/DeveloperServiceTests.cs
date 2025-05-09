@@ -3,15 +3,13 @@ namespace SteamHub.Tests.Services
     using System.Collections.ObjectModel;
     using System.Net;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.Proxies;
+    using SteamHub.ApiContract.Proxies;
     using Moq;
     using Refit;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Tag;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UsersGames;
-    using SteamHub.Models;
     using Xunit;
 
     public class DeveloperServiceTests

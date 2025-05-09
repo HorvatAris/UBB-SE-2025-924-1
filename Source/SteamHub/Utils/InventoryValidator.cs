@@ -9,8 +9,10 @@ namespace SteamHub.Utils
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.Models;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.Item;
+    using SteamHub.ApiContract.Models.User;
 
     public class InventoryValidator
     {

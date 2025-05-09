@@ -13,11 +13,14 @@ namespace SteamHub.ViewModels
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using ABI.System;
-    using SteamHub.Models;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Services.Interfaces;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Models.Item;
+    using SteamHub.ApiContract.Models.ItemTrade;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.Game;
 
     /// <summary>
     /// Viewmodel for Trade page.

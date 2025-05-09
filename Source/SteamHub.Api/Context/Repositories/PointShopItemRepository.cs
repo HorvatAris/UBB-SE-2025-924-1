@@ -3,6 +3,7 @@ using SteamHub.Api.Context;
 using SteamHub.Api.Entities;
 using SteamHub.ApiContract.Models.PointShopItem;
 using SteamHub.ApiContract.Repositories;
+using PointShopItem = SteamHub.Api.Entities.PointShopItem;
 
 namespace SteamHub.Api.Context.Repositories;
 

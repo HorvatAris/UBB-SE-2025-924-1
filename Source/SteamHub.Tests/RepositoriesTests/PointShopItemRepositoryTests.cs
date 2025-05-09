@@ -10,6 +10,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 using SteamHub.ApiContract.Models.Game;
+using PointShopItem = SteamHub.Api.Entities.PointShopItem;
 
 namespace SteamHub.Tests.RepositoriesTests
 {

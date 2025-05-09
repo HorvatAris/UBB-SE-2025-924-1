@@ -6,6 +6,7 @@
     using SteamHub.Api.Entities;
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Repositories;
+    using Item = SteamHub.Api.Entities.Item;
 
     public class ItemRepository : IItemRepository
     {

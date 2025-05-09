@@ -3,13 +3,12 @@
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
-	using SteamHub.Proxies;
-	using SteamHub.Services;
+	using SteamHub.ApiContract.Proxies;
+	using SteamHub.ApiContract.Services;
 	using Moq;
 	using SteamHub.ApiContract.Models.Game;
 	using SteamHub.ApiContract.Models.Tag;
-	using SteamHub.Models;
-	using SteamHub.Services;
+	using SteamHub.ApiContract.Models;
 	using SteamHub.Tests.TestUtils;
 	using Xunit;
 
@@ -30,7 +29,7 @@
 		{
 			gameProxyMock = new Mock<GameRepositoryProxy>();
 			tagProxyMock = new Mock<TagRepositoryProxy>();
-			subject = new GameService { GameRepository = gameProxyMock.Object, TagRepository = tagProxyMock.Object };
+			subject = new GameService(gameProxyMock.Object, tagProxyMock.Object);
 		}
 
 		[Fact]

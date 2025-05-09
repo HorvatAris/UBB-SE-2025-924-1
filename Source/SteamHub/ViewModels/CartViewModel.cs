@@ -12,10 +12,11 @@ using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SteamHub;
-using SteamHub.Constants;
+using SteamHub.ApiContract.Constants;
 using SteamHub.Pages;
-using SteamHub.Services.Interfaces;
+using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.ViewModels;
+using SteamHub.ApiContract.Models.Game;
 
 public class CartViewModel : INotifyPropertyChanged
 {

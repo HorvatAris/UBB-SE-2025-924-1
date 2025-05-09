@@ -1,6 +1,6 @@
 ﻿namespace SteamHub.Tests.TestUtils
 {
-    using SteamHub.Models;
+    using SteamHub.ApiContract.Models.Tag;
 
     public abstract class TagsConstants
     {

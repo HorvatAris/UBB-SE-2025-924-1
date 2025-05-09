@@ -9,9 +9,10 @@ namespace SteamHub.Pages
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Media;
     using SteamHub;
-    using SteamHub.Models;
+    using SteamHub.ApiContract.Models;
     using SteamHub.Pages;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Services.Interfaces;
     using SteamHub.ViewModels;
 
     /// <summary>

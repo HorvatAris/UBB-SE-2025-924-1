@@ -4,7 +4,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SteamHub.Pages"
-    xmlns:models="using:SteamHub.Models"
+    xmlns:itemModel="using:SteamHub.ApiContract.Models.Item"
+    xmlns:userModel="using:SteamHub.ApiContract.Models.User"
+    xmlns:itemTradeModel="using:SteamHub.ApiContract.Models.ItemTrade"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -297,7 +299,7 @@
                                  PlaceholderText="Select your user"
                                  Width="200">
                                 <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:User">
+                                    <DataTemplate x:DataType="userModel:User">
                                         <TextBlock Text="{x:Bind UserName}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
@@ -311,7 +313,7 @@
                               SelectionChanged="ActiveTradesListView_SelectionChanged"
                             >
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:ItemTrade">
+                                <DataTemplate x:DataType="itemTradeModel:ItemTrade">
                                     <Grid Padding="10">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -338,7 +340,7 @@
                                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind SourceUserItems}">
                                                 <ItemsRepeater.ItemTemplate>
-                                                    <DataTemplate x:DataType="models:Item">
+                                                    <DataTemplate x:DataType="itemModel:Item">
                                                         <TextBlock Text="{x:Bind ItemName}" 
                                                               Style="{StaticResource BodyTextBlockStyle}"/>
                                                     </DataTemplate>
@@ -352,7 +354,7 @@
                                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind DestinationUserItems}">
                                                 <ItemsRepeater.ItemTemplate>
-                                                    <DataTemplate x:DataType="models:Item">
+                                                    <DataTemplate x:DataType="itemModel:Item">
                                                         <TextBlock Text="{x:Bind ItemName}" 
                                                               Style="{StaticResource BodyTextBlockStyle}"/>
                                                     </DataTemplate>
@@ -397,7 +399,7 @@
                                  PlaceholderText="Select your user"
                                  Width="200">
                                 <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:User">
+                                    <DataTemplate x:DataType="userModel:User">
                                         <TextBlock Text="{x:Bind UserName}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
@@ -413,7 +415,7 @@
                              ItemsSource="{x:Bind ViewModel.TradeHistory}"
                              SelectionMode="None">
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:ItemTrade">
+                                <DataTemplate x:DataType="itemTradeModel:ItemTrade">
                                     <Grid Padding="12" 
                                        ColumnSpacing="20" 
                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -445,7 +447,7 @@
                                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind SourceUserItems}">
                                                 <ItemsRepeater.ItemTemplate>
-                                                    <DataTemplate x:DataType="models:Item">
+                                                    <DataTemplate x:DataType="itemModel:Item">
                                                         <TextBlock Text="{x:Bind ItemName}" 
                                                               Style="{StaticResource BodyTextBlockStyle}"/>
                                                     </DataTemplate>
@@ -459,7 +461,7 @@
                                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
                                             <ItemsRepeater ItemsSource="{x:Bind DestinationUserItems}">
                                                 <ItemsRepeater.ItemTemplate>
-                                                    <DataTemplate x:DataType="models:Item">
+                                                    <DataTemplate x:DataType="itemModel:Item">
                                                         <TextBlock Text="{x:Bind ItemName}" 
                                                               Style="{StaticResource BodyTextBlockStyle}"/>
                                                     </DataTemplate>

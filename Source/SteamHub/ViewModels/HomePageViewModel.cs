@@ -10,10 +10,13 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
-using SteamHub.Constants;
-using SteamHub.Models;
+using SteamHub.ApiContract.Constants;
+using SteamHub.ApiContract.Models;
 using SteamHub.Pages;
-using SteamHub.Services.Interfaces;
+using SteamHub.ApiContract.Services.Interfaces;
+using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.Tag;
+
 
 public class HomePageViewModel : INotifyPropertyChanged
 {

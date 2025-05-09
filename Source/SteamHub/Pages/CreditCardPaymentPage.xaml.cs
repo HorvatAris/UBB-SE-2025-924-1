@@ -17,7 +17,7 @@ namespace SteamHub.Pages
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Media;
     using Microsoft.UI.Xaml.Navigation;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Services.Interfaces;
     using SteamHub.ViewModels;
     using Windows.Foundation;
     using Windows.Foundation.Collections;

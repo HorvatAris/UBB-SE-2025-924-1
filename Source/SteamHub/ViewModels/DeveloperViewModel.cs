@@ -9,12 +9,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using SteamHub.Models;
+using SteamHub.ApiContract.Models;
 using Microsoft.UI.Xaml.Controls;
 using SteamHub;
-using SteamHub.Constants;
-using SteamHub.Models;
-using SteamHub.Services.Interfaces;
+using SteamHub.ApiContract.Constants;
+using SteamHub.ApiContract.Services.Interfaces;
+using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.Tag;
+using SteamHub.ApiContract.Models.User;
 using Windows.Gaming.Input;
 
 public class DeveloperViewModel : INotifyPropertyChanged

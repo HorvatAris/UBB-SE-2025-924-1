@@ -11,13 +11,14 @@ namespace SteamHub.ViewModels
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
-    using SteamHub.Models;
+    using SteamHub.ApiContract.Models;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.Constants;
-    using SteamHub.Models;
-    using SteamHub.Services;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Constants;
+    using SteamHub.ApiContract.Models.PointShopItem;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Services;
+    using SteamHub.ApiContract.Services.Interfaces;
 
     public class PointShopViewModel : INotifyPropertyChanged
     {

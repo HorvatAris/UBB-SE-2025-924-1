@@ -20,8 +20,10 @@ namespace SteamHub.Pages
     using Microsoft.UI.Xaml.Media;
     using Microsoft.UI.Xaml.Media.Imaging;
     using Microsoft.UI.Xaml.Navigation;
-    using SteamHub.Constants;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Constants;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Services.Interfaces;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
 

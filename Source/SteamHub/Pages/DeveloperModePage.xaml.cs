@@ -9,12 +9,13 @@ namespace SteamHub.Pages
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
-    using SteamHub.Constants;
+    using SteamHub.ApiContract.Constants;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.Constants;
-    using SteamHub.Models;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.Tag;
+    using SteamHub.ApiContract.Services.Interfaces;
 
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.

@@ -9,8 +9,8 @@ namespace SteamHub.Pages
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
-    using SteamHub.Models;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Services.Interfaces;
     using SteamHub.ViewModels;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -19,7 +19,7 @@ namespace SteamHub.Pages
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Media;
     using Microsoft.UI.Xaml.Navigation;
-    using SteamHub.Models;
+    using SteamHub.ApiContract.Models.Item;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
 

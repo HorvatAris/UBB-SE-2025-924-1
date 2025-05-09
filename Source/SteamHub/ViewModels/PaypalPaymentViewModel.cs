@@ -13,9 +13,11 @@ namespace SteamHub.ViewModels
     using System.Threading.Tasks;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using SteamHub.Constants;
+    using SteamHub.ApiContract.Constants;
     using SteamHub.Pages;
-    using SteamHub.Services.Interfaces;
+    using SteamHub.ApiContract.Services.Interfaces;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Game;
 
     public class PaypalPaymentViewModel : INotifyPropertyChanged
     {

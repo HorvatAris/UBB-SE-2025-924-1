@@ -4,14 +4,13 @@
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
-	using SteamHub.Models;
-	using SteamHub.Proxies;
+	using SteamHub.ApiContract.Models;
+	using SteamHub.ApiContract.Proxies;
 	using Moq;
 	using SteamHub.ApiContract.Models.PointShopItem;
 	using SteamHub.ApiContract.Models.User;
 	using SteamHub.ApiContract.Models.UserPointShopItemInventory;
-	using SteamHub.Models;
-	using SteamHub.Services;
+	using SteamHub.ApiContract.Services;
 	using SteamHub.Tests.TestUtils;
 	using Xunit;
 

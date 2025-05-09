@@ -5,15 +5,16 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using SteamHub.Models;
-    using SteamHub.Proxies;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Proxies;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Tag;
     using SteamHub.ApiContract.Models.UsersGames;
-    using SteamHub.Constants;
-    using SteamHub.Models;
-    using SteamHub.Services;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Constants;
+    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Services;
     using Xunit;
 
     public class UserGameServiceTests

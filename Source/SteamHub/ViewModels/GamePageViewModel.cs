@@ -11,9 +11,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using SteamHub.Models;
+using SteamHub.ApiContract.Models;
+using SteamHub.ApiContract.Models.Game;
 using SteamHub.Pages;
-using SteamHub.Services.Interfaces;
+using SteamHub.ApiContract.Services.Interfaces;
 
 public class GamePageViewModel : INotifyPropertyChanged
 {

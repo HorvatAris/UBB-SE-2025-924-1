@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SteamHub.ApiContract.Models.ItemTrade;
+using ItemTrade = SteamHub.Api.Entities.ItemTrade;
 using Xunit;
 
 namespace SteamHub.Tests.Repositories
