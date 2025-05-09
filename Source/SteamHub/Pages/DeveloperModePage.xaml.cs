@@ -109,10 +109,9 @@ namespace SteamHub.Pages
                         this.viewModel.AddGameMinimumRequirement,
                         this.viewModel.AddGameRecommendedRequirement,
                         this.viewModel.AddGameDiscount,
-                        this.AddGameTagList.SelectedItems.Cast<Tag>().ToList());
+                        new List<Tag> { new Tag { TagId = 500, Tag_name = "bagpl" } });
 
                     this.viewModel.ClearFieldsForAddingAGame();
-                    this.AddGameTagList.SelectedItems.Clear();
                 }
                 catch (Exception exception)
                 {

@@ -25,7 +25,7 @@ namespace SteamHub.Proxies
         public GameRepositoryProxy()
         {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7241"); // Adjust to your actual backend URL
+            _httpClient.BaseAddress = new Uri("https://localhost:7241"); 
         }
 
         public async Task<GameDetailedResponse> CreateGameAsync(CreateGameRequest game)
@@ -75,7 +75,7 @@ namespace SteamHub.Proxies
             var json = JsonSerializer.Serialize(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PutAsync($"/api/Games/{id}", content);
+            var response = await _httpClient.PatchAsync($"/api/Games/{id}", content);
             response.EnsureSuccessStatusCode();
         }
 

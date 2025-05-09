@@ -30,7 +30,7 @@ namespace SteamHub.Proxies
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:7241") // Adjust to your actual backend URL
+                BaseAddress = new Uri("https://localhost:7241") 
             };
         }
 
@@ -62,8 +62,15 @@ namespace SteamHub.Proxies
 
         public async Task RemoveItemFromUserInventoryAsync(ItemFromInventoryRequest request)
         {
-            var response = await _httpClient.DeleteAsync("/api/UserInventory");
-            response.EnsureSuccessStatusCode(); // Ensure the response is successful (2xx)
+            var httpRequest = new HttpRequestMessage
+            {
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri("/api/UserInventory", UriKind.Relative),
+                Content = JsonContent.Create(request, options: _options)
+            };
+
+            var response = await _httpClient.SendAsync(httpRequest);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

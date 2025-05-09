@@ -17,6 +17,7 @@ using SteamHub.Models;
 using SteamHub.Services.Interfaces;
 using static SteamHub.Constants.NotificationStrings;
 using SteamHub.ApiContract.Repositories;
+using System.Net.Http;
 
 public class DeveloperService : IDeveloperService
 {
@@ -348,26 +349,33 @@ public class DeveloperService : IDeveloperService
 
     public async Task<List<Tag>> GetGameTagsAsync(int gameId)
     {
-        var game = (await this.GameRepository.GetGameByIdAsync(gameId)) !;
-        return game.Tags.Select(
-            tag => new Tag
-            {
-                TagId = tag.TagId,
-                Tag_name = tag.TagName,
-                NumberOfUserGamesWithTag = 0,
-            }).ToList();
+        try
+        {
+            var game = (await this.GameRepository.GetGameByIdAsync(gameId))!;
+            return game.Tags.Select(
+                tag => new Tag
+                {
+                    TagId = tag.TagId,
+                    Tag_name = tag.TagName,
+                    NumberOfUserGamesWithTag = 0,
+                }).ToList();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return new List<Tag>();
+        }
     }
 
     public async Task<bool> IsGameIdInUseAsync(int gameId)
     {
         try
         {
-            await this.GameRepository.GetGameByIdAsync(gameId);
-            return true;
+            var game = await this.GameRepository.GetGameByIdAsync(gameId);
+            return game != null; 
         }
-        catch (ApiException exception) when (exception.StatusCode == System.Net.HttpStatusCode.NotFound)
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            return false;
+            return false; 
         }
     }
 
@@ -384,9 +392,6 @@ public class DeveloperService : IDeveloperService
 
     public async Task<int> GetGameOwnerCountAsync(int gameId)
     {
-        // SELECT COUNT(*) AS OwnerCount
-        // FROM games_users
-        // WHERE game_id = @game_id;
         var allUsers = await this.UserRepository.GetUsersAsync();
         int ownedCount = 0;
         System.Diagnostics.Debug.WriteLine(allUsers.Users.Count);
@@ -396,7 +401,15 @@ public class DeveloperService : IDeveloperService
             try
             {
                 var games = await this.UserGameRepository.GetUserGamesAsync(userId);
-                ownedCount += games.UserGames.Count;
+
+                foreach (var game in games.UserGames)
+                {
+                    if (game.GameId == gameId)
+                    {
+                        ownedCount++;
+                        break;
+                    }
+                }
             }
             catch (Exception)
             {
@@ -465,7 +478,7 @@ public class DeveloperService : IDeveloperService
             developerGames.Remove(gameToRemove);
         }
 
-        // Perform the actual deletion logic (e.g. from DB)
+        // Perform the actual deletion logic
         await this.DeleteGameAsync(gameId);
     }
 
@@ -486,7 +499,7 @@ public class DeveloperService : IDeveloperService
             developerGames.Remove(existing);
         }
 
-        await this.UpdateGameAsync(game); // this should be your existing logic that updates in DB/repo
+        await this.UpdateGameAsync(game); 
         developerGames.Add(game);
     }
 
@@ -531,13 +544,13 @@ public class DeveloperService : IDeveloperService
             }
         }
 
-        return await this.IsGameIdInUseAsync(gameId); // Call the existing database check or logic
+        return await this.IsGameIdInUseAsync(gameId); 
     }
 
     public async Task<IList<Tag>> GetMatchingTagsForGameAsync(int gameId, IList<Tag> allAvailableTags)
     {
         List<Tag> matchedTags = new List<Tag>();
-        List<Tag> gameTags = await this.GetGameTagsAsync(gameId); // Assuming this is already implemented
+        List<Tag> gameTags = await this.GetGameTagsAsync(gameId);
 
         foreach (Tag tag in allAvailableTags)
         {

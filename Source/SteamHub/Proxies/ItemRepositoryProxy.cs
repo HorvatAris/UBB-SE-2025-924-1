@@ -36,7 +36,7 @@ namespace SteamHub.Proxies
 
         public async Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync()
         {
-            var response = await _httpClient.GetAsync("/api/items");
+            var response = await _httpClient.GetAsync("/api/Items");
             response.EnsureSuccessStatusCode(); // Ensure the response is successful (2xx)
 
             var result = await response.Content.ReadFromJsonAsync<IEnumerable<ItemDetailedResponse>>(_options);
@@ -45,7 +45,7 @@ namespace SteamHub.Proxies
 
         public async Task<ItemDetailedResponse> GetItemByIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"/api/items/{id}");
+            var response = await _httpClient.GetAsync($"/api/Items/{id}");
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return null;
 
@@ -56,7 +56,7 @@ namespace SteamHub.Proxies
 
         public async Task<ItemDetailedResponse> CreateItemAsync(CreateItemRequest request)
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/items", request);
+            var response = await _httpClient.PostAsJsonAsync("/api/Items", request);
             response.EnsureSuccessStatusCode(); // Ensure the response is successful (2xx)
 
             var result = await response.Content.ReadFromJsonAsync<ItemDetailedResponse>(_options);
@@ -65,13 +65,13 @@ namespace SteamHub.Proxies
 
         public async Task UpdateItemAsync(int id, UpdateItemRequest request)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/api/items/{id}", request);
+            var response = await _httpClient.PutAsJsonAsync($"/api/Items/{id}", request);
             response.EnsureSuccessStatusCode(); // Ensure the response is successful (2xx)
         }
 
         public async Task DeleteItemAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/api/items/{id}");
+            var response = await _httpClient.DeleteAsync($"/api/Items/{id}");
             response.EnsureSuccessStatusCode(); // Ensure the response is successful (2xx)
         }
     }

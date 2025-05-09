@@ -85,7 +85,7 @@ namespace SteamHub
                 },
             };
 
-            User loggedInUser = users[1];
+            User loggedInUser = users[2];
 
             // Assign to the class field so it can be used in navigation
             this.user = loggedInUser;
