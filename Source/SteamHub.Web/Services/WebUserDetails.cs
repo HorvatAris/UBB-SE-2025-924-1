@@ -40,6 +40,11 @@ public class WebUserDetails: IUserDetails
             var value = httpContextAccessor.HttpContext?.Session.GetString("WalletBalance");
             return float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result) ? result : 0;
         }
+        set
+        {
+            httpContextAccessor.HttpContext?.Session.SetString("WalletBalance",
+                value.ToString(CultureInfo.InvariantCulture));
+        }
     }
 
     private string? GetClaimValue(string claimType)
