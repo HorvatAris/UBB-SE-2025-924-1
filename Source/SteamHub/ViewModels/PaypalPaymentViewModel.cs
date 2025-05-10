@@ -37,6 +37,7 @@ namespace SteamHub.ViewModels
             this.userGameService = userGameService;
             this.paypalProcessor = new PaypalProcessor();
             this.InitAmountToPayAsync();
+            this.InitAsync();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -65,13 +66,14 @@ namespace SteamHub.ViewModels
         public static async Task<PaypalPaymentViewModel> CreateAsync(ICartService cartService, IUserGameService userGameService)
         {
             var viewModel = new PaypalPaymentViewModel(cartService, userGameService);
-            await viewModel.InitAsync();
+            viewModel.InitAsync();
             return viewModel;
         }
 
-        public async Task InitAsync()
+        public async void InitAsync()
         {
             this.purchasedGames = await this.cartService.GetCartGamesAsync();
+            System.Diagnostics.Debug.WriteLine($"Purchased games count: {this.purchasedGames.Count}");
         }
 
         public async Task ValidatePayment(Frame frame)
@@ -84,6 +86,7 @@ namespace SteamHub.ViewModels
 
                 // Get points earned from the purchase
                 int pointsEarned = this.userGameService.LastEarnedPoints;
+                System.Diagnostics.Debug.WriteLine($"Points earned: {pointsEarned}");   
 
                 // Store points in App resources for PointsShopPage to access
                 try

@@ -1,0 +1,45 @@
+﻿@model SteamHub.Web.ViewModels.PaypalPaymentViewModel
+
+@{
+    ViewData["Title"] = "PayPal Payment";
+}
+
+<h2>PayPal Payment</h2>
+
+<form asp-action="PaypalPayment" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <p>Total to Pay: <strong>@Model.AmountToPay.ToString("C")</strong></p>
+    </div>
+
+   
+
+    <button type="submit" class="btn btn-primary">Validate Payment</button>
+  
+</form>
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-@(Model.IsSuccess ? "success" : "danger")">
+        <p>@Model.Message</p>
+
+        
+            <p>You earned <strong>@Model.PointsEarned</strong> points!</p>
+        
+
+        <a class="btn btn-secondary mt-2" href="@Url.Action("Index", "Home")">Back to Home</a>
+    </div>
+}
+
