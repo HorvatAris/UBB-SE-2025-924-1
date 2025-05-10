@@ -1,0 +1,34 @@
+﻿@model IEnumerable<SteamHub.ApiContract.Models.Game.Game>
+
+@{
+    ViewData["Title"] = "Unvalidated Games";
+}
+
+<h2>🕵️ Unvalidated Games</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.GameTitle</td>
+                <td>@game.Price €</td>
+                <td>Pending Validation</td>
+                <td>
+                    <form asp-action="Validate" method="post" asp-route-id="@game.GameId" style="display:inline">
+                        <button type="submit" class="btn btn-success">✅ Validate</button>
+                    </form>
+                    <a asp-action="Reject" asp-route-id="@game.GameId" class="btn btn-danger">❌ Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
