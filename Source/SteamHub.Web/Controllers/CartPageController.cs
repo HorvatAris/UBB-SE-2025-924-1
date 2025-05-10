@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace SteamHub.Web.Controllers
 {
+    [Authorize(Roles = "User")]
     public class CartPageController : Controller
     {
         private readonly ICartService cartService;

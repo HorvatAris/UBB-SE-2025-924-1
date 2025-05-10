@@ -6,7 +6,6 @@ using SteamHub.ApiContract.Models.Login;
 namespace SteamHub.Web.Services
 {
 
-
     public class AuthManager : IAuthManager
     {
         private readonly HttpClient httpClient;
