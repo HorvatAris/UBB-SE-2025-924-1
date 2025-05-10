@@ -115,7 +115,7 @@
 
             var result = await this.userService.GetAllUsersAsync();
 
-            Assert.Equal(User.Role.Developer, result[0].UserRole);
+            Assert.Equal(UserRole.Developer, result[0].UserRole);
         }
 
         [Fact]
@@ -199,7 +199,7 @@
 
             var result = await this.userService.GetAllUsersAsync();
 
-            Assert.Equal(User.Role.User, result[1].UserRole);
+            Assert.Equal(UserRole.User, result[1].UserRole);
         }
 
         private static List<UserResponse> CreateMockUsers()

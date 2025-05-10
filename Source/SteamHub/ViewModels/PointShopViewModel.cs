@@ -24,7 +24,7 @@ namespace SteamHub.ViewModels
     {
         private const int NoPointsBalance = 0;
         private readonly IPointShopService pointShopService;
-        private User user;
+        private IUserDetails user;
 
         // Collections
         private ObservableCollection<PointShopItem> shopItems;

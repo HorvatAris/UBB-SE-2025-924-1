@@ -29,7 +29,7 @@ namespace SteamHub.ViewModels
         private string selectedRarity;
         private List<Item> allCurrentItems;
         private Item selectedItem;
-        private User currentUser;
+        private IUserDetails currentUser;
         private ObservableCollection<User> availableUsers;
         private ObservableCollection<string> availableGames;
         private ObservableCollection<string> availableTypes;
@@ -149,7 +149,7 @@ namespace SteamHub.ViewModels
             }
         }
 
-        public User CurrentUser
+        public IUserDetails CurrentUser
         {
             get => this.currentUser;
             set

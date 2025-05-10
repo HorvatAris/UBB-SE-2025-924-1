@@ -42,8 +42,8 @@ namespace SteamHub.ApiContract.Services
                     WalletBalance = user.WalletBalance,
                     PointsBalance = user.PointsBalance,
                     UserRole = user.Role == RoleEnum.Developer
-                        ? User.Role.Developer
-                        : User.Role.User,
+                        ? UserRole.Developer
+                        : UserRole.User,
                 };
                 result.Add(currentUser);
             }

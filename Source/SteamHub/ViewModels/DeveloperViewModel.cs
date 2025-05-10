@@ -358,7 +358,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
 
     public bool CheckIfUserIsADeveloper()
     {
-        return this.developerService.GetCurrentUser().UserRole == User.Role.Developer;
+        return this.developerService.User.UserRole == UserRole.Developer;
     }
 
     public async Task CreateGameAsync(Game game, IList<Tag> selectedTags)

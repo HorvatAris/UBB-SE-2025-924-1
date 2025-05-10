@@ -22,13 +22,12 @@ namespace SteamHub.ApiContract.Proxies
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
         };
 
-        public UserGamesRepositoryProxy()
+        public UserGamesRepositoryProxy(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7241") // Adjust to your actual backend URL
-            };
+            _httpClient = httpClientFactory.CreateClient("SteamHubApi");
+
         }
+
 
         public async Task<GetUserGamesResponse> GetUserGamesAsync(int userId)
         {

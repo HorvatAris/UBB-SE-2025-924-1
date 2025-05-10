@@ -1,0 +1,33 @@
+﻿@model SteamHub.Web.ViewModels.LoginViewModel
+@{ ViewData["Title"] = "Log in"; }
+
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <h2>@ViewData["Title"]</h2>
+        <section>
+            <form asp-controller="Authentication" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]"
+                  method="post">
+                <hr/>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" class="form-control"/>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" type="password"/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Log in</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

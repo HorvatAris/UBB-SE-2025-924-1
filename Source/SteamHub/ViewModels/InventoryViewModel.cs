@@ -257,7 +257,7 @@ namespace SteamHub.ViewModels
         {
             try
             {
-                var user = this.inventoryService.GetAllUsers();
+                var user = new User(this.inventoryService.GetAllUsers());
                 this.AvailableUsers.Clear();
                 this.AvailableUsers.Add(user);
                 this.SelectedUser = user;

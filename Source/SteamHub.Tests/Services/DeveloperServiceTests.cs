@@ -221,7 +221,7 @@ namespace SteamHub.Tests.Services
         [Fact]
         public void GetCurrentUser_WhenValid_ShouldReturnUser()
         {
-            var user = developerService.GetCurrentUser();
+            var user = developerService.User;
 
             Assert.Equal(testUser, user);
         }

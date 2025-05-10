@@ -67,7 +67,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<int> GetGameOwnerCountAsync(int gameId);
 
-        User GetCurrentUser();
+        IUserDetails User { get; }
 
         Task DeleteGameAsync(int gameId, ObservableCollection<Game> developerGames);
 

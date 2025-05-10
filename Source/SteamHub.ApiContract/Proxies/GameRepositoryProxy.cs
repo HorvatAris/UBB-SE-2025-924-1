@@ -22,10 +22,9 @@ namespace SteamHub.ApiContract.Proxies
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) } };
 
-        public GameRepositoryProxy()
+        public GameRepositoryProxy(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7241"); 
+            _httpClient = httpClientFactory.CreateClient("SteamHubApi");
         }
 
         public async Task<GameDetailedResponse> CreateGameAsync(CreateGameRequest game)

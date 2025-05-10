@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 
 namespace SteamHub.Web.Controllers
 {
+    [Authorize]
     public class GamePageController : Controller
     {
         private readonly IGameService gameService;

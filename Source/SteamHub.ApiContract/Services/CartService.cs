@@ -20,10 +20,10 @@ public class CartService : ICartService
 {
     private const int InitialZeroSum = 0;
     private IUsersGamesRepository userGameRepository;
-    private User user;
+    private IUserDetails user;
     private IGameRepository gameRepository;
 
-    public CartService(IUsersGamesRepository userGameRepository, User user, IGameRepository gameRepository)
+    public CartService(IUsersGamesRepository userGameRepository, IUserDetails user, IGameRepository gameRepository)
     {
         this.userGameRepository = userGameRepository;
         this.gameRepository = gameRepository;

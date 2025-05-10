@@ -26,7 +26,8 @@ public class DeveloperService : IDeveloperService
     private const int EmptyListLength = 0;
     private const string PendingState = "Pending";
 
-    public DeveloperService(IGameRepository gameRepository, ITagRepository tagRepository, IUsersGamesRepository userGameRepository, IUserRepository userRepository, IItemRepository itemRepository, IItemTradeDetailRepository itemTradeDetailRepository, User user)
+    public DeveloperService(IGameRepository gameRepository, ITagRepository tagRepository, IUsersGamesRepository userGameRepository, IUserRepository userRepository, IItemRepository itemRepository, IItemTradeDetailRepository itemTradeDetailRepository, 
+        IUserDetails user)
     {
         this.GameRepository = gameRepository;
         this.TagRepository = tagRepository;
@@ -49,7 +50,7 @@ public class DeveloperService : IDeveloperService
 
     public IItemTradeDetailRepository ItemTradeDetailRepository { get; set; }
 
-    public User User { get; set; }
+    public IUserDetails User { get; set; }
 
     public async Task ValidateGameAsync(int game_id)
     {
@@ -418,11 +419,6 @@ public class DeveloperService : IDeveloperService
 
         System.Diagnostics.Debug.WriteLine(ownedCount);
         return ownedCount;
-    }
-
-    public User GetCurrentUser()
-    {
-        return this.User;
     }
 
     public async Task<Game> CreateValidatedGameAsync(
