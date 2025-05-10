@@ -1,3 +1,4 @@
+using SteamHub.ApiContract.Context.Repositories;
 using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Proxies;
 using SteamHub.ApiContract.Repositories;
@@ -36,12 +37,16 @@ builder.Services.AddScoped<IUserDetails, WebUserDetails>();
 builder.Services.AddScoped<IGameRepository, GameRepositoryProxy>();
 builder.Services.AddScoped<IUsersGamesRepository, UserGamesRepositoryProxy>();
 builder.Services.AddScoped<ITagRepository, TagRepositoryProxy>();
+builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepositoryProxy>();
+builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepositoryProxy>();
+builder.Services.AddScoped<IUserRepository, UserRepositoryProxy>();
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartService,CartService>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
+builder.Services.AddScoped<IPointShopService, PointShopService>();
 //ilder.Services.AddScoped<ICartService, CartService>();
 //builder.Services.AddScoped<ICartService>(provider =>
 //{
