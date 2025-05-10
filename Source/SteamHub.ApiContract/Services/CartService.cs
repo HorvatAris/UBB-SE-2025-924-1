@@ -31,6 +31,10 @@ public class CartService : ICartService
         this.user = user;
     }
 
+    public User GetUser()
+    {
+        return new User(this.user);
+    }
     public async Task<List<Game>> GetCartGamesAsync()
     {
         try

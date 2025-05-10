@@ -5,7 +5,7 @@ using SteamHub.Web.ViewModels;
 
 namespace SteamHub.Web.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize]
     public class WishlistController : Controller
     {
         private readonly IUserGameService userGameService;

@@ -11,6 +11,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
     using System.Text;
     using System.Threading.Tasks;
     using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.User;
 
     public interface ICartService
     {
@@ -31,5 +32,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
         float GetUserFunds();
 
         public float GetTheTotalSumOfItemsInCart(List<Game> cartGames);
+
+        User GetUser();
     }
 }
