@@ -36,8 +36,9 @@ public class UserGameService : IUserGameService
 
     private IUserDetails user;
 
-    public UserGameService(IUsersGamesRepository userGameRepository, IGameRepository gameRepository, ITagRepository tagRepository, IUserDetails user)
+    public UserGameService(IUserRepository userRepository, IUsersGamesRepository userGameRepository, IGameRepository gameRepository, ITagRepository tagRepository, IUserDetails user)
     {
+        this.UserRepository = userRepository;
         this.UserGameRepository = userGameRepository;
         this.GameRepository = gameRepository;
         this.TagRepository = tagRepository;
@@ -46,6 +47,8 @@ public class UserGameService : IUserGameService
 
     // Property to track points earned in the last purchase
     public int LastEarnedPoints { get; private set; }
+
+    private IUserRepository UserRepository { get; set; }
 
     private IUsersGamesRepository UserGameRepository { get; set; }
 
@@ -126,7 +129,7 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task PurchaseGamesAsync(List<Game> games)
+    public async Task PurchaseGamesAsync(List<Game> games, bool isWalletPayment)
     {
         // Reset points counter
         this.LastEarnedPoints = InitialValueForLastEarnedPoints;
@@ -142,6 +145,8 @@ public class UserGameService : IUserGameService
                 UserId = this.user.UserId,
                 GameId = game.GameId,
             };
+            if (isWalletPayment)
+                user.WalletBalance = user.WalletBalance - (float)game.Price;
             await this.UserGameRepository.PurchaseGameAsync(request);
 
             // await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
@@ -150,6 +155,17 @@ public class UserGameService : IUserGameService
         // Calculate earned points by comparing balances
         float pointsBalanceAfter = this.user.PointsBalance;
         this.LastEarnedPoints = (int)(pointsBalanceAfter - pointsBalanceBefore);
+
+        var updateUserRequest = new UpdateUserRequest
+        {
+            UserName = this.user.UserName,
+            Email = this.user.Email,
+            WalletBalance = this.user.WalletBalance,
+            PointsBalance = this.user.PointsBalance,
+            Role = (RoleEnum)this.user.UserRole,
+        };
+
+        await this.UserRepository.UpdateUserAsync(this.user.UserId, updateUserRequest);
     }
 
     public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags)

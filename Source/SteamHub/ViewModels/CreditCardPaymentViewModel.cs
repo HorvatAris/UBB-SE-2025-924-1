@@ -114,7 +114,7 @@ namespace SteamHub.ViewModels
             {
                 List<Game> purchasedGames = await this.cartService.GetCartGamesAsync();
                 await this.cartService.RemoveGamesFromCartAsync(purchasedGames);
-                await this.userGameService.PurchaseGamesAsync(purchasedGames);
+                await this.userGameService.PurchaseGamesAsync(purchasedGames, false);
                 this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
 
                 try

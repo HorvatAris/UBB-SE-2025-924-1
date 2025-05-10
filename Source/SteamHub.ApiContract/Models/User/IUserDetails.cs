@@ -7,5 +7,5 @@ public interface IUserDetails
     UserRole UserRole { get; }
     string UserName { get; }
     string Email { get; }
-    float WalletBalance { get; }
+    float WalletBalance { get; set; }
 }

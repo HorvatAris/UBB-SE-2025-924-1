@@ -32,7 +32,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IUserDetails, WebUserDetails>();
 
-
+builder.Services.AddScoped<IUserRepository, UserRepositoryProxy>();
 builder.Services.AddScoped<IGameRepository, GameRepositoryProxy>();
 builder.Services.AddScoped<IUsersGamesRepository, UserGamesRepositoryProxy>();
 builder.Services.AddScoped<ITagRepository, TagRepositoryProxy>();
@@ -40,8 +40,8 @@ builder.Services.AddScoped<ITagRepository, TagRepositoryProxy>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<ICartService,CartService>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
+
 //ilder.Services.AddScoped<ICartService, CartService>();
 //builder.Services.AddScoped<ICartService>(provider =>
 //{
