@@ -19,7 +19,7 @@ namespace SteamHub.Web.Controllers
         {
             this.cartService = cartService;
             this.userGameService = userGameService;
-            this.user = this.cartService.GetUser();
+            this.user = this.cartService.GetUser(); // neaparat
         }
 
         public async Task<IActionResult> Index()
