@@ -72,25 +72,25 @@ public class UserGameService : IUserGameService
             {
                 throw new Exception(string.Format(ExceptionMessages.GameAlreadyOwned, game.GameTitle));
             }
-
             var request = new UserGameRequest
             {
                 UserId = this.user.UserId,
                 GameId = game.GameId,
             };
 
+            var wishlistGames = await this.GetWishListGamesAsync();
+            foreach (var wishlistGame in wishlistGames)
+            {
+                if (game.GameId == wishlistGame.GameId)
+                {
+                    throw new Exception(string.Format(ExceptionMessages.GameAlreadyInWishlist, game.GameTitle));
+                }
+            }
             await this.UserGameRepository.AddToWishlistAsync(request);
         }
         catch (Exception exception)
         {
-            // Clean up the error message
-            string message = exception.Message;
-            if (message.Contains("ExecuteNonQuery"))
-            {
-                message = string.Format(ExceptionMessages.GameAlreadyInWishlist, game.GameTitle);
-            }
-
-            throw new Exception(message);
+            throw;
         }
     }
 

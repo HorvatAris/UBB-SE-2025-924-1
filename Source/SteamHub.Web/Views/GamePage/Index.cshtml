@@ -26,15 +26,35 @@
         <h5>Status</h5>
         <p>@(Model.IsOwned ? "Owned" : "Not Owned")</p>
 
-        <form asp-action="AddToCart" method="post">
+        <form asp-action="AddToCart" method="post" id="add-to-cart-form">
             <input type="hidden" name="id" value="@Model.Game.GameId" />
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
 
-        <form asp-action="AddToWishlist" method="post" class="mt-2">
+        <form asp-action="AddToWishlist" method="post" id="add-to-wishlist-form" class="mt-2">
             <input type="hidden" name="id" value="@Model.Game.GameId" />
             <button type="submit" class="btn btn-secondary">Add to Wishlist</button>
         </form>
+
+        <!-- Alerts with dismiss buttons -->
+        <div id="success-message" class="alert alert-success alert-dismissible fade show d-none mt-2" role="alert">
+            <span></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div id="error-message" class="alert alert-danger alert-dismissible fade show d-none mt-2" role="alert">
+            <span></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div id="wishlist-success-message" class="alert alert-success alert-dismissible fade show d-none mt-2" role="alert">
+            <span></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div id="wishlist-error-message" class="alert alert-danger alert-dismissible fade show d-none mt-2" role="alert">
+            <span></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
     </div>
 </div>
 
@@ -96,3 +116,63 @@
         </div>
     </div>
 }
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Bootstrap JS (for alert dismiss) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#add-to-cart-form').submit(function (event) {
+            event.preventDefault();
+
+            const form = $(this);
+            const url = form.attr('action');
+            const data = form.serialize();
+
+            $.post(url, data)
+                .done(function (response) {
+                    if (response.success) {
+                        $('#success-message span').text(response.message);
+                        $('#success-message').removeClass('d-none').show();
+                        $('#error-message').hide();
+                    } else {
+                        $('#error-message span').text(response.message);
+                        $('#error-message').removeClass('d-none').show();
+                        $('#success-message').hide();
+                    }
+                })
+                .fail(function () {
+                    $('#error-message span').text('An error occurred while adding the game to the cart.');
+                    $('#error-message').removeClass('d-none').show();
+                    $('#success-message').hide();
+                });
+        });
+
+        $('#add-to-wishlist-form').submit(function (event) {
+            event.preventDefault();
+
+            const form = $(this);
+            const url = form.attr('action');
+            const data = form.serialize();
+
+            $.post(url, data)
+                .done(function (response) {
+                    if (response.success) {
+                        $('#wishlist-success-message span').text(response.message);
+                        $('#wishlist-success-message').removeClass('d-none').show();
+                        $('#wishlist-error-message').hide();
+                    } else {
+                        $('#wishlist-error-message span').text(response.message);
+                        $('#wishlist-error-message').removeClass('d-none').show();
+                        $('#wishlist-success-message').hide();
+                    }
+                })
+                .fail(function () {
+                    $('#wishlist-error-message span').text('An error occurred while adding the game to the wishlist.');
+                    $('#wishlist-error-message').removeClass('d-none').show();
+                    $('#wishlist-success-message').hide();
+                });
+        });
+    });
+</script>
