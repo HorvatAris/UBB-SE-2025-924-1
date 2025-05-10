@@ -31,14 +31,19 @@
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
 
-        <form asp-action="AddToWishlist" method="post" class="mt-2">
+        <form asp-action="AddToWishlist" method="post" id="add-to-wishlist-form" class="mt-2">
             <input type="hidden" name="id" value="@Model.Game.GameId" />
             <button type="submit" class="btn btn-secondary">Add to Wishlist</button>
         </form>
 
+
         <!-- Success and Error Message Containers -->
         <div id="success-message" class="alert alert-success d-none mt-2"></div>
         <div id="error-message" class="alert alert-danger d-none mt-2"></div>
+
+        <div id="wishlist-success-message" class="alert alert-success d-none"></div>
+        <div id="wishlist-error-message" class="alert alert-danger d-none"></div>
+
     </div>
 </div>
 
@@ -127,4 +132,29 @@
                 });
         });
     });
+        $(document).ready(function () {
+        $('#add-to-wishlist-form').submit(function (event) {
+            event.preventDefault(); // Prevent normal form submission
+
+            const form = $(this);
+            const url = form.attr('action');
+            const data = form.serialize();
+
+            $.post(url, data)
+                .done(function (response) {
+                    if (response.success) {
+                        $('#wishlist-success-message').text(response.message).removeClass('d-none').show();
+                        $('#wishlist-error-message').hide();
+                    } else {
+                        $('#wishlist-error-message').text(response.message).removeClass('d-none').show();
+                        $('#wishlist-success-message').hide();
+                    }
+                })
+                .fail(function () {
+                    $('#wishlist-error-message').text('An error occurred while adding the game to the wishlist.').removeClass('d-none').show();
+                    $('#wishlist-success-message').hide();
+                });
+        });
+    });
+
 </script>
