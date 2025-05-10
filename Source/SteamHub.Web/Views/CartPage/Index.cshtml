@@ -1,0 +1,53 @@
+﻿@model SteamHub.Web.ViewModels.CartPageViewModel
+
+<h2>Your Cart</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["PointsEarned"] != null)
+{
+    <div class="alert alert-success">You earned @TempData["PointsEarned"] points!</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Game</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model.CartGames)
+        {
+            <tr>
+                <td><img src="@game.ImagePath" width="100" /></td>
+                <td>@game.GameTitle</td>
+                <td>@game.Price</td>
+                <td>
+                    <form method="post" asp-action="RemoveFromCart" asp-route-gameId="@game.GameId">
+                        <button class="btn btn-danger" type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form method="post" asp-action="Checkout">
+    <div class="form-group">
+        <label>Select Payment Method</label>
+        <select class="form-control" name="selectedPaymentMethod">
+            <option>Steam Wallet</option>
+            <option>PayPal</option>
+            <option>Credit Card</option>
+        </select>
+    </div>
+    <div class="form-group mt-3">
+        <span class="fw-bold">Total: @Model.TotalPrice</span>
+        <button type="submit" class="btn btn-primary float-end">Checkout</button>
+    </div>
+</form>

@@ -38,15 +38,32 @@ namespace SteamHub.Web.Controllers
             return View(vm);
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> AddToCart(int id)
+        //{
+        //    var game = await gameService.GetGameByIdAsync(id);
+        //    if (game == null) return NotFound();
+
+        //    await cartService.AddGameToCartAsync(game);
+        //    return RedirectToAction("Details", new { id });
+        //}
         [HttpPost]
         public async Task<IActionResult> AddToCart(int id)
         {
-            var game = await gameService.GetGameByIdAsync(id);
-            if (game == null) return NotFound();
+            try
+            {
+                var game = await gameService.GetGameByIdAsync(id);
+                if (game == null) return Json(new { success = false, message = "Game not found." });
 
-            await cartService.AddGameToCartAsync(game);
-            return RedirectToAction("Details", new { id });
+                await cartService.AddGameToCartAsync(game);
+                return Json(new { success = true, message = "Game added to cart successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddToWishlist(int id)

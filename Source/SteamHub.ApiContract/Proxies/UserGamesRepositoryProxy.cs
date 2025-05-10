@@ -19,14 +19,14 @@ namespace SteamHub.ApiContract.Proxies
         private readonly JsonSerializerOptions _options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
         };
 
         public UserGamesRepositoryProxy()
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:7241") // Adjust to your actual backend URL
+                BaseAddress = new Uri("https://localhost:7241"), // Adjust to your actual backend URL
             };
         }
 
@@ -74,11 +74,21 @@ namespace SteamHub.ApiContract.Proxies
             var result = await response.Content.ReadFromJsonAsync<GetUserGamesResponse>(_options);
             return result ?? throw new InvalidOperationException("Invalid response from GetUserCartAsync");
         }
-
+        /// <summary>
+        /// ////
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task AddToCartAsync(UserGameRequest request)
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/UsersGames/AddToCart", request);
-            response.EnsureSuccessStatusCode(); // Ensure successful status code
+            var response = await _httpClient.PostAsJsonAsync("api/UsersGames/AddToCart", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"AddToCart failed: {response.StatusCode} - {errorContent}");
+            }
+            response.EnsureSuccessStatusCode(); // still throws but now you know why
         }
 
         public async Task RemoveFromCartAsync(UserGameRequest request)

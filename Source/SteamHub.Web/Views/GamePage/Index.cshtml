@@ -26,7 +26,7 @@
         <h5>Status</h5>
         <p>@(Model.IsOwned ? "Owned" : "Not Owned")</p>
 
-        <form asp-action="AddToCart" method="post">
+        <form asp-action="AddToCart" method="post" id="add-to-cart-form">
             <input type="hidden" name="id" value="@Model.Game.GameId" />
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
@@ -35,6 +35,10 @@
             <input type="hidden" name="id" value="@Model.Game.GameId" />
             <button type="submit" class="btn btn-secondary">Add to Wishlist</button>
         </form>
+
+        <!-- Success and Error Message Containers -->
+        <div id="success-message" class="alert alert-success d-none mt-2"></div>
+        <div id="error-message" class="alert alert-danger d-none mt-2"></div>
     </div>
 </div>
 
@@ -96,3 +100,31 @@
         </div>
     </div>
 }
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#add-to-cart-form').submit(function (event) {
+            event.preventDefault(); // Prevent default form post
+
+            const form = $(this);
+            const url = form.attr('action');
+            const data = form.serialize();
+
+            $.post(url, data)
+                .done(function (response) {
+                    if (response.success) {
+                        $('#success-message').text(response.message).removeClass('d-none').show();
+                        $('#error-message').hide();
+                    } else {
+                        $('#error-message').text(response.message).removeClass('d-none').show();
+                        $('#success-message').hide();
+                    }
+                })
+                .fail(function () {
+                    $('#error-message').text('An error occurred while adding the game to the cart.').removeClass('d-none').show();
+                    $('#success-message').hide();
+                });
+        });
+    });
+</script>

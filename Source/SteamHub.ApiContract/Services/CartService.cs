@@ -35,6 +35,7 @@ public class CartService : ICartService
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine($"UserId: {this.user.UserId}");
             var response = await this.userGameRepository.GetUserCartAsync(this.user.UserId);
             var userGamesResponses = response.UserGames; // Access the actual list her
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
@@ -150,6 +151,8 @@ public class CartService : ICartService
             UserId = this.user.UserId,
             GameId = game.GameId,
         };
+
+        System.Diagnostics.Debug.WriteLine("user id for adding to cart" +this.user.UserId);
 
         await this.userGameRepository.AddToCartAsync(request);
     }
