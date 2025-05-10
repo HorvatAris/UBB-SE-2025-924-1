@@ -12,7 +12,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
     public interface IMarketplaceService
     {
-        User User { get; set; }
+        IUserDetails User { get; set; }
 
         Task AddListingAsync(Game game, Item item);
 

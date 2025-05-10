@@ -25,12 +25,10 @@ namespace SteamHub.ApiContract.Proxies
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) } // Ensures proper enum parsing
         };
 
-        public ItemRepositoryProxy()
+        public ItemRepositoryProxy(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7241") // Replace with your actual base URL
-            };
+            _httpClient = httpClientFactory.CreateClient("SteamHubApi");
+
         }
 
         public async Task<IEnumerable<ItemDetailedResponse>> GetItemsAsync()

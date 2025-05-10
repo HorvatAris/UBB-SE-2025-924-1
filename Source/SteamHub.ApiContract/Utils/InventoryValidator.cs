@@ -57,7 +57,7 @@ namespace SteamHub.ApiContract.Utils
             }
         }
 
-        public void ValidateUser(User user)
+        public void ValidateUser(IUserDetails user)
         {
             if (user == null)
             {
@@ -76,7 +76,7 @@ namespace SteamHub.ApiContract.Utils
             }
         }
 
-        public void ValidateInventoryOperation(Game game, Item item, User user)
+        public void ValidateInventoryOperation(Game game, Item item, IUserDetails user)
         {
             // Reuse the individual validations.
             this.ValidateGame(game);

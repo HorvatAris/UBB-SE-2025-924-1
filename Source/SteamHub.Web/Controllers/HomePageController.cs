@@ -3,9 +3,11 @@ using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 using System.Collections.ObjectModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SteamHub.Web.Controllers
 {
+    [Authorize]
     public class HomePageController : Controller
     {
         private readonly IGameService gameService;

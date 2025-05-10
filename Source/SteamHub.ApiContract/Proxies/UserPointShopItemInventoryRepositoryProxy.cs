@@ -20,11 +20,12 @@ namespace SteamHub.ApiContract.Proxies
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        public UserPointShopItemInventoryRepositoryProxy()
+        public UserPointShopItemInventoryRepositoryProxy(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7241"); // Adjust to your actual backend URL
+            _httpClient = httpClientFactory.CreateClient("SteamHubApi");
+
         }
+
 
         public async Task<GetUserPointShopItemInventoryResponse> GetUserInventoryAsync(int userId)
         {

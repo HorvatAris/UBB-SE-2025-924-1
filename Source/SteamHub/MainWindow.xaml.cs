@@ -4,18 +4,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
-using System.Threading.Tasks;
-using SteamHub.Pages;
-using SteamHub.ApiContract.Services;
-using SteamHub.ApiContract.Proxies;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Refit;
 using SteamHub.ApiContract.Models.User;
-using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Proxies;
+using SteamHub.ApiContract.Services;
+using SteamHub.Pages;
+using SteamHub.Web;
 
 namespace SteamHub
 {
@@ -50,7 +48,7 @@ namespace SteamHub
                     Email = "john.chen@thatgamecompany.com",
                     PointsBalance = 5000,
                     UserName = "JohnC",
-                    UserRole = User.Role.Developer,
+                    UserRole = UserRole.Developer,
                     WalletBalance = 390,
                 },
 
@@ -60,7 +58,7 @@ namespace SteamHub
                     Email = "alice.johnson@example.com",
                     PointsBalance = 6000,
                     UserName = "AliceJ",
-                    UserRole = User.Role.User,
+                    UserRole = UserRole.User,
                     WalletBalance = 78,
                 },
 
@@ -70,7 +68,7 @@ namespace SteamHub
                     Email = "liam.garcia@example.com",
                     PointsBalance = 7000,
                     UserName = "LiamG",
-                    UserRole = User.Role.User,
+                    UserRole = UserRole.User,
                     WalletBalance = 55,
                 },
 
@@ -80,7 +78,7 @@ namespace SteamHub
                     Email = "noah.smith@example.com",
                     PointsBalance = 4000,
                     UserName = "NoahS",
-                    UserRole = User.Role.User,
+                    UserRole = UserRole.User,
                     WalletBalance = 33,
                 },
             };
@@ -94,21 +92,29 @@ namespace SteamHub
                 ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
             };
 
-            var httpClient = new HttpClient(handler)
+            var configBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            var configuration = configBuilder.Build();
+            var services = new ServiceCollection();
+            services.AddHttpClient("SteamHubApi", client =>
             {
-                BaseAddress = new Uri("https://localhost:7241"),
-            };
+                client.BaseAddress = new Uri(configuration["ApiSettings:BaseUrl"]);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+    
+            }).ConfigurePrimaryHttpMessageHandler(() => new NoSslCertificateValidationHandler());
+            var provider = services.BuildServiceProvider();
 
-            var pointShopRepository = new PointShopItemRepositoryProxy();
-            var userPointShopInventoryRepository = new UserPointShopItemInventoryRepositoryProxy();
-            var gameRepository = new GameRepositoryProxy();
-            var userRepository = new UserRepositoryProxy();
-            var itemRepository = new ItemRepositoryProxy();
-            var itemTradeRepository = new ItemTradeRepositoryProxy();
-            var itemTradeDetailsRepository = new ItemTradeDetailsRepositoryProxy();
-            var userInventoryRepository = new UserInventoryRepositoryProxy();
-            var tagRepository = new TagRepositoryProxy();
-            var userGamesRepository = new UserGamesRepositoryProxy();
+            var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+            var pointShopRepository = new PointShopItemRepositoryProxy(httpClientFactory);
+            var userPointShopInventoryRepository = new UserPointShopItemInventoryRepositoryProxy(httpClientFactory);
+            var gameRepository = new GameRepositoryProxy(httpClientFactory);
+            var userRepository = new UserRepositoryProxy(httpClientFactory);
+            var itemRepository = new ItemRepositoryProxy(httpClientFactory);
+            var itemTradeRepository = new ItemTradeRepositoryProxy(httpClientFactory);
+            var itemTradeDetailsRepository = new ItemTradeDetailsRepositoryProxy(httpClientFactory);
+            var userInventoryRepository = new UserInventoryRepositoryProxy(httpClientFactory);
+            var tagRepository = new TagRepositoryProxy(httpClientFactory);
+            var userGamesRepository = new UserGamesRepositoryProxy(httpClientFactory);
 
 
             var tradeService = new TradeService(itemTradeRepository, loggedInUser, itemTradeDetailsRepository, userRepository, gameRepository, itemRepository, userInventoryRepository);

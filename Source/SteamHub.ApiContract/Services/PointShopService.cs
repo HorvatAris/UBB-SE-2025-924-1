@@ -30,7 +30,7 @@ namespace SteamHub.ApiContract.Services
         private const int InitialIndexUserItems = 0;
         private const string FilterTypeAll = "All";
 
-        public PointShopService(IPointShopItemRepository pointShopItemRepository, IUserPointShopItemInventoryRepository userPointShopItemInventoryRepository, IUserRepository userRepository, User user)
+        public PointShopService(IPointShopItemRepository pointShopItemRepository, IUserPointShopItemInventoryRepository userPointShopItemInventoryRepository, IUserRepository userRepository, IUserDetails user)
         {
             this.PointShopItemRepository = pointShopItemRepository;
             this.UserPointShopItemInventoryRepository = userPointShopItemInventoryRepository;
@@ -44,9 +44,9 @@ namespace SteamHub.ApiContract.Services
 
         public IUserRepository UserRepository { get; set; }
 
-        public User User { get; set; }
+        public IUserDetails User { get; set; }
 
-        public User GetCurrentUser()
+        public IUserDetails GetCurrentUser()
         {
             return this.User;
         }
@@ -282,7 +282,7 @@ namespace SteamHub.ApiContract.Services
             }
         }
 
-        public bool CanUserPurchaseItem(User user, PointShopItem selectedItem, IEnumerable<PointShopItem> userItems)
+        public bool CanUserPurchaseItem(IUserDetails user, PointShopItem selectedItem, IEnumerable<PointShopItem> userItems)
         {
             if (user == null || selectedItem == null)
             {
@@ -304,7 +304,7 @@ namespace SteamHub.ApiContract.Services
             return !isAlreadyOwned && hasEnoughPoints;
         }
 
-        public async Task<List<PointShopItem>> GetAvailableItemsAsync(User user)
+        public async Task<List<PointShopItem>> GetAvailableItemsAsync(IUserDetails user)
         {
             var allItems = await this.GetAllItemsAsync();
             var userItems = await this.GetUserItemsAsync();
@@ -333,7 +333,7 @@ namespace SteamHub.ApiContract.Services
             return availableItems;
         }
 
-        public bool TryPurchaseItem(PointShopItem selectedItem, ObservableCollection<PointShopTransaction> transactionHistory, User user, out PointShopTransaction newTransaction)
+        public bool TryPurchaseItem(PointShopItem selectedItem, ObservableCollection<PointShopTransaction> transactionHistory, IUserDetails user, out PointShopTransaction newTransaction)
         {
             newTransaction = null;
 

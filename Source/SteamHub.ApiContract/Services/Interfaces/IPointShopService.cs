@@ -16,7 +16,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
     public interface IPointShopService
     {
-        User GetCurrentUser();
+        IUserDetails GetCurrentUser();
 
         Task<List<PointShopItem>> GetAllItemsAsync();
 
@@ -30,11 +30,11 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<List<PointShopItem>> GetFilteredItemsAsync(string filterType, string searchText, double minimumPrice, double maximumPrice);
 
-        bool CanUserPurchaseItem(User user, PointShopItem selectedItem, IEnumerable<PointShopItem> userItems);
+        bool CanUserPurchaseItem(IUserDetails user, PointShopItem selectedItem, IEnumerable<PointShopItem> userItems);
 
-        Task<List<PointShopItem>> GetAvailableItemsAsync(User user);
+        Task<List<PointShopItem>> GetAvailableItemsAsync(IUserDetails user);
 
-        bool TryPurchaseItem(PointShopItem selectedItem, ObservableCollection<PointShopTransaction> transactionHistory, User user, out PointShopTransaction newTransaction);
+        bool TryPurchaseItem(PointShopItem selectedItem, ObservableCollection<PointShopTransaction> transactionHistory, IUserDetails user, out PointShopTransaction newTransaction);
 
         Task<PointShopItem> ToggleActivationForItemAsync(int itemId, ObservableCollection<PointShopItem> userItems);
     }

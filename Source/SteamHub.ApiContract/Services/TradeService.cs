@@ -30,9 +30,9 @@ namespace SteamHub.ApiContract.Services
         private IGameRepository gameRepository;
         private IItemRepository itemRepository;
         private IUserInventoryRepository userInventoryRepository;
-        private User currentUser;
+        private IUserDetails currentUser;
 
-        public TradeService(IItemTradeRepository itemTradeIItemTradeRepository, User currentUser, IItemTradeDetailRepository itemTradeDetailRepository, IUserRepository userRepository, IGameRepository gameRepository, IItemRepository itemRepository, IUserInventoryRepository userInventoryRepository)
+        public TradeService(IItemTradeRepository itemTradeIItemTradeRepository, IUserDetails currentUser, IItemTradeDetailRepository itemTradeDetailRepository, IUserRepository userRepository, IGameRepository gameRepository, IItemRepository itemRepository, IUserInventoryRepository userInventoryRepository)
         {
             this.itemTradeRepository = itemTradeIItemTradeRepository;
             this.currentUser = currentUser;
@@ -64,7 +64,7 @@ namespace SteamHub.ApiContract.Services
             };
         }
 
-        public User GetCurrentUser()
+        public IUserDetails GetCurrentUser()
         {
             System.Diagnostics.Debug.WriteLine($"Current user: {this.currentUser.UserName}, ID: {this.currentUser.UserId}");
             return this.currentUser;
@@ -187,7 +187,7 @@ namespace SteamHub.ApiContract.Services
                         UserId = currentUser.UserId,
                         UserName = currentUser.UserName,
                         Email = currentUser.Email,
-                        UserRole = (User.Role)currentUser.Role,
+                        UserRole = (UserRole)currentUser.Role,
                         WalletBalance = currentUser.WalletBalance,
                         PointsBalance = currentUser.PointsBalance,
                     };
@@ -295,7 +295,7 @@ namespace SteamHub.ApiContract.Services
                         UserId = tradeUser.UserId,
                         UserName = tradeUser.UserName,
                         Email = tradeUser.Email,
-                        UserRole = (User.Role)tradeUser.Role,
+                        UserRole = (UserRole)tradeUser.Role,
                         WalletBalance = tradeUser.WalletBalance,
                         PointsBalance = tradeUser.PointsBalance,
                     };

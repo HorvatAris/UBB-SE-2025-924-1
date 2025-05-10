@@ -31,7 +31,7 @@
 				PointsBalance = 1000,
 				Email = "test@example.com",
 				WalletBalance = 50,
-				UserRole = User.Role.User
+				UserRole = UserRole.User
 			};
 
 			itemProxyMock = new Mock<PointShopItemRepositoryProxy>();

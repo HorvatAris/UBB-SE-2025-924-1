@@ -427,7 +427,7 @@ namespace SteamHub.ViewModels
             return await this.userService.GetAllUsersAsync();
         }
 
-        public User GetCurrentUserAsync()
+        public IUserDetails GetCurrentUserAsync()
         {
             return this.tradeService.GetCurrentUser();
         }
@@ -496,7 +496,7 @@ namespace SteamHub.ViewModels
         {
             try
             {
-                var loggedInUser = this.tradeService.GetCurrentUser();
+                var loggedInUser = new User(this.tradeService.GetCurrentUser());
                 this.Users.Clear();
                 this.Users.Add(loggedInUser);
                 this.CurrentUser = loggedInUser;

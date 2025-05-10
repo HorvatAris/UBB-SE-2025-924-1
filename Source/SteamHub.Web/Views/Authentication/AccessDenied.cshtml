@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+    var requestedUrl = ViewData["RequestedUrl"] as string;
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3 text-center">
+        <div class="alert alert-danger mt-4">
+            <h1 class="display-4"><i class="bi bi-shield-exclamation"></i></h1>
+            <h2>@ViewData["Title"]</h2>
+            <p class="text-danger">You do not have permission to access this resource.</p>
+            
+            @if (!string.IsNullOrEmpty(requestedUrl))
+            {
+                <p class="small mt-2">
+                    Resource: <code>@requestedUrl</code>
+                </p>
+            }
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <h5 class="card-title">You are signed in as <strong>@User.Identity.Name</strong></h5>
+                    <p class="card-text">
+                        Your current account doesn't have the required permissions to access this page.
+                    </p>
+                    <p class="text-muted small">
+                        Your roles: 
+                        @{
+                            var userRoles = User.Claims
+                                .Where(c => c.Type == System.Security.Claims.ClaimTypes.Role)
+                                .Select(c => c.Value);
+                            
+                            if (userRoles.Any())
+                            {
+                                foreach (var role in userRoles)
+                                {
+                                    <span class="badge bg-secondary me-1">@role</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="fst-italic">No roles assigned</span>
+                            }
+                        }
+                    </p>
+                    <div class="mt-3">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Go to Home</a>
+                        <form asp-controller="Authentication" asp-action="Logout" method="post" class="d-inline ms-2">
+                            <button type="submit" class="btn btn-outline-secondary">Sign out</button>
+                        </form>
+                    </div>
+                    <p class="mt-3 small text-muted">
+                        If you believe you should have access, please contact your administrator.
+                    </p>
+                }
+                else
+                {
+                    <h5 class="card-title">Authentication Required</h5>
+                    <p class="card-text">
+                        You are not signed in. This page requires authentication with specific permissions.
+                    </p>
+                    <div class="mt-3">
+                        <a asp-controller="Authentication" asp-action="Login" asp-route-returnUrl="@requestedUrl" 
+                           class="btn btn-primary">Log In</a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary ms-2">Go to Home</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

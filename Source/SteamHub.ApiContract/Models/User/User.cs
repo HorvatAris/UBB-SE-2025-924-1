@@ -4,13 +4,13 @@
 
 namespace SteamHub.ApiContract.Models.User
 {
-    public class User
+    public partial class User : IUserDetails
     {
         public User()
         {
         }
 
-        public User(int userIdentifier, string name, string email, float walletBalance, float pointsBalance, Role userRole)
+        public User(int userIdentifier, string name, string email, float walletBalance, float pointsBalance, UserRole userRole)
         {
             UserId = userIdentifier;
             UserName = name;
@@ -18,19 +18,16 @@ namespace SteamHub.ApiContract.Models.User
             WalletBalance = walletBalance;
             PointsBalance = pointsBalance;
             UserRole = userRole;
-        }
-
-        public enum Role
+        } 
+        
+        public User(IUserDetails userDetails)
         {
-            /// <summary>
-            /// User is a developer.
-            /// </summary>
-            Developer,
-
-            /// <summary>
-            /// User is not a developer.
-            /// </summary>
-            User,
+            UserId = userDetails.UserId;
+            UserName = userDetails.UserName;
+            Email = userDetails.Email;
+            WalletBalance = userDetails.WalletBalance;
+            PointsBalance = userDetails.PointsBalance;
+            UserRole = userDetails.UserRole;
         }
 
         public int UserId { get; set; }
@@ -43,6 +40,6 @@ namespace SteamHub.ApiContract.Models.User
 
         public float PointsBalance { get; set; }
 
-        public Role UserRole { get; set; }
+        public UserRole UserRole { get; set; }
     }
 }

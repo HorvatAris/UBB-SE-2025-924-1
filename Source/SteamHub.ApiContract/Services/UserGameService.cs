@@ -34,9 +34,9 @@ public class UserGameService : IUserGameService
     private const int ValueToDecrementPositionWith = 1;
     private const int ValueToIncrementPositionWith = 1;
 
-    private User user;
+    private IUserDetails user;
 
-    public UserGameService(IUsersGamesRepository userGameRepository, IGameRepository gameRepository, ITagRepository tagRepository, User user)
+    public UserGameService(IUsersGamesRepository userGameRepository, IGameRepository gameRepository, ITagRepository tagRepository, IUserDetails user)
     {
         this.UserGameRepository = userGameRepository;
         this.GameRepository = gameRepository;

@@ -25,7 +25,7 @@ namespace SteamHub.ApiContract.Services
 
         public IItemRepository ItemRepository { get; set; }
 
-        public User User { get; set; }
+        public IUserDetails User { get; set; }
 
         public async Task<List<User>> GetAllUsersAsync()
         {
@@ -41,7 +41,7 @@ namespace SteamHub.ApiContract.Services
                         Email = user.Email,
                         WalletBalance = user.WalletBalance,
                         PointsBalance = user.PointsBalance,
-                        UserRole = (user.Role == RoleEnum.User) ? User.Role.User : User.Role.Developer,
+                        UserRole = (user.Role == RoleEnum.User) ? UserRole.User : UserRole.Developer,
                     });
             }
 

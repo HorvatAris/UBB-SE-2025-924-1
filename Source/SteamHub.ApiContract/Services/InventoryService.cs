@@ -27,9 +27,9 @@ namespace SteamHub.ApiContract.Services
         private readonly IUserInventoryRepository userRepository;
         private readonly IItemRepository itemRepository;
         private readonly IGameRepository gameRepository;
-        private User user;
+        private IUserDetails user;
 
-        public InventoryService(IUserInventoryRepository userRepository, IItemRepository itemRepository, IGameRepository gameRepository, User user)
+        public InventoryService(IUserInventoryRepository userRepository, IItemRepository itemRepository, IGameRepository gameRepository, IUserDetails user)
         {
             this.userRepository = userRepository;
             this.itemRepository = itemRepository;
@@ -120,7 +120,7 @@ namespace SteamHub.ApiContract.Services
             return filteredItems;
         }
 
-        public User GetAllUsers()
+        public IUserDetails GetAllUsers()
         {
             return this.user;
         }
