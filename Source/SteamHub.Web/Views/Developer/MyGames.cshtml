@@ -29,6 +29,9 @@
                     <form asp-action="Delete" asp-route-id="@game.GameId" method="post" style="display:inline">
                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                     </form>
+                    <a asp-action="RejectionMessage" asp-route-id="@game.GameId" class="btn btn-sm btn-outline-danger">
+            View Rejection
+        </a>
                 </td>
             </tr>
         }

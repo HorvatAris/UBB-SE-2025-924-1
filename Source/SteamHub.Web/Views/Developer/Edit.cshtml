@@ -61,7 +61,7 @@
         @for (int i = 0; i < Model.AllTags.Count; i++)
         {
             <div>
-                <!-- Checkbox with name="SelectedTags", so it binds to the SelectedTags list in the view model -->
+               
                 <input type="checkbox" name="SelectedTags" value="@Model.AllTags[i].TagId"
                        @(Model.SelectedTags.Contains(Model.AllTags[i].TagId) ? "checked" : "") />
                 <label>@Model.AllTags[i].Tag_name</label>

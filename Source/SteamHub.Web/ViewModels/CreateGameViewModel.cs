@@ -14,9 +14,6 @@ namespace SteamHub.Web.ViewModels
         public string MinimumRequirement { get; set; }
         public string RecommendedRequirement { get; set; }
         public string Discount { get; set; }
-
-        public List<Tag> AllTags { get; set; } = new();
-        public List<Tag> SelectedTags { get; set; } = new();
     }
 
 }

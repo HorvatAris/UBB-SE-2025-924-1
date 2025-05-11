@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.Tag;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 using System.Collections.ObjectModel;
@@ -30,9 +31,7 @@ namespace SteamHub.Web.Controllers
         }
         public async Task<IActionResult> Create()
         {
-            var tags = (await developerService.GetAllTagsAsync()).ToList(); // Explicit conversion to List<Tag>
-            var viewModel = new CreateGameViewModel { AllTags = tags };
-            return View(viewModel);
+            return View(new CreateGameViewModel());
         }
 
         // POST: /Developer/Create
@@ -41,7 +40,7 @@ namespace SteamHub.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.AllTags = (await developerService.GetAllTagsAsync()).ToList();
+                //model.AllTags = (await developerService.GetAllTagsAsync()).ToList();
                 return View(model);
             }
 
@@ -56,7 +55,8 @@ namespace SteamHub.Web.Controllers
                 model.MinimumRequirement,
                 model.RecommendedRequirement,
                 model.Discount,
-                model.SelectedTags
+                new List<Tag> { new Tag { TagId = 500, Tag_name = "bagpl" } }
+                
             );
 
             return RedirectToAction("MyGames");
@@ -177,6 +177,38 @@ namespace SteamHub.Web.Controllers
             var tags = await developerService.GetGameTagsAsync(id);
             return Json(tags);
         }
+        // GET: /Developer/RejectionMessage/5
+        public async Task<IActionResult> RejectionMessage(int id)
+        {
+            try
+            {
+                string message = await developerService.GetRejectionMessageAsync(id);
+
+                if (string.IsNullOrWhiteSpace(message))
+                {
+                    //TempData["Error"] = "No rejection message found.";
+                    //return RedirectToAction("MyGames"); // or wherever makes sense
+                    message = "No rejection message available for this game.";
+                }
+
+                var model = new RejectionMessageViewModel
+                {
+                    GameId = id,
+                    Message = message
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Failed to get rejection message: {ex.Message}";
+                return RedirectToAction("MyGames");
+            }
+        }
+
+
+
+
         public IActionResult Index()
         {
             return View();
