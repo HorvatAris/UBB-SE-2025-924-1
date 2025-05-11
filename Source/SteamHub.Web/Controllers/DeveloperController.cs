@@ -138,6 +138,13 @@ namespace SteamHub.Web.Controllers
             await developerService.DeleteGameAsync(id, developerGames);
             return RedirectToAction("MyGames");
         }
+        [HttpGet]
+        public async Task<JsonResult> GetGameOwnerCount(int id)
+        {
+            var count = await developerService.GetGameOwnerCountAsync(id);
+            return Json(count);
+        }
+
 
         // POST: /Developer/Validate/5
         [HttpPost]
