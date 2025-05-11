@@ -160,13 +160,41 @@
             });
         }
 
+        function refreshInventory() {
+            fetch('/PointShopPage/GetInventory')
+                .then(response => response.json())
+                .then(data => {
+                    const inventoryContainer = document.querySelector('.bg-light .row');
+                    inventoryContainer.innerHTML = '';
+
+                    data.forEach(item => {
+                        const card = `
+                            <div class="col-md-3 mb-4">
+                                <div class="card border-light shadow-sm">
+                                    <img src="${item.imagePath}" class="card-img-top" alt="${item.name}" style="height: 150px; object-fit: cover;" />
+                                    <div class="card-body">
+                                        <h5 class="card-title text-dark">${item.name}</h5>
+                                        <p class="card-text text-muted">${item.itemType}</p>
+                                        <p class="card-text text-primary fw-bold">${item.isActive ? "Active" : "Inactive"}</p>
+                                        <button class="btn btn-warning w-100" onclick="toggleActivation(${item.itemIdentifier})">
+                                            ${item.isActive ? "Deactivate" : "Activate"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        inventoryContainer.innerHTML += card;
+                    });
+                });
+        }
+
         function purchaseItem(itemId) {
-            fetch(`/PointShopPage/PurchaseItem?id=${itemId}`, { method: 'POST' })
+            fetch(`/PointShopPage/PurchaseItem?itemId=${itemId}`, { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         alert('Item purchased successfully!');
-                        document.getElementById('userPointBalance').innerText = data.newBalance;
+                        refreshInventory();
                         applyFilters();
                     } else {
                         alert('Failed to purchase item: ' + data.message);

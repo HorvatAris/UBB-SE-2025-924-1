@@ -32,8 +32,9 @@ namespace SteamHub.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PurchaseItem(int itemId)
+        public async Task<IActionResult> PurchaseItem([FromQuery]int itemId)
         {
+            Console.WriteLine($"Received itemId: {itemId}");
             var user = _pointShopService.GetCurrentUser();
             var shopItems = await _pointShopService.GetAvailableItemsAsync(user);
             var selectedItem = shopItems.FirstOrDefault(item => item.ItemIdentifier == itemId);
@@ -131,5 +132,22 @@ namespace SteamHub.Web.Controllers
 
             return Json(new { maxPrice });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInventory()
+        {
+            var userItems = await _pointShopService.GetUserItemsAsync();
+
+            return Json(userItems.Select(item => new
+            {
+                item.ItemIdentifier,
+                item.Name,
+                item.ItemType,
+                item.ImagePath,
+                item.IsActive
+            }));
+        }
+
+
     }
 }
