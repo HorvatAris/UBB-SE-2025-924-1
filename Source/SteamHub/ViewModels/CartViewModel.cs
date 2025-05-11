@@ -101,7 +101,11 @@ public class CartViewModel : INotifyPropertyChanged
 
     public async Task PurchaseGamesAsync()
     {
-        await this.userGameService.PurchaseGamesAsync(this.CartGames.ToList());
+        bool isWalletPayment = false;
+        if (this.SelectedPaymentMethod == PaymentMethods.SteamWalletPaymentWallet)
+            isWalletPayment = true;
+
+        await this.userGameService.PurchaseGamesAsync(this.CartGames.ToList(), isWalletPayment);
 
         // Get the points earned from the user game service
         this.LastEarnedPoints = this.userGameService.LastEarnedPoints;

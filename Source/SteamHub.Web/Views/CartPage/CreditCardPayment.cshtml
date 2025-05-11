@@ -1,0 +1,78 @@
+﻿@model SteamHub.Web.ViewModels.CreditCardPaymentViewModel
+
+@{
+    ViewData["Title"] = "Credit Card Payment";
+}
+
+@if (Model.IsSuccess)
+{
+    <div class="alert alert-success">
+        @Model.Message
+    </div>
+}
+else if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-danger">
+        @Model.Message
+    </div>
+}
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">Credit Card Payment</h2>
+
+    @if (TempData["PaymentSuccess"] != null)
+    {
+        <div class="alert alert-success">@TempData["PaymentSuccess"]</div>
+    }
+    @if (TempData["PaymentError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["PaymentError"]</div>
+    }
+
+    <form asp-action="CreditCardPayment" method="post">
+        <div class="mb-3">
+            <label asp-for="CardNumber" class="form-label"></label>
+            <input asp-for="CardNumber" class="form-control" />
+            <span asp-validation-for="CardNumber" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ExpirationDate" class="form-label"></label>
+            <input asp-for="ExpirationDate" class="form-control" placeholder="MM/YY" />
+            <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CVV" class="form-label"></label>
+            <input asp-for="CVV" class="form-control" />
+            <span asp-validation-for="CVV" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="OwnerName" class="form-label"></label>
+            <input asp-for="OwnerName" class="form-control" />
+            <span asp-validation-for="OwnerName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="fw-bold">Total Amount:</label>
+            <span>@Model.TotalAmount.ToString("C")</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Confirm Payment</button>
+        <a href="@Url.Action("Index", "CartPage")" class="btn btn-secondary ms-2">Back to Cart</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (TempData["PaymentSuccess"] != null)
+    {
+        <script>
+            setTimeout(() => {
+                window.location.href = '/HomePage/Index';
+            }, 3000);
+        </script>
+    }
+}

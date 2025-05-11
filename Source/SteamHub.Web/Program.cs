@@ -32,7 +32,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IUserDetails, WebUserDetails>();
 
-
+builder.Services.AddScoped<IUserRepository, UserRepositoryProxy>();
 builder.Services.AddScoped<IGameRepository, GameRepositoryProxy>();
 builder.Services.AddScoped<IItemTradeRepository, ItemTradeRepositoryProxy>();
 builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailsRepositoryProxy>();
