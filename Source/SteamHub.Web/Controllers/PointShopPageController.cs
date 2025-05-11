@@ -56,10 +56,10 @@ namespace SteamHub.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ActivateItem(int itemId)
+        public async Task<IActionResult> ToggleActivation(int id)
         {
             var userItems = await _pointShopService.GetUserItemsAsync();
-            var selectedItem = userItems.FirstOrDefault(item => item.ItemIdentifier == itemId);
+            var selectedItem = userItems.FirstOrDefault(item => item.ItemIdentifier == id);
 
             if (selectedItem == null)
             {
@@ -68,34 +68,20 @@ namespace SteamHub.Web.Controllers
 
             try
             {
-                await _pointShopService.ActivateItemAsync(selectedItem);
-                return Json(new { success = true, message = $"{selectedItem.Name} has been activated." });
+                if (selectedItem.IsActive)
+                {
+                    await _pointShopService.DeactivateItemAsync(selectedItem);
+                    return Json(new { success = true, message = $"{selectedItem.Name} has been deactivated." });
+                }
+                else
+                {
+                    await _pointShopService.ActivateItemAsync(selectedItem);
+                    return Json(new { success = true, message = $"{selectedItem.Name} has been activated." });
+                }
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Failed to activate item: {ex.Message}" });
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DeactivateItem(int itemId)
-        {
-            var userItems = await _pointShopService.GetUserItemsAsync();
-            var selectedItem = userItems.FirstOrDefault(item => item.ItemIdentifier == itemId);
-
-            if (selectedItem == null)
-            {
-                return Json(new { success = false, message = "Item not found in your inventory." });
-            }
-
-            try
-            {
-                await _pointShopService.DeactivateItemAsync(selectedItem);
-                return Json(new { success = true, message = $"{selectedItem.Name} has been deactivated." });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = $"Failed to deactivate item: {ex.Message}" });
+                return Json(new { success = false, message = $"Failed to toggle activation: {ex.Message}" });
             }
         }
 

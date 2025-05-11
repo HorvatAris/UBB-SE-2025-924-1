@@ -67,7 +67,7 @@
                             <h5 class="card-title text-dark">@item.Name</h5>
                             <p class="card-text text-muted">@item.ItemType</p>
                             <p class="card-text text-primary fw-bold">@(item.IsActive ? "Active" : "Inactive")</p>
-                            <button class="btn btn-warning w-100" asp-action="ToggleActivation" asp-route-id="@item.ItemIdentifier">
+                            <button class="btn btn-warning w-100" onclick="toggleActivation(@item.ItemIdentifier)">
                                 @(item.IsActive ? "Deactivate" : "Activate")
                             </button>
                         </div>
@@ -201,5 +201,19 @@
                     }
                 });
         }
+
+        function toggleActivation(itemId) {
+            fetch(`/PointShopPage/ToggleActivation?id=${itemId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        refreshInventory();
+                    } else {
+                        alert('Failed to toggle activation: ' + data.message);
+                    }
+                });
+        }
+
     </script>
 }
