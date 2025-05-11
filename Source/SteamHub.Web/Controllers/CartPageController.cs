@@ -19,7 +19,7 @@ namespace SteamHub.Web.Controllers
         {
             this.cartService = cartService;
             this.userGameService = userGameService;
-            this.user = this.cartService.GetUser();
+            this.user = this.cartService.GetUser(); // neaparat
         }
 
         public async Task<IActionResult> Index()
@@ -83,7 +83,7 @@ namespace SteamHub.Web.Controllers
             if (success)
             {
                 var games = await cartService.GetCartGamesAsync();
-                await userGameService.PurchaseGamesAsync(games);
+                await userGameService.PurchaseGamesAsync(games, false);
                 await cartService.RemoveGamesFromCartAsync(games);
 
                 model.IsSuccess = true;
@@ -121,7 +121,7 @@ namespace SteamHub.Web.Controllers
             if (success)
             {
                 var games = await cartService.GetCartGamesAsync();
-                await userGameService.PurchaseGamesAsync(games);
+                await userGameService.PurchaseGamesAsync(games, false);
                 await cartService.RemoveGamesFromCartAsync(games);
 
                 model.IsSuccess = true;
@@ -146,7 +146,7 @@ namespace SteamHub.Web.Controllers
             }
 
             var games = await cartService.GetCartGamesAsync();
-            await userGameService.PurchaseGamesAsync(games);
+            await userGameService.PurchaseGamesAsync(games, true);
             await cartService.RemoveGamesFromCartAsync(games);
 
             TempData["PointsEarned"] = userGameService.LastEarnedPoints;

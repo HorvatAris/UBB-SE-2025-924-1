@@ -19,6 +19,7 @@
 
     public class UserGameServiceTests
     {
+        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
         private readonly Mock<UserGamesRepositoryProxy> userGameServiceProxyMock;
         private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
         private readonly Mock<TagRepositoryProxy> tagServiceProxyMock;
@@ -28,6 +29,7 @@
 
         public UserGameServiceTests()
         {
+            this.userServiceProxyMock = new Mock<UserRepositoryProxy>();
             this.userGameServiceProxyMock = new Mock<UserGamesRepositoryProxy>();
             this.gameServiceProxyMock = new Mock<GameRepositoryProxy>();
             this.tagServiceProxyMock = new Mock<TagRepositoryProxy>();
@@ -40,6 +42,7 @@
             };
 
             this.userGameService = new UserGameService(
+                this.userServiceProxyMock.Object,
                 this.userGameServiceProxyMock.Object,
                 this.gameServiceProxyMock.Object,
                 this.tagServiceProxyMock.Object,
@@ -103,7 +106,7 @@
             var initialPoints = testUser.PointsBalance;
             var games = new List<Game> { new Game { GameId = 1 }, new Game { GameId = 2 } };
 
-            await this.userGameService.PurchaseGamesAsync(games);
+            await this.userGameService.PurchaseGamesAsync(games, true);
 
             this.userGameServiceProxyMock.Verify(proxy => proxy.PurchaseGameAsync(
                 It.IsAny<UserGameRequest>()), Times.Exactly(games.Count));
@@ -597,7 +600,7 @@
             float originalPoints = testUser.PointsBalance;
             testUser.PointsBalance += 20;
 
-            await this.userGameService.PurchaseGamesAsync(gamesToBuy);
+            await this.userGameService.PurchaseGamesAsync(gamesToBuy, true);
 
             this.userGameServiceProxyMock.Verify(proxy => proxy.PurchaseGameAsync(It.IsAny<UserGameRequest>()), Times.Exactly(2));
         }

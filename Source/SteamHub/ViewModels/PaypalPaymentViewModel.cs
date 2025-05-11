@@ -82,7 +82,7 @@ namespace SteamHub.ViewModels
             if (paymentSuccess)
             {
                 await this.cartService.RemoveGamesFromCartAsync(this.purchasedGames);
-                await this.userGameService.PurchaseGamesAsync(this.purchasedGames);
+                await this.userGameService.PurchaseGamesAsync(this.purchasedGames, false);
 
                 // Get points earned from the purchase
                 int pointsEarned = this.userGameService.LastEarnedPoints;

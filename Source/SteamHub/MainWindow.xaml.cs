@@ -144,7 +144,7 @@ namespace SteamHub
 
             this.cartService = new CartService(userGamesRepository, loggedInUser, gameRepository);
 
-            this.userGameService = new UserGameService(userGamesRepository, gameRepository, tagRepository, loggedInUser);
+            this.userGameService = new UserGameService(userRepository, userGamesRepository, gameRepository, tagRepository, loggedInUser);
 
             this.developerService = new DeveloperService(
             gameRepository, tagRepository, userGamesRepository, userRepository, itemRepository, itemTradeDetailsRepository, loggedInUser);
