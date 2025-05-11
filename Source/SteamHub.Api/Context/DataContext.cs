@@ -116,7 +116,7 @@ namespace SteamHub.Api.Context
                     PointsBalance = 6000,
                     UserName = "AliceJ",
                     RoleId = RoleEnum.User,
-                    WalletBalance = 78
+                    WalletBalance = 780
                 },
                 new User
                 {
@@ -125,7 +125,7 @@ namespace SteamHub.Api.Context
                     PointsBalance = 7000,
                     UserName = "LiamG",
                     RoleId = RoleEnum.User,
-                    WalletBalance = 55
+                    WalletBalance = 5500
                 },
                 new User
                 {
@@ -134,7 +134,7 @@ namespace SteamHub.Api.Context
                     PointsBalance = 6000,
                     UserName = "SophieW",
                     RoleId = RoleEnum.User,
-                    WalletBalance = 95
+                    WalletBalance = 950
                 },
                 new User
                 {
@@ -143,7 +143,7 @@ namespace SteamHub.Api.Context
                     PointsBalance = 4000,
                     UserName = "NoahS",
                     RoleId = RoleEnum.User,
-                    WalletBalance = 33
+                    WalletBalance = 3300
                 },
                 new User
                 {
@@ -152,7 +152,7 @@ namespace SteamHub.Api.Context
                     PointsBalance = 5000,
                     UserName = "EmilyB",
                     RoleId = RoleEnum.User,
-                    WalletBalance = 110
+                    WalletBalance = 1100
                 }
             };
 
