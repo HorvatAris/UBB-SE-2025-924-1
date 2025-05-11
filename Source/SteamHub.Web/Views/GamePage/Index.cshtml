@@ -24,7 +24,9 @@
         <p><strong>@($"${Model.Game.Price:F2}")</strong></p>
 
         <h5>Status</h5>
-        <p>@(Model.IsOwned ? "Owned" : "Not Owned")</p>
+        <p style="color:@(Model.IsOwned ? "green" : "red")">
+            @(Model.IsOwned ? "Owned" : "Not Owned")
+        </p>
 
         <form asp-action="AddToCart" method="post" id="add-to-cart-form">
             <input type="hidden" name="id" value="@Model.Game.GameId" />
