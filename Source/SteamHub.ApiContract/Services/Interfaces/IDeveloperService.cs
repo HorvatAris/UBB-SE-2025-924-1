@@ -43,7 +43,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task UpdateGameWithTagsAsync(Game game, IList<Tag> selectedTags);
 
-        Task DeleteGameAsync(int game_id);
+        Task DeleteGameAsync(int gameId, ObservableCollection<Game> developerGames);
 
         Task<List<Game>> GetDeveloperGamesAsync();
 
@@ -68,8 +68,6 @@ namespace SteamHub.ApiContract.Services.Interfaces
         Task<int> GetGameOwnerCountAsync(int gameId);
 
         IUserDetails User { get; }
-
-        Task DeleteGameAsync(int gameId, ObservableCollection<Game> developerGames);
 
         Task UpdateGameAndRefreshListAsync(Game game, ObservableCollection<Game> developerGames);
 

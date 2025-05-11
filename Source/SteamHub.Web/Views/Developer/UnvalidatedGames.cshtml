@@ -1,0 +1,107 @@
+﻿@model IEnumerable<SteamHub.ApiContract.Models.Game.Game>
+
+@{
+    ViewData["Title"] = "Unvalidated Games";
+}
+
+<h2>🕵️ Unvalidated Games</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+{
+    <tr>
+        <td>@game.GameTitle</td>
+        <td>@game.Price €</td>
+        <td>Pending Validation</td>
+        <td>
+            <form asp-action="Validate" method="post" asp-route-id="@game.GameId" style="display:inline">
+                <button type="submit" class="btn btn-success">✅ Validate</button>
+            </form>
+
+            <!-- Button to open modal -->
+            <button class="btn btn-danger" onclick="openModal('@game.GameId')">❌ Reject</button>
+
+            <!-- Modal -->
+            <div class="custom-modal" id="modal-@game.GameId">
+                <div class="custom-modal-content">
+                    <span class="close" onclick="closeModal('@game.GameId')">&times;</span>
+                    <h3>Reject Game: @game.GameTitle</h3>
+                    <form asp-action="Reject" method="post">
+                        <input type="hidden" name="GameId" value="@game.GameId" />
+                        <label>Reason for Rejection:</label>
+                        <textarea name="RejectionMessage" required style="width:100%; height:100px;"></textarea>
+                        <br /><br />
+                        <button type="submit" class="btn btn-danger">Confirm Reject</button>
+                        <button type="button" onclick="closeModal('@game.GameId')" class="btn btn-secondary">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </td>
+    </tr>
+}
+
+    </tbody>
+</table>
+<style>
+    .custom-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .custom-modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 400px;
+        border-radius: 8px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: black;
+    }
+</style>
+
+<script>
+   function openModal(id) {
+        document.getElementById('modal-' + id).style.display = 'block';
+    }
+    function closeModal(id) {
+        document.getElementById('modal-' + id).style.display = 'none';
+    }
+
+    // Optional: close modal on outside click
+    window.onclick = function (event) {
+        document.querySelectorAll('.custom-modal').forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+</script>
+
