@@ -25,7 +25,6 @@
                     asp-for="SelectedUserId"
                     asp-items="@(new SelectList(Model.AvailableUsers, "UserId", "UserName"))"
                     id="SelectedUserId">
-                <option value="">-- Select User --</option>
             </select>
         </div>
 
@@ -35,7 +34,6 @@
                     asp-for="SelectedGameId"
                     asp-items="@(new SelectList(Model.AvailableGames, "GameId", "GameTitle"))"
                     id="SelectedGameId">
-                <option value="">All Games</option>
             </select>
         </div>
 
