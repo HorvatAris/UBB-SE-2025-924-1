@@ -1,0 +1,219 @@
+@model SteamHub.Web.ViewModels.PointShopViewModel
+
+@{
+    ViewData["Title"] = "PointShopPage";
+}
+
+<div class="container">
+    <div class="row bg-light text-dark py-3 mb-4 border rounded">
+        <div class="col-md-1 text-center">
+            <i class="bi bi-coin text-primary fs-1"></i>
+        </div>
+        <div class="col-md-9">
+            <h1>Points Shop</h1>
+            <p>Customize your profile with points earned from purchases</p>
+        </div>
+        <div class="col-md-2 text-end">
+            <i class="bi bi-coin text-primary"></i>
+            <span class="text-primary fw-bold">@Model.UserPointBalance</span> Points
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8 d-flex align-items-center">
+            <input id="SearchBox" class="form-control me-3" style="width: 300px;" placeholder="Search items..." oninput="onSearchChange(this.value)" />
+            <select id="ItemTypeFilter" class="form-select me-3" style="width: 200px;" onchange="applyFilters()">
+                <option value="All">All</option>
+                <option value="ProfileBackground">Profile Background</option>
+                <option value="Avatar">Avatar</option>
+                <option value="AvatarFrame">Avatar Frame</option>
+                <option value="Emoticon">Emoticon</option>
+                <option value="MiniProfile">Mini Profile</option>
+            </select>
+            <label for="PriceSlider" class="me-2">Max Price:</label>
+            <input id="PriceSlider" type="range" class="form-range" min="0" max="10000" step="100" onchange="applyFilters()" />
+            <span id="maxPriceDisplay" class="ms-2">10000</span>
+        </div>
+    </div>
+
+    <!-- Shop Items -->
+    <div id="shopItemsContainer" class="row">
+        @foreach (var item in Model.ShopItems)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card border-light shadow-sm">
+                    <img src="@item.ImagePath" class="card-img-top" alt="@item.Name" style="height: 150px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title text-dark">@item.Name</h5>
+                        <p class="card-text text-muted">@item.ItemType</p>
+                        <p class="card-text text-primary fw-bold">@item.PointPrice Points</p>
+                        <button class="btn btn-primary w-100" onclick="purchaseItem(@item.ItemIdentifier)">Purchase</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Inventory Panel -->
+    <div class="bg-light text-dark p-4 border rounded shadow-sm">
+        <h2>My Inventory</h2>
+        <div class="row">
+            @foreach (var item in Model.UserItems)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card border-light shadow-sm">
+                        <img src="@item.ImagePath" class="card-img-top" alt="@item.Name" style="height: 150px; object-fit: cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title text-dark">@item.Name</h5>
+                            <p class="card-text text-muted">@item.ItemType</p>
+                            <p class="card-text text-primary fw-bold">@(item.IsActive ? "Active" : "Inactive")</p>
+                            <button class="btn btn-warning w-100" onclick="toggleActivation(@item.ItemIdentifier)">
+                                @(item.IsActive ? "Deactivate" : "Activate")
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="bg-light text-dark p-4 border rounded shadow-sm">
+        <h2>Transaction History</h2>
+        @if (Model.TransactionHistory.Any())
+        {
+            <ul class="list-group">
+                @foreach (var transaction in Model.TransactionHistory)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>
+                            <strong>@transaction.ItemName</strong> - @transaction.ItemType
+                        </span>
+                        <span>@transaction.PurchaseDate.ToString("g")</span>
+                        <span class="text-primary fw-bold">@transaction.PointsSpent Points</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No transactions yet. Purchase an item to see it in your history.</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function initializePriceSlider() {
+            fetch('/PointShopPage/GetMaxPrice')
+                .then(response => response.json())
+                .then(data => {
+                    const priceSlider = document.getElementById('PriceSlider');
+                    const maxPriceDisplay = document.getElementById('maxPriceDisplay');
+
+                    priceSlider.max = data.maxPrice;
+                    priceSlider.value = data.maxPrice;
+                    maxPriceDisplay.innerText = data.maxPrice;
+                });
+        }
+
+        document.getElementById('PriceSlider').addEventListener('input', function () {
+            document.getElementById('maxPriceDisplay').innerText = this.value;
+        });
+
+        document.addEventListener('DOMContentLoaded', initializePriceSlider);
+
+        function onSearchChange(value) {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchQuery = document.getElementById('SearchBox').value;
+            const itemType = document.getElementById('ItemTypeFilter').value;
+            const maxPrice = document.getElementById('PriceSlider').value;
+
+            fetch(`/PointShopPage/ApplyFilters?search=${searchQuery}&type=${itemType}&maxPrice=${maxPrice}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateShopItems(data);
+                });
+        }
+
+        function updateShopItems(items) {
+            const container = document.getElementById('shopItemsContainer');
+            container.innerHTML = '';
+
+            items.forEach(item => {
+                const card = `
+                    <div class="col-md-3 mb-4">
+                        <div class="card border-light shadow-sm">
+                            <img src="${item.imagePath}" class="card-img-top" alt="${item.name}" style="height: 150px; object-fit: cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title text-dark">${item.name}</h5>
+                                <p class="card-text text-muted">${item.itemType}</p>
+                                <p class="card-text text-primary fw-bold">${item.pointPrice} Points</p>
+                                <button class="btn btn-primary w-100" onclick="purchaseItem(${item.itemIdentifier})">Purchase</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function refreshInventory() {
+            fetch('/PointShopPage/GetInventory')
+                .then(response => response.json())
+                .then(data => {
+                    const inventoryContainer = document.querySelector('.bg-light .row');
+                    inventoryContainer.innerHTML = '';
+
+                    data.forEach(item => {
+                        const card = `
+                            <div class="col-md-3 mb-4">
+                                <div class="card border-light shadow-sm">
+                                    <img src="${item.imagePath}" class="card-img-top" alt="${item.name}" style="height: 150px; object-fit: cover;" />
+                                    <div class="card-body">
+                                        <h5 class="card-title text-dark">${item.name}</h5>
+                                        <p class="card-text text-muted">${item.itemType}</p>
+                                        <p class="card-text text-primary fw-bold">${item.isActive ? "Active" : "Inactive"}</p>
+                                        <button class="btn btn-warning w-100" onclick="toggleActivation(${item.itemIdentifier})">
+                                            ${item.isActive ? "Deactivate" : "Activate"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        inventoryContainer.innerHTML += card;
+                    });
+                });
+        }
+
+        function purchaseItem(itemId) {
+            fetch(`/PointShopPage/PurchaseItem?itemId=${itemId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Item purchased successfully!');
+                        refreshInventory();
+                        applyFilters();
+                    } else {
+                        alert('Failed to purchase item: ' + data.message);
+                    }
+                });
+        }
+
+        function toggleActivation(itemId) {
+            fetch(`/PointShopPage/ToggleActivation?id=${itemId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        refreshInventory();
+                    } else {
+                        alert('Failed to toggle activation: ' + data.message);
+                    }
+                });
+        }
+
+    </script>
+}

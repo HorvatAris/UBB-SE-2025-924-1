@@ -40,15 +40,6 @@ namespace SteamHub.Web.Controllers
             return View(vm);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> AddToCart(int id)
-        //{
-        //    var game = await gameService.GetGameByIdAsync(id);
-        //    if (game == null) return NotFound();
-
-        //    await cartService.AddGameToCartAsync(game);
-        //    return RedirectToAction("Details", new { id });
-        //}
         [HttpPost]
         public async Task<IActionResult> AddToCart(int id)
         {
@@ -66,16 +57,6 @@ namespace SteamHub.Web.Controllers
             }
         }
 
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddToWishlist(int id)
-        //{
-        //    var game = await gameService.GetGameByIdAsync(id);
-        //    if (game == null) return NotFound();
-
-        //    await userGameService.AddGameToWishlistAsync(game);
-        //    return RedirectToAction("Details", new { id });
-        //}
         [HttpPost]
         public async Task<IActionResult> AddToWishlist(int id)
         {
@@ -93,6 +74,7 @@ namespace SteamHub.Web.Controllers
                 return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
             }
         }
+
 
     }
 }
