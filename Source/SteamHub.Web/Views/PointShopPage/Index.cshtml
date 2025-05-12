@@ -77,32 +77,48 @@
         </div>
     </div>
 
-    <div class="bg-light text-dark p-4 border rounded shadow-sm">
+    <div id="transactionContainer" class="bg-light text-dark p-4 border rounded shadow-sm">
         <h2>Transaction History</h2>
-        @if (Model.TransactionHistory.Any())
-        {
-            <ul class="list-group">
-                @foreach (var transaction in Model.TransactionHistory)
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Points Spent</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.TransactionHistory.Any())
                 {
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>
-                            <strong>@transaction.ItemName</strong> - @transaction.ItemType
-                        </span>
-                        <span>@transaction.PurchaseDate.ToString("g")</span>
-                        <span class="text-primary fw-bold">@transaction.PointsSpent Points</span>
-                    </li>
+                    @foreach (var transaction in Model.TransactionHistory)
+                    {
+						@if (transaction.UserId == Model.User.UserId)
+						{
+							<tr>
+								<td>@transaction.ItemName</td>
+								<td>@transaction.ItemType</td>
+								<td>@transaction.PurchaseDate.ToString("g")</td>
+								<td class="text-primary fw-bold">@transaction.PointsSpent</td>
+							</tr>
+						}
+                    }
                 }
-            </ul>
-        }
-        else
-        {
-            <p>No transactions yet. Purchase an item to see it in your history.</p>
-        }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">No transactions yet. Purchase an item to see it in your history.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
     </div>
 </div>
 
 @section Scripts {
     <script>
+        const currentUserId = '@Model.User.UserId';
         function initializePriceSlider() {
             fetch('/PointShopPage/GetMaxPrice')
                 .then(response => response.json())
@@ -188,6 +204,43 @@
                 });
         }
 
+        function refreshTransactionHistory() {
+            fetch('/PointShopPage/GetTransactionHistory')
+                .then(response => response.json())
+                .then(data => {
+                    const transactionTbody = document.querySelector('#transactionContainer tbody');
+                    if (!transactionTbody) {
+                        console.error('[ERROR] Transaction table body not found.');
+                        return;
+                    }
+
+                    transactionTbody.innerHTML = '';
+
+                    if (data.length > 0) {
+                        data.forEach(transaction => {
+                            const row = `
+                                <tr>
+                                    <td>${transaction.itemName}</td>
+                                    <td>${transaction.itemType}</td>
+                                    <td>${new Date(transaction.purchaseDate).toLocaleString()}</td>
+                                    <td class="text-primary fw-bold">${transaction.pointsSpent}</td>
+                                </tr>
+                            `;
+                            transactionTbody.innerHTML += row;
+                        });
+                    } else {
+                        transactionTbody.innerHTML = `
+                            <tr>
+                                <td colspan="4" class="text-center">No transactions yet. Purchase an item to see it in your history.</td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error(`[ERROR] Failed to refresh transaction history: ${error}`);
+                });
+        }
+
         function purchaseItem(itemId) {
             fetch(`/PointShopPage/PurchaseItem?itemId=${itemId}`, { method: 'POST' })
                 .then(response => response.json())
@@ -196,6 +249,7 @@
                         alert('Item purchased successfully!');
                         refreshInventory();
                         applyFilters();
+                        refreshTransactionHistory();
                     } else {
                         alert('Failed to purchase item: ' + data.message);
                     }
