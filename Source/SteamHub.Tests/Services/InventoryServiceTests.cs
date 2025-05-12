@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using SteamHub.ApiContract.Models;
-    using SteamHub.ApiContract.Proxies;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Item;
@@ -13,6 +11,7 @@
     using SteamHub.ApiContract.Services;
     using SteamHub.Utils;
     using Xunit;
+    using SteamHub.ApiContract.Repositories;
 
     public class InventoryServiceTests
     {
@@ -38,9 +37,9 @@
         private readonly string testItemImagePath3 = "img3";
 
         private readonly InventoryService inventoryService;
-        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceProxyMock;
-        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
-        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
+        private readonly Mock<IUserInventoryRepository> userInventoryRepositoryMock;
+        private readonly Mock<IItemRepository> itemRepositoryMock;
+        private readonly Mock<IGameRepository> gameRepositoryMock;
 
         private readonly InventoryValidator inventoryValidator;
 
@@ -48,11 +47,11 @@
 
         public InventoryServiceTests()
         {
-            userInventoryServiceProxyMock = new Mock<UserInventoryRepositoryProxy>();
-            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
-            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
+            userInventoryRepositoryMock = new Mock<IUserInventoryRepository>();
+            itemRepositoryMock = new Mock<IItemRepository>();
+            gameRepositoryMock = new Mock<IGameRepository>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
-            inventoryService = new InventoryService(userInventoryServiceProxyMock.Object, itemServiceProxyMock.Object, gameServiceProxyMock.Object, testUser);
+            inventoryService = new InventoryService(userInventoryRepositoryMock.Object, itemRepositoryMock.Object, gameRepositoryMock.Object, testUser);
             inventoryValidator = new InventoryValidator();
         }
 
@@ -69,7 +68,7 @@
                 ImagePath = testItemImagePath
             };
 
-            itemServiceProxyMock.Setup(proxy => proxy.GetItemsAsync()).ReturnsAsync(new List<ItemDetailedResponse>
+            itemRepositoryMock.Setup(proxy => proxy.GetItemsAsync()).ReturnsAsync(new List<ItemDetailedResponse>
             {
                 new ItemDetailedResponse
                 {
@@ -91,13 +90,13 @@
                 }
             });
 
-            itemServiceProxyMock.Setup(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>())).Returns(Task.CompletedTask);
+            itemRepositoryMock.Setup(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>())).Returns(Task.CompletedTask);
 
             var result = await inventoryService.SellItemAsync(item);
 
             Assert.True(result);
             Assert.True(item.IsListed);
-            itemServiceProxyMock.Verify(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>()), Times.Once);
+            itemRepositoryMock.Verify(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>()), Times.Once);
         }
 
         [Fact]
@@ -113,7 +112,7 @@
                 ImagePath = testItemImagePath
             };
 
-            itemServiceProxyMock.Setup(proxy => proxy.GetItemsAsync()).ReturnsAsync(new List<ItemDetailedResponse>
+            itemRepositoryMock.Setup(proxy => proxy.GetItemsAsync()).ReturnsAsync(new List<ItemDetailedResponse>
             {
                 new ItemDetailedResponse
                 {
@@ -135,7 +134,7 @@
                 }
             });
 
-            itemServiceProxyMock.Setup(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>()))
+            itemRepositoryMock.Setup(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>()))
                                 .ThrowsAsync(new Exception("Update failed"));
 
             var result = await inventoryService.SellItemAsync(item);
@@ -156,7 +155,7 @@
                 ImagePath = testItemImagePath
             };
 
-            itemServiceProxyMock.Setup(proxy => proxy.GetItemsAsync()).ReturnsAsync(new List<ItemDetailedResponse>
+            itemRepositoryMock.Setup(proxy => proxy.GetItemsAsync()).ReturnsAsync(new List<ItemDetailedResponse>
             {
                 new ItemDetailedResponse
                 {
@@ -169,7 +168,7 @@
                 }
             });
 
-            itemServiceProxyMock.Setup(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>())).Returns(Task.CompletedTask);
+            itemRepositoryMock.Setup(proxy => proxy.UpdateItemAsync(item.ItemId, It.IsAny<UpdateItemRequest>())).Returns(Task.CompletedTask);
 
             var result = await inventoryService.SellItemAsync(item);
 
@@ -329,11 +328,11 @@
             int firstItemIndex = 0;
             var items = new List<Item>();
 
-            userInventoryServiceProxyMock
+            userInventoryRepositoryMock
                 .Setup(proxy => proxy.GetUserInventoryAsync(testUser.UserId))
                 .ReturnsAsync(new UserInventoryResponse { Items = new List<InventoryItemResponse>() });
 
-            gameServiceProxyMock
+            gameRepositoryMock
                 .Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
                 .ReturnsAsync(new List<GameDetailedResponse>()); // No games
 
@@ -352,7 +351,7 @@
             var game2 = new Game { GameTitle = "Halo" };
             var game3 = new Game { GameTitle = "OtherGame" };
 
-            userInventoryServiceProxyMock
+            userInventoryRepositoryMock
                 .Setup(proxy => proxy.GetUserInventoryAsync(testUser.UserId))
                 .ReturnsAsync(new UserInventoryResponse
                 {
@@ -395,7 +394,7 @@
                     }
                 });
 
-            gameServiceProxyMock
+            gameRepositoryMock
                 .Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
                 .ReturnsAsync(new List<GameDetailedResponse>
                 {
