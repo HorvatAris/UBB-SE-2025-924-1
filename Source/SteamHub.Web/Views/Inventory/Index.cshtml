@@ -1,6 +1,11 @@
 ﻿@model SteamHub.Web.ViewModels.InventoryViewModel
 @{
     ViewData["Title"] = "Inventory";
+
+    if (TempData["StatusMessage"] != null)
+    {
+        Model.StatusMessage = TempData["StatusMessage"].ToString();
+    }
 }
 
 <div class="container mt-4">
@@ -16,27 +21,30 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <label class="form-label">User</label>
-                <select class="form-select" 
-                        asp-for="SelectedUserId"
-                        asp-items="@(new SelectList(Model.AvailableUsers, "UserId", "UserName"))">
-                    <option value="">-- Select User --</option>
-                </select>
+            <select class="form-select"
+                    asp-for="SelectedUserId"
+                    asp-items="@(new SelectList(Model.AvailableUsers, "UserId", "UserName"))"
+                    id="SelectedUserId">
+                <option value="">-- Select User --</option>
+            </select>
         </div>
 
         <div class="col-md-3">
             <label class="form-label">Game</label>
-            <select class="form-select" 
-                    asp-for="SelectedGameId" 
-                    asp-items="@(new SelectList(Model.AvailableGames, "GameId", "GameTitle"))">
+            <select class="form-select"
+                    asp-for="SelectedGameId"
+                    asp-items="@(new SelectList(Model.AvailableGames, "GameId", "GameTitle"))"
+                    id="SelectedGameId">
                 <option value="">All Games</option>
             </select>
         </div>
 
         <div class="col-md-3">
             <label class="form-label">Search</label>
-            <input type="text" class="form-control" 
-                   asp-for="SearchText" 
-                   placeholder="Search items..."/>
+            <input type="text" class="form-control"
+                   asp-for="SearchText"
+                   placeholder="Search items..."
+                   id="SearchText" />
         </div>
 
         <div class="col-md-3 d-flex align-items-end">
@@ -54,10 +62,10 @@
             {
                         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                             <div class="card h-100">
-                                <img src="@item.ImagePath" 
-                                     class="card-img-top p-3" 
-                                     style="height: 180px; object-fit: contain;" 
-                                     alt="@item.ItemName">
+                                <img src="@item.ImagePath"
+                                     class="card-img-top p-3"
+                                     style="height: 180px; object-fit: contain;"
+                                     alt="@item.ItemName" />
 
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">@item.ItemName</h5>
@@ -66,7 +74,7 @@
                                     <div class="mt-auto">
                                 @if (!item.IsListed)
                                 {
-                                                <button type="button" 
+                                                <button type="button"
                                                         class="btn btn-primary w-100"
                                                         onclick="confirmSale('@item.ItemId', '@item.ItemName.Replace("'", "\\'")')">
                                                     <i class="fas fa-tag"></i> Sell Item
@@ -106,17 +114,21 @@
 @section Scripts {
         <script>
             // Auto-submit filters when dropdowns change
-            $(function() {
-                $('#SelectedUserId, #SelectedGameId').change(function() {
+            $(function () {
+                $('#SelectedUserId, #SelectedGameId').change(function () {
                     filterItems();
                 });
             });
 
             function filterItems() {
-                window.location.href = '@Url.Action("Index")' + 
-                    '?selectedUserId=' + $('#SelectedUserId').val() + 
-                    '&selectedGameId=' + $('#SelectedGameId').val() + 
-                    '&searchText=' + encodeURIComponent($('#SearchText').val());
+                const userId = $('#SelectedUserId').val();
+                const gameId = $('#SelectedGameId').val();
+                const search = encodeURIComponent($('#SearchText').val());
+
+                window.location.href = '@Url.Action("Index", "Inventory")' +
+                    '?selectedUserId=' + userId +
+                    '&selectedGameId=' + gameId +
+                    '&searchText=' + search;
             }
 
             function confirmSale(itemId, itemName) {

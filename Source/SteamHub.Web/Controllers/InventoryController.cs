@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Models.Item;
 using SteamHub.Web.ViewModels;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SteamHub.Web.Controllers
 {
+    [Authorize]
     public class InventoryController : Controller
     {
         private readonly IInventoryService inventoryService;
@@ -17,84 +20,50 @@ namespace SteamHub.Web.Controllers
             this.inventoryService = inventoryService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index(int? selectedUserId, int? selectedGameId, string searchText)
         {
-            var model = new InventoryViewModel();
+            var user = inventoryService.GetAllUsers();
+            var users = new List<User> { user };
+            var currentUserId = selectedUserId ?? users.FirstOrDefault()?.UserId ?? 0;
 
-            try
+            var allItems = await inventoryService.GetUserInventoryAsync(currentUserId);
+            var filteredItems = await inventoryService.GetUserFilteredInventoryAsync(
+                currentUserId,
+                selectedGameId.HasValue ? new Game { GameId = selectedGameId.Value } : null,
+                searchText
+            );
+
+            var availableGames = await inventoryService.GetAvailableGamesAsync(allItems);
+
+            var model = new InventoryViewModel
             {
-                var user = inventoryService.GetAllUsers();
-                if (user == null || user.UserId <= 0)
-                {
-                    model.StatusMessage = "No valid user found";
-                    return View(model);
-                }
-
-                model.AvailableUsers.Add(user);
-
-                model.SelectedUserId = (selectedUserId.HasValue && selectedUserId > 0)
-                    ? selectedUserId
-                    : user.UserId;
-
-                if (model.SelectedUserId <= 0)
-                {
-                    model.StatusMessage = "Invalid user selected";
-                    return View(model);
-                }
-
-                var filteredItems = await inventoryService.GetUserFilteredInventoryAsync(
-                    model.SelectedUserId.Value,
-                    selectedGameId.HasValue ? new Game { GameId = selectedGameId.Value } : null,
-                    searchText);
-
-                model.InventoryItems = filteredItems.ToList();
-
-                var allItems = await inventoryService.GetUserInventoryAsync(model.SelectedUserId.Value);
-                var availableGames = await inventoryService.GetAvailableGamesAsync(allItems);
-                model.AvailableGames = availableGames.ToList();
-
-                model.SelectedGameId = selectedGameId;
-                model.SearchText = searchText;
-
-                if (TempData["StatusMessage"] is string msg)
-                {
-                    model.StatusMessage = msg;
-                }
-            }
-            catch (Exception ex)
-            {
-                model.StatusMessage = $"Error loading inventory: {ex.Message}";
-            }
+                SelectedUserId = currentUserId,
+                SelectedGameId = selectedGameId,
+                SearchText = searchText,
+                InventoryItems = filteredItems,
+                AvailableGames = availableGames,
+                AvailableUsers = users
+            };
 
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Sell(int itemId, string itemName)
+        public async Task<IActionResult> Sell(int itemId, int selectedUserId, int? selectedGameId, string searchText)
         {
-            try
-            {
-                // Confirm sale (in a real app, you might want JavaScript confirmation first)
-                var item = new Item { ItemId = itemId };
-                var success = await inventoryService.SellItemAsync(item);
+            var item = (await inventoryService.GetUserInventoryAsync(selectedUserId))
+                .FirstOrDefault(i => i.ItemId == itemId);
 
-                TempData["StatusMessage"] = success
-                    ? $"{itemName} has been successfully listed for sale!"
-                    : "Failed to sell the item. Please try again.";
+            if (item != null && !item.IsListed)
+                await inventoryService.SellItemAsync(item);
 
-                return RedirectToAction("Index", new
-                {
-                    selectedUserId = Request.Form["selectedUserId"],
-                    selectedGameId = Request.Form["selectedGameId"],
-                    searchText = Request.Form["searchText"]
-                });
-            }
-            catch (Exception ex)
-            {
-                TempData["StatusMessage"] = "Error selling item: " + ex.Message;
-                return RedirectToAction("Index");
-            }
+            TempData["StatusMessage"] = item != null
+                ? $"Item '{item.ItemName}' was successfully listed for sale."
+                : "Item could not be found or is already listed.";
+
+            return RedirectToAction(nameof(Index), new { selectedUserId, selectedGameId, searchText });
         }
     }
 }

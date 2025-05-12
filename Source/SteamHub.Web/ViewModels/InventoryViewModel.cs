@@ -6,14 +6,12 @@ namespace SteamHub.Web.ViewModels
 {
     public class InventoryViewModel
     {
-        public List<Item> InventoryItems { get; set; } = new();
-        public List<Game> AvailableGames { get; set; } = new();
-        public List<User> AvailableUsers { get; set; } = new();
-
-        public int? SelectedGameId { get; set; }
         public int? SelectedUserId { get; set; }
-        public string? SearchText { get; set; }
-        public int? SelectedItemId { get; set; }
-        public string? StatusMessage { get; set; }
+        public int? SelectedGameId { get; set; }
+        public string SearchText { get; set; }
+        public List<Item> InventoryItems { get; set; }
+        public List<Game> AvailableGames { get; set; }
+        public List<User> AvailableUsers { get; set; }
+        public string StatusMessage { get; set; }
     }
 }
