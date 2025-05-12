@@ -125,6 +125,12 @@ namespace SteamHub.ApiContract.Services
             return this.user;
         }
 
+        public async Task<IUserDetails> GetAllUsersAsync()
+        {
+            return await Task.FromResult(this.user);
+        }
+
+
         public async Task<bool> SellItemAsync(Item item)
         {
             // Validate that the item is sellable.

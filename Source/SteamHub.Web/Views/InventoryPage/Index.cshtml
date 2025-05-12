@@ -1,0 +1,142 @@
+﻿@model SteamHub.Web.ViewModels.InventoryViewModel
+@{
+    ViewData["Title"] = "Inventory";
+
+    if (TempData["StatusMessage"] != null)
+    {
+        Model.StatusMessage = TempData["StatusMessage"].ToString();
+    }
+}
+
+<div class="container mt-4">
+    <!-- Status Message Display -->
+    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+                <div class="alert @(Model.StatusMessage.Contains("successfully") ? "alert-success" : "alert-danger")">
+            @Model.StatusMessage
+                </div>
+    }
+
+    <!-- Filter Controls -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label class="form-label">User</label>
+            <select class="form-select"
+                    asp-for="SelectedUserId"
+                    asp-items="@(new SelectList(Model.AvailableUsers, "UserId", "UserName"))"
+                    id="SelectedUserId">
+                <option value="">-- Select User --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Game</label>
+            <select class="form-select"
+                    asp-for="SelectedGameId"
+                    asp-items="@(new SelectList(Model.AvailableGames, "GameId", "GameTitle"))"
+                    id="SelectedGameId">
+                <option value="">All Games</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-control"
+                   asp-for="SearchText"
+                   placeholder="Search items..."
+                   id="SearchText" />
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <button class="btn btn-primary w-100" onclick="filterItems()">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+    </div>
+
+    <!-- Inventory Items Grid -->
+    <div class="row">
+        @if (Model.InventoryItems != null && Model.InventoryItems.Any())
+        {
+            @foreach (var item in Model.InventoryItems)
+            {
+                                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                    <div class="card h-100">
+                                        <img src="@item.ImagePath"
+                                             class="card-img-top p-3"
+                                             style="height: 180px; object-fit: contain;"
+                                             alt="@item.ItemName" />
+
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title">@item.ItemName</h5>
+                                            <p class="card-text text-success fw-bold">@item.Price.ToString("C")</p>
+
+                                            <div class="mt-auto">
+                                @if (!item.IsListed)
+                                {
+                                                            <button type="button"
+                                                                    class="btn btn-primary w-100"
+                                                                    onclick="confirmSale('@item.ItemId', '@item.ItemName.Replace("'", "\\'")')">
+                                                                <i class="fas fa-tag"></i> Sell Item
+                                                            </button>
+                                }
+                                else
+                                {
+                                                            <button class="btn btn-secondary w-100" disabled>
+                                                                <i class="fas fa-check"></i> Listed
+                                                            </button>
+                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+            }
+        }
+        else
+        {
+                    <div class="col-12">
+                        <div class="alert alert-info">No items found matching your criteria.</div>
+                    </div>
+        }
+    </div>
+</div>
+
+<!-- Hidden Form for Selling Items -->
+<form id="sellForm" asp-action="Sell" method="post">
+    <input type="hidden" id="itemId" name="itemId" />
+    <input type="hidden" id="itemName" name="itemName" />
+    <input type="hidden" name="selectedUserId" value="@Model.SelectedUserId" />
+    <input type="hidden" name="selectedGameId" value="@Model.SelectedGameId" />
+    <input type="hidden" name="searchText" value="@Model.SearchText" />
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+            <script>
+                // Auto-submit filters when dropdowns change
+                $(function () {
+                    $('#SelectedUserId, #SelectedGameId').change(function () {
+                        filterItems();
+                    });
+                });
+
+                function filterItems() {
+                    const userId = $('#SelectedUserId').val();
+                    const gameId = $('#SelectedGameId').val();
+                    const search = encodeURIComponent($('#SearchText').val());
+
+                    window.location.href = '@Url.Action("Index", "Inventory")' +
+                        '?selectedUserId=' + userId +
+                        '&selectedGameId=' + gameId +
+                        '&searchText=' + search;
+                }
+
+                function confirmSale(itemId, itemName) {
+                    if (confirm('Are you sure you want to sell "' + itemName + '"?')) {
+                        $('#itemId').val(itemId);
+                        $('#itemName').val(itemName);
+                        $('#sellForm').submit();
+                    }
+                }
+            </script>
+}

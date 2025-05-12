@@ -51,6 +51,10 @@ builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IPointShopService, PointShopService>();
 
+builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
+builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+
 //ilder.Services.AddScoped<ICartService, CartService>();
 //builder.Services.AddScoped<ICartService>(provider =>
 //{
