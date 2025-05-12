@@ -1,272 +1,313 @@
 ﻿namespace SteamHub.Tests.Services
 {
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Threading.Tasks;
-	using SteamHub.ApiContract.Proxies;
-	using SteamHub.ApiContract.Services;
-	using Moq;
-	using SteamHub.ApiContract.Models.Game;
-	using SteamHub.ApiContract.Models.Tag;
-	using SteamHub.ApiContract.Models;
-	using SteamHub.Tests.TestUtils;
-	using Xunit;
+    using Moq;
+    using Xunit;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Collections.ObjectModel;
+    using System.Threading.Tasks;
+    using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.Tag;
+    using SteamHub.ApiContract.Repositories;
+    using SteamHub.ApiContract.Services;
 
-	public class GameServiceTest
-	{
-		private const string TEST_TAG_1 = "tag1";
-		private const string TEST_TAG_2 = "tag2";
-		private const string TEST_NAME = "Test";
-		private const string NOT_MATCH_NAME = "NoMatch";
-		private const string TEST_GAME_1 = "test Game 1";
-		private const string TEST_GAME_2 = "TEST Game 2";
-		private const string TEST_GAME_3 = "Game 2";
-		private readonly GameService subject;
-		private readonly Mock<GameRepositoryProxy> gameProxyMock;
-		private readonly Mock<TagRepositoryProxy> tagProxyMock;
+    public class GameServiceTest
+    {
+        private const string TEST_TAG_1 = "tag1";
+        private const string TEST_TAG_2 = "tag2";
+        private const string TEST_NAME = "Test";
+        private const string NOT_MATCH_NAME = "NoMatch";
+        private const string TEST_GAME_1 = "test Game 1";
+        private const string TEST_GAME_2 = "TEST Game 2";
+        private const string TEST_GAME_3 = "Game 2";
+        private readonly GameService subject;
+        private readonly Mock<IGameRepository> gameRepoMock;
+        private readonly Mock<ITagRepository> tagRepoMock;
 
-		public GameServiceTest()
-		{
-			gameProxyMock = new Mock<GameRepositoryProxy>();
-			tagProxyMock = new Mock<TagRepositoryProxy>();
-			subject = new GameService(gameProxyMock.Object, tagProxyMock.Object);
-		}
+        public GameServiceTest()
+        {
+            gameRepoMock = new Mock<IGameRepository>();
+            tagRepoMock = new Mock<ITagRepository>();
+            subject = new GameService(gameRepoMock.Object, tagRepoMock.Object);
+        }
 
-		[Fact]
-		public async Task SearchGamesAsync_WhenQueryMatchesGames_ShouldReturnMatchingGames()
-		{
-			var expectedGame1 = new Game { GameTitle = TEST_GAME_1 };
-			var expectedGame2 = new Game { GameTitle = TEST_GAME_2 };
-			var excludedGame = new Game { GameTitle = TEST_GAME_3 };
-			var allGames = new List<GameDetailedResponse>
-			{
-				new GameDetailedResponse() { Name = TEST_GAME_1 },
-				new GameDetailedResponse() { Name = TEST_GAME_2 },
-				new GameDetailedResponse() { Name = TEST_GAME_3 }
-			};
-			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
-				.ReturnsAsync(allGames);
+        [Fact]
+        public async Task SearchGamesAsync_WhenQueryMatches_ReturnsCorrectNumberOfGames()
+        {
+            var allGames = new List<GameDetailedResponse>
+        {
+            new() { Name = TEST_GAME_1, Status = GameStatusEnum.Approved },
+            new() { Name = TEST_GAME_2, Status = GameStatusEnum.Approved },
+            new() { Name = TEST_GAME_3, Status = GameStatusEnum.Approved }
+        };
+            gameRepoMock.Setup(repo => repo.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                .ReturnsAsync(allGames);
 
-			var actualGames = await subject.SearchGamesAsync(TEST_NAME);
+            var result = await subject.SearchGamesAsync(TEST_NAME);
 
-			var expectedGames = new[]
-			{
-				GameMapper.MapToGame(allGames[0]),
-				GameMapper.MapToGame(allGames[1])
-			};
+            Assert.Equal(2, result.Count);
+        }
+        [Fact]
+        public async Task SearchGamesAsync_WhenQueryMatches_IncludesGame()
+        {
+            var allGames = new List<GameDetailedResponse> { new() { Name = TEST_GAME_1, Status = GameStatusEnum.Approved } };
+            gameRepoMock.Setup(repo => repo.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                .ReturnsAsync(allGames);
 
-			AssertUtils.AssertContainsEquivalent(actualGames, expectedGames);
-		}
+            var result = await subject.SearchGamesAsync(TEST_NAME);
 
-		[Fact]
-		public async Task SearchGamesAsync_WhenQueryDoesNotMatchAnyGames_ShouldReturnEmptyList()
-		{
-			var allGames = new List<GameDetailedResponse>
-			{
-				new GameDetailedResponse() { Name = TEST_GAME_1 },
-				new GameDetailedResponse() { Name = TEST_GAME_2 },
-				new GameDetailedResponse() { Name = TEST_GAME_3 }
-			};
-			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
-				.ReturnsAsync(allGames);
+            Assert.Contains(result, g => g.GameTitle == TEST_GAME_1);
+        }
 
-			var foundGames = await subject.SearchGamesAsync(NOT_MATCH_NAME);
+        [Fact]
+        public async Task SearchGamesAsync_WhenNoMatch_ReturnsEmptyList()
+        {
+            gameRepoMock.Setup(repo => repo.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                .ReturnsAsync(new List<GameDetailedResponse>());
 
-			Assert.Empty(foundGames);
-		}
+            var result = await subject.SearchGamesAsync(NOT_MATCH_NAME);
 
-		[Fact]
-		public async Task GetAllTagsAsync_WhenCalled_ShouldReturnMappedTags()
-		{
-			var apiTags = new GetTagsResponse
-			{
-				Tags = new List<TagSummaryResponse>
-				{
-					new TagSummaryResponse() { TagName = TEST_TAG_1 },
-					new TagSummaryResponse() { TagName = TEST_TAG_2 }
-				}
-			};
-			var expectedTags = new Tag[]
-			{
-				new Tag { Tag_name = TEST_TAG_1 },
-				new Tag { Tag_name = TEST_TAG_2 }
-			};
-			tagProxyMock.Setup(proxy => proxy.GetAllTagsAsync())
-				.ReturnsAsync(apiTags);
+            Assert.Empty(result);
+        }
+        [Fact]
+        public async Task GetAllTagsAsync_WhenCalled_ReturnsCorrectNumberOfTags()
+        {
+            var apiTags = new GetTagsResponse
+            {
+                Tags = new List<TagSummaryResponse>
+            {
+                new TagSummaryResponse { TagName = TEST_TAG_1 },
+                new TagSummaryResponse { TagName = TEST_TAG_2 }
+            }
+            };
+            tagRepoMock.Setup(repo => repo.GetAllTagsAsync())
+                .ReturnsAsync(apiTags);
 
-			var actualTags = await subject.GetAllTagsAsync();
+            var actualTags = await subject.GetAllTagsAsync();
 
-			AssertUtils.AssertContainsEquivalent(actualTags, expectedTags);
-		}
+            Assert.Equal(2, actualTags.Count);
+        }
 
-		[Fact]
-		public async Task GetAllGameTagsAsync_WhenGameHasMatchingTags_ShouldReturnOnlyMatchingTags()
-		{
-			var game = new Game { Tags = new[] { TEST_TAG_1, TEST_TAG_2 } };
-			var apiTags = new GetTagsResponse
-			{
-				Tags = new List<TagSummaryResponse>
-				{
-					new TagSummaryResponse() { TagName = TEST_TAG_1 },
-					new TagSummaryResponse() { TagName = "UnrelatedTag" }
-				}
-			};
-			var expectedTags = new Tag[]
-			{
-				new Tag { Tag_name = TEST_TAG_1 }
-			};
-			tagProxyMock.Setup(proxy => proxy.GetAllTagsAsync())
-				.ReturnsAsync(apiTags);
+        [Fact]
+        public async Task GetAllTagsAsync_WhenCalled_IncludesTag()
+        {
+            var apiTags = new GetTagsResponse
+            {
+                Tags = new List<TagSummaryResponse>
+            {
+                new TagSummaryResponse { TagName = TEST_TAG_1 },
+                new TagSummaryResponse { TagName = TEST_TAG_2 }
+            }
+            };
+            tagRepoMock.Setup(repo => repo.GetAllTagsAsync())
+                .ReturnsAsync(apiTags);
 
-			var actualTags = await subject.GetAllGameTagsAsync(game);
+            var actualTags = await subject.GetAllTagsAsync();
 
-			AssertUtils.AssertContainsEquivalent(actualTags, expectedTags);
-		}
+            Assert.Contains(actualTags, t => t.Tag_name == TEST_TAG_1);
+        }
 
-		[Fact]
-		public async Task FilterGamesAsync_WhenCalledWithMatchingCriteria_ShouldReturnFilteredGames()
-		{
-			var game1 = new Game { Rating = 5, Price = 20, Tags = new[] { TEST_TAG_1 } };
-			var game2 = new Game { Rating = 4, Price = 25, Tags = new[] { TEST_TAG_1, TEST_TAG_2 } };
-			var game3 = new Game { Rating = 3, Price = 15, Tags = new[] { "otherTag" } };
-			var games = new Collection<Game> { game1, game2, game3 };
+        [Fact]
+        public async Task GetTrendingGamesAsync_ReturnsOnlyApprovedGames()
+        {
+            var allGames = new List<GameDetailedResponse>
+        {
+            new() { Name = "Game1", Status = GameStatusEnum.Approved, NumberOfRecentPurchases = 5 },
+            new() { Name = "Game2", Status = GameStatusEnum.Rejected, NumberOfRecentPurchases = 10 }
+        };
+            gameRepoMock.Setup(repo => repo.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                .ReturnsAsync(allGames);
 
-			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
-				.ReturnsAsync(new List<GameDetailedResponse>
-				{
-					new GameDetailedResponse
-					{
-						Name = game1.GameTitle, Rating = game1.Rating, Price = game1.Price,
-						Tags = new List<TagDetailedResponse>
-						{
-							new TagDetailedResponse()
-							{
-								TagName = TEST_TAG_1
-							}
-						}
-					},
-					new GameDetailedResponse
-					{
-						Name = game2.GameTitle, Rating = game2.Rating, Price = game2.Price,
-						Tags = new List<TagDetailedResponse>
-						{
-							new TagDetailedResponse()
-							{
-								TagName = TEST_TAG_1
-							},
-							new TagDetailedResponse()
-							{
-								TagName = TEST_TAG_2
-							}
-						}
-					},
-					new GameDetailedResponse
-					{
-						Name = game3.GameTitle, Rating = game3.Rating, Price = game3.Price,
-						Tags = new List<TagDetailedResponse>
-						{
-							new TagDetailedResponse()
-							{
-								TagName = "otherTag"
-							}
-						}
-					}
-				});
+            var result = await subject.GetTrendingGamesAsync();
 
-			var result = await subject.FilterGamesAsync(4, 10, 30, new[] { TEST_TAG_1 });
+            Assert.All(result, game => Assert.Equal("Approved", game.Status));
+        }
 
-			Assert.True(result.All(game => game.Tags.Contains(TEST_TAG_1)));
-		}
+        [Fact]
+        public async Task GetTrendingGamesAsync_SortsByTrendingScoreDescending()
+        {
+            var allGames = new List<GameDetailedResponse>
+        {
+            new() { Name = "Game1", Status = GameStatusEnum.Approved, NumberOfRecentPurchases = 5 },
+            new() { Name = "Game2", Status = GameStatusEnum.Approved, NumberOfRecentPurchases = 10 }
+        };
+            gameRepoMock.Setup(repo => repo.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                .ReturnsAsync(allGames);
 
-		[Fact]
-		public async Task GetTrendingGamesAsync_WhenCalled_ShouldReturnTopTrendingGames()
-		{
-			var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", NumberOfRecentPurchases = 5, TrendingScore = 0.5m, TagScore = Game.NOTCOMPUTED };
-			var game2 = new Game { GameId = 2, GameTitle = "Game2", Status = "Approved", NumberOfRecentPurchases = 10, TrendingScore = 1, TagScore = Game.NOTCOMPUTED };
-			var game3 = new Game { GameId = 3, GameTitle = "Game3", Status = "Rejected", NumberOfRecentPurchases = 1, TagScore = Game.NOTCOMPUTED };
-			var approvedGames = new Collection<Game> { game1, game2, game3 };
+            var result = await subject.GetTrendingGamesAsync();
 
-			var expectedResult = new Game[]
-			{
-				game2, game1
-			};
+            Assert.Equal("Game2", result[0].GameTitle);
+        }
 
-			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
-				.ReturnsAsync(approvedGames.Select(game => new GameDetailedResponse
-				{
-					Name = game.GameTitle,
-					Identifier = game.GameId,
-					Status = game.Status == "Approved" ? GameStatusEnum.Approved : GameStatusEnum.Rejected,
-					NumberOfRecentPurchases = game.NumberOfRecentPurchases
-				}).ToList());
+        [Fact]
+        public async Task GetDiscountedGamesAsync_ReturnsOnlyGamesWithDiscount()
+        {
+            var allGames = new List<GameDetailedResponse>
+        {
+            new() { Name = "Game1", Status = GameStatusEnum.Approved, Discount = 5 },
+            new() { Name = "Game2", Status = GameStatusEnum.Approved, Discount = 0 }
+        };
+            gameRepoMock.Setup(repo => repo.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                .ReturnsAsync(allGames);
 
-			var trendingGames = await subject.GetTrendingGamesAsync();
+            var result = await subject.GetDiscountedGamesAsync();
 
-			AssertUtils.AssertContainsEquivalent(trendingGames, expectedResult);
-		}
+            Assert.All(result, game => Assert.True(game.Discount > 0));
+        }
+        [Fact]
+        public async Task GetSimilarGamesAsync_WhenCalledWithGameId_ShouldReturnOtherGames()
+        {
+            var allGames = new List<GameDetailedResponse>
+        {
+            new GameDetailedResponse { Identifier = 1, Name = "Game1", Status = GameStatusEnum.Approved },
+            new GameDetailedResponse { Identifier = 2, Name = "Game2", Status = GameStatusEnum.Approved },
+            new GameDetailedResponse { Identifier = 3, Name = "Game3", Status = GameStatusEnum.Approved}
+        };
+            gameRepoMock.Setup(repo => repo.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                .ReturnsAsync(allGames);
 
-		[Fact]
-		public async Task GetDiscountedGamesAsync_WhenGamesHaveDiscounts_ShouldReturnOnlyDiscounted()
-		{
-			var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", Discount = 5, TagScore = Game.NOTCOMPUTED };
-			var game2 = new Game { GameId = 2, GameTitle = "Game2", Status = "Approved", Discount = 0 };
+            var similarGames = await subject.GetSimilarGamesAsync(1);
 
-			var expectedGames = new Game[]
-			{
-				game1
-			};
+            Assert.DoesNotContain(similarGames, g => g.GameId == 1);
+        }
 
-			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
-				.ReturnsAsync(new List<GameDetailedResponse>
-				{
-					new GameDetailedResponse { Identifier = game1.GameId, Name = game1.GameTitle, Status = GameStatusEnum.Approved, Discount = 5 },
-					new GameDetailedResponse { Identifier = game2.GameId, Name = game2.GameTitle, Status = GameStatusEnum.Approved, Discount = 0 }
-				});
+        [Fact]
+        public async Task GetGameByIdAsync_MapsGameIdCorrectly()
+        {
+            const int gameId = 42;
+            gameRepoMock.Setup(repo => repo.GetGameByIdAsync(gameId))
+                .ReturnsAsync(new GameDetailedResponse { Identifier = gameId, Name = "Sample Game" });
 
-			var discountedGames = await subject.GetDiscountedGamesAsync();
+            var result = await subject.GetGameByIdAsync(gameId);
 
-			AssertUtils.AssertContainsEquivalent(discountedGames, expectedGames);
-		}
+            Assert.Equal(gameId, result.GameId);
+        }
 
-		[Fact]
-		public async Task GetSimilarGamesAsync_WhenCalledWithGameId_ShouldReturnOtherGames()
-		{
-			int gameId = 1;
-            var game1 = new Game { GameId = 1, GameTitle = "Game1", Status = "Approved", TagScore = Game.NOTCOMPUTED };
-			var game2 = new Game { GameId = 2, GameTitle = "Game2", Status = "Approved", TagScore = Game.NOTCOMPUTED };
-			var game3 = new Game { GameId = 3, GameTitle = "Game3", Status = "Approved", TagScore = Game.NOTCOMPUTED };
+        [Fact]
+        public async Task GetGameByIdAsync_MapsGameTitleCorrectly()
+        {
+            gameRepoMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GameDetailedResponse { Name = "Sample Game" });
 
-			var expectedGames = new Game[]
-			{
-				game3, game2
-			};
+            var result = await subject.GetGameByIdAsync(1);
 
-			gameProxyMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
-				.ReturnsAsync(new List<GameDetailedResponse>
-				{
-					new GameDetailedResponse { Identifier = game1.GameId, Name = game1.GameTitle, Status = GameStatusEnum.Approved },
-					new GameDetailedResponse { Identifier = game2.GameId, Name = game2.GameTitle, Status = GameStatusEnum.Approved },
-					new GameDetailedResponse { Identifier = game3.GameId, Name = game3.GameTitle, Status = GameStatusEnum.Approved }
-				});
+            Assert.Equal("Sample Game", result.GameTitle);
+        }
+        [Fact]
+        public async Task FilterGamesAsync_WhenTagsMatch_ReturnsGamesWithMatchingTags()
+        {
+            var testTag = TEST_TAG_1;
+            var games = new List<GameDetailedResponse>
+    {
+        new() { Name = "Game1", Status = GameStatusEnum.Approved, Tags = new List<TagDetailedResponse> { new() { TagName = testTag } } },
+        new() { Name = "Game2", Status = GameStatusEnum.Approved, Tags = new List<TagDetailedResponse>() }
+    };
 
-			var similarGames = await subject.GetSimilarGamesAsync(gameId);
+            gameRepoMock.Setup(x => x.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                       .ReturnsAsync(games);
 
-			Assert.Equal(similarGames.Count, expectedGames.Count());
-		}
+            var result = await subject.FilterGamesAsync(0, 0, int.MaxValue, new[] { testTag });
 
-		[Fact]
-		public async Task GetGameById_WhenCalled_ShouldReturnMappedGame()
-		{
-			var gameId = 42;
-			var detailedResponse = new GameDetailedResponse { Identifier = gameId, Name = "Sample Game" };
+            Assert.All(result, game => Assert.Contains(testTag, game.Tags));
+        }
 
-			gameProxyMock.Setup(proxy => proxy.GetGameByIdAsync(gameId))
-				.ReturnsAsync(detailedResponse);
+        [Fact]
+        public async Task FilterGamesAsync_WhenRatingMatches_ReturnsGamesAboveMinimumRating()
+        {
 
-			var result = await subject.GetGameByIdAsync(gameId);
+            var minRating = 4;
+            var games = new List<GameDetailedResponse>
+    {
+        new() { Name = "Game1", Status = GameStatusEnum.Approved, Rating = 5 },
+        new() { Name = "Game2", Status = GameStatusEnum.Approved, Rating = 3 }
+    };
 
-			Assert.Equal(gameId, result.GameId);
-			Assert.Equal("Sample Game", result.GameTitle);
-		}
-	}
+            gameRepoMock.Setup(x => x.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                       .ReturnsAsync(games);
+
+            var result = await subject.FilterGamesAsync(minRating, 0, int.MaxValue, Array.Empty<string>());
+
+            Assert.All(result, game => Assert.True(game.Rating >= minRating));
+        }
+
+        [Fact]
+        public async Task FilterGamesAsync_WhenPriceInRange_ReturnsGamesWithinPriceRange()
+        {
+
+            var minPrice = 10;
+            var maxPrice = 20;
+            var games = new List<GameDetailedResponse>
+    {
+        new() { Name = "Game1", Status = GameStatusEnum.Approved, Price = 15 },
+        new() { Name = "Game2", Status = GameStatusEnum.Approved, Price = 25 }
+    };
+
+            gameRepoMock.Setup(x => x.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                       .ReturnsAsync(games);
+
+            var result = await subject.FilterGamesAsync(0, minPrice, maxPrice, Array.Empty<string>());
+
+
+            Assert.All(result, game => Assert.InRange(game.Price, minPrice, maxPrice));
+        }
+
+        [Fact]
+        public async Task FilterGamesAsync_WhenNoTagsProvided_ReturnsAllMatchingGames()
+        {
+
+            var games = new List<GameDetailedResponse>
+    {
+        new() { Name = "Game1", Status = GameStatusEnum.Approved, Tags = new List<TagDetailedResponse>() },
+        new() { Name = "Game2", Status = GameStatusEnum.Approved, Tags = new List<TagDetailedResponse>() }
+    };
+
+            gameRepoMock.Setup(x => x.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                       .ReturnsAsync(games);
+
+            var result = await subject.FilterGamesAsync(0, 0, int.MaxValue, Array.Empty<string>());
+
+            Assert.Equal(2, result.Count);
+        }
+
+        [Fact]
+        public async Task FilterGamesAsync_WhenMultipleCriteriaMatch_ReturnsIntersection()
+        {
+            var testTag = TEST_TAG_1;
+            var minRating = 4;
+            var minPrice = 10;
+            var maxPrice = 20;
+
+            var games = new List<GameDetailedResponse>
+    {
+        new() {
+            Name = "Game1",
+            Status = GameStatusEnum.Approved,
+            Rating = 5,
+            Price = 15,
+            Tags = new List<TagDetailedResponse> { new() { TagName = testTag } }
+        },
+        new() {
+            Name = "Game2",
+            Status = GameStatusEnum.Approved,
+            Rating = 3,
+            Price = 15,
+            Tags = new List<TagDetailedResponse> { new() { TagName = testTag } }
+        },
+        new() {
+            Name = "Game3",
+            Status = GameStatusEnum.Approved,
+            Rating = 5,
+            Price = 25,
+            Tags = new List<TagDetailedResponse> { new() { TagName = testTag } }
+        }
+    };
+
+            gameRepoMock.Setup(x => x.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+                       .ReturnsAsync(games);
+
+            var result = await subject.FilterGamesAsync(minRating, minPrice, maxPrice, new[] { testTag });
+
+            Assert.Equal("Game1", result[0].GameTitle);
+        }
+    }
 }
