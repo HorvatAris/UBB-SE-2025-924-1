@@ -1,0 +1,13 @@
+﻿@model SteamHub.Web.ViewModels.RejectionMessageViewModel
+
+@{
+    ViewData["Title"] = "Rejection Message";
+}
+
+<h2>Rejection Message for Game #@Model.GameId</h2>
+
+<div class="alert alert-warning">
+    <p>@Model.Message</p>
+</div>
+
+<a asp-action="MyGames" class="btn btn-secondary">Back</a>

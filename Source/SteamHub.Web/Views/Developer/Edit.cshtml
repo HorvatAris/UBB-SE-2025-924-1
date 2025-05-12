@@ -1,0 +1,73 @@
+﻿@model SteamHub.Web.ViewModels.EditGameViewModel
+
+@{
+    ViewData["Title"] = "Edit Game";
+}
+
+<h2>Edit Game</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="GameId" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUrl"></label>
+        <input asp-for="ImageUrl" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TrailerUrl"></label>
+        <input asp-for="TrailerUrl" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GameplayUrl"></label>
+        <input asp-for="GameplayUrl" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MinimumRequirement"></label>
+        <input asp-for="MinimumRequirement" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RecommendedRequirement"></label>
+        <input asp-for="RecommendedRequirement" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Discount"></label>
+        <input asp-for="Discount" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Tags</label>
+        @for (int i = 0; i < Model.AllTags.Count; i++)
+        {
+            <div>
+               
+                <input type="checkbox" name="SelectedTags" value="@Model.AllTags[i].TagId"
+                       @(Model.SelectedTags.Contains(Model.AllTags[i].TagId) ? "checked" : "") />
+                <label>@Model.AllTags[i].Tag_name</label>
+            </div>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
