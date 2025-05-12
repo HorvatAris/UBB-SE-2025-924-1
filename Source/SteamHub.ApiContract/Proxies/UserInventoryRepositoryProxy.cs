@@ -7,6 +7,7 @@ namespace SteamHub.ApiContract.Proxies
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Text;
@@ -35,7 +36,16 @@ namespace SteamHub.ApiContract.Proxies
         public async Task<UserInventoryResponse> GetUserInventoryAsync(int userId)
         {
             var response = await _httpClient.GetAsync($"/api/UserInventory/{userId}");
-            response.EnsureSuccessStatusCode(); // Ensure the response is successful (2xx)
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new UserInventoryResponse
+                {
+                    Items = new List<InventoryItemResponse>()
+                };
+            }
+
+            response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<UserInventoryResponse>(_options);
             return result ?? throw new InvalidOperationException("Invalid response from GetUserInventoryAsync");
