@@ -430,7 +430,7 @@ public class UserGameService : IUserGameService
     public async Task<bool> IsGamePurchasedAsync(Game game)
     {
         var purchasedGameList = await this.GetPurchasedGamesAsync();
-        return purchasedGameList.Contains(game);
+        return purchasedGameList.Any(currentGame => currentGame.GameId == game.GameId);
     }
 
     public async Task<Collection<Game>> SortWishListGamesAsync(string criteria, bool ascending)
