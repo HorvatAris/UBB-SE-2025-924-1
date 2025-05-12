@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Developer Dashboard";
+}
+
+<h1>Developer Dashboard</h1>
+
+<div class="dashboard-options">
+    <ul>
+        <li><a asp-action="MyGames">📦 My Games</a></li>
+        <li><a asp-action="Create">➕ Create New Game</a></li>
+        <li><a asp-action="UnvalidatedGames">🕵️ Unvalidated Games</a></li>
+    </ul>
+</div>
+
+<style>
+    .dashboard-options {
+        margin-top: 20px;
+    }
+
+        .dashboard-options ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .dashboard-options li {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .dashboard-options a {
+            text-decoration: none;
+            color: #007acc;
+        }
+
+            .dashboard-options a:hover {
+                text-decoration: underline;
+            }
+</style>

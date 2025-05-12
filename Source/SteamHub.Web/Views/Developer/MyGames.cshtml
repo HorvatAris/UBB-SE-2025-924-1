@@ -1,0 +1,63 @@
+﻿@using SteamHub.ApiContract.Models.Game
+@model List<Game>
+@{
+    ViewData["Title"] = "My Games";
+}
+
+<h2>My Games</h2>
+
+<a asp-action="Create" class="btn btn-primary">Add New Game</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Validated</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.GameTitle</td>
+                <td>@game.Price</td>
+                <td>@game.Status</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@game.GameId" class="btn btn-sm btn-warning">Edit</a>
+                    @* <form asp-action="Delete" asp-route-id="@game.GameId" method="post" style="display:inline"> *@
+                    @*     <button type="submit" class="btn btn-sm btn-danger">Delete</button> *@
+                    @* </form> *@
+                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@game.GameId)">
+    Delete
+</button>
+<form id="delete-form-@game.GameId" asp-action="Delete" asp-route-id="@game.GameId" method="post" style="display:none;"></form>
+                    <a asp-action="RejectionMessage" asp-route-id="@game.GameId" class="btn btn-sm btn-outline-danger">
+            View Rejection
+        </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+        async function confirmDelete(gameId) {
+            try {
+                const response = await fetch(`/Developer/GetGameOwnerCount?id=${gameId}`);
+                const ownerCount = await response.json();
+
+                let message = ownerCount > 0
+                    ? `⚠️ This game is currently owned by ${ownerCount} user(s). Are you sure you want to delete it?`
+                    : "Are you sure you want to delete this game?";
+
+                if (confirm(message)) {
+                    document.getElementById(`delete-form-${gameId}`).submit();
+                }
+            } catch (error) {
+                alert("An error occurred while checking game ownership.");
+            }
+        }
+    </script>
+}
