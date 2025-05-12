@@ -32,6 +32,9 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICartService, CartService>();
 
+builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
+builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
 
 var app = builder.Build();
 
