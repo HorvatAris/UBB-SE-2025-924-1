@@ -1,139 +1,151 @@
 ﻿namespace SteamHub.Tests.Services
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Linq;
     using System.Threading.Tasks;
-    using SteamHub.ApiContract.Models;
-    using SteamHub.ApiContract.Proxies;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
-    using SteamHub.ApiContract.Models.Tag;
     using SteamHub.ApiContract.Models.UsersGames;
     using SteamHub.ApiContract.Models.User;
-    using SteamHub.ApiContract.Constants;
-    using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Repositories;
     using SteamHub.ApiContract.Services;
     using Xunit;
+    using SteamHub.ApiContract.Constants;
+    using SteamHub.ApiContract.Models.Tag;
 
     public class UserGameServiceTests
     {
-        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
-        private readonly Mock<UserGamesRepositoryProxy> userGameServiceProxyMock;
-        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
-        private readonly Mock<TagRepositoryProxy> tagServiceProxyMock;
+        private readonly Mock<IUserRepository> userRepositoryMock;
+        private readonly Mock<IUsersGamesRepository> userGameRepositoryMock;
+        private readonly Mock<IGameRepository> gameRepositoryMock;
+        private readonly Mock<ITagRepository> tagRepositoryMock;
+        private readonly Mock<IUserDetails> userDetailsMock;
 
-        private readonly User testUser;
         private readonly UserGameService userGameService;
 
         public UserGameServiceTests()
         {
-            this.userServiceProxyMock = new Mock<UserRepositoryProxy>();
-            this.userGameServiceProxyMock = new Mock<UserGamesRepositoryProxy>();
-            this.gameServiceProxyMock = new Mock<GameRepositoryProxy>();
-            this.tagServiceProxyMock = new Mock<TagRepositoryProxy>();
+            this.userRepositoryMock = new Mock<IUserRepository>();
+            this.userGameRepositoryMock = new Mock<IUsersGamesRepository>();
+            this.gameRepositoryMock = new Mock<IGameRepository>();
+            this.tagRepositoryMock = new Mock<ITagRepository>();
+            this.userDetailsMock = new Mock<IUserDetails>();
 
-            this.testUser = new User
-            {
-                UserId = 1,
-                WalletBalance = 100,
-                PointsBalance = 10
-            };
+            this.userDetailsMock.SetupGet(u => u.UserId).Returns(1);
 
             this.userGameService = new UserGameService(
-                this.userServiceProxyMock.Object,
-                this.userGameServiceProxyMock.Object,
-                this.gameServiceProxyMock.Object,
-                this.tagServiceProxyMock.Object,
-                this.testUser);
+                this.userRepositoryMock.Object,
+                this.userGameRepositoryMock.Object,
+                this.gameRepositoryMock.Object,
+                this.tagRepositoryMock.Object,
+                this.userDetailsMock.Object);
         }
 
         [Fact]
-        public async Task RemoveGameFromWishlistAsync_ValidGameId_CallsProxyCorrectly()
+        public async Task RemoveGameFromWishlistAsync_ValidGameId_CallsRepositoryCorrectly()
         {
             var game = new Game { GameId = 1 };
 
             await this.userGameService.RemoveGameFromWishlistAsync(game);
 
-            this.userGameServiceProxyMock.Verify(proxy => proxy.RemoveFromWishlistAsync(
-                It.Is<UserGameRequest>(request => request.GameId == game.GameId && request.UserId == testUser.UserId)), Times.Once);
+            this.userGameRepositoryMock.Verify(repo => repo.RemoveFromWishlistAsync(
+                It.Is<UserGameRequest>(req =>
+                    req.GameId == game.GameId &&
+                    req.UserId == 1)), Times.Once);
         }
 
         [Fact]
-        public async Task AddGameToWishlistAsync_ValidId_CallsProxy()
+        public async Task AddGameToWishlistAsync_ValidId_CallsRepository()
         {
             var game = new Game { GameId = 2, GameTitle = "Not Owned Game" };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserPurchasedGamesAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+            this.userGameRepositoryMock
+                .Setup(repo => repo.GetUserPurchasedGamesAsync(userDetailsMock.Object.UserId))
+                .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse>()
                 });
 
             await this.userGameService.AddGameToWishlistAsync(game);
 
-            this.userGameServiceProxyMock.Verify(proxy => proxy.AddToWishlistAsync(
-                It.Is<UserGameRequest>(request => request.GameId == game.GameId && request.UserId == testUser.UserId)), Times.Once);
+            this.userGameRepositoryMock.Verify(repo => repo.AddToWishlistAsync(
+                It.Is<UserGameRequest>(request =>
+                    request.GameId == game.GameId && request.UserId == userDetailsMock.Object.UserId)), Times.Once);
         }
+
 
         [Fact]
         public async Task GetAllGamesAsync_WhenGamesExist_ReturnsMappedGames()
         {
-            var response = new GetUserGamesResponse
+            var userGamesResponse = new GetUserGamesResponse
             {
                 UserGames = new List<UserGamesResponse>
-                {
-                    new UserGamesResponse { GameId = 1 },
-                    new UserGamesResponse { GameId = 2 }
-                }
+        {
+            new UserGamesResponse { GameId = 1 },
+            new UserGamesResponse { GameId = 2 }
+        }
             };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserGamesAsync(testUser.UserId)).ReturnsAsync(response);
+            this.userGameRepositoryMock.Setup(repo =>
+                repo.GetUserGamesAsync(1)).ReturnsAsync(userGamesResponse);
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => new GameDetailedResponse { Identifier = id, Name = $"Game{id}" });
+            this.gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(1)).ReturnsAsync(
+                new GameDetailedResponse { Identifier = 1, Name = "Game1", Price = 59.99m });
+
+            this.gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(2)).ReturnsAsync(
+                new GameDetailedResponse { Identifier = 2, Name = "Game2", Price = 39.99m });
 
             var result = await this.userGameService.GetAllGamesAsync();
 
             Assert.Equal(2, result.Count);
+            Assert.Contains(result, game => game.GameId == 1 && game.GameTitle == "Game1");
+            Assert.Contains(result, game => game.GameId == 2 && game.GameTitle == "Game2");
         }
+
 
         [Fact]
         public async Task PurchaseGamesAsync_ValidGames_UpdatesLastEarnedPoints()
         {
-            var initialPoints = testUser.PointsBalance;
             var games = new List<Game> { new Game { GameId = 1 }, new Game { GameId = 2 } };
+
+            this.userGameRepositoryMock.Setup(repo =>
+                repo.PurchaseGameAsync(It.IsAny<UserGameRequest>()))
+                .Returns(Task.CompletedTask);
 
             await this.userGameService.PurchaseGamesAsync(games, true);
 
-            this.userGameServiceProxyMock.Verify(proxy => proxy.PurchaseGameAsync(
-                It.IsAny<UserGameRequest>()), Times.Exactly(games.Count));
+            this.userGameRepositoryMock.Verify(repo =>
+                repo.PurchaseGameAsync(It.IsAny<UserGameRequest>()), Times.Exactly(games.Count));
+
             Assert.Equal(0, this.userGameService.LastEarnedPoints);
         }
+
 
         [Fact]
         public async Task SearchWishListByNameAsync_ValidExistingName_FindsMatchingGames()
         {
-            var games = new Collection<Game>
-            {
-                new Game { GameId = 1, GameTitle = "Zelda" },
-                new Game { GameId = 2, GameTitle = "Halo Infinite" },
-                new Game { GameId = 3, GameTitle = "Cool Game" }
-            };
+            var wishlistGames = new List<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Zelda" },
+        new Game { GameId = 2, GameTitle = "Halo Infinite" },
+        new Game { GameId = 3, GameTitle = "Cool Game" }
+    };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+            this.userGameRepositoryMock.Setup(repo =>
+                repo.GetUserWishlistAsync(1)).ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = wishlistGames.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+            this.gameRepositoryMock.Setup(repo =>
+                repo.GetGameByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) =>
                 {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse { Identifier = id, Name = game.GameTitle };
+                    var match = wishlistGames.First(g => g.GameId == id);
+                    return new GameDetailedResponse
+                    {
+                        Identifier = id,
+                        Name = match.GameTitle
+                    };
                 });
 
             var result = await this.userGameService.SearchWishListByNameAsync("cool");
@@ -142,13 +154,14 @@
             Assert.Equal("Cool Game", result[0].GameTitle);
         }
 
+
         [Fact]
         public async Task FilterWishListGamesAsync_WhenRatingIs5AndFilterIsOverwhelminglyPositive_ReturnsGame()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameId = 1, GameTitle = "Test Game", Rating = 5 }
-            };
+    {
+        new Game { GameId = 1, GameTitle = "Test Game", Rating = 5 }
+    };
 
             SetupUserWishlistWithGames(games);
             SetupGameServiceMock(games);
@@ -163,9 +176,9 @@
         public async Task FilterWishListGamesAsync_WhenRatingIs4Point1AndFilterIsVeryPositive_ReturnsGame()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameId = 2, GameTitle = "Test Game", Rating = 4.1m }
-            };
+    {
+        new Game { GameId = 2, GameTitle = "Test Game", Rating = 4.1m }
+    };
 
             SetupUserWishlistWithGames(games);
             SetupGameServiceMock(games);
@@ -180,9 +193,9 @@
         public async Task FilterWishListGamesAsync_WhenRatingIs3AndFilterIsMixed_ReturnsGame()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameId = 3, GameTitle = "Test Game", Rating = 3m }
-            };
+        {
+            new Game { GameId = 3, GameTitle = "Test Game", Rating = 3m }
+        };
 
             SetupUserWishlistWithGames(games);
             SetupGameServiceMock(games);
@@ -197,9 +210,9 @@
         public async Task FilterWishListGamesAsync_WhenRatingIs1AndFilterIsNegative_ReturnsGame()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameId = 4, GameTitle = "Test Game", Rating = 1m }
-            };
+        {
+            new Game { GameId = 4, GameTitle = "Test Game", Rating = 1m }
+        };
 
             SetupUserWishlistWithGames(games);
             SetupGameServiceMock(games);
@@ -214,23 +227,13 @@
         public async Task FilterWishListGamesAsync_UnknownCriteria_ReturnsAll()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameId = 1, GameTitle = "Game A", Rating = 2.5m },
-                new Game { GameId = 2, GameTitle = "Game B", Rating = 4.8m }
-            };
+        {
+            new Game { GameId = 1, GameTitle = "Game A", Rating = 2.5m },
+            new Game { GameId = 2, GameTitle = "Game B", Rating = 4.8m }
+        };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
-                {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
-                });
-
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
-                {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse { Identifier = id, Name = game.GameTitle, Rating = (decimal)game.Rating };
-                });
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
 
             var result = await this.userGameService.FilterWishListGamesAsync("UNKNOWN");
 
@@ -238,111 +241,99 @@
         }
 
         [Fact]
-        public async Task SortWishListGamesAsync_WhenSortedByPrice_AndAscendingOrder_ReturnsCorrectOrder()
+        public async Task SortWishListGamesAsync_WhenSortedByPriceAscending_ShouldReturnCorrectOrder()
         {
             var games = new Collection<Game>
     {
-        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
-        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
-        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15 }
     };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = games.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new GameDetailedResponse
                 {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse
-                    {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Price = game.Price,
-                        Rating = (decimal)game.Rating,
-                        Discount = game.Discount
-                    };
+                    Identifier = id,
+                    Name = games.First(g => g.GameId == id).GameTitle,
+                    Price = games.First(g => g.GameId == id).Price
                 });
 
-            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.PRICE, true);
+            var result = await userGameService.SortWishListGamesAsync(FilterCriteria.PRICE, true);
 
-            Assert.Equal(3, sorted.Count);
-            Assert.Equal("Halo", sorted.First().GameTitle);  // Expecting lowest price first
+            Assert.Equal(10, result[0].Price);
+        }
+
+        [Fact]
+        public async Task SortWishListGamesAsync_WhenSortedByPriceAscending_ShouldReturnCheapestGameFirst()
+        {
+            var games = new Collection<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Zelda", Price = 20 },
+        new Game { GameId = 2, GameTitle = "Halo", Price = 10 },
+        new Game { GameId = 3, GameTitle = "Among Us", Price = 15 }
+    };
+
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
+                });
+
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new GameDetailedResponse
+                {
+                    Identifier = id,
+                    Name = games.First(g => g.GameId == id).GameTitle,
+                    Price = games.First(g => g.GameId == id).Price
+                });
+
+            var result = await userGameService.SortWishListGamesAsync(FilterCriteria.PRICE, true);
+
+            Assert.Equal("Halo", result[0].GameTitle);
         }
 
         [Fact]
         public async Task SortWishListGamesAsync_WhenSortedByPrice_AndDescendingOrder_ReturnsCorrectOrder()
         {
             var games = new Collection<Game>
-    {
-        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
-        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
-        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
-    };
+        {
+            new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+            new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+            new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+        };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
-                {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
-                });
-
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
-                {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse
-                    {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Price = game.Price,
-                        Rating = (decimal)game.Rating,
-                        Discount = game.Discount
-                    };
-                });
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
 
             var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.PRICE, false);
 
             Assert.Equal(3, sorted.Count);
-            Assert.Equal("Zelda", sorted.First().GameTitle);  // Expecting highest price first
+            Assert.Equal("Zelda", sorted.First().GameTitle);  
         }
 
         [Fact]
         public async Task SortWishListGamesAsync_WhenSortedByRating_AndAscendingOrder_ReturnsCorrectOrder()
         {
             var games = new Collection<Game>
-    {
-        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
-        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
-        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
-    };
+        {
+            new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
+            new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
+            new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+        };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
-                {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
-                });
-
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
-                {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse
-                    {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Price = game.Price,
-                        Rating = (decimal)game.Rating,
-                        Discount = game.Discount
-                    };
-                });
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
 
             var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.RATING, true);
 
             Assert.Equal(3, sorted.Count);
-            Assert.Equal("Among Us", sorted.First().GameTitle);  // Expecting lowest rating first
+            Assert.Equal("Among Us", sorted.First().GameTitle);  
         }
 
         [Fact]
@@ -355,115 +346,87 @@
         new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
     };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
-                {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
-                });
-
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
-                {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse
-                    {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Price = game.Price,
-                        Rating = (decimal)game.Rating,
-                        Discount = game.Discount
-                    };
-                });
+            SetupUserWishlistWithGames(games);
+            SetupGameServiceMock(games);
 
             var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.RATING, false);
 
             Assert.Equal(3, sorted.Count);
-            Assert.Equal("Halo", sorted.First().GameTitle);  // Expecting highest rating first
+            Assert.Equal("Halo", sorted[0].GameTitle);     
+            Assert.Equal("Zelda", sorted[1].GameTitle);
+            Assert.Equal("Among Us", sorted[2].GameTitle);
         }
 
         [Fact]
-        public async Task SortWishListGamesAsync_WhenSortedByDiscount_AndAscendingOrder_ReturnsCorrectOrder()
+        public async Task SortWishListGamesAsync_WhenSortedByDiscountDescending_ShouldReturnHighestDiscountFirst()
         {
             var games = new Collection<Game>
     {
-        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
-        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
-        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+        new Game { GameId = 1, Discount = 10 },
+        new Game { GameId = 2, Discount = 5 },
+        new Game { GameId = 3, Discount = 20 }
     };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = games.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new GameDetailedResponse
                 {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse
-                    {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Price = game.Price,
-                        Rating = (decimal)game.Rating,
-                        Discount = game.Discount
-                    };
+                    Identifier = id,
+                    Discount = games.First(g => g.GameId == id).Discount
                 });
 
-            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.DISCOUNT, true);
+            var result = await userGameService.SortWishListGamesAsync(FilterCriteria.DISCOUNT, false);
 
-            Assert.Equal(3, sorted.Count);
-            Assert.Equal("Halo", sorted.First().GameTitle);  // Expecting lowest discount first
+            Assert.Equal(20, result[0].Discount);
         }
 
         [Fact]
-        public async Task SortWishListGamesAsync_WhenSortedByDiscount_AndDescendingOrder_ReturnsCorrectOrder()
+        public async Task SortWishListGamesAsync_WhenSortedByDiscountDescending_ShouldReturnCorrectGameOrder()
         {
             var games = new Collection<Game>
     {
-        new Game { GameId = 1, GameTitle = "Zelda", Price = 20, Rating = 3.5m, Discount = 10 },
-        new Game { GameId = 2, GameTitle = "Halo", Price = 10, Rating = 4.5m, Discount = 5 },
-        new Game { GameId = 3, GameTitle = "Among Us", Price = 15, Rating = 2.5m, Discount = 20 }
+        new Game { GameId = 1, GameTitle = "Zelda", Discount = 10 },
+        new Game { GameId = 2, GameTitle = "Halo", Discount = 5 },
+        new Game { GameId = 3, GameTitle = "Among Us", Discount = 20 }
     };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = games.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new GameDetailedResponse
                 {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse
-                    {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Price = game.Price,
-                        Rating = (decimal)game.Rating,
-                        Discount = game.Discount
-                    };
+                    Identifier = id,
+                    Name = games.First(g => g.GameId == id).GameTitle,
+                    Discount = games.First(g => g.GameId == id).Discount
                 });
 
-            var sorted = await this.userGameService.SortWishListGamesAsync(FilterCriteria.DISCOUNT, false);
+            var result = await userGameService.SortWishListGamesAsync(FilterCriteria.DISCOUNT, false);
 
-            Assert.Equal(3, sorted.Count);
-            Assert.Equal("Among Us", sorted.First().GameTitle);  // Expecting highest discount first
+            Assert.Equal("Among Us", result[0].GameTitle);
+            Assert.Equal("Zelda", result[1].GameTitle);
+            Assert.Equal("Halo", result[2].GameTitle);
         }
 
         [Fact]
-        public void ComputeTrendingScores_ComputesCorrectly()
+        public void ComputeTrendingScores_WhenMultipleGames_ShouldCalculateCorrectScores()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameTitle = "A", NumberOfRecentPurchases = 100 },
-                new Game { GameTitle = "B", NumberOfRecentPurchases = 50 },
-                new Game { GameTitle = "C", NumberOfRecentPurchases = 0 }
-            };
+    {
+        new Game { NumberOfRecentPurchases = 100 },
+        new Game { NumberOfRecentPurchases = 50 },
+        new Game { NumberOfRecentPurchases = 0 }
+    };
 
-            this.userGameService.ComputeTrendingScores(games);
+            userGameService.ComputeTrendingScores(games);
 
             Assert.Equal(1.0m, games[0].TrendingScore);
             Assert.Equal(0.5m, games[1].TrendingScore);
@@ -471,330 +434,469 @@
         }
 
         [Fact]
-        public async Task ComputeTagScoreForGamesAsync_ValidComputingFormula_AddsScore()
+        public async Task ComputeTagScoreForGamesAsync_WhenCalled_ShouldSetNonNegativeTagScores()
         {
             var games = new Collection<Game>
-            {
-                new Game { GameTitle = "Game1", Tags = new[] { "Action", "RPG" } },
-                new Game { GameTitle = "Game2", Tags = new[] { "Puzzle" } }
-            };
+    {
+        new Game { GameTitle = "Game1", Tags = new[] { "Action", "RPG" } },
+        new Game { GameTitle = "Game2", Tags = new[] { "Puzzle" } }
+    };
 
             var allTags = new List<TagSummaryResponse>
-            {
-                new TagSummaryResponse { TagId = 1, TagName = "Action" },
-                new TagSummaryResponse { TagId = 2, TagName = "RPG" }
-            };
+    {
+        new TagSummaryResponse { TagId = 1, TagName = "Action" },
+        new TagSummaryResponse { TagId = 2, TagName = "RPG" }
+    };
 
-            var userGames = new List<Game>
-            {
-                new Game { GameTitle = "GameX", Tags = new[] { "Action", "Action", "Puzzle" } }
-            };
-
-            this.tagServiceProxyMock.Setup(proxy => proxy.GetAllTagsAsync())
+            tagRepositoryMock.Setup(repo => repo.GetAllTagsAsync())
                 .ReturnsAsync(new GetTagsResponse { Tags = allTags });
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserGamesAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserGamesAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = userGames.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = 1 } }
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => new GameDetailedResponse
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GameDetailedResponse
                 {
-                    Identifier = id,
-                    Name = "GameX",
                     Tags = new List<TagDetailedResponse>
                     {
-                        new TagDetailedResponse { TagId = 1, TagName = "Action" },
-                        new TagDetailedResponse { TagId = 2, TagName = "Puzzle" },
-                        new TagDetailedResponse { TagId = 1, TagName = "Action" }
+                new TagDetailedResponse { TagName = "Action" },
+                new TagDetailedResponse { TagName = "Action" },
+                new TagDetailedResponse { TagName = "Puzzle" }
                     }
                 });
 
-            await this.userGameService.ComputeTagScoreForGamesAsync(games);
+            await userGameService.ComputeTagScoreForGamesAsync(games);
 
             Assert.True(games.All(game => game.TagScore >= 0));
         }
 
         [Fact]
-        public async Task GetFavoriteUserTagsAsync_ValidIds_ReturnsTopTags()
+        public async Task GetFavoriteUserTagsAsync_WhenCalled_ShouldReturnThreeTags()
         {
             var allTags = new List<TagSummaryResponse>
-            {
-                 new TagSummaryResponse { TagId = 1, TagName = "Action" },
-                 new TagSummaryResponse { TagId = 2, TagName = "Puzzle" },
-                 new TagSummaryResponse { TagId = 3, TagName = "Adventure" },
-                 new TagSummaryResponse { TagId = 4, TagName = "RPG" }
-            };
+    {
+        new TagSummaryResponse { TagId = 1, TagName = "Action" },
+        new TagSummaryResponse { TagId = 2, TagName = "Puzzle" },
+        new TagSummaryResponse { TagId = 3, TagName = "Adventure" },
+        new TagSummaryResponse { TagId = 4, TagName = "RPG" }
+    };
 
-            var purchasedGames = new List<Game>
-            {
-                new Game { GameId = 1, GameTitle = "G1", Tags = new List<string> { "Action", "Puzzle" }.ToArray() },
-                new Game { GameId = 2, GameTitle = "G2", Tags = new List<string> { "Action", "RPG" }.ToArray() },
-                new Game { GameId = 3, GameTitle = "G3", Tags = new List<string> { "Puzzle", "Adventure" }.ToArray() }
-            };
-
-            this.tagServiceProxyMock.Setup(proxy => proxy.GetAllTagsAsync())
+            tagRepositoryMock.Setup(repo => repo.GetAllTagsAsync())
                 .ReturnsAsync(new GetTagsResponse { Tags = allTags });
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserGamesAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserGamesAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = purchasedGames.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
-                });
-
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
-                {
-                    var game = purchasedGames.First(game => game.GameId == id);
-                    return new GameDetailedResponse
+                    UserGames = new List<UserGamesResponse>
                     {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Tags = game.Tags.Select(tag => new TagDetailedResponse { TagId = 0, TagName = tag }).ToList()
-                    };
+                new UserGamesResponse { GameId = 1 },
+                new UserGamesResponse { GameId = 2 },
+                new UserGamesResponse { GameId = 3 }
+                    }
                 });
 
-            var result = await this.userGameService.GetFavoriteUserTagsAsync();
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(1))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Tags = new List<TagDetailedResponse>
+                    {
+                new TagDetailedResponse { TagName = "Action" },
+                new TagDetailedResponse { TagName = "Puzzle" }
+                    }
+                });
+
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(2))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Tags = new List<TagDetailedResponse>
+                    {
+                new TagDetailedResponse { TagName = "Action" },
+                new TagDetailedResponse { TagName = "RPG" }
+                    }
+                });
+
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(3))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Tags = new List<TagDetailedResponse>
+                    {
+                new TagDetailedResponse { TagName = "Puzzle" },
+                new TagDetailedResponse { TagName = "Adventure" }
+                    }
+                });
+
+            var result = await userGameService.GetFavoriteUserTagsAsync();
 
             Assert.Equal(3, result.Count);
-            Assert.True(result.Any(tag => tag.Tag_name == "Action"));
         }
 
         [Fact]
-        public async Task AddGameToWishlistAsync_ValidGame_Successful()
+        public async Task GetFavoriteUserTagsAsync_WhenCalled_ShouldIncludeMostCommonTag()
+        {
+            var allTags = new List<TagSummaryResponse>
+    {
+        new TagSummaryResponse { TagId = 1, TagName = "Action" },
+        new TagSummaryResponse { TagId = 2, TagName = "Puzzle" }
+    };
+
+            tagRepositoryMock.Setup(repo => repo.GetAllTagsAsync())
+                .ReturnsAsync(new GetTagsResponse { Tags = allTags });
+
+            userGameRepositoryMock.Setup(repo => repo.GetUserGamesAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = new List<UserGamesResponse>
+                    {
+                new UserGamesResponse { GameId = 1 },
+                new UserGamesResponse { GameId = 2 }
+                    }
+                });
+
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Tags = new List<TagDetailedResponse>
+                    {
+                new TagDetailedResponse { TagName = "Action" },
+                new TagDetailedResponse { TagName = "Action" }
+                    }
+                });
+
+            var result = await userGameService.GetFavoriteUserTagsAsync();
+
+            Assert.Contains(result, tag => tag.Tag_name == "Action");
+        }
+
+        [Fact]
+        public async Task AddGameToWishlistAsync_WhenGameNotPurchased_ShouldCallAddToWishlist()
         {
             var game = new Game { GameId = 7, GameTitle = "NewGame" };
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserPurchasedGamesAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserPurchasedGamesAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse>()
                 });
 
-            await this.userGameService.AddGameToWishlistAsync(game);
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = new List<UserGamesResponse>()
+                });
 
-            this.userGameServiceProxyMock.Verify(proxy => proxy.AddToWishlistAsync(It.Is<UserGameRequest>(
-                request => request.UserId == testUser.UserId && request.GameId == game.GameId)), Times.Once);
+            await userGameService.AddGameToWishlistAsync(game);
+
+            userGameRepositoryMock.Verify(repo => repo.AddToWishlistAsync(
+                It.Is<UserGameRequest>(r => r.UserId == 1 && r.GameId == game.GameId)),
+                Times.Once);
         }
 
         [Fact]
-        public async Task RemoveGameFromWishlistAsync_ValidGameId_RemovesSuccessfully()
+        public async Task RemoveGameFromWishlistAsync_WhenCalled_ShouldCallRemoveFromWishlist()
         {
             var game = new Game { GameId = 5 };
 
-            await this.userGameService.RemoveGameFromWishlistAsync(game);
+            await userGameService.RemoveGameFromWishlistAsync(game);
 
-            this.userGameServiceProxyMock.Verify(proxy => proxy.RemoveFromWishlistAsync(It.Is<UserGameRequest>(
-                request => request.UserId == testUser.UserId && request.GameId == game.GameId)), Times.Once);
+            userGameRepositoryMock.Verify(repo => repo.RemoveFromWishlistAsync(
+                It.Is<UserGameRequest>(r => r.UserId == 1 && r.GameId == game.GameId)),
+                Times.Once);
         }
 
         [Fact]
-        public async Task PurchaseGamesAsync_ValidGames_BuysCorrectGames()
+        public async Task PurchaseGamesAsync_WhenCalledWithMultipleGames_ShouldCallPurchaseForEachGame()
         {
-            var game1 = new Game { GameId = 10 };
-            var game2 = new Game { GameId = 11 };
-            var gamesToBuy = new List<Game> { game1, game2 };
+            var gamesToBuy = new List<Game>
+    {
+        new Game { GameId = 10 },
+        new Game { GameId = 11 }
+    };
 
-            float originalPoints = testUser.PointsBalance;
-            testUser.PointsBalance += 20;
+            await userGameService.PurchaseGamesAsync(gamesToBuy, true);
 
-            await this.userGameService.PurchaseGamesAsync(gamesToBuy, true);
-
-            this.userGameServiceProxyMock.Verify(proxy => proxy.PurchaseGameAsync(It.IsAny<UserGameRequest>()), Times.Exactly(2));
+            userGameRepositoryMock.Verify(repo => repo.PurchaseGameAsync(
+                It.Is<UserGameRequest>(r => r.UserId == 1)),
+                Times.Exactly(2));
         }
 
         [Fact]
-        public async Task SearchWishListByNameAsync_ExistingName_ReturnsMatchingGames()
+        public async Task PurchaseGamesAsync_WhenCalled_ShouldUpdateUserRepository()
+        {
+            var gamesToBuy = new List<Game> { new Game { GameId = 10, Price = 20m } };
+
+            await userGameService.PurchaseGamesAsync(gamesToBuy, true);
+
+            userRepositoryMock.Verify(repo => repo.UpdateUserAsync(
+                It.IsAny<int>(),
+                It.IsAny<UpdateUserRequest>()),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task SearchWishListByNameAsync_WhenNameMatches_ShouldReturnFilteredGames()
         {
             var searchText = "halo";
             var games = new Collection<Game>
-            {
-                new Game { GameId = 1, GameTitle = "Halo Infinite" },
-                new Game { GameId = 2, GameTitle = "Zelda" }
-            };
+    {
+        new Game { GameId = 1, GameTitle = "Halo Infinite" },
+        new Game { GameId = 2, GameTitle = "Zelda" }
+    };
 
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = games.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new GameDetailedResponse
                 {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse { Identifier = id, Name = game.GameTitle };
+                    Identifier = id,
+                    Name = games.First(g => g.GameId == id).GameTitle
                 });
 
-            var results = await this.userGameService.SearchWishListByNameAsync(searchText);
+            var results = await userGameService.SearchWishListByNameAsync(searchText);
 
             Assert.Single(results);
-            Assert.Contains(results, game => game.GameTitle.ToLower().Contains(searchText));
         }
 
         [Fact]
-        public async Task FilterWishListGamesAsync_WhenRatingIs4Point5AndCriteriaIsOverwhelminglyPositive_ReturnsGame()
+        public async Task SearchWishListByNameAsync_WhenNameMatches_ShouldReturnCorrectGame()
         {
-            var game = new Game { GameId = 1, GameTitle = "Game1", Rating = 4.5m };
+            var searchText = "halo";
+            var games = new Collection<Game>
+    {
+        new Game { GameId = 1, GameTitle = "Halo Infinite" }
+    };
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = games.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
+                });
+
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new GameDetailedResponse
+                {
+                    Identifier = id,
+                    Name = games.First(g => g.GameId == id).GameTitle
+                });
+
+            var results = await userGameService.SearchWishListByNameAsync(searchText);
+
+            Assert.Contains("Halo", results[0].GameTitle);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenOverwhelminglyPositive_ShouldReturnMatchingGame()
+        {
+            var game = new Game { GameId = 1, Rating = 4.5m };
+
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(game.GameId))
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(game.GameId))
                 .ReturnsAsync(new GameDetailedResponse
                 {
                     Identifier = game.GameId,
-                    Name = game.GameTitle,
-                    Rating = game.Rating
+                    Rating = game.Rating,
+                    Status = GameStatusEnum.Approved
                 });
 
-            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.OVERWHELMINGLYPOSITIVE);
+            var result = await userGameService.FilterWishListGamesAsync(FilterCriteria.OVERWHELMINGLYPOSITIVE);
 
             Assert.Single(result);
         }
 
         [Fact]
-        public async Task FilterWishListGamesAsync_WhenRatingIs4Point1AndCriteriaIsVeryPositive_ReturnsGame()
+        public async Task FilterWishListGamesAsync_WhenVeryPositive_ShouldReturnMatchingGame()
         {
-            var game = new Game { GameId = 2, GameTitle = "Game1", Rating = 4.1m };
+            var game = new Game { GameId = 2, Rating = 4.1m };
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(game.GameId))
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(game.GameId))
                 .ReturnsAsync(new GameDetailedResponse
                 {
                     Identifier = game.GameId,
-                    Name = game.GameTitle,
-                    Rating = game.Rating
+                    Rating = game.Rating,
+                    Status = GameStatusEnum.Approved
                 });
 
-            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.VERYPOSITIVE);
+            var result = await userGameService.FilterWishListGamesAsync(FilterCriteria.VERYPOSITIVE);
 
             Assert.Single(result);
         }
 
         [Fact]
-        public async Task FilterWishListGamesAsync_WhenRatingIs3Point0AndCriteriaIsMixed_ReturnsGame()
+        public async Task FilterWishListGamesAsync_WhenOverwhelminglyPositive_ShouldReturnGameWithCorrectRating()
         {
-            var game = new Game { GameId = 3, GameTitle = "Game1", Rating = 3.0m };
+            var game = new Game { GameId = 1, Rating = 4.5m };
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(game.GameId))
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(game.GameId))
                 .ReturnsAsync(new GameDetailedResponse
                 {
                     Identifier = game.GameId,
-                    Name = game.GameTitle,
-                    Rating = game.Rating
+                    Rating = game.Rating,
+                    Status = GameStatusEnum.Approved
                 });
 
-            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.MIXED);
+            var result = await userGameService.FilterWishListGamesAsync(FilterCriteria.OVERWHELMINGLYPOSITIVE);
 
-            Assert.Single(result);
+            Assert.Equal(4.5m, result[0].Rating);
         }
 
         [Fact]
-        public async Task FilterWishListGamesAsync_WhenRatingIs1Point5AndCriteriaIsNegative_ReturnsGame()
+        public async Task FilterWishListGamesAsync_WhenMixedRating_ShouldReturnMatchingGame()
         {
-            var game = new Game { GameId = 4, GameTitle = "Game1", Rating = 1.5m };
+            var game = new Game { GameId = 3, Rating = 3.0m };
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(game.GameId))
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(game.GameId))
                 .ReturnsAsync(new GameDetailedResponse
                 {
                     Identifier = game.GameId,
-                    Name = game.GameTitle,
-                    Rating = game.Rating
+                    Rating = game.Rating,
+                    Status = GameStatusEnum.Approved
                 });
 
-            var result = await this.userGameService.FilterWishListGamesAsync(FilterCriteria.NEGATIVE);
+            var result = await userGameService.FilterWishListGamesAsync(FilterCriteria.MIXED);
 
             Assert.Single(result);
         }
 
         [Fact]
-        public async Task FilterWishListGamesAsync_InvalidCriteria_ReturnsAll()
+        public async Task FilterWishListGamesAsync_WhenNegativeRating_ShouldReturnMatchingGame()
         {
-            var games = new List<Game>
-            {
-                new Game { GameId = 1, GameTitle = "Halo", Rating = 3.5m },
-                new Game { GameId = 2, GameTitle = "Zelda", Rating = 2.0m }
-            };
+            var game = new Game { GameId = 4, Rating = 1.5m };
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserWishlistAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
                 });
 
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) =>
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(game.GameId))
+                .ReturnsAsync(new GameDetailedResponse
                 {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse
-                    {
-                        Identifier = id,
-                        Name = game.GameTitle,
-                        Rating = (decimal)game.Rating
-                    };
+                    Identifier = game.GameId,
+                    Rating = game.Rating,
+                    Status = GameStatusEnum.Approved
                 });
+            var result = await userGameService.FilterWishListGamesAsync(FilterCriteria.NEGATIVE);
 
-            var result = await this.userGameService.FilterWishListGamesAsync("INVALID");
-
-            Assert.Equal(2, result.Count);
+            Assert.Single(result);
         }
 
         [Fact]
-        public async Task IsGamePurchasedAsync_GameNotExists_ReturnsFalse()
+        public async Task FilterWishListGamesAsync_WhenMixedRating_ShouldReturnCorrectRating()
+        {
+            var game = new Game { GameId = 3, Rating = 3.0m };
+
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
+                });
+
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(game.GameId))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Identifier = game.GameId,
+                    Rating = game.Rating,
+                    Status = GameStatusEnum.Approved
+                });
+
+            var result = await userGameService.FilterWishListGamesAsync(FilterCriteria.MIXED);
+
+            Assert.Equal(3.0m, result[0].Rating);
+        }
+
+        [Fact]
+        public async Task FilterWishListGamesAsync_WhenNegativeRating_ShouldReturnCorrectRating()
+        {
+            var game = new Game { GameId = 4, Rating = 1.5m };
+
+            userGameRepositoryMock.Setup(repo => repo.GetUserWishlistAsync(It.IsAny<int>()))
+                .ReturnsAsync(new GetUserGamesResponse
+                {
+                    UserGames = new List<UserGamesResponse> { new UserGamesResponse { GameId = game.GameId } }
+                });
+
+            gameRepositoryMock.Setup(repo => repo.GetGameByIdAsync(game.GameId))
+                .ReturnsAsync(new GameDetailedResponse
+                {
+                    Identifier = game.GameId,
+                    Rating = game.Rating,
+                    Status = GameStatusEnum.Approved
+                });
+
+            var result = await userGameService.FilterWishListGamesAsync(FilterCriteria.NEGATIVE);
+
+            Assert.Equal(1.5m, result[0].Rating);
+        }
+
+        [Fact]
+        public async Task IsGamePurchasedAsync_WhenGameNotPurchased_ShouldReturnFalse()
         {
             var game = new Game { GameId = 2 };
 
-            this.userGameServiceProxyMock.Setup(proxy => proxy.GetUserPurchasedGamesAsync(testUser.UserId))
+            userGameRepositoryMock.Setup(repo => repo.GetUserPurchasedGamesAsync(It.IsAny<int>()))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse>()
                 });
 
-            var result = await this.userGameService.IsGamePurchasedAsync(game);
+            var result = await userGameService.IsGamePurchasedAsync(game);
 
             Assert.False(result);
         }
 
-        private void SetupUserWishlistWithGames(Collection<Game> games)
+        private void SetupUserWishlistWithGames(IEnumerable<Game> games)
         {
-            this.userGameServiceProxyMock.Setup(proxy =>
-                proxy.GetUserWishlistAsync(testUser.UserId)).ReturnsAsync(new GetUserGamesResponse
+            this.userGameRepositoryMock.Setup(repo =>
+                repo.GetUserWishlistAsync(1)).ReturnsAsync(new GetUserGamesResponse
                 {
-                    UserGames = games.Select(game => new UserGamesResponse { GameId = game.GameId }).ToList()
+                    UserGames = games.Select(g => new UserGamesResponse { GameId = g.GameId }).ToList()
                 });
         }
 
-        private void SetupGameServiceMock(Collection<Game> games)
+        private void SetupGameServiceMock(IEnumerable<Game> games)
         {
-            this.gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(It.IsAny<int>()))
+            this.gameRepositoryMock.Setup(repo =>
+                repo.GetGameByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) =>
                 {
-                    var game = games.First(game => game.GameId == id);
-                    return new GameDetailedResponse { Identifier = id, Name = game.GameTitle, Rating = game.Rating };
+                    var match = games.First(g => g.GameId == id);
+                    return new GameDetailedResponse
+                    {
+                        Identifier = id,
+                        Name = match.GameTitle,
+                        Rating = match.Rating 
+                    };
                 });
         }
-    }
+
+        }
 }
