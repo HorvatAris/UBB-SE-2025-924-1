@@ -12,12 +12,13 @@ namespace SteamHub.ApiContract.Models
 
     public class PointShopTransaction
     {
-        public PointShopTransaction(int identifier, string itemName, double pointsSpent, string itemType)
+        public PointShopTransaction(int identifier, string itemName, double pointsSpent, string itemType, int userId)
         {
             this.Identifier = identifier;
             this.ItemName = itemName;
             this.PointsSpent = pointsSpent;
             this.PurchaseDate = DateTime.Now;
+            this.UserId = userId;
             this.ItemType = itemType;
         }
 
@@ -30,5 +31,6 @@ namespace SteamHub.ApiContract.Models
         public DateTime PurchaseDate { get; set; }
 
         public string ItemType { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -2,204 +2,188 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using SteamHub.ApiContract.Models;
-    using SteamHub.ApiContract.Proxies;
-    using SteamHub.ApiContract.Services;
     using Moq;
     using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Repositories;
+    using SteamHub.ApiContract.Services;
     using Xunit;
 
     public class UserServiceTests
     {
         private readonly UserService userService;
-        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
+        private readonly Mock<IUserRepository> userRepositoryMock;
 
         public UserServiceTests()
         {
-            this.userServiceProxyMock = new Mock<UserRepositoryProxy>();
-            this.userService = new UserService(this.userServiceProxyMock.Object);
+            this.userRepositoryMock = new Mock<IUserRepository>();
+            this.userService = new UserService(this.userRepositoryMock.Object);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_WhenCalled_ReturnsTwoUsers()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldReturnCorrectNumberOfUsers()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(2, result.Count);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_FirstUser_HasCorrectId()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapFirstUserIdCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(1, result[0].UserId);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_FirstUser_HasCorrectName()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapFirstUserNameCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal("user1", result[0].UserName);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_FirstUser_HasCorrectEmail()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapFirstUserEmailCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal("user1@example.com", result[0].Email);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_FirstUser_HasCorrectWalletBalance()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapFirstUserWalletBalanceCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(100f, result[0].WalletBalance);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_FirstUser_HasCorrectPointsBalance()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapFirstUserPointsBalanceCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(50, result[0].PointsBalance);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_FirstUser_HasCorrectRole()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapFirstUserRoleToDeveloper()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(UserRole.Developer, result[0].UserRole);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_SecondUser_HasCorrectId()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapSecondUserIdCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(2, result[1].UserId);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_SecondUser_HasCorrectName()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapSecondUserNameCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal("user2", result[1].UserName);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_SecondUser_HasCorrectEmail()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapSecondUserEmailCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal("user2@example.com", result[1].Email);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_SecondUser_HasCorrectWalletBalance()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapSecondUserWalletBalanceCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(200f, result[1].WalletBalance);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_SecondUser_HasCorrectPointsBalance()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapSecondUserPointsBalanceCorrectly()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(80, result[1].PointsBalance);
         }
 
         [Fact]
-        public async Task GetAllUsersAsync_SecondUser_HasCorrectRole()
+        public async Task GetAllUsersAsync_WhenCalled_ShouldMapSecondUserRoleToUser()
         {
-            var userResponseList = CreateMockUsers();
+            var mockUsers = CreateMockUsers();
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = mockUsers });
 
-            this.userServiceProxyMock
-                .Setup(proxy => proxy.GetUsersAsync())
-                .ReturnsAsync(new GetUsersResponse { Users = userResponseList });
-
-            var result = await this.userService.GetAllUsersAsync();
+            var result = await userService.GetAllUsersAsync();
 
             Assert.Equal(UserRole.User, result[1].UserRole);
+        }
+
+        [Fact]
+        public async Task GetAllUsersAsync_WhenRepositoryReturnsEmptyList_ShouldReturnEmptyList()
+        {
+            userRepositoryMock.Setup(repo => repo.GetUsersAsync())
+                .ReturnsAsync(new GetUsersResponse { Users = new List<UserResponse>() });
+
+            var result = await userService.GetAllUsersAsync();
+
+            Assert.Empty(result);
         }
 
         private static List<UserResponse> CreateMockUsers()

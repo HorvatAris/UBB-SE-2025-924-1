@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using SteamHub.ApiContract.Models;
-    using SteamHub.ApiContract.Proxies;
     using SteamHub.ApiContract.Services;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
@@ -12,6 +10,7 @@
     using SteamHub.ApiContract.Models.UserInventory;
     using SteamHub.ApiContract.Models.User;
     using Xunit;
+    using SteamHub.ApiContract.Repositories;
 
     public class MarketplaceServiceTests
     {
@@ -37,28 +36,22 @@
         private readonly string testItemImagePath3 = "img3";
 
         private readonly MarketplaceService marketplaceService;
-        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
-        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceProxyMock;
-        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
-        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
+        private readonly Mock<IGameRepository> gameRepositoryMock;
+        private readonly Mock<IUserInventoryRepository> userInventoryRepositoryMock;
+        private readonly Mock<IUserRepository> userRepositoryMock;
+		private readonly Mock<IItemRepository> itemRepositoryMock;
 
-        private readonly User testUser;
+		private readonly User testUser;
 
         public MarketplaceServiceTests()
         {
-            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
-            userInventoryServiceProxyMock = new Mock<UserInventoryRepositoryProxy>();
-            userServiceProxyMock = new Mock<UserRepositoryProxy>();
-            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
+            gameRepositoryMock = new Mock<IGameRepository>();
+            userInventoryRepositoryMock = new Mock<IUserInventoryRepository>();
+            userRepositoryMock = new Mock<IUserRepository>();
+            itemRepositoryMock = new Mock<IItemRepository>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
-            marketplaceService = new MarketplaceService
-            {
-                GameRepository = gameServiceProxyMock.Object,
-                UserInventoryRepository = userInventoryServiceProxyMock.Object,
-                UserRepository = userServiceProxyMock.Object,
-                ItemRepository = itemServiceProxyMock.Object,
-                User = testUser,
-            };
+            marketplaceService = new MarketplaceService(userRepositoryMock.Object, gameRepositoryMock.Object,
+                itemRepositoryMock.Object, userInventoryRepositoryMock.Object, testUser);
         }
 
         [Fact]
@@ -144,18 +137,18 @@
                 Price = 60
             };
 
-            userInventoryServiceProxyMock
+            userInventoryRepositoryMock
                 .Setup(proxy => proxy.GetUserInventoryAsync(testUser.UserId))
                 .ReturnsAsync(new UserInventoryResponse { Items = userInventory });
 
-            itemServiceProxyMock
+            itemRepositoryMock
                 .Setup(proxy => proxy.GetItemByIdAsync(testItemId)).ReturnsAsync(item1);
-            itemServiceProxyMock
+            itemRepositoryMock
                 .Setup(proxy => proxy.GetItemByIdAsync(testItemId2)).ReturnsAsync(item2);
-            itemServiceProxyMock
+            itemRepositoryMock
                 .Setup(proxy => proxy.GetItemByIdAsync(testItemId3)).ReturnsAsync(item3);
 
-            gameServiceProxyMock
+            gameRepositoryMock
                 .Setup(proxy => proxy.GetGameByIdAsync(testItemId)).ReturnsAsync(gameResponse);
 
             var result = await marketplaceService.GetListingsByGameAsync(game1, testUser.UserId);
@@ -213,12 +206,12 @@
                 GameId = game1.GameId
             };
 
-            userInventoryServiceProxyMock
+            userInventoryRepositoryMock
                 .Setup(proxy => proxy.GetUserInventoryAsync(testUser.UserId))
                 .ReturnsAsync(new UserInventoryResponse { Items = userInventory });
 
-            itemServiceProxyMock.Setup(proxy => proxy.GetItemByIdAsync(testItemId)).ReturnsAsync(item1);
-            itemServiceProxyMock.Setup(proxy => proxy.GetItemByIdAsync(testItemId2)).ReturnsAsync(item2);
+            itemRepositoryMock.Setup(proxy => proxy.GetItemByIdAsync(testItemId)).ReturnsAsync(item1);
+            itemRepositoryMock.Setup(proxy => proxy.GetItemByIdAsync(testItemId2)).ReturnsAsync(item2);
 
             var result = await marketplaceService.GetListingsByGameAsync(game99, testUser.UserId);
 
@@ -273,19 +266,19 @@
                 },
             };
 
-            userInventoryServiceProxyMock
+            userInventoryRepositoryMock
                .Setup(proxy => proxy.GetUserInventoryAsync(testUser.UserId))
                .ReturnsAsync(new UserInventoryResponse { Items = userInventory });
 
-            userInventoryServiceProxyMock
+            userInventoryRepositoryMock
                 .Setup(items => items.RemoveItemFromUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()))
                 .Returns(Task.CompletedTask);
 
-            userInventoryServiceProxyMock
+            userInventoryRepositoryMock
                 .Setup(items => items.AddItemToUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()))
                 .Returns(Task.CompletedTask);
 
-            itemServiceProxyMock
+            itemRepositoryMock
                 .Setup(item => item.UpdateItemAsync(testItemId, It.IsAny<UpdateItemRequest>()))
                 .Returns(Task.CompletedTask);
 
@@ -293,13 +286,13 @@
 
             Assert.True(result);
 
-            userInventoryServiceProxyMock.Verify(item =>
+            userInventoryRepositoryMock.Verify(item =>
                 item.RemoveItemFromUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()), Times.Once);
 
-            userInventoryServiceProxyMock.Verify(item =>
+            userInventoryRepositoryMock.Verify(item =>
                 item.AddItemToUserInventoryAsync(It.IsAny<ItemFromInventoryRequest>()), Times.Once);
 
-            itemServiceProxyMock.Verify(item =>
+            itemRepositoryMock.Verify(item =>
                 item.UpdateItemAsync(testItemId, It.IsAny<UpdateItemRequest>()), Times.Once);
         }
 

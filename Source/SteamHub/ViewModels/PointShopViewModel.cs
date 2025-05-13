@@ -410,7 +410,8 @@ namespace SteamHub.ViewModels
                     this.nextTransactionId++,
                     itemToPurchase.Name,
                     itemToPurchase.PointPrice,
-                    itemToPurchase.ItemType);
+                    itemToPurchase.ItemType,
+                    user.UserId);
                 this.TransactionHistory.Add(transaction);
 
                 // Point balance is updated in the repository

@@ -1,0 +1,64 @@
+﻿@model SteamHub.Web.ViewModels.ActiveTradesViewModel
+@{
+	ViewData["Title"] = "Active Trades";
+}
+
+<h1 class="mb-4">Active Trades</h1>
+
+@if (Model.ActiveTrades != null && Model.ActiveTrades.Any())
+{
+	<div class="list-group mb-4">
+		@foreach (var trade in Model.ActiveTrades)
+		{
+			<div class="list-group-item">
+				<div class="d-flex justify-content-between">
+					<div>
+						<strong>@trade.TradeDescription</strong>
+						<div class="text-muted">@trade.TradeStatus</div>
+					</div>
+				</div>
+
+				<div class="mt-3">
+					<h6>@trade.SourceUser.UserName</h6>
+					<ul class="list-inline">
+						@foreach (var item in trade.SourceUserItems)
+						{
+							<li class="list-inline-item">@item.ItemName</li>
+						}
+					</ul>
+				</div>
+
+				<div>
+					<h6>@trade.DestinationUser.UserName</h6>
+					<ul class="list-inline">
+						@foreach (var item in trade.DestinationUserItems)
+						{
+							<li class="list-inline-item">@item.ItemName</li>
+						}
+					</ul>
+				</div>
+
+				<!-- Determine buttons to show based on current user -->
+				<form method="post" asp-action="RespondToTrade" class="mt-3">
+					<input type="hidden" name="TradeId" value="@trade.Id" />
+
+					@if (trade.SourceUser.UserId == Model.CurrentUserId)
+					{
+						<!-- If the current user created the trade, allow Cancel only -->
+						<button type="submit" name="action" value="Decline" class="btn btn-warning btn-sm">Cancel</button>
+					}
+					else if (trade.DestinationUser.UserId == Model.CurrentUserId)
+					{
+						<!-- If the current user is the receiver, allow Accept/Decline -->
+						<button type="submit" name="action" value="Accept" class="btn btn-success btn-sm me-2" @(Model.CanAcceptOrDeclineTrade ? "" : "disabled")>Accept</button>
+						<button type="submit" name="action" value="Decline" class="btn btn-danger btn-sm" @(Model.CanAcceptOrDeclineTrade ? "" : "disabled")>Decline</button>
+					}
+				</form>
+			</div>
+		}
+	</div>
+}
+else
+{
+	<p>No active trades.</p>
+}

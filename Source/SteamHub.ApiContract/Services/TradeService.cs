@@ -54,15 +54,20 @@ namespace SteamHub.ApiContract.Services
             await this.itemTradeRepository.UpdateItemTradeAsync(tradeId, updateRequest);
         }
 
-        public void DeclineTradeRequest()
+        public async void DeclineTradeRequest(ItemTrade trade)
         {
-            var updateRequest = new UpdateItemTradeRequest
-            {
-                TradeStatus = TradeStatusEnum.Declined,
-                AcceptedBySourceUser = false,
-                AcceptedByDestinationUser = false,
-            };
-        }
+			trade.TradeStatus = "Declined";
+			trade.AcceptedBySourceUser = false;
+			trade.AcceptedByDestinationUser = false;
+
+			await this.itemTradeRepository.UpdateItemTradeAsync(trade.TradeId, new UpdateItemTradeRequest
+			{
+				AcceptedByDestinationUser = trade.AcceptedByDestinationUser,
+				AcceptedBySourceUser = trade.AcceptedBySourceUser,
+				TradeDescription = trade.TradeDescription,
+				TradeStatus = TradeStatusEnum.Declined
+			});
+		}
 
         public IUserDetails GetCurrentUser()
         {

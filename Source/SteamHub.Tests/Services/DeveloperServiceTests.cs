@@ -3,14 +3,13 @@ namespace SteamHub.Tests.Services
     using System.Collections.ObjectModel;
     using System.Net;
     using System.Threading.Tasks;
-    using SteamHub.ApiContract.Proxies;
     using Moq;
-    using Refit;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Tag;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UsersGames;
     using Xunit;
+    using SteamHub.ApiContract.Repositories;
 
     public class DeveloperServiceTests
     {
@@ -43,27 +42,27 @@ namespace SteamHub.Tests.Services
         private const int TestSecondTagId = 2;
 
         private readonly DeveloperService developerService;
-        private readonly Mock<GameRepositoryProxy> gameServiceProxyMock;
-        private readonly Mock<TagRepositoryProxy> tagServiceMock;
-        private readonly Mock<UserGamesRepositoryProxy> userGameServiceProxyMock;
-        private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
-        private readonly Mock<ItemRepositoryProxy> itemServiceProxyMock;
-        private readonly Mock<ItemTradeDetailsRepositoryProxy> itemTradeDetailServiceProxyMock;
+        private readonly Mock<IGameRepository> gameRepositoryMock;
+        private readonly Mock<ITagRepository> tagRepositoryMock;
+        private readonly Mock<IUsersGamesRepository> userGameRepositoryMock;
+        private readonly Mock<IUserRepository> userRepositoryMock;
+        private readonly Mock<IItemRepository> itemRepositoryMock;
+        private readonly Mock<IItemTradeDetailRepository> itemTradeDetailRepositoryMock;
 
         private readonly User testUser;
 
         public DeveloperServiceTests()
         {
-            gameServiceProxyMock = new Mock<GameRepositoryProxy>();
-            tagServiceMock = new Mock<TagRepositoryProxy>();
-            userGameServiceProxyMock = new Mock<UserGamesRepositoryProxy>();
-            userServiceProxyMock = new Mock<UserRepositoryProxy>();
-            itemServiceProxyMock = new Mock<ItemRepositoryProxy>();
-            itemTradeDetailServiceProxyMock = new Mock<ItemTradeDetailsRepositoryProxy>();
+            gameRepositoryMock = new Mock<IGameRepository>();
+            tagRepositoryMock = new Mock<ITagRepository>();
+            userGameRepositoryMock = new Mock<IUsersGamesRepository>();
+            userRepositoryMock = new Mock<IUserRepository>();
+            itemRepositoryMock = new Mock<IItemRepository>();
+            itemTradeDetailRepositoryMock = new Mock<IItemTradeDetailRepository>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
 
-            developerService = new DeveloperService(gameServiceProxyMock.Object, tagServiceMock.Object, userGameServiceProxyMock.Object,
-                userServiceProxyMock.Object, itemServiceProxyMock.Object, itemTradeDetailServiceProxyMock.Object, testUser);
+            developerService = new DeveloperService(gameRepositoryMock.Object, tagRepositoryMock.Object, userGameRepositoryMock.Object,
+                userRepositoryMock.Object, itemRepositoryMock.Object, itemTradeDetailRepositoryMock.Object, testUser);
         }
 
         [Fact]
@@ -153,7 +152,7 @@ namespace SteamHub.Tests.Services
         {
             var expectedGameIdentifier = TestGameId;
 
-            gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ReturnsAsync(new GameDetailedResponse());
+            gameRepositoryMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ReturnsAsync(new GameDetailedResponse());
 
             var result = await developerService.IsGameIdInUseAsync(expectedGameIdentifier);
 
@@ -165,13 +164,9 @@ namespace SteamHub.Tests.Services
         {
             var expectedGameIdentifier = TestGameId;
 
-            var exception = await ApiException.Create(
-                new HttpRequestMessage(HttpMethod.Get, $"https://fake/api/games/{expectedGameIdentifier}"),
-                HttpMethod.Get,
-                new HttpResponseMessage(HttpStatusCode.NotFound),
-                new RefitSettings());
+            var exception = new HttpRequestException("Not Found", null, HttpStatusCode.NotFound);
 
-            gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ThrowsAsync(exception);
+            gameRepositoryMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ThrowsAsync(exception);
 
             var result = await developerService.IsGameIdInUseAsync(expectedGameIdentifier);
 
@@ -186,7 +181,7 @@ namespace SteamHub.Tests.Services
             var testUserId1 = 1;
             var testUserId2 = 2;
 
-            userServiceProxyMock.Setup(proxy => proxy.GetUsersAsync()).ReturnsAsync(new GetUsersResponse
+            userRepositoryMock.Setup(proxy => proxy.GetUsersAsync()).ReturnsAsync(new GetUsersResponse
             {
                 Users = new List<UserResponse>
                 {
@@ -195,7 +190,7 @@ namespace SteamHub.Tests.Services
                 }
             });
 
-            userGameServiceProxyMock.Setup(proxy => proxy.GetUserGamesAsync(testUserId1))
+            userGameRepositoryMock.Setup(proxy => proxy.GetUserGamesAsync(testUserId1))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse>
@@ -204,7 +199,7 @@ namespace SteamHub.Tests.Services
                     }
                 });
 
-            userGameServiceProxyMock.Setup(proxy => proxy.GetUserGamesAsync(testUserId2))
+            userGameRepositoryMock.Setup(proxy => proxy.GetUserGamesAsync(testUserId2))
                 .ReturnsAsync(new GetUserGamesResponse
                 {
                     UserGames = new List<UserGamesResponse>
@@ -243,7 +238,7 @@ namespace SteamHub.Tests.Services
 
             var expectedGameIdentifier = TestGameId;
 
-            gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ReturnsAsync(new GameDetailedResponse());
+            gameRepositoryMock.Setup(proxy => proxy.GetGameByIdAsync(expectedGameIdentifier)).ReturnsAsync(new GameDetailedResponse());
 
             await Assert.ThrowsAsync<Exception>(() =>
                 developerService.CreateValidatedGameAsync(gameIdText, name, priceText, description, imageUrl, tralerUrl, gameplayUrl, minimumRequirement, recommendedRequirement, dicountText, tags));
@@ -290,7 +285,7 @@ namespace SteamHub.Tests.Services
             var expectedIdentifier = TestGameId;
             var expectedMatchingTagsCount = 1;
 
-            gameServiceProxyMock.Setup(proxy => proxy.GetGameByIdAsync(expectedIdentifier)).ReturnsAsync(new GameDetailedResponse
+            gameRepositoryMock.Setup(proxy => proxy.GetGameByIdAsync(expectedIdentifier)).ReturnsAsync(new GameDetailedResponse
             {
                 Identifier = expectedIdentifier,
                 Tags = new List<TagDetailedResponse>
