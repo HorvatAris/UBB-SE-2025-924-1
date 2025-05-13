@@ -122,15 +122,9 @@ namespace SteamHub
 
             var userService = new UserService(userRepository);
             this.userService = userService;
-            
-            this.marketplaceService = new MarketplaceService
-            {
-                UserInventoryRepository = userInventoryRepository,
-                GameRepository = gameRepository,
-                UserRepository = userRepository,
-                ItemRepository = itemRepository,
-                User = loggedInUser,
-            };
+
+            this.marketplaceService = new MarketplaceService(userRepository, gameRepository, itemRepository, userInventoryRepository, loggedInUser);
+
 
             this.pointShopService = new PointShopService(
                 pointShopRepository,
