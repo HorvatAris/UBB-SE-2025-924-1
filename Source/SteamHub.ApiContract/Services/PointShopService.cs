@@ -364,7 +364,8 @@ namespace SteamHub.ApiContract.Services
                         transactionHistory.Count + IncrementingValue,
                         selectedItem.Name,
                         selectedItem.PointPrice,
-                        selectedItem.ItemType);
+                        selectedItem.ItemType,
+                        User.UserId);
                 }
 
                 return true;
