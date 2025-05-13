@@ -39,9 +39,9 @@
         private readonly Mock<IGameRepository> gameRepositoryMock;
         private readonly Mock<IUserInventoryRepository> userInventoryRepositoryMock;
         private readonly Mock<IUserRepository> userRepositoryMock;
-        private readonly Mock<IItemRepository> itemRepositoryMock;
+		private readonly Mock<IItemRepository> itemRepositoryMock;
 
-        private readonly User testUser;
+		private readonly User testUser;
 
         public MarketplaceServiceTests()
         {

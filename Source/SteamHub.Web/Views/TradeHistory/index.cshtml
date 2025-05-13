@@ -1,0 +1,47 @@
+﻿@model SteamHub.Web.ViewModels.TradeHistoryViewModel
+@{
+	ViewData["Title"] = "Trade History";
+}
+
+<h1 class="mb-4">Trade History</h1>
+
+@if (Model.TradeHistory != null && Model.TradeHistory.Any())
+{
+	<div class="list-group">
+		@foreach (var trade in Model.TradeHistory)
+		{
+			<div class="list-group-item mb-3 border rounded p-3">
+				<div class="d-flex justify-content-between">
+					<div>
+						<strong>@trade.TradeDescription</strong>
+						<div class="text-muted">@trade.TradeStatus</div>
+					</div>
+				</div>
+
+				<div class="mt-3">
+					<h6>@trade.SourceUser.UserName</h6>
+					<ul class="list-inline">
+						@foreach (var item in trade.SourceUserItems)
+						{
+							<li class="list-inline-item">@item.ItemName</li>
+						}
+					</ul>
+				</div>
+
+				<div>
+					<h6>@trade.DestinationUser.UserName</h6>
+					<ul class="list-inline">
+						@foreach (var item in trade.DestinationUserItems)
+						{
+							<li class="list-inline-item">@item.ItemName</li>
+						}
+					</ul>
+				</div>
+			</div>
+		}
+	</div>
+}
+else
+{
+	<p>No trade history.</p>
+}
