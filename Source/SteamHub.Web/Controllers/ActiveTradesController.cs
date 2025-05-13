@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SteamHub.ApiContract.Models.ItemTrade;
 using SteamHub.ApiContract.Services.Interfaces;
@@ -6,6 +7,7 @@ using SteamHub.Web.ViewModels;
 
 namespace SteamHub.Web.Controllers
 {
+	[Authorize]
 	public class ActiveTradesController : Controller
 	{
 		private readonly IUserService _userService;

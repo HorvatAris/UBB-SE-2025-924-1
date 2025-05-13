@@ -8,6 +8,7 @@ using SteamHub.Web.ViewModels;
 
 namespace SteamHub.Web.Controllers
 {
+	[Authorize]
 	public class TradePageController : Controller
 	{
 		private readonly IUserService _userService;
