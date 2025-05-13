@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SteamHub.ApiContract.Models;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
+using System.Collections.ObjectModel;
 
 namespace SteamHub.Web.Controllers
 {
@@ -9,6 +11,7 @@ namespace SteamHub.Web.Controllers
     public class PointShopPageController : Controller
     {
         private readonly IPointShopService _pointShopService;
+        private static ObservableCollection<PointShopTransaction> transactionHistory = new ObservableCollection<PointShopTransaction>();
 
         public PointShopPageController(IPointShopService pointShopService)
         {
@@ -21,11 +24,13 @@ namespace SteamHub.Web.Controllers
             var shopItems = await _pointShopService.GetAvailableItemsAsync(user);
             var userItems = await _pointShopService.GetUserItemsAsync();
 
+
             var viewModel = new PointShopViewModel
             {
                 User = user,
                 ShopItems = shopItems,
                 UserItems = userItems,
+                TransactionHistory = transactionHistory.ToList(),
             };
 
             return View(viewModel);
@@ -47,6 +52,15 @@ namespace SteamHub.Web.Controllers
             try
             {
                 await _pointShopService.PurchaseItemAsync(selectedItem);
+                var newTransaction = new PointShopTransaction(
+                    transactionHistory.Count + 1,
+                    selectedItem.Name,
+                    selectedItem.PointPrice,
+                    selectedItem.ItemType,
+                    user.UserId
+                );
+                transactionHistory.Add(newTransaction);
+                Console.WriteLine($"[DEBUG] Transaction added: {newTransaction.ItemName}, PointsSpent: {newTransaction.PointsSpent}");
                 return Json(new { success = true, message = $"Successfully purchased {selectedItem.Name}." });
             }
             catch (Exception ex)
@@ -134,6 +148,12 @@ namespace SteamHub.Web.Controllers
             }));
         }
 
-
+        [HttpGet]
+        public IActionResult GetTransactionHistory()
+        {
+            var user = _pointShopService.GetCurrentUser();
+            var userTransactions = transactionHistory.Where(t => t.UserId == user.UserId).ToList();
+            return Json(userTransactions);
+        }
     }
 }
