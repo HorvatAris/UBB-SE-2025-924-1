@@ -5,8 +5,6 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
-    using SteamHub.ApiContract.Models;
-    using SteamHub.ApiContract.Proxies;
     using SteamHub.ApiContract.Services;
     using Moq;
     using SteamHub.ApiContract.Models.Game;
@@ -16,36 +14,37 @@
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UserInventory;
     using Xunit;
-
+    using SteamHub.ApiContract.Repositories;
     public class TradeServiceTests
     {
         private readonly TradeService tradeService;
-        private readonly Mock<ItemTradeRepositoryProxy> itemTradeServiceMock;
-        private readonly Mock<ItemTradeDetailsRepositoryProxy> itemTradeDetailServiceMock;
-        private readonly Mock<UserRepositoryProxy> userServiceMock;
-        private readonly Mock<GameRepositoryProxy> gameServiceMock;
-        private readonly Mock<ItemRepositoryProxy> itemServiceMock;
-        private readonly Mock<UserInventoryRepositoryProxy> userInventoryServiceMock;
+        
+        private readonly Mock<IItemTradeRepository> itemTradeRepositoryMock;
+        private readonly Mock<IItemTradeDetailRepository> itemTradeDetailRepositoryMock;
+        private readonly Mock<IUserRepository> userRepositoryMock;
+        private readonly Mock<IGameRepository> gameRepositoryMock;
+        private readonly Mock<IItemRepository> itemRepositoryMock;
+        private readonly Mock<IUserInventoryRepository> userInventoryRepositoryMock;
         private readonly User testUser;
 
         public TradeServiceTests()
         {
-            itemTradeServiceMock = new Mock<ItemTradeRepositoryProxy>();
-            itemTradeDetailServiceMock = new Mock<ItemTradeDetailsRepositoryProxy>();
-            userServiceMock = new Mock<UserRepositoryProxy>();
-            gameServiceMock = new Mock<GameRepositoryProxy>();
-            itemServiceMock = new Mock<ItemRepositoryProxy>();
-            userInventoryServiceMock = new Mock<UserInventoryRepositoryProxy>();
+            itemTradeRepositoryMock = new Mock<IItemTradeRepository>();
+            itemTradeDetailRepositoryMock = new Mock<IItemTradeDetailRepository>();
+            userRepositoryMock = new Mock<IUserRepository>();
+            gameRepositoryMock = new Mock<IGameRepository>();
+            itemRepositoryMock = new Mock<IItemRepository>();
+            userInventoryRepositoryMock = new Mock<IUserInventoryRepository>();
 
             testUser = new User { UserId = 1, UserName = "TestUser" };
             tradeService = new TradeService(
-                itemTradeServiceMock.Object,
+                itemTradeRepositoryMock.Object,
                 testUser,
-                itemTradeDetailServiceMock.Object,
-                userServiceMock.Object,
-                gameServiceMock.Object,
-                itemServiceMock.Object,
-                userInventoryServiceMock.Object);
+                itemTradeDetailRepositoryMock.Object,
+                userRepositoryMock.Object,
+                gameRepositoryMock.Object,
+                itemRepositoryMock.Object,
+                userInventoryRepositoryMock.Object);
         }
 
         [Fact]
@@ -61,7 +60,7 @@
             var tradeId = 123;
             await tradeService.MarkTradeAsCompletedAsync(tradeId);
 
-            itemTradeServiceMock.Verify(proxy => proxy.UpdateItemTradeAsync(tradeId, It.Is<UpdateItemTradeRequest>(request =>
+            itemTradeRepositoryMock.Verify(proxy => proxy.UpdateItemTradeAsync(tradeId, It.Is<UpdateItemTradeRequest>(request =>
                 request.TradeStatus == TradeStatusEnum.Completed &&
                 request.AcceptedBySourceUser == true &&
                 request.AcceptedByDestinationUser == true)), Times.Once);
@@ -77,10 +76,10 @@
 
             await tradeService.TransferItemAsync(itemId, fromUserId, toUserId, gameId);
 
-            userInventoryServiceMock.Verify(proxy => proxy.RemoveItemFromUserInventoryAsync(It.Is<ItemFromInventoryRequest>(request =>
+            userInventoryRepositoryMock.Verify(proxy => proxy.RemoveItemFromUserInventoryAsync(It.Is<ItemFromInventoryRequest>(request =>
                 request.UserId == fromUserId && request.ItemId == itemId && request.GameId == gameId)), Times.Once);
 
-            userInventoryServiceMock.Verify(proxy => proxy.AddItemToUserInventoryAsync(It.Is<ItemFromInventoryRequest>(request =>
+            userInventoryRepositoryMock.Verify(proxy => proxy.AddItemToUserInventoryAsync(It.Is<ItemFromInventoryRequest>(request =>
                 request.UserId == toUserId && request.ItemId == itemId && request.GameId == gameId)), Times.Once);
         }
 
@@ -98,17 +97,17 @@
                 DestinationUserItems = new List<Item> { new Item { ItemId = 202 } },
             };
 
-            itemTradeServiceMock.Setup(proxy => proxy.CreateItemTradeAsync(It.IsAny<CreateItemTradeRequest>()))
+            itemTradeRepositoryMock.Setup(proxy => proxy.CreateItemTradeAsync(It.IsAny<CreateItemTradeRequest>()))
                 .ReturnsAsync(new CreateItemTradeResponse { TradeId = 999 });
 
             await tradeService.AddItemTradeAsync(trade);
 
             Assert.Equal(999, trade.TradeId);
 
-            itemTradeDetailServiceMock.Verify(proxy => proxy.CreateItemTradeDetailAsync(
+            itemTradeDetailRepositoryMock.Verify(proxy => proxy.CreateItemTradeDetailAsync(
                 It.Is<CreateItemTradeDetailRequest>(request => request.ItemId == 101 && request.IsSourceUserItem)), Times.Once);
 
-            itemTradeDetailServiceMock.Verify(proxy => proxy.CreateItemTradeDetailAsync(
+            itemTradeDetailRepositoryMock.Verify(proxy => proxy.CreateItemTradeDetailAsync(
                 It.Is<CreateItemTradeDetailRequest>(request => request.ItemId == 202 && !request.IsSourceUserItem)), Times.Once);
         }
 
@@ -126,7 +125,7 @@
                 DestinationUserItems = new List<Item>(),
             };
 
-            itemTradeServiceMock.Setup(proxy => proxy.CreateItemTradeAsync(It.IsAny<CreateItemTradeRequest>()))
+            itemTradeRepositoryMock.Setup(proxy => proxy.CreateItemTradeAsync(It.IsAny<CreateItemTradeRequest>()))
                 .ReturnsAsync(new CreateItemTradeResponse { TradeId = 1 });
 
             await tradeService.CreateTradeAsync(trade);
@@ -147,11 +146,11 @@
                 GameOfTrade = new Game { GameId = 99 },
             };
 
-            itemTradeDetailServiceMock.Setup(detailServiceProxy => detailServiceProxy.GetItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
+            itemTradeDetailRepositoryMock.Setup(detailServiceProxy => detailServiceProxy.GetItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
 
             await tradeService.UpdateTradeAsync(trade);
 
-            itemTradeServiceMock.Verify(proxy => proxy.UpdateItemTradeAsync(trade.TradeId, It.IsAny<UpdateItemTradeRequest>()), Times.Once);
+            itemTradeRepositoryMock.Verify(proxy => proxy.UpdateItemTradeAsync(trade.TradeId, It.IsAny<UpdateItemTradeRequest>()), Times.Once);
         }
 
         [Fact]
@@ -169,7 +168,7 @@
                 DestinationUserItems = new List<Item>()
             };
 
-            itemTradeDetailServiceMock.Setup(detailServiceProxy => detailServiceProxy.GetItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
+            itemTradeDetailRepositoryMock.Setup(detailServiceProxy => detailServiceProxy.GetItemTradeDetailsAsync()).ReturnsAsync(new GetItemTradeDetailsResponse { ItemTradeDetails = new List<ItemTradeDetailResponse>() });
 
             await tradeService.AcceptTradeAsync(trade, true);
 
@@ -181,7 +180,7 @@
         {
             var gameTitle = "GameX";
 
-            userInventoryServiceMock.Setup(proxy => proxy.GetUserInventoryAsync(It.IsAny<int>()))
+            userInventoryRepositoryMock.Setup(proxy => proxy.GetUserInventoryAsync(It.IsAny<int>()))
                 .ReturnsAsync(new UserInventoryResponse
                 {
                     Items = new List<InventoryItemResponse>
@@ -190,7 +189,7 @@
                     }
                 });
 
-            gameServiceMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
+            gameRepositoryMock.Setup(proxy => proxy.GetGamesAsync(It.IsAny<GetGamesRequest>()))
                 .ReturnsAsync(new List<GameDetailedResponse> { new GameDetailedResponse { Name = gameTitle, Identifier = 10 } });
 
             var result = await tradeService.GetUserInventoryAsync(testUser.UserId);
