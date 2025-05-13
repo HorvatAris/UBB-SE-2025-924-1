@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SteamHub.ApiContract.Models.Item;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SteamHub.Web.ViewModels
 {
@@ -9,8 +10,11 @@ namespace SteamHub.Web.ViewModels
 		// Dropdowns
 		public int? CurrentUserId { get; set; }
 		public int? SelectedUserId { get; set; }
+
+		[Required(ErrorMessage = "Game selection is required.")]
 		public int? SelectedGameId { get; set; }
 
+		[Required(ErrorMessage = "Trade description is required.")]
 		public string TradeDescription { get; set; }
 
 		public List<SelectListItem> Users { get; set; } = new();

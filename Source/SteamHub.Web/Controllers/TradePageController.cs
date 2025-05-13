@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SteamHub.ApiContract.Models.ItemTrade;
 using SteamHub.ApiContract.Services.Interfaces;
@@ -32,10 +33,10 @@ namespace SteamHub.Web.Controllers
 			var viewModel = new TradeViewModel
 			{
 				CurrentUserId = currentUser.UserId,
-				Users = allUsers.Select(u => new SelectListItem { Value = u.UserId.ToString(), Text = u.UserName }).ToList(),
-				AvailableUsers = allUsers.Where(u => u.UserId != currentUser.UserId)
-										 .Select(u => new SelectListItem { Value = u.UserId.ToString(), Text = u.UserName }).ToList(),
-				Games = games.Select(g => new SelectListItem { Value = g.GameId.ToString(), Text = g.GameTitle }).ToList(),
+				Users = allUsers.Select(user => new SelectListItem { Value = user.UserId.ToString(), Text = user.UserName }).ToList(),
+				AvailableUsers = allUsers.Where(user => user.UserId != currentUser.UserId)
+										 .Select(user => new SelectListItem { Value = user.UserId.ToString(), Text = user.UserName }).ToList(),
+				Games = games.Select(game => new SelectListItem { Value = game.GameId.ToString(), Text = game.GameTitle }).ToList(),
 				SourceUserItems = await _tradeService.GetUserInventoryAsync(currentUser.UserId),
 			};
 
@@ -51,7 +52,7 @@ namespace SteamHub.Web.Controllers
 				return View("Index", await RebuildModel(model));
 			}
 
-			if (model.CurrentUserId == null || model.SelectedUserId == null)
+			if (currentUser == null || model.SelectedUserId == null)
 			{
 				model.ErrorMessage = "Both users must be selected.";
 				return View("Index", await RebuildModel(model));
@@ -63,15 +64,15 @@ namespace SteamHub.Web.Controllers
 				return View("Index", await RebuildModel(model));
 			}
 
-			var sourceItems = await _tradeService.GetUserInventoryAsync(model.CurrentUserId.Value);
+			var sourceItems = await _tradeService.GetUserInventoryAsync(currentUser.UserId);
 			var destinationItems = await _tradeService.GetUserInventoryAsync(model.SelectedUserId.Value);
 
-			var selectedSourceItems = sourceItems.Where(i => model.SelectedSourceItemIds.Contains(i.ItemId)).ToList();
-			var selectedDestinationItems = destinationItems.Where(i => model.SelectedDestinationItemIds.Contains(i.ItemId)).ToList();
+			var selectedSourceItems = sourceItems.Where(item => model.SelectedSourceItemIds.Contains(item.ItemId)).ToList();
+			var selectedDestinationItems = destinationItems.Where(item => model.SelectedDestinationItemIds.Contains(item.ItemId)).ToList();
 
 			var trade = new ItemTrade
 			{
-				SourceUser = new() { UserId = model.CurrentUserId.Value },
+				SourceUser = new() { UserId = currentUser.UserId },
 				DestinationUser = new() { UserId = model.SelectedUserId.Value },
 				GameOfTrade = new() { GameId = model.SelectedGameId ?? 0 },
 				TradeDescription = model.TradeDescription,
@@ -89,13 +90,27 @@ namespace SteamHub.Web.Controllers
 			return View("Index", await RebuildModel(model));
 		}
 
+		public async Task<IActionResult> LoadSelectedUser(TradeViewModel model)
+		{
+			return View("Index", await RebuildModel(model));
+		}
+
+		public async Task<IActionResult> LoadSelectedGame(TradeViewModel model)
+		{
+			return View("Index", await RebuildModel(model));
+		}
+
 		private async Task<TradeViewModel> RebuildModel(TradeViewModel model)
 		{
+			var currentUser = _tradeService.GetCurrentUser();
 			var allUsers = await _userService.GetAllUsersAsync();
+
 			var games = await _gameService.GetAllGamesAsync();
 
-			var sourceInventory = await _tradeService.GetUserInventoryAsync(model.CurrentUserId ?? 0);
+			var sourceInventory = await _tradeService.GetUserInventoryAsync(currentUser.UserId);
+			sourceInventory = sourceInventory.Where(item => item.Game.GameId == model.SelectedGameId).ToList();
 			var destinationInventory = await _tradeService.GetUserInventoryAsync(model.SelectedUserId ?? 0);
+			destinationInventory = destinationInventory.Where(item => item.Game.GameId == model.SelectedGameId).ToList();
 
 			return new TradeViewModel
 			{
@@ -105,14 +120,14 @@ namespace SteamHub.Web.Controllers
 				TradeDescription = model.TradeDescription,
 				SelectedSourceItemIds = model.SelectedSourceItemIds ?? new(),
 				SelectedDestinationItemIds = model.SelectedDestinationItemIds ?? new(),
-				Users = allUsers.Select(u => new SelectListItem { Value = u.UserId.ToString(), Text = u.UserName }).ToList(),
-				AvailableUsers = allUsers.Where(u => u.UserId != model.CurrentUserId)
-										 .Select(u => new SelectListItem { Value = u.UserId.ToString(), Text = u.UserName }).ToList(),
-				Games = games.Select(g => new SelectListItem { Value = g.GameId.ToString(), Text = g.GameTitle }).ToList(),
+				Users = allUsers.Select(user => new SelectListItem { Value = user.UserId.ToString(), Text = user.UserName }).ToList(),
+				AvailableUsers = allUsers.Where(user => user.UserId != currentUser.UserId)
+										 .Select(user => new SelectListItem { Value = user.UserId.ToString(), Text = user.UserName }).ToList(),
+				Games = games.Select(game => new SelectListItem { Value = game.GameId.ToString(), Text = game.GameTitle }).ToList(),
 				SourceUserItems = sourceInventory,
 				DestinationUserItems = destinationInventory,
-				SelectedSourceItems = sourceInventory.Where(i => model.SelectedSourceItemIds.Contains(i.ItemId)).ToList(),
-				SelectedDestinationItems = destinationInventory.Where(i => model.SelectedDestinationItemIds.Contains(i.ItemId)).ToList(),
+				SelectedSourceItems = sourceInventory.Where(item => model.SelectedSourceItemIds.Contains(item.ItemId)).ToList(),
+				SelectedDestinationItems = destinationInventory.Where(item => model.SelectedDestinationItemIds.Contains(item.ItemId)).ToList(),
 				ErrorMessage = model.ErrorMessage,
 				SuccessMessage = model.SuccessMessage
 			};
