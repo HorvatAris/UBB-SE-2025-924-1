@@ -52,6 +52,8 @@ builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IPointShopService, PointShopService>();
 builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
+builder.Services.AddScoped<ITradeService, TradeService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();

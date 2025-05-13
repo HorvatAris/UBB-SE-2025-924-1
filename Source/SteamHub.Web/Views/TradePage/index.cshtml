@@ -1,0 +1,108 @@
+﻿@model SteamHub.Web.ViewModels.TradeViewModel
+@{
+	ViewData["Title"] = "TradePage";
+}
+
+<h1 class="mb-4">Trading</h1>
+
+<div class="tab-content">
+	<!-- Create Offer Tab -->
+	<div id="create-offer-tab" class="tab-pane fade show active p-3 border rounded">
+
+		<form asp-action="CreateTradeOffer" method="post">
+			<div class="row mb-4">
+				<div class="col-md-6">
+					<label>Current User</label>
+					<select class="form-control" asp-for="CurrentUserId" asp-items="Model.Users">
+						<option value="">Select...</option>
+					</select>
+				</div>
+				<div class="col-md-6">
+					<label>Trade With</label>
+					<select class="form-control" asp-for="SelectedUserId" asp-items="Model.AvailableUsers">
+						<option value="">Select...</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="mb-4">
+				<h5>Create New Trade Offer</h5>
+				<select class="form-control mb-2" asp-for="SelectedGameId" asp-items="Model.Games">
+					<option value="">Select Game</option>
+				</select>
+				<textarea class="form-control" asp-for="TradeDescription" placeholder="Trade Description" rows="3"></textarea>
+			</div>
+
+			<div class="row">
+				<div class="col-md-5">
+					<h5>Your Inventory</h5>
+					<ul class="list-group mb-3">
+						@foreach (var item in Model.SourceUserItems)
+						{
+							<li class="list-group-item">
+								<img src="@item.ImagePath" width="50" class="me-2" />
+								<strong>@item.ItemName</strong> - @item.Price
+								<input type="checkbox" name="SelectedSourceItemIds" value="@item.ItemId" class="float-end" />
+							</li>
+						}
+					</ul>
+
+					<h6>Your Selected Items</h6>
+					<ul class="list-group">
+						@foreach (var item in Model.SelectedSourceItems)
+						{
+							<li class="list-group-item d-flex justify-content-between">
+								<span>@item.ItemName - @item.Price</span>
+								<button type="submit" name="removeSourceItemId" value="@item.ItemId" class="btn btn-sm btn-danger">Remove</button>
+							</li>
+						}
+					</ul>
+				</div>
+
+				<div class="col-md-2 text-center d-flex flex-column justify-content-center">
+					<button type="submit" name="move" value="toDestination" class="btn btn-primary mb-2">Add &gt;</button>
+					<button type="submit" name="move" value="toSource" class="btn btn-primary">&lt; Add</button>
+				</div>
+
+				<div class="col-md-5">
+					<h5>Their Inventory</h5>
+					<ul class="list-group mb-3">
+						@foreach (var item in Model.DestinationUserItems)
+						{
+							<li class="list-group-item">
+								<img src="@item.ImagePath" width="50" class="me-2" />
+								<strong>@item.ItemName</strong> - @item.Price
+								<input type="checkbox" name="SelectedDestinationItemIds" value="@item.ItemId" class="float-end" />
+							</li>
+						}
+					</ul>
+
+					<h6>Their Selected Items</h6>
+					<ul class="list-group">
+						@foreach (var item in Model.SelectedDestinationItems)
+						{
+							<li class="list-group-item d-flex justify-content-between">
+								<span>@item.ItemName - @item.Price</span>
+								<button type="submit" name="removeDestinationItemId" value="@item.ItemId" class="btn btn-sm btn-danger">Remove</button>
+							</li>
+						}
+					</ul>
+				</div>
+			</div>
+
+			@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+			{
+				<div class="text-danger mt-3">@Model.ErrorMessage</div>
+			}
+
+			@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+			{
+				<div class="text-success mt-3">@Model.SuccessMessage</div>
+			}
+
+			<div class="text-end mt-4">
+				<button type="submit" class="btn btn-success">Create Trade Offer</button>
+			</div>
+		</form>
+	</div>
+</div>

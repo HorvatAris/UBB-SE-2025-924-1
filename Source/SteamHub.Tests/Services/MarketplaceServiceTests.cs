@@ -39,9 +39,9 @@
         private readonly Mock<IGameRepository> gameRepositoryMock;
         private readonly Mock<IUserInventoryRepository> userInventoryRepositoryMock;
         private readonly Mock<IUserRepository> userRepositoryMock;
-        private readonly Mock<IItemRepository> itemRepositoryMock;
+		private readonly Mock<IItemRepository> itemRepositoryMock;
 
-        private readonly User testUser;
+		private readonly User testUser;
 
         public MarketplaceServiceTests()
         {
@@ -51,13 +51,13 @@
             itemRepositoryMock = new Mock<IItemRepository>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
             marketplaceService = new MarketplaceService
-            {
-                GameRepository = gameRepositoryMock.Object,
-                UserInventoryRepository = userInventoryRepositoryMock.Object,
-                UserRepository = userRepositoryMock.Object,
-                ItemRepository = itemRepositoryMock.Object,
-                User = testUser,
-            };
+			(
+				userRepositoryMock.Object,
+				gameRepositoryMock.Object,
+				itemRepositoryMock.Object,
+				userInventoryRepositoryMock.Object,
+                testUser
+            );
         }
 
         [Fact]
