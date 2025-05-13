@@ -50,14 +50,8 @@
             userRepositoryMock = new Mock<IUserRepository>();
             itemRepositoryMock = new Mock<IItemRepository>();
             testUser = new User { UserId = 1, WalletBalance = 50f };
-            marketplaceService = new MarketplaceService
-			(
-				userRepositoryMock.Object,
-				gameRepositoryMock.Object,
-				itemRepositoryMock.Object,
-				userInventoryRepositoryMock.Object,
-                testUser
-            );
+            marketplaceService = new MarketplaceService(userRepositoryMock.Object, gameRepositoryMock.Object,
+                itemRepositoryMock.Object, userInventoryRepositoryMock.Object, testUser);
         }
 
         [Fact]
