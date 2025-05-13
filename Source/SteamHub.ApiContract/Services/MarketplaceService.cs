@@ -27,6 +27,16 @@ namespace SteamHub.ApiContract.Services
 
         public IUserDetails User { get; set; }
 
+        public MarketplaceService(IUserRepository userRepository, IGameRepository gameRepository, IItemRepository itemRepository,
+                                  IUserInventoryRepository userInventoryRepository, IUserDetails userDetails)
+        {
+            this.UserRepository = userRepository;
+            this.GameRepository = gameRepository;
+            this.ItemRepository = itemRepository;
+            this.UserInventoryRepository = userInventoryRepository;
+            this.User = userDetails;
+        }
+
         public async Task<List<User>> GetAllUsersAsync()
         {
             var returnUsers = new List<User>();

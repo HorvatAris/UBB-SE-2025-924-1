@@ -42,6 +42,7 @@ builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();
 builder.Services.AddScoped<ITagRepository, TagRepositoryProxy>();
 builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepositoryProxy>();
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepositoryProxy>();
+builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
@@ -50,6 +51,9 @@ builder.Services.AddScoped<ICartService,CartService>();
 builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IPointShopService, PointShopService>();
+builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
+builder.Services.AddScoped<ITradeService, TradeService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();

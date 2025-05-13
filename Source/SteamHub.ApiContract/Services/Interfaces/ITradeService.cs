@@ -23,7 +23,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task MarkTradeAsCompletedAsync(int tradeId);
 
-        void DeclineTradeRequest();
+        void DeclineTradeRequest(ItemTrade trade);
 
         Task UpdateItemTradeAsync(ItemTrade trade);
 

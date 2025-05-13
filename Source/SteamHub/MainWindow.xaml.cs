@@ -83,7 +83,7 @@ namespace SteamHub
                 },
             };
 
-            User loggedInUser = users[0];
+            User loggedInUser = users[1];
 
             // Assign to the class field so it can be used in navigation
             this.user = loggedInUser;
@@ -122,15 +122,9 @@ namespace SteamHub
 
             var userService = new UserService(userRepository);
             this.userService = userService;
-            
-            this.marketplaceService = new MarketplaceService
-            {
-                UserInventoryRepository = userInventoryRepository,
-                GameRepository = gameRepository,
-                UserRepository = userRepository,
-                ItemRepository = itemRepository,
-                User = loggedInUser,
-            };
+
+            this.marketplaceService = new MarketplaceService(userRepository, gameRepository, itemRepository, userInventoryRepository, loggedInUser);
+
 
             this.pointShopService = new PointShopService(
                 pointShopRepository,

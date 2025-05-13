@@ -1,0 +1,137 @@
+﻿@model SteamHub.Web.ViewModels.MarketplaceViewModel
+
+@{
+    ViewData["Title"] = "Marketplace";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Skin Marketplace</h1>
+
+    <!-- Feedback Message -->
+    <div id="statusBox" class="alert d-none" role="alert"></div>
+
+    <!-- Current User -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label class="form-label">Current User</label>
+            <input type="text" class="form-control" value="@(User.Identity?.Name ?? "Unknown")" disabled />
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label class="form-label">Game</label>
+            <select id="GameFilter" class="form-select">
+                <option value="">All Games</option>
+                @foreach (var game in Model.AvailableGames)
+                {
+                    <option value="@game">@game</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Type</label>
+            <select id="TypeFilter" class="form-select">
+                <option value="">All Types</option>
+                @foreach (var type in Model.AvailableTypes)
+                {
+                    <option value="@type">@type</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Rarity</label>
+            <select id="RarityFilter" class="form-select">
+                <option value="">All Rarities</option>
+                @foreach (var rarity in Model.AvailableRarities)
+                {
+                    <option value="@rarity">@rarity</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Search</label>
+            <input id="SearchBox" class="form-control" placeholder="Search skins..." />
+        </div>
+    </div>
+
+    <!-- Items Grid -->
+    <div class="row" id="ItemsContainer">
+        @foreach (var item in Model.Items)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@item.ImagePath" class="card-img-top" style="height: 150px; object-fit: cover;" alt="@item.ItemName" />
+                    <div class="card-body">
+                        <h5 class="card-title">@item.ItemName</h5>
+                        <p class="card-text text-muted">@item.Game.GameTitle</p>
+                        <p class="card-text text-primary fw-bold">@item.Price.ToString("0.00") $</p>
+                        <p class="card-text text-muted">@(item.IsListed ? "Listed" : "Not Listed")</p>
+                        <button class="btn btn-success w-100" onclick="buyItem(@item.ItemId)">Buy</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#GameFilter, #TypeFilter, #RarityFilter').change(applyFilters);
+            $('#SearchBox').on('input', applyFilters);
+        });
+
+        function applyFilters() {
+            const search = $('#SearchBox').val();
+            const game = $('#GameFilter').val();
+            const type = $('#TypeFilter').val();
+            const rarity = $('#RarityFilter').val();
+
+            fetch(`/Marketplace/ApplyFilters?search=${search}&game=${game}&type=${type}&rarity=${rarity}`)
+                .then(response => response.json())
+                .then(updateItems);
+        }
+
+        function updateItems(items) {
+            const container = $('#ItemsContainer');
+            container.empty();
+
+            if (items.length === 0) {
+                container.append('<div class="col-12"><div class="alert alert-info">No items found matching your criteria.</div></div>');
+                return;
+            }
+
+            items.forEach(item => {
+                const card = `
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="${item.imagePath}" class="card-img-top" style="height: 150px; object-fit: cover;" />
+                                    <div class="card-body">
+                                        <h5 class="card-title">${item.itemName}</h5>
+                                        <p class="card-text text-muted">${item.game}</p>
+                                        <p class="card-text text-primary fw-bold">${item.price.toFixed(2)} $</p>
+                                        <p class="card-text text-muted">${item.isListed ? "Listed" : "Not Listed"}</p>
+                                        <button class="btn btn-success w-100" onclick="buyItem(${item.itemId})">Buy</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                container.append(card);
+            });
+        }
+
+        function buyItem(itemId) {
+            fetch(`/Marketplace/BuyItem?itemId=${itemId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    const statusBox = $('#statusBox');
+                    statusBox.removeClass().addClass(`alert ${data.success ? 'alert-success' : 'alert-danger'}`)
+                        .text(data.message).removeClass('d-none');
+                    if (data.success) {
+                        applyFilters();
+                    }
+                });
+        }
+    </script>
+}
