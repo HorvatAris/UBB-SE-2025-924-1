@@ -5,7 +5,6 @@
 	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
 	using SteamHub.ApiContract.Models;
-	using SteamHub.ApiContract.Proxies;
 	using Moq;
 	using SteamHub.ApiContract.Models.PointShopItem;
 	using SteamHub.ApiContract.Models.User;
@@ -13,14 +12,16 @@
 	using SteamHub.ApiContract.Services;
 	using SteamHub.Tests.TestUtils;
 	using Xunit;
+	using SteamHub.ApiContract.Repositories;
+    using SteamHub.ApiContract.Context.Repositories;
 
-	public class PointShopServiceTest
+    public class PointShopServiceTest
 	{
 		private readonly User testUser;
-		private readonly Mock<PointShopItemRepositoryProxy> itemProxyMock;
-		private readonly Mock<UserPointShopItemInventoryRepositoryProxy> inventoryProxyMock;
-		private readonly Mock<UserRepositoryProxy> userServiceProxyMock;
-		private readonly PointShopService service;
+		private readonly Mock<IPointShopItemRepository> itemRepositoryMock;
+        private readonly Mock<IUserPointShopItemInventoryRepository> inventoryRepositoryMock;
+        private readonly Mock<IUserRepository> userRepositoryMock;
+        private readonly PointShopService service;
 
 		public PointShopServiceTest()
 		{
@@ -33,15 +34,14 @@
 				WalletBalance = 50,
 				UserRole = UserRole.User
 			};
-
-			itemProxyMock = new Mock<PointShopItemRepositoryProxy>();
-			inventoryProxyMock = new Mock<UserPointShopItemInventoryRepositoryProxy>();
-			userServiceProxyMock = new Mock<UserRepositoryProxy>();
+			itemRepositoryMock = new Mock<IPointShopItemRepository>();
+			inventoryRepositoryMock = new Mock<IUserPointShopItemInventoryRepository>();
+			userRepositoryMock = new Mock<IUserRepository>();
 
 			service = new PointShopService(
-				itemProxyMock.Object,
-				inventoryProxyMock.Object,
-				userServiceProxyMock.Object,
+				itemRepositoryMock.Object,
+				inventoryRepositoryMock.Object,
+				userRepositoryMock.Object,
 				testUser);
 		}
 
@@ -62,7 +62,7 @@
 				new PointShopItem() { ItemIdentifier = 2, Name = "Item2", PointPrice = 200 }
 			};
 
-			itemProxyMock.Setup(proxy => proxy.GetPointShopItemsAsync())
+			itemRepositoryMock.Setup(proxy => proxy.GetPointShopItemsAsync())
 				.ReturnsAsync(new GetPointShopItemsResponse
 				{
 					PointShopItems = new List<PointShopItemResponse>
@@ -101,9 +101,9 @@
 				new PointShopItem() { ItemIdentifier = 1, Name = "Item1", PointPrice = 100, IsActive = true }
 			};
 
-			inventoryProxyMock.Setup(proxy => proxy.GetUserInventoryAsync(testUser.UserId))
+			inventoryRepositoryMock.Setup(proxy => proxy.GetUserInventoryAsync(testUser.UserId))
 				.ReturnsAsync(inventory);
-			itemProxyMock.Setup(proxy => proxy.GetPointShopItemsAsync())
+			itemRepositoryMock.Setup(proxy => proxy.GetPointShopItemsAsync())
 				.ReturnsAsync(allItems);
 
 			var foundItems = await service.GetUserItemsAsync();
@@ -116,9 +116,9 @@
 		{
 			var item = new PointShopItem { ItemIdentifier = 1, PointPrice = 100 };
 
-			inventoryProxyMock.Setup(proxy => proxy.PurchaseItemAsync(It.IsAny<PurchasePointShopItemRequest>()))
+			inventoryRepositoryMock.Setup(proxy => proxy.PurchaseItemAsync(It.IsAny<PurchasePointShopItemRequest>()))
 				.Returns(Task.CompletedTask);
-			userServiceProxyMock.Setup(proxy => proxy.UpdateUserAsync(testUser.UserId, It.IsAny<UpdateUserRequest>()))
+			userRepositoryMock.Setup(proxy => proxy.UpdateUserAsync(testUser.UserId, It.IsAny<UpdateUserRequest>()))
 				.Returns(Task.CompletedTask);
 
 			await service.PurchaseItemAsync(item);
@@ -131,12 +131,12 @@
 		{
 			var item = new PointShopItem { ItemIdentifier = 1 };
 
-			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
+			inventoryRepositoryMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
 				.Returns(Task.CompletedTask);
 
 			await service.ActivateItemAsync(item);
 
-			inventoryProxyMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => request.IsActive)), Times.Once);
+			inventoryRepositoryMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => request.IsActive)), Times.Once);
 		}
 
 		[Fact]
@@ -144,12 +144,12 @@
 		{
 			var item = new PointShopItem { ItemIdentifier = 1 };
 
-			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
+			inventoryRepositoryMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>()))
 				.Returns(Task.CompletedTask);
 
 			await service.DeactivateItemAsync(item);
 
-			inventoryProxyMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => !request.IsActive)), Times.Once);
+			inventoryRepositoryMock.Verify(proxy => proxy.UpdateItemStatusAsync(It.Is<UpdateUserPointShopItemInventoryRequest>(request => !request.IsActive)), Times.Once);
 		}
 
 		[Fact]
@@ -170,7 +170,7 @@
             var activeItem = new PointShopItem { ItemIdentifier = itemId, IsActive = true };
 			var userItems = new ObservableCollection<PointShopItem> { activeItem };
 
-			inventoryProxyMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>())).Returns(Task.CompletedTask);
+			inventoryRepositoryMock.Setup(proxy => proxy.UpdateItemStatusAsync(It.IsAny<UpdateUserPointShopItemInventoryRequest>())).Returns(Task.CompletedTask);
 
 			var toggledItem = await service.ToggleActivationForItemAsync(itemId, userItems);
 
