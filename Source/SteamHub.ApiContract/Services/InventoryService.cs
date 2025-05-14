@@ -144,7 +144,7 @@ namespace SteamHub.ApiContract.Services
             if (foundItem == null)
             {
                 Console.WriteLine($"Item with ID {item.ItemId} not found.", nameof(item));
-                return false;
+                throw new Exception("The item can't be found.");
             }
 
             var foundItemGameId = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId).GameId;
@@ -169,7 +169,7 @@ namespace SteamHub.ApiContract.Services
             {
                 // Handle exceptions (e.g., log them).
                 Console.WriteLine($"Error selling item: {exception.Message}");
-                return false;
+                throw new Exception("Item couldn't be updated as for sale.");
             }
 
             // return await this.inventoryRepository.SellItemAsync(item);
