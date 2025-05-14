@@ -420,11 +420,11 @@ namespace SteamHub.Api.Migrations
                     { 1, "gabe.newell@valvestudio.com", 6000f, 1, "GabeN", 500f },
                     { 2, "mathias.new@cdprojektred.com", 5000f, 1, "MattN", 420f },
                     { 3, "john.chen@thatgamecompany.com", 5000f, 1, "JohnC", 390f },
-                    { 4, "alice.johnson@example.com", 6000f, 0, "AliceJ", 78f },
-                    { 5, "liam.garcia@example.com", 7000f, 0, "LiamG", 55f },
-                    { 6, "sophie.williams@example.com", 6000f, 0, "SophieW", 95f },
-                    { 7, "noah.smith@example.com", 4000f, 0, "NoahS", 33f },
-                    { 8, "emily.brown@example.com", 5000f, 0, "EmilyB", 110f }
+                    { 4, "alice.johnson@example.com", 6000f, 0, "AliceJ", 780f },
+                    { 5, "liam.garcia@example.com", 7000f, 0, "LiamG", 5500f },
+                    { 6, "sophie.williams@example.com", 6000f, 0, "SophieW", 950f },
+                    { 7, "noah.smith@example.com", 4000f, 0, "NoahS", 3300f },
+                    { 8, "emily.brown@example.com", 5000f, 0, "EmilyB", 1100f }
                 });
 
             migrationBuilder.InsertData(
@@ -567,6 +567,7 @@ namespace SteamHub.Api.Migrations
                     { 5, 5, false, false, true },
                     { 6, 5, true, false, false },
                     { 19, 5, false, false, true },
+                    { 20, 6, false, false, true },
                     { 20, 7, false, false, true },
                     { 15, 8, true, false, false }
                 });
@@ -577,7 +578,8 @@ namespace SteamHub.Api.Migrations
                 values: new object[,]
                 {
                     { 7, 1, true },
-                    { 12, 2, false }
+                    { 12, 2, true },
+                    { 13, 3, true }
                 });
 
             migrationBuilder.InsertData(
@@ -592,7 +594,7 @@ namespace SteamHub.Api.Migrations
                     { 6, 7, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 6, 8, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 19, 12, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 20, 13, 7, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
+                    { 20, 13, 6, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
                 });
 
             migrationBuilder.CreateIndex(

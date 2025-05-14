@@ -956,7 +956,13 @@ namespace SteamHub.Api.Migrations
                         {
                             TradeId = 2,
                             ItemId = 12,
-                            IsSourceUserItem = false
+                            IsSourceUserItem = true
+                        },
+                        new
+                        {
+                            TradeId = 3,
+                            ItemId = 13,
+                            IsSourceUserItem = true
                         });
                 });
 
@@ -1455,7 +1461,7 @@ namespace SteamHub.Api.Migrations
                         },
                         new
                         {
-                            UserId = 7,
+                            UserId = 6,
                             ItemId = 13,
                             GameId = 20,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1619,6 +1625,14 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 5,
                             GameId = 19,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 6,
+                            GameId = 20,
                             IsInCart = false,
                             IsInWishlist = false,
                             IsPurchased = true

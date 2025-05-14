@@ -12,7 +12,7 @@ using SteamHub.Api.Context;
 namespace SteamHub.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250511095800_MainMigration")]
+    [Migration("20250514214714_MainMigration")]
     partial class MainMigration
     {
         /// <inheritdoc />
@@ -959,7 +959,13 @@ namespace SteamHub.Api.Migrations
                         {
                             TradeId = 2,
                             ItemId = 12,
-                            IsSourceUserItem = false
+                            IsSourceUserItem = true
+                        },
+                        new
+                        {
+                            TradeId = 3,
+                            ItemId = 13,
+                            IsSourceUserItem = true
                         });
                 });
 
@@ -1342,7 +1348,7 @@ namespace SteamHub.Api.Migrations
                             PointsBalance = 6000f,
                             RoleId = 0,
                             UserName = "AliceJ",
-                            WalletBalance = 78f
+                            WalletBalance = 780f
                         },
                         new
                         {
@@ -1351,7 +1357,7 @@ namespace SteamHub.Api.Migrations
                             PointsBalance = 7000f,
                             RoleId = 0,
                             UserName = "LiamG",
-                            WalletBalance = 55f
+                            WalletBalance = 5500f
                         },
                         new
                         {
@@ -1360,7 +1366,7 @@ namespace SteamHub.Api.Migrations
                             PointsBalance = 6000f,
                             RoleId = 0,
                             UserName = "SophieW",
-                            WalletBalance = 95f
+                            WalletBalance = 950f
                         },
                         new
                         {
@@ -1369,7 +1375,7 @@ namespace SteamHub.Api.Migrations
                             PointsBalance = 4000f,
                             RoleId = 0,
                             UserName = "NoahS",
-                            WalletBalance = 33f
+                            WalletBalance = 3300f
                         },
                         new
                         {
@@ -1378,7 +1384,7 @@ namespace SteamHub.Api.Migrations
                             PointsBalance = 5000f,
                             RoleId = 0,
                             UserName = "EmilyB",
-                            WalletBalance = 110f
+                            WalletBalance = 1100f
                         });
                 });
 
@@ -1458,7 +1464,7 @@ namespace SteamHub.Api.Migrations
                         },
                         new
                         {
-                            UserId = 7,
+                            UserId = 6,
                             ItemId = 13,
                             GameId = 20,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1622,6 +1628,14 @@ namespace SteamHub.Api.Migrations
                         {
                             UserId = 5,
                             GameId = 19,
+                            IsInCart = false,
+                            IsInWishlist = false,
+                            IsPurchased = true
+                        },
+                        new
+                        {
+                            UserId = 6,
+                            GameId = 20,
                             IsInCart = false,
                             IsInWishlist = false,
                             IsPurchased = true
