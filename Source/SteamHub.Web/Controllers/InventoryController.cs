@@ -60,15 +60,23 @@ namespace SteamHub.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Sell(int itemId, int selectedUserId, int? selectedGameId, string searchText)
         {
-            var item = (await inventoryService.GetUserInventoryAsync(selectedUserId))
-                .FirstOrDefault(i => i.ItemId == itemId);
+            try
+            {
+                var item = (await inventoryService.GetUserInventoryAsync(selectedUserId))
+                    .FirstOrDefault(i => i.ItemId == itemId);
 
-            if (item != null && !item.IsListed)
-                await inventoryService.SellItemAsync(item);
+                if (item != null && !item.IsListed)
+                    await inventoryService.SellItemAsync(item);
 
-            TempData["StatusMessage"] = item != null
-                ? $"Item '{item.ItemName}' was successfully listed for sale."
-                : "Item could not be found or is already listed.";
+                TempData["StatusMessage"] = item != null
+                    ? $"Item '{item.ItemName}' was successfully listed for sale."
+                    : "Item could not be found or is already listed.";
+            }
+            catch (Exception exception)
+            {
+                TempData["StatusMessage"] = "An error occurred while trying to sell the item:" + exception.ToString();
+            }
+                
 
             return RedirectToAction(nameof(Index), new { selectedUserId, selectedGameId, searchText });
         }
