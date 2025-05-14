@@ -1,0 +1,69 @@
+﻿@startuml
+
+actor user
+participant "SteamHub.Web UI" as WebUi
+participant "SteamHub.Web Server" as WebServer
+participant ":PointShopPageController" as Ctrl
+participant ":PointShopService" as PsSvc
+participant ":IPointShopItemRepository" as PointRepo
+participant ":IUserRepository" as UserRepo
+participant ":IUserPointShopItemInventoryRepository" as UspRepo
+
+note right user
+    user is in the Points Shop Page
+end note
+
+user -> WebUi ++: click on Purchase button \n for item with id __itemId__
+WebUi -> WebServer++ : fetch(POST /PointShopPage/PurchaseItem?itemId=__itemId__)
+WebServer -> Ctrl ++: PurchaseItem(__itemId__)
+Ctrl -> PsSvc ++: GetCurrentUser()
+return __user__
+Ctrl -> PsSvc ++: GetAvailableItemsAsync(__user__)
+PsSvc -> PointRepo ++: GetPointShopItemsAsync()
+return __allItems__
+PsSvc -> UspRepo ++: GetUserInventoryAsync(__user__.id)
+return __userItems__
+PsSvc -> PsSvc : resolve __availableItems__ \nfrom __userItems__ and __allItems__
+return __shopItems__
+
+Ctrl -> Ctrl : __selectedItem__ = find from __shopItems__ where id = __itemId__
+
+alt __selectedItem__ does not exist
+Ctrl --> WebServer: __responseBody__ = { success = false, message = "Item not found." }
+WebServer --> WebUi: 200,__responseBody__
+WebUi -> WebUi:  alert('Failed to purchase item: Item not found.')
+
+else 
+Ctrl -> PsSvc ++ : PurchaseItemAsync(__selectedItem__)
+
+PsSvc -> PsSvc: check available points balance on __user__
+PsSvc -> UspRepo++ : PurchaseItemAsync(__selectedItem__)
+return
+PsSvc -> PsSvc: updates __user__ points balance
+PsSvc -> UserRepo ++: UpdateUserAsync(__user__)
+return 
+
+return
+
+Ctrl -> Ctrl: create __newTransaction__ from __selectedItem__
+Ctrl -> Ctrl: add __newTransaction__ to __transactionHistory__
+WebServer <-- Ctrl: __responseBody__ = { success = true, message = "Successfully purchased {__selectedItem__.Name}"}
+WebUi <-- WebServer: 200,  __responseBody__
+WebUi -> WebUi: alert('Item purchased successfully!')
+WebUi -> WebUi: refresh UI after purchase
+
+alt if an unexpected error occurs
+WebServer <-- Ctrl: __responseBody__ = { success = false, message = "Failed to purchase item: {ex.Message}" }
+WebUi <-- WebServer: 200, __responseBody__
+WebUi -> WebUi :  alert('Failed to purchase item: Failed to purchase item...')
+
+deactivate Ctrl
+deactivate WebServer
+
+end alt  if an unexpected error occurs
+
+deactivate WebUi
+
+
+end alt __selectedItem__ does not exist
+@enduml
