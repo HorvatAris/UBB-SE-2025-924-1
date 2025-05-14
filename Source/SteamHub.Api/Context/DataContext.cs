@@ -999,6 +999,14 @@ namespace SteamHub.Api.Context
                 },
                 new UsersGames
                 {
+                    UserId = 6,
+                    GameId = 20,
+                    IsInWishlist = false,
+                    IsPurchased = true,
+                    IsInCart = false
+                },
+                new UsersGames
+                {
                     UserId = 7,
                     GameId = 20,
                     IsInWishlist = false,
@@ -1174,7 +1182,7 @@ namespace SteamHub.Api.Context
                 },
                 new UserInventory
                 {
-                    UserId = 7,
+                    UserId = 6,
                     ItemId = 13,
                     GameId = 20,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
@@ -1217,7 +1225,8 @@ namespace SteamHub.Api.Context
             var itemTradeDetailsSeed = new List<ItemTradeDetail>
             { 
                 new ItemTradeDetail { TradeId = 1, ItemId = 7, IsSourceUserItem = true },
-                new ItemTradeDetail { TradeId = 2, ItemId = 12, IsSourceUserItem = false },
+                new ItemTradeDetail { TradeId = 2, ItemId = 12, IsSourceUserItem = true },
+                new ItemTradeDetail { TradeId = 3, ItemId = 13, IsSourceUserItem = true},
             };
 
             builder.Entity<ItemTradeDetail>().HasData(itemTradeDetailsSeed);
