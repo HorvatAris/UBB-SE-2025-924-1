@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Controls;
 using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Proxies;
 using SteamHub.ApiContract.Services;
+using SteamHub.ApiContract.ServiceProxies;
 using SteamHub.Pages;
 using SteamHub.Web;
 
@@ -27,7 +28,7 @@ namespace SteamHub
         private CartService cartService;
         private UserGameService userGameService;
         private DeveloperService developerService;
-        private PointShopService pointShopService;
+        private PointShopServiceProxy pointShopService;
         private InventoryService inventoryService;
         private MarketplaceService marketplaceService;
         private TradeService tradeService;
@@ -126,11 +127,13 @@ namespace SteamHub
             this.marketplaceService = new MarketplaceService(userRepository, gameRepository, itemRepository, userInventoryRepository, loggedInUser);
 
 
-            this.pointShopService = new PointShopService(
-                pointShopRepository,
-                userPointShopInventoryRepository,
-                userRepository,
-                loggedInUser);
+            //this.pointShopService = new PointShopService(
+            //    pointShopRepository,
+            //    userPointShopInventoryRepository,
+            //    userRepository,
+            //    loggedInUser);
+
+            this.pointShopService = new PointShopServiceProxy(httpClientFactory, loggedInUser);
 
             this.inventoryService = new InventoryService(userInventoryRepository, itemRepository, gameRepository, this.user);
 
