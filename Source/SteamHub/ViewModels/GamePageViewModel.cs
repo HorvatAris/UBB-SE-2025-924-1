@@ -154,7 +154,12 @@ public class GamePageViewModel : INotifyPropertyChanged
         {
             try
             {
-                await this.cartService.AddGameToCartAsync(this.game);
+                var gameRequest = new UserGameRequest
+                {
+                    UserId = this.user.UserId,
+                    GameId = this.Game.GameId
+                };
+                await this.cartService.AddGameToCartAsync(gameRequest);
             }
             catch (Exception exception)
             {
@@ -214,7 +219,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
         try
         {
-            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game);
+            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game, this.user.UserId);
         }
         catch (Exception)
         {

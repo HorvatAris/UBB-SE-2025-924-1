@@ -7,6 +7,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -27,15 +28,15 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task PurchaseGamesAsync(PurchaseGamesRequest request);
 
-        Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags);
+        Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags, int userId);
 
-        Task<Collection<Tag>> GetFavoriteUserTagsAsync();
+        Task<Collection<Tag>> GetFavoriteUserTagsAsync(int userId);
 
-        Task ComputeTagScoreForGamesAsync(Collection<Game> games);
+        Task ComputeTagScoreForGamesAsync(Collection<Game> games, int userId);
 
         void ComputeTrendingScores(Collection<Game> games);
 
-        Task<Collection<Game>> GetRecommendedGamesAsync();
+        Task<Collection<Game>> GetRecommendedGamesAsync(int userId);
 
         Task<Collection<Game>> GetWishListGamesAsync(int userId);
 
@@ -45,7 +46,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<Collection<Game>> FilterWishListGamesAsync(string criteria);
 
-        Task<bool> IsGamePurchasedAsync(Game game);
+        Task<bool> IsGamePurchasedAsync(Game game, int userId);
 
         Task<Collection<Game>> SortWishListGamesAsync(string criteria, bool ascending);
 

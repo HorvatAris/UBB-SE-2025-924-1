@@ -78,16 +78,10 @@ public class UserGameService : IUserGameService
             var game = GameMapper.MapToGame(gameResponse);
 
             // Check if game is already purchased
-            if (await this.IsGamePurchasedAsync(game))
+            if (await this.IsGamePurchasedAsync(game, gameRequest.UserId))
             {
                 throw new Exception(string.Format(ExceptionMessages.GameAlreadyOwned, game.GameTitle));
             }
-
-            var request = new UserGameRequest
-            {
-                UserId = gameRequest.UserId,
-                GameId = game.GameId,
-            };
 
             var wishlistGames = await this.GetWishListGamesAsync(gameRequest.UserId);
             foreach (var wishlistGame in wishlistGames)
@@ -97,7 +91,7 @@ public class UserGameService : IUserGameService
                     throw new Exception(string.Format(ExceptionMessages.GameAlreadyInWishlist, game.GameTitle));
                 }
             }
-            await this.UserGameRepository.AddToWishlistAsync(request);
+            await this.UserGameRepository.AddToWishlistAsync(gameRequest);
         }
         catch (Exception exception)
         {
@@ -178,8 +172,7 @@ public class UserGameService : IUserGameService
 
     public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags, int userId)
     {
-        var user = await this.UserRepository.GetUserByIdAsync(userId);
-        var user_games = await this.GetAllGamesAsync(user.UserId);
+        var user_games = await this.GetAllGamesAsync(userId);
 
         // Manually build the dictionary instead of using ToDictionary
         Dictionary<string, Tag> tagsDictionary = new Dictionary<string, Tag>();
@@ -208,11 +201,11 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task<Collection<Tag>> GetFavoriteUserTagsAsync()
+    public async Task<Collection<Tag>> GetFavoriteUserTagsAsync(int userId)
     {
         var tagsResponse = await this.TagRepository.GetAllTagsAsync();
         var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
-        await this.ComputeNoOfUserGamesForEachTagAsync(allTags);
+        await this.ComputeNoOfUserGamesForEachTagAsync(allTags, userId);
 
         List<Tag> sortedTags = new List<Tag>(allTags);
 
@@ -238,9 +231,9 @@ public class UserGameService : IUserGameService
         return new Collection<Tag>(topTags);
     }
 
-    public async Task ComputeTagScoreForGamesAsync(Collection<Game> games)
+    public async Task ComputeTagScoreForGamesAsync(Collection<Game> games, int userId)
     {
-        var favorite_tags = await this.GetFavoriteUserTagsAsync();
+        var favorite_tags = await this.GetFavoriteUserTagsAsync(userId);
         foreach (var game in games)
         {
             game.TagScore = InitialTagScore;
@@ -265,7 +258,7 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task<Collection<Game>> GetRecommendedGamesAsync()
+    public async Task<Collection<Game>> GetRecommendedGamesAsync(int userId)
     {
         var games = await this.GameRepository.GetGamesAsync(
             new GetGamesRequest());
@@ -280,7 +273,7 @@ public class UserGameService : IUserGameService
         }
 
         this.ComputeTrendingScores(approvedGames);
-        await this.ComputeTagScoreForGamesAsync(approvedGames);
+        await this.ComputeTagScoreForGamesAsync(approvedGames, userId);
 
         List<Game> sortedGames = new List<Game>(approvedGames);
 
@@ -436,9 +429,9 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task<bool> IsGamePurchasedAsync(Game game)
+    public async Task<bool> IsGamePurchasedAsync(Game game, int userId)
     {
-        var purchasedGameList = await this.GetPurchasedGamesAsync(this.GetUser().UserId);
+        var purchasedGameList = await this.GetPurchasedGamesAsync(userId);
         return purchasedGameList.Any(currentGame => currentGame.GameId == game.GameId);
     }
 
@@ -541,11 +534,6 @@ public class UserGameService : IUserGameService
     }
 
     public IUserDetails GetUser()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags)
     {
         throw new NotImplementedException();
     }

@@ -4,6 +4,7 @@ using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Authorization;
+using SteamHub.ApiContract.Models.User;
 
 namespace SteamHub.Web.Controllers
 {
@@ -13,19 +14,21 @@ namespace SteamHub.Web.Controllers
         private readonly IGameService gameService;
         private readonly IUserGameService userGameService;
         private readonly ICartService cartService;
+        private IUserDetails user;
 
         public HomePageController(IGameService gameService, IUserGameService userGameService, ICartService cartService)
         {
             this.gameService = gameService;
             this.userGameService = userGameService;
             this.cartService = cartService;
+            this.user = userGameService.GetUser();
         }
 
         public async Task<IActionResult> Index()
         {
             var filteredGames = await gameService.GetAllApprovedGamesAsync();
             var trendingGames = await gameService.GetTrendingGamesAsync();
-            var recommendedGames = await userGameService.GetRecommendedGamesAsync();
+            var recommendedGames = await userGameService.GetRecommendedGamesAsync(this.user.UserId);
             var discountedGames = await gameService.GetDiscountedGamesAsync();
             var tags = await gameService.GetAllTagsAsync();
 

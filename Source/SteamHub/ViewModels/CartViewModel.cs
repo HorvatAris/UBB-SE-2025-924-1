@@ -102,7 +102,7 @@ public class CartViewModel : INotifyPropertyChanged
             GameId = game.GameId,
             UserId = this.user.UserId,
         };
-        await this.cartService.RemoveGameFromCartAsync(game);
+        await this.cartService.RemoveGameFromCartAsync(gameRequest);
         this.CartGames.Remove(game);
         this.UpdateTotalPrice();
         this.OnPropertyChanged(nameof(this.CartGames));

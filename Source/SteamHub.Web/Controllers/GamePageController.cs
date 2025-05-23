@@ -28,7 +28,7 @@ namespace SteamHub.Web.Controllers
             var game = await gameService.GetGameByIdAsync(id);
             if (game == null) return NotFound();
 
-            var isOwned = await userGameService.IsGamePurchasedAsync(game);
+            var isOwned = await userGameService.IsGamePurchasedAsync(game, user.UserId);
             var tags = await gameService.GetAllGameTagsAsync(game);
             var similarGames = await gameService.GetSimilarGamesAsync(game.GameId);
 
@@ -58,7 +58,7 @@ namespace SteamHub.Web.Controllers
                     UserId = this.user.UserId,
                 };
 
-                await cartService.AddGameToCartAsync(game);
+                await cartService.AddGameToCartAsync(request);
                 return Json(new { success = true, message = "Game added to cart successfully!" });
             }
             catch (Exception ex)

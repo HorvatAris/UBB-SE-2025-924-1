@@ -27,6 +27,7 @@ namespace SteamHub.Api.Controllers
             var result = await _userGameService.GetWishListGamesAsync(userId);
             return Ok(result);
         }
+
         [HttpPost("AddToWishlist")]
         public async Task<IActionResult> AddToWishlist([FromBody] UserGameRequest request)
         {
@@ -36,10 +37,11 @@ namespace SteamHub.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"An error occurred: {ex.Message}");
+                return BadRequest(ex.Message);
             }
             return NoContent();
         }
+
         [HttpPatch("RemoveFromWishlist")]
         public async Task<IActionResult> RemoveFromWishlist([FromBody] UserGameRequest request)
         {
@@ -61,10 +63,10 @@ namespace SteamHub.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("RecommendedGames")]
-        public async Task<IActionResult> GetRecommendedGames()
+        [HttpGet("RecommendedGames/{userId}")]
+        public async Task<IActionResult> GetRecommendedGames([FromRoute]int userId)
         {
-            var result = await _userGameService.GetRecommendedGamesAsync();
+            var result = await _userGameService.GetRecommendedGamesAsync(userId);
             return Ok(result);
         }
 
@@ -82,10 +84,10 @@ namespace SteamHub.Api.Controllers
             return NoContent();
         }
 
-        [HttpGet("Tags")]
-        public async Task<IActionResult> GetFavoriteUserTags()
+        [HttpGet("Tags/{userId}")]
+        public async Task<IActionResult> GetFavoriteUserTags([FromRoute] int userId)
         {
-            var result = await _userGameService.GetFavoriteUserTagsAsync();
+            var result = await _userGameService.GetFavoriteUserTagsAsync(userId);
             return Ok(result);
         }
     }

@@ -50,13 +50,17 @@ namespace SteamHub.ApiContract.ServiceProxies
         public IUserDetails User { get; set; }
         public int LastEarnedPoints { get; private set; }
 
-        public Task AddGameToWishlistAsync(UserGameRequest gameRequest)
+        public async Task AddGameToWishlistAsync(UserGameRequest gameRequest)
         {
             try
             {
-                var response = _httpClient.PostAsJsonAsync("/api/UserGame/AddToWishlist", gameRequest);
-                response.Result.EnsureSuccessStatusCode(); // Ensure successful status code
-                return Task.CompletedTask;
+                var response = await _httpClient.PostAsJsonAsync("/api/UserGame/AddToWishlist", gameRequest);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = (await response.Content.ReadAsStringAsync()).Trim('"');
+                    System.Diagnostics.Debug.WriteLine($"API returned error: {errorMessage}");
+                    throw new Exception(errorMessage);
+                }
             }
             catch (Exception exception)
             {
@@ -81,7 +85,7 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags)
+        public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags, int userId)
         {
             var user_games = await this.GetAllGamesAsync(User.UserId);
 
@@ -112,9 +116,9 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task ComputeTagScoreForGamesAsync(Collection<Game> games)
+        public async Task ComputeTagScoreForGamesAsync(Collection<Game> games, int userId)
         {
-            var favorite_tags = await this.GetFavoriteUserTagsAsync();
+            var favorite_tags = await this.GetFavoriteUserTagsAsync(User.UserId);
             foreach (var game in games)
             {
                 game.TagScore = InitialTagScore;
@@ -183,11 +187,11 @@ namespace SteamHub.ApiContract.ServiceProxies
             return filteredGames;
         }
 
-        public async Task<Collection<Tag>> GetFavoriteUserTagsAsync()
+        public async Task<Collection<Tag>> GetFavoriteUserTagsAsync(int userId)
         {
             try
             {
-                var response = await _httpClient.GetAsync("/api/UserGame/Tags");
+                var response = await _httpClient.GetAsync($"/api/UserGame/Tags/{userId}");
                 response.EnsureSuccessStatusCode(); // Ensure successful status code
                 var result = await response.Content.ReadFromJsonAsync<Collection<Tag>>(_options);
                 return result ?? throw new InvalidOperationException("Invalid response from GetFavoriteUserTagsAsync");
@@ -199,11 +203,11 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task<Collection<Game>> GetRecommendedGamesAsync()
+        public async Task<Collection<Game>> GetRecommendedGamesAsync(int userId)
         {
             try
             {
-                var response = await _httpClient.GetAsync("/api/UserGame/RecommendedGames");
+                var response = await _httpClient.GetAsync($"/api/UserGame/RecommendedGames/{userId}");
                 response.EnsureSuccessStatusCode(); // Ensure successful status code
                 var result = await response.Content.ReadFromJsonAsync<Collection<Game>>(_options);
                 return result ?? throw new InvalidOperationException("Invalid response from GetRecommendedGamesAsync");
@@ -231,7 +235,7 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task<bool> IsGamePurchasedAsync(Game game)
+        public async Task<bool> IsGamePurchasedAsync(Game game, int userId)
         {
             var purchasedGameList = await this.GetPurchasedGamesAsync(User.UserId);
             return purchasedGameList.Any(currentGame => currentGame.GameId == game.GameId);
