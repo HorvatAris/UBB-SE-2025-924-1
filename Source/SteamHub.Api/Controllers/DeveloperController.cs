@@ -20,7 +20,7 @@ namespace SteamHub.Api.Controllers
 
         //Task ValidateGameAsync(int game_id);
 
-        [HttpPatch("games/validate/{game_id}")]
+        [HttpPatch("Validate/{game_id}")]
         public async Task<IActionResult> ValidateGameAsync([FromRoute] int game_id)
         {
             try
@@ -34,7 +34,7 @@ namespace SteamHub.Api.Controllers
             }
         }
 
-        [HttpGet("games/{id}/rejection-message")]
+        [HttpGet("RejectionMessage/{id}")]
         public async Task<IActionResult> GetRejectionMessageAsync([FromRoute] int id)
         {
             try
@@ -51,12 +51,12 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpGet("games/unvalidated")]
-        public async Task<IActionResult> GetUnvalidatedGamesAsync()
+        [HttpGet("Unvalidated/{userId}")]
+        public async Task<IActionResult> GetUnvalidatedGamesAsync([FromRoute] int userId)
         {
             try
             {
-                var games = await this.developerService.GetUnvalidatedAsync();
+                var games = await this.developerService.GetUnvalidatedAsync(userId);
                 return Ok(games);
             }
             catch (Exception ex)
@@ -64,12 +64,12 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpPost("games/{id}/reject")]
-        public async Task<IActionResult> RejectGameAsync([FromRoute] int id)
+        [HttpPost("Reject/{game_id}")]
+        public async Task<IActionResult> RejectGameAsync([FromRoute] int game_id)
         {
             try
             {
-                await this.developerService.RejectGameAsync(id);
+                await this.developerService.RejectGameAsync(game_id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
@@ -82,7 +82,7 @@ namespace SteamHub.Api.Controllers
             }
         }
 
-        [HttpPatch("games/{id}/reject-with-message")]
+        [HttpPatch("RejectWithMessage/{id}")]
         public async Task<IActionResult> RejectGameWithMessageAsync([FromRoute]int id, [FromBody] string message)
         {
             try
@@ -99,9 +99,14 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpPost("games/{userId}/create")]
+
+        [HttpPost("Create/{userId}")]
         public async Task<IActionResult> CreateGame([FromRoute] int userId, [FromBody] Game game)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
                 await this.developerService.CreateGameAsync(game, userId);
@@ -117,12 +122,13 @@ namespace SteamHub.Api.Controllers
             }
 
         }
-        [HttpPatch("games/update")]
-        public async Task<IActionResult> UpdateGame([FromBody] Game game)
+
+        [HttpPatch("Update/{userId}")]
+        public async Task<IActionResult> UpdateGame([FromBody] Game game, [FromRoute]  int userId)
         {
             try
             {
-                await developerService.UpdateGameAsync(game);
+                await developerService.UpdateGameAsync(game,userId);
                 return Ok(new { message = "Game updated successfully." });
             }
             catch (ArgumentException ex)
@@ -135,24 +141,41 @@ namespace SteamHub.Api.Controllers
             }
         }
 
-        [HttpPatch("games/update-with-tags")]
-        public async Task<IActionResult> UpdateGameWithTags([FromBody] UpdateGameWithTagsRequest request)
+        [HttpPatch("UpdateWithTags/{userId}")]
+        public async Task<IActionResult> UpdateGameWithTags([FromRoute] int userId,[FromBody] UpdateGameWithTagsRequest request)
         {
             try
             {
-                await developerService.UpdateGameWithTagsAsync(request.Game, request.SelectedTags);
-                return Ok(new { message = "Game and tags updated successfully." });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
+                if (request == null)
+                {
+                    return BadRequest("Request body is null");
+                }
+
+                if (request.Game == null)
+                {
+                    return BadRequest("Game object is null");
+                }
+
+                if (request.SelectedTags == null)
+                {
+                    return BadRequest("SelectedTags is null");
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Received request for userId: {userId}");
+                System.Diagnostics.Debug.WriteLine($"Game ID: {request.Game.GameId}");
+                System.Diagnostics.Debug.WriteLine($"Selected Tags Count: {request.SelectedTags.Count}");
+
+                await developerService.UpdateGameWithTagsAsync(request.Game, request.SelectedTags, userId);
+                return Ok("Game updated successfully");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                System.Diagnostics.Debug.WriteLine($"Error in UpdateGameWithTags: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                return BadRequest($"An error occurred: {ex.Message}");
             }
         }
-        [HttpDelete("games/{gameId}")]
+        [HttpDelete("Delete/{gameId}")]
         public async Task<IActionResult> DeleteGame([FromRoute] int gameId)
         {
             try
@@ -169,12 +192,13 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpGet("games/developer")]
-        public async Task<IActionResult> GetDeveloperGames()
+
+        [HttpGet("Games/{userId}")]
+        public async Task<IActionResult> GetDeveloperGames([FromRoute] int userId)
         {
             try
             {
-                var games = await developerService.GetDeveloperGamesAsync();
+                var games = await developerService.GetDeveloperGamesAsync(userId);
                 return Ok(games);
             }
             catch (Exception ex)
@@ -182,7 +206,8 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpPost("games/{gameId}/tags/{tagId}")]
+
+        [HttpPost("Games/{gameId}/Tags/{tagId}")]
         public async Task<IActionResult> InsertGameTag([FromRoute] int gameId, [FromRoute] int tagId)
         {
             try
@@ -195,7 +220,8 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpGet("tags")]
+
+        [HttpGet("Tags")]
         public async Task<IActionResult> GetAllTags()
         {
             try
@@ -209,7 +235,7 @@ namespace SteamHub.Api.Controllers
             }
         }
 
-        [HttpGet("games/{gameId}/exists")]
+        [HttpGet("Games/{gameId}/Exists")]
         public async Task<IActionResult> IsGameIdInUse([FromRoute] int gameId)
         {
             try
@@ -224,7 +250,7 @@ namespace SteamHub.Api.Controllers
         }
 
 
-        [HttpGet("games/{gameId}/tags")]
+        [HttpGet("Games/{gameId}/Tags")]
         public async Task<IActionResult> GetGameTags([FromRoute] int gameId)
         {
             try
@@ -237,7 +263,8 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpPatch("games/{gameId}/tags")]
+
+        [HttpPatch("Games/{gameId}/Tags")]
         public async Task<IActionResult> DeleteGameTags([FromRoute] int gameId)
         {
             try
@@ -250,7 +277,8 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-        [HttpGet("games/{gameId}/owners/count")]
+
+        [HttpGet("Games/{gameId}/OwnersCount")]
         public async Task<IActionResult> GetGameOwnerCount([FromRoute] int gameId)
         {
             try

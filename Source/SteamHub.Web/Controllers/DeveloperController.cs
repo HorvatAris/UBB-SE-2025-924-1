@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.ApiContract.Models.Tag;
+using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 using System.Collections.ObjectModel;
@@ -12,21 +13,23 @@ namespace SteamHub.Web.Controllers
     public class DeveloperController : Controller
     {
         private readonly IDeveloperService developerService;
+        private IUserDetails user;
 
         public DeveloperController(IDeveloperService developerService)
         {
             this.developerService = developerService;
+            this.user = developerService.GetCurrentUser();
         }
         // GET: Developer/MyGames
         public async Task<IActionResult> MyGames()
         {
-            var games = await developerService.GetDeveloperGamesAsync();
+            var games = await developerService.GetDeveloperGamesAsync(this.user.UserId);
             return View(games); // View expects a list of Game
         }
         // GET: /Developer/UnvalidatedGames
         public async Task<IActionResult> UnvalidatedGames()
         {
-            var games = await developerService.GetUnvalidatedAsync();
+            var games = await developerService.GetUnvalidatedAsync(this.user.UserId);
             return View(games); // View expects a list of Game
         }
         public async Task<IActionResult> Create()
@@ -55,8 +58,9 @@ namespace SteamHub.Web.Controllers
                 model.MinimumRequirement,
                 model.RecommendedRequirement,
                 model.Discount,
-                new List<Tag> { new Tag { TagId = 500, Tag_name = "bagpl" } }
-                
+                new List<Tag> { new Tag { TagId = 500, Tag_name = "bagpl" } },
+                this.developerService.GetCurrentUser().UserId
+
             );
 
             return RedirectToAction("MyGames");
@@ -66,7 +70,7 @@ namespace SteamHub.Web.Controllers
         //Fix for CS1503: Convert the List<Game> to ObservableCollection<Game> before passing it to the method.
         public async Task<IActionResult> Edit(int id)
         {
-            var allGames = new ObservableCollection<Game>((await developerService.GetDeveloperGamesAsync()).ToList());
+            var allGames = new ObservableCollection<Game>((await developerService.GetDeveloperGamesAsync(this.user.UserId)).ToList());
             var game = developerService.FindGameInObservableCollectionById(id, allGames);
             if (game == null) return NotFound();
 
@@ -126,7 +130,7 @@ namespace SteamHub.Web.Controllers
                 selectedTagObjects
             );
 
-            await developerService.UpdateGameWithTagsAsync(game, selectedTagObjects);
+            await developerService.UpdateGameWithTagsAsync(game, selectedTagObjects, this.user.UserId);
             return RedirectToAction("MyGames");
         }
 
@@ -134,7 +138,7 @@ namespace SteamHub.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var developerGames = new ObservableCollection<Game>((await developerService.GetDeveloperGamesAsync()).ToList());
+            var developerGames = new ObservableCollection<Game>((await developerService.GetDeveloperGamesAsync(this.user.UserId)).ToList());
             await developerService.DeleteGameAsync(id, developerGames);
             return RedirectToAction("MyGames");
         }
@@ -171,7 +175,7 @@ namespace SteamHub.Web.Controllers
             }
             else
             {
-                var unvalidatedGames = new ObservableCollection<Game>((await developerService.GetUnvalidatedAsync()).ToList());
+                var unvalidatedGames = new ObservableCollection<Game>((await developerService.GetUnvalidatedAsync(this.user.UserId)).ToList());
                 await developerService.RejectGameAndRemoveFromUnvalidatedAsync(model.GameId, unvalidatedGames);
             }
 

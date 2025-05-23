@@ -163,9 +163,9 @@ public class DeveloperService : IDeveloperService
 
     }
 
-    public async Task UpdateGameAsync(Game game)
+    public async Task UpdateGameAsync(Game game,int userId)
     {
-        game.PublisherIdentifier = this.GetCurrentUser().UserId;
+        game.PublisherIdentifier = userId;
 
         await this.GameRepository.UpdateGameAsync(
             game.GameId,
@@ -185,9 +185,9 @@ public class DeveloperService : IDeveloperService
             });
     }
 
-    public async Task UpdateGameWithTagsAsync(Game game, IList<Tag> selectedTags)
+    public async Task UpdateGameWithTagsAsync(Game game, IList<Tag> selectedTags,int userId)
     {
-        game.PublisherIdentifier = this.GetCurrentUser().UserId;
+        game.PublisherIdentifier = userId;
         await this.GameRepository.UpdateGameAsync(
             game.GameId,
             new UpdateGameRequest
@@ -257,23 +257,23 @@ public class DeveloperService : IDeveloperService
         await this.GameRepository.DeleteGameAsync(game_id);
     }
 
-    public async Task<List<Game>> GetDeveloperGamesAsync()
+    public async Task<List<Game>> GetDeveloperGamesAsync(int userId)
     {
         var games = await this.GameRepository.GetGamesAsync(
             new GetGamesRequest
             {
-                PublisherIdentifierIs = this.GetCurrentUser().UserId,
+                PublisherIdentifierIs = userId
             });
         return games.Select(GameMapper.MapToGame).ToList();
     }
 
-    public async Task<List<Game>> GetUnvalidatedAsync()
+    public async Task<List<Game>> GetUnvalidatedAsync(int userId)
     {
         var games = await this.GameRepository.GetGamesAsync(
             new GetGamesRequest
             {
                 StatusIs = GameStatusEnum.Pending,
-                PublisherIdentifierIsnt = this.GetCurrentUser().UserId,
+                PublisherIdentifierIsnt = userId,
             });
         return games.Select(GameMapper.MapToGame).ToList();
     }
@@ -460,7 +460,7 @@ public class DeveloperService : IDeveloperService
         await this.DeleteGameAsync(gameId);
     }
 
-    public async Task UpdateGameAndRefreshListAsync(Game game, ObservableCollection<Game> developerGames)
+    public async Task UpdateGameAndRefreshListAsync(Game game, ObservableCollection<Game> developerGames, int userId)
     {
         Game existing = null;
         foreach (var gameInDeveloperGames in developerGames)
@@ -477,7 +477,7 @@ public class DeveloperService : IDeveloperService
             developerGames.Remove(existing);
         }
 
-        await this.UpdateGameAsync(game); 
+        await this.UpdateGameAsync(game,userId); 
         developerGames.Add(game);
     }
 
