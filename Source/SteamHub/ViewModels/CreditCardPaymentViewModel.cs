@@ -18,12 +18,14 @@ namespace SteamHub.ViewModels
     using SteamHub.Pages;
     using SteamHub.ApiContract.Services.Interfaces;
     using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.User;
 
     public class CreditCardPaymentViewModel : INotifyPropertyChanged
     {
         private const int ThresholdForNotEarningPoints = 0;
         private readonly ICartService cartService;
         private readonly IUserGameService userGameService;
+        private IUserDetails user;
         private readonly CreditCardProcessor creditCardProcessor;
         private string cardNumber;
         private string expirationDate;
@@ -36,6 +38,7 @@ namespace SteamHub.ViewModels
         {
             this.cartService = cartService;
             this.userGameService = userGameService;
+            this.user = this.cartService.GetUser();
             this.creditCardProcessor = new CreditCardProcessor();
             this.InitAsync();
         }
@@ -112,7 +115,7 @@ namespace SteamHub.ViewModels
             bool paymentSuccess = await this.creditCardProcessor.ProcessPaymentAsync(this.cardNumber, this.expirationDate, this.cvv, this.ownerName);
             if (paymentSuccess)
             {
-                List<Game> purchasedGames = await this.cartService.GetCartGamesAsync();
+                List<Game> purchasedGames = await this.cartService.GetCartGamesAsync(this.user.UserId);
                 await this.cartService.RemoveGamesFromCartAsync(purchasedGames);
                 await this.userGameService.PurchaseGamesAsync(purchasedGames, false);
                 this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
