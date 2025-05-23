@@ -34,18 +34,17 @@ public class UserGameService : IUserGameService
     private const int ValueToDecrementPositionWith = 1;
     private const int ValueToIncrementPositionWith = 1;
 
-    private IUserDetails user;
 
-    public UserGameService(IUserRepository userRepository, IUsersGamesRepository userGameRepository, IGameRepository gameRepository, ITagRepository tagRepository, IUserDetails user)
+    public UserGameService(IUserRepository userRepository, IUsersGamesRepository userGameRepository, IGameRepository gameRepository, ITagRepository tagRepository)
     {
         this.UserRepository = userRepository;
         this.UserGameRepository = userGameRepository;
         this.GameRepository = gameRepository;
         this.TagRepository = tagRepository;
-        this.user = user;
     }
 
     // Property to track points earned in the last purchase
+
     public int LastEarnedPoints { get; private set; }
 
     private IUserRepository UserRepository { get; set; }
@@ -56,32 +55,41 @@ public class UserGameService : IUserGameService
 
     private ITagRepository TagRepository { get; set; }
 
-    public async Task RemoveGameFromWishlistAsync(Game game)
+    public async Task RemoveGameFromWishlistAsync(UserGameRequest gameRequest)
     {
-        var request = new UserGameRequest
-        {
-            UserId = this.user.UserId,
-            GameId = game.GameId,
-        };
-        await this.UserGameRepository.RemoveFromWishlistAsync(request);
+        //var request = new UserGameRequest
+        //{
+        //    UserId = this.user.UserId,
+        //    GameId = game.GameId,
+        //};
+        await this.UserGameRepository.RemoveFromWishlistAsync(gameRequest);
     }
 
-    public async Task AddGameToWishlistAsync(Game game)
+    public async Task AddGameToWishlistAsync(UserGameRequest gameRequest)
     {
         try
         {
+            var gameResponse = await GameRepository.GetGameByIdAsync(gameRequest.GameId);
+            if (gameResponse == null)
+            {
+                throw new Exception($"Game with ID {gameRequest.GameId} not found.");
+            }
+
+            var game = GameMapper.MapToGame(gameResponse);
+
             // Check if game is already purchased
             if (await this.IsGamePurchasedAsync(game))
             {
                 throw new Exception(string.Format(ExceptionMessages.GameAlreadyOwned, game.GameTitle));
             }
+
             var request = new UserGameRequest
             {
-                UserId = this.user.UserId,
+                UserId = gameRequest.UserId,
                 GameId = game.GameId,
             };
 
-            var wishlistGames = await this.GetWishListGamesAsync();
+            var wishlistGames = await this.GetWishListGamesAsync(gameRequest.UserId);
             foreach (var wishlistGame in wishlistGames)
             {
                 if (game.GameId == wishlistGame.GameId)
@@ -97,11 +105,11 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task<Collection<Game>> GetAllGamesAsync()
+    public async Task<Collection<Game>> GetAllGamesAsync(int userId)
     {
         try
         {
-            var response = await this.UserGameRepository.GetUserGamesAsync(this.user.UserId);
+            var response = await this.UserGameRepository.GetUserGamesAsync(userId);
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -129,23 +137,24 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task PurchaseGamesAsync(List<Game> games, bool isWalletPayment)
+    public async Task PurchaseGamesAsync(PurchaseGamesRequest purchaseRequest)
     {
         // Reset points counter
         this.LastEarnedPoints = InitialValueForLastEarnedPoints;
 
         // Track user's points before purchase
-        float pointsBalanceBefore = this.user.PointsBalance;
+        var user = await this.UserRepository.GetUserByIdAsync(purchaseRequest.UserId);
+        float pointsBalanceBefore = user.PointsBalance;
 
         // Purchase games
-        foreach (var game in games)
+        foreach (var game in purchaseRequest.Games)
         {
             var request = new UserGameRequest
             {
-                UserId = this.user.UserId,
+                UserId = user.UserId,
                 GameId = game.GameId,
             };
-            if (isWalletPayment)
+            if (purchaseRequest.IsWalletPayment)
                 user.WalletBalance = user.WalletBalance - (float)game.Price;
             await this.UserGameRepository.PurchaseGameAsync(request);
 
@@ -153,24 +162,24 @@ public class UserGameService : IUserGameService
         }
 
         // Calculate earned points by comparing balances
-        float pointsBalanceAfter = this.user.PointsBalance;
+        float pointsBalanceAfter = user.PointsBalance;
         this.LastEarnedPoints = (int)(pointsBalanceAfter - pointsBalanceBefore);
 
         var updateUserRequest = new UpdateUserRequest
         {
-            UserName = this.user.UserName,
-            Email = this.user.Email,
-            WalletBalance = this.user.WalletBalance,
-            PointsBalance = this.user.PointsBalance,
-            Role = (RoleEnum)this.user.UserRole,
+            UserName = user.UserName,
+            Email = user.Email,
+            WalletBalance = user.WalletBalance,
+            PointsBalance = user.PointsBalance,
         };
 
-        await this.UserRepository.UpdateUserAsync(this.user.UserId, updateUserRequest);
+        await this.UserRepository.UpdateUserAsync(user.UserId, updateUserRequest);
     }
 
-    public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags)
+    public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags, int userId)
     {
-        var user_games = await this.GetAllGamesAsync();
+        var user = await this.UserRepository.GetUserByIdAsync(userId);
+        var user_games = await this.GetAllGamesAsync(user.UserId);
 
         // Manually build the dictionary instead of using ToDictionary
         Dictionary<string, Tag> tagsDictionary = new Dictionary<string, Tag>();
@@ -303,11 +312,11 @@ public class UserGameService : IUserGameService
         return new Collection<Game>(recommendedGames);
     }
 
-    public async Task<Collection<Game>> GetWishListGamesAsync()
+    public async Task<Collection<Game>> GetWishListGamesAsync(int userId)
     {
         try
         {
-            var response = await this.UserGameRepository.GetUserWishlistAsync(this.user.UserId);
+            var response = await this.UserGameRepository.GetUserWishlistAsync(userId);
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -337,7 +346,7 @@ public class UserGameService : IUserGameService
 
     public async Task<Collection<Game>> SearchWishListByNameAsync(string searchText)
     {
-        List<Game> allWishListGames = (await this.GetWishListGamesAsync()).ToList();
+        List<Game> allWishListGames = (await this.GetWishListGamesAsync(this.GetUser().UserId)).ToList();
         List<Game> matchingGames = new List<Game>();
 
         foreach (Game game in allWishListGames)
@@ -353,7 +362,7 @@ public class UserGameService : IUserGameService
 
     public async Task<Collection<Game>> FilterWishListGamesAsync(string criteria)
     {
-        Collection<Game> games = await this.GetWishListGamesAsync();
+        Collection<Game> games = await this.GetWishListGamesAsync(this.GetUser().UserId);
         Collection<Game> filteredGames = new Collection<Game>();
 
         bool isKnownCriteria = criteria == FilterCriteria.OVERWHELMINGLYPOSITIVE ||
@@ -395,11 +404,11 @@ public class UserGameService : IUserGameService
         return filteredGames;
     }
 
-    public async Task<Collection<Game>> GetPurchasedGamesAsync()
+    public async Task<Collection<Game>> GetPurchasedGamesAsync(int userId)
     {
         try
         {
-            var response = await this.UserGameRepository.GetUserPurchasedGamesAsync(this.user.UserId);
+            var response = await this.UserGameRepository.GetUserPurchasedGamesAsync(userId);
             var userGamesResponses = response.UserGames;
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -429,13 +438,13 @@ public class UserGameService : IUserGameService
 
     public async Task<bool> IsGamePurchasedAsync(Game game)
     {
-        var purchasedGameList = await this.GetPurchasedGamesAsync();
+        var purchasedGameList = await this.GetPurchasedGamesAsync(this.GetUser().UserId);
         return purchasedGameList.Any(currentGame => currentGame.GameId == game.GameId);
     }
 
     public async Task<Collection<Game>> SortWishListGamesAsync(string criteria, bool ascending)
     {
-        Collection<Game> gamesCollection = await this.GetWishListGamesAsync();
+        Collection<Game> gamesCollection = await this.GetWishListGamesAsync(this.GetUser().UserId);
         List<Game> games = new List<Game>();
 
         foreach (var game in gamesCollection)
@@ -529,5 +538,15 @@ public class UserGameService : IUserGameService
     private int CompareByNameDescending(Game firstGame, Game secondGame)
     {
         return string.Compare(secondGame.GameTitle, firstGame.GameTitle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public IUserDetails GetUser()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags)
+    {
+        throw new NotImplementedException();
     }
 }

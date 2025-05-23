@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using SteamHub.Api.Context;
 using SteamHub.Api.Context.Repositories;
 using SteamHub.ApiContract.Context.Repositories;
+using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Repositories;
 using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Services.Interfaces;
@@ -30,6 +31,8 @@ builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailRepository
 builder.Services.AddScoped<IPointShopService, PointShopService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IUserGameService, UserGameService>();
+
 
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });

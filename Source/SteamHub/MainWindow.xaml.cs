@@ -26,7 +26,7 @@ namespace SteamHub
         private User user;
         private GameServiceProxy gameService;
         private CartServiceProxy cartService;
-        private UserGameService userGameService;
+        private UserGameServiceProxy userGameService;
         private DeveloperService developerService;
         private PointShopServiceProxy pointShopService;
         private InventoryService inventoryService;
@@ -141,7 +141,7 @@ namespace SteamHub
 
             this.cartService = new CartServiceProxy(httpClientFactory, loggedInUser);
 
-            this.userGameService = new UserGameService(userRepository, userGamesRepository, gameRepository, tagRepository, loggedInUser);
+            this.userGameService = new UserGameServiceProxy(httpClientFactory, loggedInUser);
 
             this.developerService = new DeveloperService(
             gameRepository, tagRepository, userGamesRepository, userRepository, itemRepository, itemTradeDetailsRepository, loggedInUser);

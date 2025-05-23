@@ -12,16 +12,20 @@ namespace SteamHub.ApiContract.Services.Interfaces
     using System.Threading.Tasks;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Tag;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.UsersGames;
 
     public interface IUserGameService
     {
         int LastEarnedPoints { get; }
 
-        Task RemoveGameFromWishlistAsync(Game game);
+        IUserDetails GetUser();
 
-        Task AddGameToWishlistAsync(Game game);
+        Task RemoveGameFromWishlistAsync(UserGameRequest gameRequest);
 
-        Task PurchaseGamesAsync(List<Game> games, bool isWalletPayment);
+        Task AddGameToWishlistAsync(UserGameRequest gameRequest);
+
+        Task PurchaseGamesAsync(PurchaseGamesRequest request);
 
         Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags);
 
@@ -33,7 +37,9 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<Collection<Game>> GetRecommendedGamesAsync();
 
-        Task<Collection<Game>> GetWishListGamesAsync();
+        Task<Collection<Game>> GetWishListGamesAsync(int userId);
+
+        Task<Collection<Game>> GetAllGamesAsync(int userId);
 
         Task<Collection<Game>> SearchWishListByNameAsync(string searchText);
 
@@ -42,5 +48,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
         Task<bool> IsGamePurchasedAsync(Game game);
 
         Task<Collection<Game>> SortWishListGamesAsync(string criteria, bool ascending);
+
+        Task<Collection<Game>> GetPurchasedGamesAsync(int userId);
     }
 }

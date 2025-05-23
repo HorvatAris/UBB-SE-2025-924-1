@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SteamHub.ApiContract.Models.UsersGames;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 
@@ -20,7 +21,8 @@ namespace SteamHub.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string search = "", string filter = "", string sort = "")
         {
-            var games = (await userGameService.GetWishListGamesAsync()).ToList();
+            var userId = userGameService.GetUser().UserId;
+            var games = (await userGameService.GetWishListGamesAsync(userId)).ToList();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -66,9 +68,14 @@ namespace SteamHub.Web.Controllers
         public async Task<IActionResult> Remove(int gameId)
         {
             var game = await gameService.GetGameByIdAsync(gameId);
+            var request = new UserGameRequest
+            {
+                GameId = game.GameId,
+                UserId = userGameService.GetUser().UserId
+            };
             if (game != null)
             {
-                await userGameService.RemoveGameFromWishlistAsync(game);
+                await userGameService.RemoveGameFromWishlistAsync(request);
             }
 
             return RedirectToAction("Index");

@@ -58,7 +58,7 @@ namespace SteamHub.Web.Controllers
                     UserId = this.user.UserId,
                 };
 
-                await cartService.AddGameToCartAsync(request);
+                await cartService.AddGameToCartAsync(game);
                 return Json(new { success = true, message = "Game added to cart successfully!" });
             }
             catch (Exception ex)
@@ -73,10 +73,15 @@ namespace SteamHub.Web.Controllers
             try
             {
                 var game = await gameService.GetGameByIdAsync(id);
+                var userGameRequest = new UserGameRequest
+                {
+                    GameId = id,
+                    UserId = this.user.UserId,
+                };
                 if (game == null)
                     return Json(new { success = false, message = "Game not found." });
 
-                await userGameService.AddGameToWishlistAsync(game);
+                await userGameService.AddGameToWishlistAsync(userGameRequest);
                 return Json(new { success = true, message = "Game added to wishlist successfully!" });
             }
             catch (Exception ex)

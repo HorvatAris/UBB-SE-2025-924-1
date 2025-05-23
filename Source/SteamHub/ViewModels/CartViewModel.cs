@@ -102,7 +102,7 @@ public class CartViewModel : INotifyPropertyChanged
             GameId = game.GameId,
             UserId = this.user.UserId,
         };
-        await this.cartService.RemoveGameFromCartAsync(gameRequest);
+        await this.cartService.RemoveGameFromCartAsync(game);
         this.CartGames.Remove(game);
         this.UpdateTotalPrice();
         this.OnPropertyChanged(nameof(this.CartGames));
@@ -113,8 +113,14 @@ public class CartViewModel : INotifyPropertyChanged
         bool isWalletPayment = false;
         if (this.SelectedPaymentMethod == PaymentMethods.SteamWalletPaymentWallet)
             isWalletPayment = true;
+        var purchaseRequest = new PurchaseGamesRequest
+        {
+            UserId = this.user.UserId,
+            Games = this.CartGames.ToList(),
+            IsWalletPayment = isWalletPayment,
+        };
 
-        await this.userGameService.PurchaseGamesAsync(this.CartGames.ToList(), isWalletPayment);
+        await this.userGameService.PurchaseGamesAsync(purchaseRequest);
 
         // Get the points earned from the user game service
         this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
