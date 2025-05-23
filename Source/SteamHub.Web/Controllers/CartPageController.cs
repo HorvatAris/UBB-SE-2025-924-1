@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SteamHub.ApiContract.Models.User;
+using SteamHub.ApiContract.Models.UsersGames;
 using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
@@ -24,7 +25,7 @@ namespace SteamHub.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var games = await cartService.GetCartGamesAsync();
+            var games = await cartService.GetCartGamesAsync(this.user.UserId);
             var model = new CartPageViewModel
             {
                 CartGames = games,
@@ -37,9 +38,16 @@ namespace SteamHub.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int gameId)
         {
-            var game = (await cartService.GetCartGamesAsync()).FirstOrDefault(g => g.GameId == gameId);
+            var game = (await cartService.GetCartGamesAsync(this.user.UserId)).FirstOrDefault(g => g.GameId == gameId);
             if (game != null)
-                await cartService.RemoveGameFromCartAsync(game);
+            {
+                var request = new UserGameRequest
+                {
+                    GameId = game.GameId,
+                    UserId = this.user.UserId,
+                };
+                await cartService.RemoveGameFromCartAsync(request);
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -82,7 +90,7 @@ namespace SteamHub.Web.Controllers
 
             if (success)
             {
-                var games = await cartService.GetCartGamesAsync();
+                var games = await cartService.GetCartGamesAsync(this.user.UserId);
                 await userGameService.PurchaseGamesAsync(games, false);
                 await cartService.RemoveGamesFromCartAsync(games);
 
@@ -120,7 +128,7 @@ namespace SteamHub.Web.Controllers
 
             if (success)
             {
-                var games = await cartService.GetCartGamesAsync();
+                var games = await cartService.GetCartGamesAsync(this.user.UserId);
                 await userGameService.PurchaseGamesAsync(games, false);
                 await cartService.RemoveGamesFromCartAsync(games);
 
@@ -145,7 +153,7 @@ namespace SteamHub.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var games = await cartService.GetCartGamesAsync();
+            var games = await cartService.GetCartGamesAsync(this.user.UserId);
             await userGameService.PurchaseGamesAsync(games, true);
             await cartService.RemoveGamesFromCartAsync(games);
 
