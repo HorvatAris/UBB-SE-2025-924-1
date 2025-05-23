@@ -19,6 +19,7 @@ namespace SteamHub.ViewModels
     using SteamHub.ApiContract.Services.Interfaces;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.UsersGames;
 
     public class CreditCardPaymentViewModel : INotifyPropertyChanged
     {
@@ -117,7 +118,13 @@ namespace SteamHub.ViewModels
             {
                 List<Game> purchasedGames = await this.cartService.GetCartGamesAsync(this.user.UserId);
                 await this.cartService.RemoveGamesFromCartAsync(purchasedGames);
-                await this.userGameService.PurchaseGamesAsync(purchasedGames, false);
+                var request = new PurchaseGamesRequest
+                {
+                    UserId = this.user.UserId,
+                    Games = purchasedGames.ToList(),
+                    IsWalletPayment = false,
+                };
+                await this.userGameService.PurchaseGamesAsync(request);
                 this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
 
                 try

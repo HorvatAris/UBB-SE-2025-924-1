@@ -19,6 +19,7 @@ namespace SteamHub.ViewModels
     using SteamHub.ApiContract.Models;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.UsersGames;
 
     public class PaypalPaymentViewModel : INotifyPropertyChanged
     {
@@ -85,7 +86,13 @@ namespace SteamHub.ViewModels
             if (paymentSuccess)
             {
                 await this.cartService.RemoveGamesFromCartAsync(this.purchasedGames);
-                await this.userGameService.PurchaseGamesAsync(this.purchasedGames, false);
+                var request = new PurchaseGamesRequest
+                {
+                    UserId = this.user.UserId,
+                    Games = this.purchasedGames.ToList(),
+                    IsWalletPayment = false,
+                };
+                await this.userGameService.PurchaseGamesAsync(request);
 
                 // Get points earned from the purchase
                 int pointsEarned = this.userGameService.LastEarnedPoints;

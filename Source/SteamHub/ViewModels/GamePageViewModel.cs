@@ -174,9 +174,14 @@ public class GamePageViewModel : INotifyPropertyChanged
     {
         if (this.Game != null && this.userGameService != null)
         {
+            var gameRequest = new UserGameRequest
+            {
+                UserId = this.user.UserId,
+                GameId = this.Game.GameId
+            };
             try
             {
-                await this.userGameService.AddGameToWishlistAsync(this.Game);
+                await this.userGameService.AddGameToWishlistAsync(gameRequest);
             }
             catch (Exception exception)
             {
@@ -214,7 +219,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
         try
         {
-            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game);
+            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game, this.user.UserId);
         }
         catch (Exception)
         {

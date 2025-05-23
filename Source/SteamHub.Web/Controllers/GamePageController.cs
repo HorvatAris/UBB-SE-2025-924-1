@@ -28,7 +28,7 @@ namespace SteamHub.Web.Controllers
             var game = await gameService.GetGameByIdAsync(id);
             if (game == null) return NotFound();
 
-            var isOwned = await userGameService.IsGamePurchasedAsync(game);
+            var isOwned = await userGameService.IsGamePurchasedAsync(game, user.UserId);
             var tags = await gameService.GetAllGameTagsAsync(game);
             var similarGames = await gameService.GetSimilarGamesAsync(game.GameId);
 
@@ -73,10 +73,15 @@ namespace SteamHub.Web.Controllers
             try
             {
                 var game = await gameService.GetGameByIdAsync(id);
+                var userGameRequest = new UserGameRequest
+                {
+                    GameId = id,
+                    UserId = this.user.UserId,
+                };
                 if (game == null)
                     return Json(new { success = false, message = "Game not found." });
 
-                await userGameService.AddGameToWishlistAsync(game);
+                await userGameService.AddGameToWishlistAsync(userGameRequest);
                 return Json(new { success = true, message = "Game added to wishlist successfully!" });
             }
             catch (Exception ex)

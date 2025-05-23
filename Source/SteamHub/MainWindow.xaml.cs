@@ -141,7 +141,7 @@ namespace SteamHub
 
             this.cartService = new CartServiceProxy(httpClientFactory, loggedInUser);
 
-            this.userGameService = new UserGameService(userRepository, userGamesRepository, gameRepository, tagRepository, loggedInUser);
+            this.userGameService = new UserGameServiceProxy(httpClientFactory, loggedInUser);
 
             this.developerService = new DeveloperServiceProxy(httpClientFactory, loggedInUser);
 
