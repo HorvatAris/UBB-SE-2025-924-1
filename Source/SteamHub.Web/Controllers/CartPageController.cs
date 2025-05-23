@@ -91,7 +91,13 @@ namespace SteamHub.Web.Controllers
             if (success)
             {
                 var games = await cartService.GetCartGamesAsync(this.user.UserId);
-                await userGameService.PurchaseGamesAsync(games, false);
+                var request = new PurchaseGamesRequest
+                {
+                    UserId = this.user.UserId,
+                    Games = games.ToList(),
+                    IsWalletPayment = false
+                };
+                await userGameService.PurchaseGamesAsync(request);
                 await cartService.RemoveGamesFromCartAsync(games);
 
                 model.IsSuccess = true;
@@ -129,7 +135,13 @@ namespace SteamHub.Web.Controllers
             if (success)
             {
                 var games = await cartService.GetCartGamesAsync(this.user.UserId);
-                await userGameService.PurchaseGamesAsync(games, false);
+                var request = new PurchaseGamesRequest
+                {
+                    UserId = this.user.UserId,
+                    Games = games.ToList(),
+                    IsWalletPayment = false
+                };
+                await userGameService.PurchaseGamesAsync(request);
                 await cartService.RemoveGamesFromCartAsync(games);
 
                 model.IsSuccess = true;
@@ -154,7 +166,13 @@ namespace SteamHub.Web.Controllers
             }
 
             var games = await cartService.GetCartGamesAsync(this.user.UserId);
-            await userGameService.PurchaseGamesAsync(games, true);
+            var request = new PurchaseGamesRequest
+            {
+                UserId = this.user.UserId,
+                Games = games.ToList(),
+                IsWalletPayment = true
+            };
+            await userGameService.PurchaseGamesAsync(request);
             await cartService.RemoveGamesFromCartAsync(games);
 
             TempData["PointsEarned"] = userGameService.LastEarnedPoints;

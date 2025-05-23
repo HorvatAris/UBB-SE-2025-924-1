@@ -16,6 +16,7 @@ using SteamHub.Pages;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.ApiContract.Models.Tag;
+using SteamHub.ApiContract.Models.User;
 
 
 public class HomePageViewModel : INotifyPropertyChanged
@@ -30,13 +31,14 @@ public class HomePageViewModel : INotifyPropertyChanged
     private int minPrice;
     private int maxPrice;
     private ObservableCollection<string> selectedTags;
+    private IUserDetails user;
 
     public HomePageViewModel(IGameService gameService, IUserGameService userGameService, ICartService cartService)
     {
         this.gameService = gameService;
         this.userGameService = userGameService;
         this.cartService = cartService;
-
+        this.user = this.userGameService.GetUser();
         this.SearchedOrFilteredGames = new ObservableCollection<Game>();
         this.TrendingGames = new ObservableCollection<Game>();
         this.RecommendedGames = new ObservableCollection<Game>();
@@ -215,7 +217,7 @@ public class HomePageViewModel : INotifyPropertyChanged
     private async Task LoadRecommendedGames()
     {
         this.RecommendedGames.Clear();
-        var reccomendedGames = await this.userGameService.GetRecommendedGamesAsync();
+        var reccomendedGames = await this.userGameService.GetRecommendedGamesAsync(this.user.UserId);
         foreach (var game in reccomendedGames)
         {
             this.RecommendedGames.Add(game);

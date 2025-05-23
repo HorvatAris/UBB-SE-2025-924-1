@@ -7,40 +7,49 @@ namespace SteamHub.ApiContract.Services.Interfaces
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.Tag;
+    using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.UsersGames;
 
     public interface IUserGameService
     {
         int LastEarnedPoints { get; }
 
-        Task RemoveGameFromWishlistAsync(Game game);
+        IUserDetails GetUser();
 
-        Task AddGameToWishlistAsync(Game game);
+        Task RemoveGameFromWishlistAsync(UserGameRequest gameRequest);
 
-        Task PurchaseGamesAsync(List<Game> games, bool isWalletPayment);
+        Task AddGameToWishlistAsync(UserGameRequest gameRequest);
 
-        Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags);
+        Task PurchaseGamesAsync(PurchaseGamesRequest request);
 
-        Task<Collection<Tag>> GetFavoriteUserTagsAsync();
+        Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags, int userId);
 
-        Task ComputeTagScoreForGamesAsync(Collection<Game> games);
+        Task<Collection<Tag>> GetFavoriteUserTagsAsync(int userId);
+
+        Task ComputeTagScoreForGamesAsync(Collection<Game> games, int userId);
 
         void ComputeTrendingScores(Collection<Game> games);
 
-        Task<Collection<Game>> GetRecommendedGamesAsync();
+        Task<Collection<Game>> GetRecommendedGamesAsync(int userId);
 
-        Task<Collection<Game>> GetWishListGamesAsync();
+        Task<Collection<Game>> GetWishListGamesAsync(int userId);
+
+        Task<Collection<Game>> GetAllGamesAsync(int userId);
 
         Task<Collection<Game>> SearchWishListByNameAsync(string searchText);
 
         Task<Collection<Game>> FilterWishListGamesAsync(string criteria);
 
-        Task<bool> IsGamePurchasedAsync(Game game);
+        Task<bool> IsGamePurchasedAsync(Game game, int userId);
 
         Task<Collection<Game>> SortWishListGamesAsync(string criteria, bool ascending);
+
+        Task<Collection<Game>> GetPurchasedGamesAsync(int userId);
     }
 }
