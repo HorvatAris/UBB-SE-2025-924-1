@@ -45,7 +45,7 @@ builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepositoryProx
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepositoryProxy>();
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 
-builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IGameService, GameServiceProxy>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICartService, CartServiceProxy>();
 builder.Services.AddScoped<IDeveloperService, DeveloperService>();
