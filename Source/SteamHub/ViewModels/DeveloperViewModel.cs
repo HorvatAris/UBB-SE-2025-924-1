@@ -21,6 +21,7 @@ using Windows.Gaming.Input;
 
 public class DeveloperViewModel : INotifyPropertyChanged
 {
+    private IUserDetails user;
     private readonly IDeveloperService developerService;
     private string editGameId;
     private string editGameName;
@@ -51,6 +52,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
     public DeveloperViewModel(IDeveloperService developerService)
     {
         this.developerService = developerService;
+        this.user = this.developerService.GetCurrentUser();
         this.DeveloperGames = new ObservableCollection<Game>();
         this.UnvalidatedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
@@ -358,12 +360,12 @@ public class DeveloperViewModel : INotifyPropertyChanged
 
     public bool CheckIfUserIsADeveloper()
     {
-        return this.developerService.User.UserRole == UserRole.Developer;
+        return this.developerService.GetCurrentUser().UserRole == UserRole.Developer;
     }
 
     public async Task CreateGameAsync(Game game, IList<Tag> selectedTags)
     {
-        await this.developerService.CreateGameWithTagsAsync(game, selectedTags);
+        await this.developerService.CreateGameWithTagsAsync(game, selectedTags,this.user.UserId);
         this.DeveloperGames.Add(game);
     }
 
@@ -445,7 +447,9 @@ public class DeveloperViewModel : INotifyPropertyChanged
             minimumRequirement,
             recommendedRequirements,
             discountText,
-            selectedTags);
+            selectedTags,
+            this.user.UserId
+            );
         this.DeveloperGames.Add(game);
         this.OnPropertyChanged(nameof(this.DeveloperGames));
     }

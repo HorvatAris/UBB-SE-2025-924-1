@@ -3,6 +3,7 @@ using SteamHub.Api.Context;
 using SteamHub.Api.Context.Repositories;
 using SteamHub.ApiContract.Context.Repositories;
 using SteamHub.ApiContract.Repositories;
+using SteamHub.ApiContract.ServiceProxies;
 using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Services.Interfaces;
 
@@ -28,6 +29,7 @@ builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepository>();
 builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailRepository>();
 
 builder.Services.AddScoped<IPointShopService, PointShopService>();
+builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });

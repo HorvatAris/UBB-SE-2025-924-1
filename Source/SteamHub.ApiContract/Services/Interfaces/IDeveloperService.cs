@@ -16,6 +16,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
     public interface IDeveloperService
     {
+        IUserDetails GetCurrentUser();
         Task ValidateGameAsync(int game_id);
 
         Game ValidateInputForAddingAGame(string gameIdText, string name, string priceText, string description, string imageUrl, string trailerUrl, string gameplayUrl, string minimumRequirement, string reccommendedRequirement, string discountText, IList<Tag> selectedTags);
@@ -31,19 +32,20 @@ namespace SteamHub.ApiContract.Services.Interfaces
             string minimumRequirement,
             string reccommendedRequirement,
             string discountText,
-            IList<Tag> selectedTags);
+            IList<Tag> selectedTags,int userId);
 
         Game FindGameInObservableCollectionById(int gameId, ObservableCollection<Game> gameList);
 
-        Task CreateGameAsync(Game game);
+        Task CreateGameAsync(Game game, int userId);
 
-        Task CreateGameWithTagsAsync(Game game, IList<Tag> selectedTags);
+        Task CreateGameWithTagsAsync(Game game, IList<Tag> selectedTags,int userId);
 
         Task UpdateGameAsync(Game game);
 
         Task UpdateGameWithTagsAsync(Game game, IList<Tag> selectedTags);
 
         Task DeleteGameAsync(int gameId, ObservableCollection<Game> developerGames);
+        Task DeleteGameAsync(int game_id);
 
         Task<List<Game>> GetDeveloperGamesAsync();
 
@@ -67,7 +69,6 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<int> GetGameOwnerCountAsync(int gameId);
 
-        IUserDetails User { get; }
 
         Task UpdateGameAndRefreshListAsync(Game game, ObservableCollection<Game> developerGames);
 
