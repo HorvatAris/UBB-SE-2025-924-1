@@ -26,7 +26,7 @@ namespace SteamHub
         private User user;
         private GameServiceProxy gameService;
         private CartServiceProxy cartService;
-        private UserGameService userGameService;
+        private UserGameServiceProxy userGameService;
         private DeveloperServiceProxy developerService;
         private PointShopServiceProxy pointShopService;
         private InventoryService inventoryService;
