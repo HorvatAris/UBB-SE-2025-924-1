@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SteamHub.ApiContract.Models.User;
+using SteamHub.ApiContract.Models.UsersGames;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 
@@ -11,12 +13,14 @@ namespace SteamHub.Web.Controllers
         private readonly IGameService gameService;
         private readonly ICartService cartService;
         private readonly IUserGameService userGameService;
+        private IUserDetails user;
 
         public GamePageController(IGameService gameService, ICartService cartService, IUserGameService userGameService)
         {
             this.gameService = gameService;
             this.cartService = cartService;
             this.userGameService = userGameService;
+            this.user = cartService.GetUser();
         }
 
         public async Task<IActionResult> Index(int id)
@@ -48,7 +52,13 @@ namespace SteamHub.Web.Controllers
                 var game = await gameService.GetGameByIdAsync(id);
                 if (game == null) return Json(new { success = false, message = "Game not found." });
 
-                await cartService.AddGameToCartAsync(game);
+                var request = new UserGameRequest
+                {
+                    GameId = game.GameId,
+                    UserId = this.user.UserId,
+                };
+
+                await cartService.AddGameToCartAsync(request);
                 return Json(new { success = true, message = "Game added to cart successfully!" });
             }
             catch (Exception ex)
