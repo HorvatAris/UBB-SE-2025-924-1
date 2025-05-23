@@ -45,28 +45,16 @@ namespace SteamHub.ApiContract.ServiceProxies
             return this.User;
         }
 
-        public async Task ActivateItemAsync(PointShopItem item)
+        public async Task ActivateItemAsync(UpdateUserPointShopItemInventoryRequest request)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item), "Item cannot be null");
-            }
-
             if (this.User == null)
             {
                 throw new InvalidOperationException("User is not initialized");
             }
 
-            var request = new UpdateUserPointShopItemInventoryRequest
-            {
-                UserId = this.User.UserId,
-                PointShopItemId = item.ItemIdentifier,
-                IsActive = true
-            };
-
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("/api/UserPointShopItemInventory/update", request);
+                var response = await _httpClient.PutAsJsonAsync($"/api/PointShop/Activate", request);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception exception)
@@ -97,28 +85,16 @@ namespace SteamHub.ApiContract.ServiceProxies
             return !isAlreadyOwned && hasEnoughPoints;
         }
 
-        public async Task DeactivateItemAsync(PointShopItem item)
+        public async Task DeactivateItemAsync(UpdateUserPointShopItemInventoryRequest request)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item), "Item cannot be null");
-            }
-
             if (this.User == null)
             {
                 throw new InvalidOperationException("User is not initialized");
             }
 
-            var request = new UpdateUserPointShopItemInventoryRequest
-            {
-                UserId = this.User.UserId,
-                PointShopItemId = item.ItemIdentifier,
-                IsActive = false
-            };
-
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("/api/UserPointShopItemInventory/update", request);
+                var response = await _httpClient.PutAsJsonAsync($"/api/PointShop/Deactivate", request);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception exception)
@@ -131,17 +107,12 @@ namespace SteamHub.ApiContract.ServiceProxies
         {
             try
             {
-                var response = await _httpClient.GetAsync("/api/PointShopItems");
-                response.EnsureSuccessStatusCode();
-                var itemsResponse = await response.Content.ReadFromJsonAsync<GetPointShopItemsResponse>(_options);
-
-                // Map PointShopItemResponse to PointShopItem using PointShopItemMapper
-                var pointShopItems = itemsResponse?.PointShopItems?
-                    .Select(item => PointShopItemMapper.MapToPointShopItem(item))
-                    .ToList();
+                var itemsResponse = await _httpClient.GetAsync("/api/PointShop");
+                itemsResponse.EnsureSuccessStatusCode();
+                var itemsResult = await itemsResponse.Content.ReadFromJsonAsync<List<PointShopItem>>(_options);
 
                 // Ensure a non-null list is returned
-                return pointShopItems ?? new List<PointShopItem>();
+                return itemsResult ?? new List<PointShopItem>();
             }
             catch (Exception exception)
             {
@@ -152,7 +123,7 @@ namespace SteamHub.ApiContract.ServiceProxies
         public async Task<List<PointShopItem>> GetAvailableItemsAsync(IUserDetails user)
         {
             var allItems = await this.GetAllItemsAsync();
-            var userItems = await this.GetUserItemsAsync();
+            var userItems = await this.GetUserItemsAsync(this.User.UserId);
 
             var availableItems = new List<PointShopItem>();
 
@@ -183,7 +154,7 @@ namespace SteamHub.ApiContract.ServiceProxies
             try
             {
                 var allItems = await this.GetAllItemsAsync();
-                var userItems = await this.GetUserItemsAsync();
+                var userItems = await this.GetUserItemsAsync(this.User.UserId);
                 var availableItems = new List<PointShopItem>();
 
                 // Exclude items already owned by the user
@@ -257,47 +228,15 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task<Collection<PointShopItem>> GetUserItemsAsync()
+        public async Task<Collection<PointShopItem>> GetUserItemsAsync(int userId)
         {
             try
             {
-                var responseUserItems = await _httpClient.GetAsync($"/api/UserPointShopItemInventory/{this.User.UserId}");
-                responseUserItems.EnsureSuccessStatusCode();
-                var userItems = await responseUserItems.Content.ReadFromJsonAsync<GetUserPointShopItemInventoryResponse>(_options);
+                var userItemsResponse = await _httpClient.GetAsync($"/api/PointShop/User/{userId}");
+                userItemsResponse.EnsureSuccessStatusCode();
+                var userItems = await userItemsResponse.Content.ReadFromJsonAsync<Collection<PointShopItem>>(_options);
 
-                if (userItems == null)
-                {
-                    throw new InvalidOperationException("Invalid response from GetUserItemsAsync");
-                }
-
-                var responseAllItems = await _httpClient.GetAsync("/api/PointShopItems");
-                responseAllItems.EnsureSuccessStatusCode();
-
-                var allItems = await responseAllItems.Content.ReadFromJsonAsync<GetPointShopItemsResponse>(_options);
-
-                if (allItems == null)
-                {
-                    throw new InvalidOperationException("Invalid response from GetAllItemsAsync");
-                }
-
-                var userPointShopItems = userItems.UserPointShopItemsInventory
-                        .Select(userItem =>
-                        {
-                            var pointShopItem = allItems.PointShopItems
-                                .FirstOrDefault(item => item.PointShopItemId == userItem.PointShopItemId);
-
-                            if (pointShopItem != null)
-                            {
-                                var mappedItem = PointShopItemMapper.MapToPointShopItem(pointShopItem);
-                                mappedItem.IsActive = userItem.IsActive; // Update IsActive status
-                                return mappedItem;
-                            }
-
-                            return null;
-                        })
-                        .Where(item => item != null)
-                        .ToList();
-                return new Collection<PointShopItem>(userPointShopItems);
+                return userItems ?? new Collection<PointShopItem>();
             }
             catch (Exception exception)
             {
@@ -305,48 +244,12 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task PurchaseItemAsync(PointShopItem item)
+        public async Task PurchaseItemAsync(PurchasePointShopItemRequest purchaseRequest)
         {
             try
             {
-                if (item == null)
-                {
-                    throw new ArgumentNullException(nameof(item), "Item cannot be null");
-                }
-
-                if (this.User == null)
-                {
-                    throw new InvalidOperationException("User is not initialized");
-                }
-
-                if (this.User.PointsBalance < item.PointPrice)
-                {
-                    throw new InvalidOperationException("User does not have enough points to purchase this item");
-                }
-
-                var purchaseRequest = new PurchasePointShopItemRequest
-                {
-                    UserId = this.User.UserId,
-                    PointShopItemId = item.ItemIdentifier,
-                };
-
-                var response = await _httpClient.PostAsJsonAsync("/api/UserPointShopItemInventory/purchase", purchaseRequest);
+                var response = await _httpClient.PostAsJsonAsync("/api/PointShop/Purchase", purchaseRequest);
                 response.EnsureSuccessStatusCode();
-
-                this.User.PointsBalance -= (float)item.PointPrice;
-
-                // Update the user's points balance in the database
-                var updateUserRequest = new UpdateUserRequest
-                {
-                    UserName = this.User.UserName,
-                    Email = this.User.Email,
-                    WalletBalance = this.User.WalletBalance,
-                    PointsBalance = this.User.PointsBalance,
-                    Role = (RoleEnum)this.User.UserRole,
-                };
-
-                var responseUser = await _httpClient.PutAsJsonAsync($"/api/Users/{this.User.UserId}", updateUserRequest);
-                responseUser.EnsureSuccessStatusCode(); // Ensure the response is successful (2xx)
             }
             catch (Exception exception)
             {
@@ -374,12 +277,26 @@ namespace SteamHub.ApiContract.ServiceProxies
 
             if (item.IsActive)
             {
-                await this.DeactivateItemAsync(item);
+                var deactivateRequest = new UpdateUserPointShopItemInventoryRequest
+                {
+                    UserId = this.User.UserId,
+                    PointShopItemId = itemId,
+                    IsActive = false,
+                };
+
+                await this.DeactivateItemAsync(deactivateRequest);
                 return item;
             }
             else
             {
-                await this.ActivateItemAsync(item);
+                var activateRequest = new UpdateUserPointShopItemInventoryRequest
+                {
+                    UserId = this.User.UserId,
+                    PointShopItemId = itemId,
+                    IsActive = true,
+                };
+
+                await this.ActivateItemAsync(activateRequest);
                 return item;
             }
         }

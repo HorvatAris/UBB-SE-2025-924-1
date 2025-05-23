@@ -14,6 +14,7 @@ namespace SteamHub.ApiContract.Services
     using SteamHub.ApiContract.Constants;
     using SteamHub.ApiContract.Context.Repositories;
     using SteamHub.ApiContract.Models;
+    using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.PointShopItem;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UserPointShopItemInventory;
@@ -30,12 +31,11 @@ namespace SteamHub.ApiContract.Services
         private const int InitialIndexUserItems = 0;
         private const string FilterTypeAll = "All";
 
-        public PointShopService(IPointShopItemRepository pointShopItemRepository, IUserPointShopItemInventoryRepository userPointShopItemInventoryRepository, IUserRepository userRepository, IUserDetails user)
+        public PointShopService(IPointShopItemRepository pointShopItemRepository, IUserPointShopItemInventoryRepository userPointShopItemInventoryRepository, IUserRepository userRepository)
         {
             this.PointShopItemRepository = pointShopItemRepository;
             this.UserPointShopItemInventoryRepository = userPointShopItemInventoryRepository;
             this.UserRepository = userRepository;
-            this.User = user;
         }
 
         public IPointShopItemRepository PointShopItemRepository { get; set; }
@@ -43,13 +43,6 @@ namespace SteamHub.ApiContract.Services
         public IUserPointShopItemInventoryRepository UserPointShopItemInventoryRepository { get; set; }
 
         public IUserRepository UserRepository { get; set; }
-
-        public IUserDetails User { get; set; }
-
-        public IUserDetails GetCurrentUser()
-        {
-            return this.User;
-        }
 
         public async Task<List<PointShopItem>> GetAllItemsAsync()
         {
@@ -66,11 +59,11 @@ namespace SteamHub.ApiContract.Services
             }
         }
 
-        public async Task<Collection<PointShopItem>> GetUserItemsAsync()
+        public async Task<Collection<PointShopItem>> GetUserItemsAsync(int userId)
         {
             try
             {
-                var userItems = await this.UserPointShopItemInventoryRepository.GetUserInventoryAsync(this.User.UserId);
+                var userItems = await this.UserPointShopItemInventoryRepository.GetUserInventoryAsync(userId);
                 var allItems = await this.PointShopItemRepository.GetPointShopItemsAsync();
                 var userPointShopItems = userItems.UserPointShopItemsInventory
                         .Select(userItem =>
@@ -97,46 +90,49 @@ namespace SteamHub.ApiContract.Services
             }
         }
 
-        public async Task PurchaseItemAsync(PointShopItem item)
+        public async Task PurchaseItemAsync(PurchasePointShopItemRequest itemRequest)
         {
             try
             {
+                PointShopItemResponse item = await this.PointShopItemRepository.GetPointShopItemByIdAsync(itemRequest.PointShopItemId);
+                UserResponse user = await this.UserRepository.GetUserByIdAsync(itemRequest.UserId);
+
                 if (item == null)
                 {
                     throw new ArgumentNullException(nameof(item), "Item cannot be null");
                 }
 
-                if (this.User == null)
+                if (user == null)
                 {
                     throw new InvalidOperationException("User is not initialized");
                 }
 
-                if (this.User.PointsBalance < item.PointPrice)
+                if (user.PointsBalance < item.PointPrice)
                 {
                     throw new InvalidOperationException("User does not have enough points to purchase this item");
                 }
 
                 var purchaseRequest = new PurchasePointShopItemRequest
                 {
-                    UserId = this.User.UserId,
-                    PointShopItemId = item.ItemIdentifier,
+                    UserId = user.UserId,
+                    PointShopItemId = item.PointShopItemId,
                 };
 
                 await this.UserPointShopItemInventoryRepository.PurchaseItemAsync(purchaseRequest);
 
-                this.User.PointsBalance -= (float)item.PointPrice;
+                user.PointsBalance -= (float)item.PointPrice;
 
                 // Update the user's points balance in the database
                 var updateUserRequest = new UpdateUserRequest
                 {
-                    UserName = this.User.UserName,
-                    Email = this.User.Email,
-                    WalletBalance = this.User.WalletBalance,
-                    PointsBalance = this.User.PointsBalance,
-                    Role = (RoleEnum)this.User.UserRole,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    WalletBalance = user.WalletBalance,
+                    PointsBalance = user.PointsBalance,
+                    Role = (RoleEnum)user.Role,
                 };
 
-                await this.UserRepository.UpdateUserAsync(this.User.UserId, updateUserRequest);
+                await this.UserRepository.UpdateUserAsync(user.UserId, updateUserRequest);
             }
             catch (Exception exception)
             {
@@ -144,28 +140,10 @@ namespace SteamHub.ApiContract.Services
             }
         }
 
-        public async Task ActivateItemAsync(PointShopItem item)
+        public async Task ActivateItemAsync(UpdateUserPointShopItemInventoryRequest activateRequest)
         {
             try
             {
-                // this.repository.ActivateItem(item);
-                if (item == null)
-                {
-                    throw new ArgumentNullException(nameof(item), "Item cannot be null");
-                }
-
-                if (this.User == null)
-                {
-                    throw new InvalidOperationException("User is not initialized");
-                }
-
-                var activateRequest = new UpdateUserPointShopItemInventoryRequest
-                {
-                    UserId = this.User.UserId,
-                    PointShopItemId = item.ItemIdentifier,
-                    IsActive = true,
-                };
-
                 await this.UserPointShopItemInventoryRepository.UpdateItemStatusAsync(activateRequest);
             }
             catch (Exception exception)
@@ -174,28 +152,11 @@ namespace SteamHub.ApiContract.Services
             }
         }
 
-        public async Task DeactivateItemAsync(PointShopItem item)
+        public async Task DeactivateItemAsync(UpdateUserPointShopItemInventoryRequest deactivateRequest)
         {
             try
             {
-                if (item == null)
-                {
-                    throw new ArgumentNullException(nameof(item), "Item cannot be null");
-                }
-
-                if (this.User == null)
-                {
-                    throw new InvalidOperationException("User is not initialized");
-                }
-
-                var activateRequest = new UpdateUserPointShopItemInventoryRequest
-                {
-                    UserId = this.User.UserId,
-                    PointShopItemId = item.ItemIdentifier,
-                    IsActive = false,
-                };
-
-                await this.UserPointShopItemInventoryRepository.UpdateItemStatusAsync(activateRequest);
+                await this.UserPointShopItemInventoryRepository.UpdateItemStatusAsync(deactivateRequest);
             }
             catch (Exception exception)
             {
@@ -208,7 +169,7 @@ namespace SteamHub.ApiContract.Services
             try
             {
                 var allItems = await this.GetAllItemsAsync();
-                var userItems = await this.GetUserItemsAsync();
+                var userItems = await this.GetUserItemsAsync(0);
                 var availableItems = new List<PointShopItem>();
 
                 // Exclude items already owned by the user
@@ -307,7 +268,7 @@ namespace SteamHub.ApiContract.Services
         public async Task<List<PointShopItem>> GetAvailableItemsAsync(IUserDetails user)
         {
             var allItems = await this.GetAllItemsAsync();
-            var userItems = await this.GetUserItemsAsync();
+            var userItems = await this.GetUserItemsAsync(0);
 
             var availableItems = new List<PointShopItem>();
 
@@ -365,7 +326,7 @@ namespace SteamHub.ApiContract.Services
                         selectedItem.Name,
                         selectedItem.PointPrice,
                         selectedItem.ItemType,
-                        User.UserId);
+                        0);
                 }
 
                 return true;
@@ -396,14 +357,33 @@ namespace SteamHub.ApiContract.Services
 
             if (item.IsActive)
             {
-                await this.DeactivateItemAsync(item);
+                var deactivateRequest = new UpdateUserPointShopItemInventoryRequest
+                {
+                    UserId = 0,
+                    PointShopItemId = itemId,
+                    IsActive = false,
+                };
+
+                await this.DeactivateItemAsync(deactivateRequest);
                 return item;
             }
             else
             {
-                await this.ActivateItemAsync(item);
+                var activateRequest = new UpdateUserPointShopItemInventoryRequest
+                {
+                    UserId = 0,
+                    PointShopItemId = itemId,
+                    IsActive = false,
+                };
+
+                await this.ActivateItemAsync(activateRequest);
                 return item;
             }
+        }
+
+        public IUserDetails GetCurrentUser()
+        {
+            throw new NotImplementedException();
         }
     }
 }
