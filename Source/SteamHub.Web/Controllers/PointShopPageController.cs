@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SteamHub.ApiContract.Models;
+using SteamHub.ApiContract.Models.UserPointShopItemInventory;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 using System.Collections.ObjectModel;
@@ -22,7 +23,7 @@ namespace SteamHub.Web.Controllers
         {
             var user = _pointShopService.GetCurrentUser();
             var shopItems = await _pointShopService.GetAvailableItemsAsync(user);
-            var userItems = await _pointShopService.GetUserItemsAsync();
+            var userItems = await _pointShopService.GetUserItemsAsync(user.UserId);
 
 
             var viewModel = new PointShopViewModel
@@ -51,7 +52,12 @@ namespace SteamHub.Web.Controllers
 
             try
             {
-                await _pointShopService.PurchaseItemAsync(selectedItem);
+                var request = new PurchasePointShopItemRequest
+                {
+                    PointShopItemId = selectedItem.ItemIdentifier,
+                    UserId = user.UserId
+                };
+                await _pointShopService.PurchaseItemAsync(request);
                 var newTransaction = new PointShopTransaction(
                     transactionHistory.Count + 1,
                     selectedItem.Name,
@@ -72,7 +78,8 @@ namespace SteamHub.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleActivation(int id)
         {
-            var userItems = await _pointShopService.GetUserItemsAsync();
+            var user = _pointShopService.GetCurrentUser();
+            var userItems = await _pointShopService.GetUserItemsAsync(user.UserId);
             var selectedItem = userItems.FirstOrDefault(item => item.ItemIdentifier == id);
 
             if (selectedItem == null)
@@ -82,14 +89,20 @@ namespace SteamHub.Web.Controllers
 
             try
             {
+                var request = new UpdateUserPointShopItemInventoryRequest
+                {
+                    PointShopItemId = selectedItem.ItemIdentifier,
+                    UserId = user.UserId,
+                    IsActive = !selectedItem.IsActive  
+                };
                 if (selectedItem.IsActive)
                 {
-                    await _pointShopService.DeactivateItemAsync(selectedItem);
+                    await _pointShopService.DeactivateItemAsync(request);
                     return Json(new { success = true, message = $"{selectedItem.Name} has been deactivated." });
                 }
                 else
                 {
-                    await _pointShopService.ActivateItemAsync(selectedItem);
+                    await _pointShopService.ActivateItemAsync(request);
                     return Json(new { success = true, message = $"{selectedItem.Name} has been activated." });
                 }
             }
@@ -136,7 +149,8 @@ namespace SteamHub.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetInventory()
         {
-            var userItems = await _pointShopService.GetUserItemsAsync();
+            var user = _pointShopService.GetCurrentUser();
+            var userItems = await _pointShopService.GetUserItemsAsync(user.UserId);
 
             return Json(userItems.Select(item => new
             {
