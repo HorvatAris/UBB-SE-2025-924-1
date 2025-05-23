@@ -15,11 +15,11 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
     public interface IInventoryService
     {
-        Task<List<Item>> GetItemsFromInventoryAsync(Game game);
+        Task<List<Item>> GetItemsFromInventoryAsync(Game game, int userId);
 
-        Task<List<Item>> GetAllItemsFromInventoryAsync();
+        Task<List<Item>> GetAllItemsFromInventoryAsync(int userId);
 
-        Task AddItemToInventoryAsync(Game game, Item item);
+        Task AddItemToInventoryAsync(Game game, Item item,int userId);
 
         Task<List<Item>> GetUserInventoryAsync(int userId);
 
@@ -31,7 +31,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         List<Item> FilterInventoryItems(List<Item> items, Game selectedGame, string searchText);
 
-        Task<List<Game>> GetAvailableGamesAsync(List<Item> items);
+        Task<List<Game>> GetAvailableGamesAsync(List<Item> items,int userId);
 
         Task<List<Item>> GetUserFilteredInventoryAsync(int userId, Game selectedGame, string searchText);
     }

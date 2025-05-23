@@ -29,7 +29,7 @@ namespace SteamHub
         private UserGameService userGameService;
         private DeveloperServiceProxy developerService;
         private PointShopServiceProxy pointShopService;
-        private InventoryService inventoryService;
+        private InventoryServiceProxy inventoryService;
         private MarketplaceService marketplaceService;
         private TradeService tradeService;
         private UserService userService;
@@ -84,7 +84,7 @@ namespace SteamHub
                 },
             };
 
-            User loggedInUser = users[0];
+            User loggedInUser = users[1];
 
             // Assign to the class field so it can be used in navigation
             this.user = loggedInUser;
@@ -135,7 +135,7 @@ namespace SteamHub
 
             this.pointShopService = new PointShopServiceProxy(httpClientFactory, loggedInUser);
 
-            this.inventoryService = new InventoryService(userInventoryRepository, itemRepository, gameRepository, this.user);
+            this.inventoryService = new InventoryServiceProxy(httpClientFactory,loggedInUser);
 
             this.gameService = new GameServiceProxy(httpClientFactory);
 
