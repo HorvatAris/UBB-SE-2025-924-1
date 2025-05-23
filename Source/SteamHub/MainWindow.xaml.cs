@@ -24,7 +24,7 @@ namespace SteamHub
     public sealed partial class MainWindow : Window
     {
         private User user;
-        private GameService gameService;
+        private GameServiceProxy gameService;
         private CartServiceProxy cartService;
         private UserGameService userGameService;
         private DeveloperServiceProxy developerService;
@@ -137,7 +137,7 @@ namespace SteamHub
 
             this.inventoryService = new InventoryService(userInventoryRepository, itemRepository, gameRepository, this.user);
 
-            this.gameService = new GameService(gameRepository,tagRepository);
+            this.gameService = new GameServiceProxy(httpClientFactory);
 
             this.cartService = new CartServiceProxy(httpClientFactory, loggedInUser);
 

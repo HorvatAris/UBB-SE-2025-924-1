@@ -78,8 +78,7 @@ public class GameService : IGameService
 
     public async Task<Collection<Tag>> GetAllGameTagsAsync(Game game)
     {
-        var tagsResponse = await this.TagRepository.GetAllTagsAsync();
-        var allTags = new Collection<Tag>(tagsResponse.Tags.Select(TagMapper.MapToTag).ToList());
+        var allTags = await this.GetAllTagsAsync();
 
         // Extract the result from the task
         var tagsForCurrentGame = new List<Tag>();
