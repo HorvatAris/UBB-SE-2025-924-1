@@ -21,6 +21,7 @@ using Windows.Gaming.Input;
 
 public class DeveloperViewModel : INotifyPropertyChanged
 {
+    private IUserDetails user;
     private readonly IDeveloperService developerService;
     private string editGameId;
     private string editGameName;
@@ -51,10 +52,12 @@ public class DeveloperViewModel : INotifyPropertyChanged
     public DeveloperViewModel(IDeveloperService developerService)
     {
         this.developerService = developerService;
+        this.user = this.developerService.GetCurrentUser();
         this.DeveloperGames = new ObservableCollection<Game>();
         this.UnvalidatedGames = new ObservableCollection<Game>();
         this.Tags = new ObservableCollection<Tag>();
         this.PageTitle = DeveloperPageTitles.MYGAMES;
+
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -342,7 +345,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
     public async Task LoadGamesAsync()
     {
         this.DeveloperGames.Clear();
-        var games = await this.developerService.GetDeveloperGamesAsync();
+        var games = await this.developerService.GetDeveloperGamesAsync(this.user.UserId);
         foreach (var game in games)
         {
             this.DeveloperGames.Add(game);
@@ -358,18 +361,18 @@ public class DeveloperViewModel : INotifyPropertyChanged
 
     public bool CheckIfUserIsADeveloper()
     {
-        return this.developerService.User.UserRole == UserRole.Developer;
+        return this.developerService.GetCurrentUser().UserRole == UserRole.Developer;
     }
 
     public async Task CreateGameAsync(Game game, IList<Tag> selectedTags)
     {
-        await this.developerService.CreateGameWithTagsAsync(game, selectedTags);
+        await this.developerService.CreateGameWithTagsAsync(game, selectedTags,this.user.UserId);
         this.DeveloperGames.Add(game);
     }
 
     public async Task UpdateGameAsync(Game game)
     {
-        await this.developerService.UpdateGameAndRefreshListAsync(game, this.DeveloperGames);
+        await this.developerService.UpdateGameAndRefreshListAsync(game, this.DeveloperGames,this.user.UserId);
     }
 
     public void UpdateGameWithTags(Game game, IList<Tag> selectedTags)
@@ -389,7 +392,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
     public async Task LoadUnvalidatedAsync()
     {
         this.UnvalidatedGames.Clear();
-        var games = await this.developerService.GetUnvalidatedAsync();
+        var games = await this.developerService.GetUnvalidatedAsync(this.user.UserId);
         foreach (var game in games)
         {
             this.UnvalidatedGames.Add(game);
@@ -445,7 +448,9 @@ public class DeveloperViewModel : INotifyPropertyChanged
             minimumRequirement,
             recommendedRequirements,
             discountText,
-            selectedTags);
+            selectedTags,
+            this.user.UserId
+            );
         this.DeveloperGames.Add(game);
         this.OnPropertyChanged(nameof(this.DeveloperGames));
     }
@@ -464,7 +469,7 @@ public class DeveloperViewModel : INotifyPropertyChanged
             recommendedRequirements,
             discountText,
             selectedTags);
-        await this.developerService.UpdateGameWithTagsAsync(game, selectedTags);
+        await this.developerService.UpdateGameWithTagsAsync(game, selectedTags, this.user.UserId);
     }
 
     public async Task<string> GetRejectionMessageAsync(int gameId)
