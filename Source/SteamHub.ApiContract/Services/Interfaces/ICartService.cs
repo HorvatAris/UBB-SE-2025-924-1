@@ -12,20 +12,21 @@ namespace SteamHub.ApiContract.Services.Interfaces
     using System.Threading.Tasks;
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.UsersGames;
 
     public interface ICartService
     {
-        Task<List<int>> GetAllCartGamesIdsAsync();
+        Task<List<int>> GetAllCartGamesIdsAsync(int userId);
 
-        Task<List<Game>> GetAllPurchasedGamesAsync();
+        Task<List<Game>> GetAllPurchasedGamesAsync(int userId);
 
         Task<decimal> GetTotalSumToBePaidAsync();
 
-        Task<List<Game>> GetCartGamesAsync();
+        Task<List<Game>> GetCartGamesAsync(int userId);
 
-        Task RemoveGameFromCartAsync(Game game);
+        Task RemoveGameFromCartAsync(UserGameRequest gameRequest);
 
-        Task AddGameToCartAsync(Game game);
+        Task AddGameToCartAsync(UserGameRequest gameRequest);
 
         Task RemoveGamesFromCartAsync(List<Game> games);
 
