@@ -52,7 +52,7 @@ namespace SteamHub.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _authManager.LogoutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Authentication");
         }
 
 
@@ -70,7 +70,7 @@ namespace SteamHub.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("AccessDenied", "Authentication");
             }
         }
     }

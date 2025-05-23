@@ -2,6 +2,7 @@ using SteamHub.ApiContract.Context.Repositories;
 using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Proxies;
 using SteamHub.ApiContract.Repositories;
+using SteamHub.ApiContract.ServiceProxies;
 using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web;
@@ -46,11 +47,10 @@ builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProx
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
-builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<ICartService,CartService>();
+builder.Services.AddScoped<ICartService, CartServiceProxy>();
 builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
-builder.Services.AddScoped<IPointShopService, PointShopService>();
+builder.Services.AddScoped<IPointShopService, PointShopServiceProxy>();
 builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
 builder.Services.AddScoped<ITradeService, TradeService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -143,7 +143,7 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=HomePage}/{action=Index}/{id?}");
 // app.MapRazorPages();
 
 app.Run();

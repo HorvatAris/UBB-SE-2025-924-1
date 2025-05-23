@@ -28,7 +28,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
     private Game game;
     private ObservableCollection<Game> similarGames;
-    private bool isOwned;
+    private bool isOwned = false;
     private ObservableCollection<string> gameTags;
     private ObservableCollection<string> mediaLinks;
 
@@ -67,9 +67,9 @@ public class GamePageViewModel : INotifyPropertyChanged
         {
             this.game = value;
             this.OnPropertyChanged();
-            this.UpdateIsOwnedStatusAsync();
-            this.UpdateGameTagsAsync();
             this.UpdateMediaLinks();
+            _ = this.UpdateIsOwnedStatusAsync();
+            _ = this.UpdateGameTagsAsync();
         }
     }
 
@@ -195,7 +195,7 @@ public class GamePageViewModel : INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private async void UpdateIsOwnedStatusAsync()
+    private async Task UpdateIsOwnedStatusAsync()
     {
         if (this.Game == null || this.userGameService == null)
         {
@@ -213,7 +213,7 @@ public class GamePageViewModel : INotifyPropertyChanged
         }
     }
 
-    private async void UpdateGameTagsAsync()
+    private async Task UpdateGameTagsAsync()
     {
         if (this.Game == null || this.gameService == null)
         {

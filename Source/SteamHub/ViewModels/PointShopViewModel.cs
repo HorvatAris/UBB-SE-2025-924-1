@@ -19,6 +19,7 @@ namespace SteamHub.ViewModels
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Services;
     using SteamHub.ApiContract.Services.Interfaces;
+    using SteamHub.ApiContract.Models.UserPointShopItemInventory;
 
     public class PointShopViewModel : INotifyPropertyChanged
     {
@@ -374,7 +375,7 @@ namespace SteamHub.ViewModels
         {
             try
             {
-                var items = await this.pointShopService.GetUserItemsAsync();
+                var items = await this.pointShopService.GetUserItemsAsync(this.user.UserId);
                 this.UserItems.Clear();
                 foreach (var item in items)
                 {
@@ -401,16 +402,20 @@ namespace SteamHub.ViewModels
             try
             {
                 // Store a local copy of the item to prevent issues after state changes
-                var itemToPurchase = this.SelectedItem;
+                var itemPurchaseRequest = new PurchasePointShopItemRequest
+                {
+                    UserId = this.user.UserId,
+                    PointShopItemId = this.SelectedItem.ItemIdentifier,
+                };
 
-                await this.pointShopService.PurchaseItemAsync(itemToPurchase);
+                await this.pointShopService.PurchaseItemAsync(itemPurchaseRequest);
 
                 // Add transaction to history
                 var transaction = new PointShopTransaction(
                     this.nextTransactionId++,
-                    itemToPurchase.Name,
-                    itemToPurchase.PointPrice,
-                    itemToPurchase.ItemType,
+                    this.SelectedItem.Name,
+                    this.SelectedItem.PointPrice,
+                    this.SelectedItem.ItemType,
                     user.UserId);
                 this.TransactionHistory.Add(transaction);
 
@@ -442,7 +447,14 @@ namespace SteamHub.ViewModels
 
             try
             {
-                await this.pointShopService.ActivateItemAsync(item);
+                var itemRequest = new UpdateUserPointShopItemInventoryRequest
+                {
+                    UserId = this.user.UserId,
+                    PointShopItemId = item.ItemIdentifier,
+                    IsActive = true,
+                };
+
+                await this.pointShopService.ActivateItemAsync(itemRequest);
 
                 // Refresh user items to reflect the activation change
                 await this.LoadUserItems();
@@ -465,7 +477,14 @@ namespace SteamHub.ViewModels
 
             try
             {
-                await this.pointShopService.DeactivateItemAsync(item);
+                var itemRequest = new UpdateUserPointShopItemInventoryRequest
+                {
+                    UserId = this.user.UserId,
+                    PointShopItemId = item.ItemIdentifier,
+                    IsActive = false,
+                };
+
+                await this.pointShopService.DeactivateItemAsync(itemRequest);
 
                 // Refresh user items to reflect the deactivation change
                 await this.LoadUserItems();

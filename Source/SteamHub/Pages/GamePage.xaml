@@ -75,13 +75,13 @@
                 <!-- Action Buttons -->
                 <StackPanel Grid.Column="2" Margin="0,10,0,0">
                     <TextBlock Text="{Binding FormattedPrice}"  Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10" />
-                    <!--  <TextBlock 
+                      <TextBlock 
                              Text="{Binding IsOwned, Converter={StaticResource BoolToOwnedStatusConverter}}" 
                              Foreground="#75b022" 
                              FontWeight="Bold" 
                              FontSize="14"
                              HorizontalAlignment="Center"
-                             Margin="0,0,0,10"/>-->
+                             Margin="0,0,0,10"/>
                     <Button Content="Add to Cart" Click="BuyButton_Click" 
                             Margin="0,0,0,10" Width="150"/>
                     <Button Content="Add to Wishlist" Click="WishlistButton_Click" 

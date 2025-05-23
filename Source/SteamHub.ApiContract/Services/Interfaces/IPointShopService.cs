@@ -13,6 +13,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
     using SteamHub.ApiContract.Models;
     using SteamHub.ApiContract.Models.PointShopItem;
     using SteamHub.ApiContract.Models.User;
+    using SteamHub.ApiContract.Models.UserPointShopItemInventory;
 
     public interface IPointShopService
     {
@@ -20,13 +21,13 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<List<PointShopItem>> GetAllItemsAsync();
 
-        Task<Collection<PointShopItem>> GetUserItemsAsync();
+        Task<Collection<PointShopItem>> GetUserItemsAsync(int userId);
 
-        Task PurchaseItemAsync(PointShopItem item);
+        Task PurchaseItemAsync(PurchasePointShopItemRequest item);
 
-        Task ActivateItemAsync(PointShopItem item);
+        Task ActivateItemAsync(UpdateUserPointShopItemInventoryRequest request);
 
-        Task DeactivateItemAsync(PointShopItem item);
+        Task DeactivateItemAsync(UpdateUserPointShopItemInventoryRequest request);
 
         Task<List<PointShopItem>> GetFilteredItemsAsync(string filterType, string searchText, double minimumPrice, double maximumPrice);
 
