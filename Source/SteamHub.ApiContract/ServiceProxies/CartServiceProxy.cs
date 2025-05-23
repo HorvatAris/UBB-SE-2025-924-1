@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using SteamHub.ApiContract.Services;
 using SteamHub.ApiContract.Models.UsersGames;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace SteamHub.ApiContract.ServiceProxies
 {
@@ -32,61 +33,39 @@ namespace SteamHub.ApiContract.ServiceProxies
         private const int InitialZeroSum = 0;
         private IUserDetails user;
 
-        public async Task AddGameToCartAsync(Game game)
-        {
-            var purchasedGames = await this.GetAllPurchasedGamesAsync();
-            var cartGamesIds = await this.GetAllCartGamesIdsAsync();
-            foreach (var purchasedGame in purchasedGames)
-            {
-                if (game.GameId == purchasedGame.GameId)
-                {
-                    // System.Diagnostics.Debug.WriteLine("The game is already purchased.");
-                    throw new Exception("The game is already purchased.");
-                }
-            }
-
-            foreach (var gameId in cartGamesIds)
-            {
-                if (game.GameId == gameId)
-                {
-                    // System.Diagnostics.Debug.WriteLine("The game is already in the cart.");
-                    throw new Exception("The game is already in the cart.");
-                }
-            }
-
-            var request = new UserGameRequest
-            {
-                UserId = this.user.UserId,
-                GameId = game.GameId,
-            };
-
-            System.Diagnostics.Debug.WriteLine("user id for adding to cart" + this.user.UserId);
-
-            var response = await _httpClient.PostAsJsonAsync("api/UsersGames/AddToCart", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"AddToCart failed: {response.StatusCode} - {errorContent}");
-            }
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task<List<int>> GetAllCartGamesIdsAsync()
+        public async Task AddGameToCartAsync(UserGameRequest gameRequest)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/api/UsersGames/Cart/{this.user.UserId}");
+                var response = await _httpClient.PostAsJsonAsync("/api/Cart/AddToCart", gameRequest);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = (await response.Content.ReadAsStringAsync()).Trim('"');
+                    System.Diagnostics.Debug.WriteLine($"API returned error: {errorMessage}");
+                    throw new Exception(errorMessage);
+                }
+            }
+            catch (Exception exception)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error adding game from cart: {exception.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<int>> GetAllCartGamesIdsAsync(int userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/Cart/{userId}");
                 response.EnsureSuccessStatusCode(); // Ensure successful status code
 
-                var result = await response.Content.ReadFromJsonAsync<GetUserGamesResponse>(_options);
+                var result = await response.Content.ReadFromJsonAsync<List<Game>>(_options);
 
-                var userGamesResponses = result.UserGames; // Access the actual list here
-                var gameIds = userGamesResponses
-                    .Where(currentGame => currentGame.IsInCart)
+                var gameIds = result
                     .Select(currentGame => currentGame.GameId)
                     .ToList();
-                return gameIds;
+                return gameIds ?? new List<int>();
             }
             catch (Exception exception)
             {
@@ -95,29 +74,15 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task<List<Game>> GetAllPurchasedGamesAsync()
+        public async Task<List<Game>> GetAllPurchasedGamesAsync(int userId)
         {
-            var purchasedGames = new List<Game>();
             try
             {
-                var response = await _httpClient.GetAsync($"/api/UsersGames/Purchased/{this.user.UserId}");
+                var response = await _httpClient.GetAsync($"/api/Cart/Purchased/{userId}");
                 response.EnsureSuccessStatusCode(); // Ensure successful status code
+                var purchasedGames = await response.Content.ReadFromJsonAsync<List<Game>>(_options);
 
-                var result = await response.Content.ReadFromJsonAsync<GetUserGamesResponse>(_options);
-
-                var userGamesResponses = result.UserGames; // Access the actual list here
-                foreach (var userGame in userGamesResponses)
-                {
-                    var responseGame = await _httpClient.GetAsync($"/api/Games/{userGame.GameId}");
-
-                    responseGame.EnsureSuccessStatusCode();
-                    var resultGame = await responseGame.Content.ReadFromJsonAsync<GameDetailedResponse>(_options);
-                    
-                    var game = GameMapper.MapToGame(resultGame);
-                    purchasedGames.Add(game);
-                }
-
-                return purchasedGames;
+                return purchasedGames ?? new List<Game>();
             }
             catch (Exception exception)
             {
@@ -126,40 +91,15 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public async Task<List<Game>> GetCartGamesAsync()
+        public async Task<List<Game>> GetCartGamesAsync(int userId)
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine($"UserId: {this.user.UserId}");
-                
-                var response = await _httpClient.GetAsync($"/api/UsersGames/Cart/{this.user.UserId}");
+                var response = await _httpClient.GetAsync($"/api/Cart/{userId}");
                 response.EnsureSuccessStatusCode(); // Ensure successful status code
-                var result = await response.Content.ReadFromJsonAsync<GetUserGamesResponse>(_options);
-
-                var userGamesResponses = result.UserGames; // Access the actual list here                var userGamesResponses = response.UserGames; // Access the actual list her
-                System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
-                var gameIds = userGamesResponses
-            .Select(game => game.GameId)
-            .ToList();
-                if (gameIds.Count == 0)
-                {
-                    return new List<Game>();
-                }
-
-                var games = new List<Game>();
-                foreach (var gameId in gameIds)
-                {
-                    System.Diagnostics.Debug.WriteLine($"GameId: {gameId}");
-                    var responseGame = await _httpClient.GetAsync($"/api/Games/{gameId}");
-
-                    response.EnsureSuccessStatusCode();
-                    var resultGame = await responseGame.Content.ReadFromJsonAsync<GameDetailedResponse>(_options);
-
-                    var game = GameMapper.MapToGame(resultGame);
-                    games.Add(game);
-                }
-
-                return games;
+                var games = await response.Content.ReadFromJsonAsync<List<Game>>(_options);
+               
+                return games ?? new List<Game>();
             }
             catch (Exception exception)
             {
@@ -182,7 +122,7 @@ namespace SteamHub.ApiContract.ServiceProxies
         public async Task<decimal> GetTotalSumToBePaidAsync()
         {
             decimal totalSumToBePaid = InitialZeroSum;
-            var cartGames = await this.GetCartGamesAsync();
+            var cartGames = await this.GetCartGamesAsync(this.user.UserId);
 
             foreach (var game in cartGames)
             {
@@ -202,17 +142,11 @@ namespace SteamHub.ApiContract.ServiceProxies
             return this.user.WalletBalance;
         }
 
-        public async Task RemoveGameFromCartAsync(Game game)
+        public async Task RemoveGameFromCartAsync(UserGameRequest gameRequest)
         {
             try
             {
-                var request = new UserGameRequest
-                {
-                    UserId = this.user.UserId,
-                    GameId = game.GameId,
-                };
-
-                var response = await _httpClient.PatchAsJsonAsync("/api/UsersGames/RemoveFromCart", request);
+                var response = await _httpClient.PatchAsJsonAsync("/api/Cart/RemoveFromCart", gameRequest);
                 response.EnsureSuccessStatusCode(); // Ensure successful status code
             }
             catch (Exception exception)
@@ -223,9 +157,15 @@ namespace SteamHub.ApiContract.ServiceProxies
 
         public async Task RemoveGamesFromCartAsync(List<Game> games)
         {
+            var gameRequest = new UserGameRequest
+            {
+                UserId = this.user.UserId
+            };
+
             foreach (var game in games)
             {
-                await this.RemoveGameFromCartAsync(game);
+                gameRequest.GameId = game.GameId;
+                await this.RemoveGameFromCartAsync(gameRequest);
             }
         }
     }

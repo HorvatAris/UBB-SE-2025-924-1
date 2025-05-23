@@ -18,12 +18,14 @@ namespace SteamHub.ViewModels
     using SteamHub.ApiContract.Services.Interfaces;
     using SteamHub.ApiContract.Models;
     using SteamHub.ApiContract.Models.Game;
+    using SteamHub.ApiContract.Models.User;
 
     public class PaypalPaymentViewModel : INotifyPropertyChanged
     {
         private const int NoPointsEarnedAmount = 0;
         private ICartService cartService;
         private IUserGameService userGameService;
+        private IUserDetails user;
         private List<Game> purchasedGames;
         private PaypalProcessor paypalProcessor;
         private decimal amountToPay;
@@ -35,6 +37,7 @@ namespace SteamHub.ViewModels
         {
             this.cartService = cartService;
             this.userGameService = userGameService;
+            this.user = this.cartService.GetUser();
             this.paypalProcessor = new PaypalProcessor();
             this.InitAmountToPayAsync();
             this.InitAsync();
@@ -72,7 +75,7 @@ namespace SteamHub.ViewModels
 
         public async void InitAsync()
         {
-            this.purchasedGames = await this.cartService.GetCartGamesAsync();
+            this.purchasedGames = await this.cartService.GetCartGamesAsync(this.user.UserId);
             System.Diagnostics.Debug.WriteLine($"Purchased games count: {this.purchasedGames.Count}");
         }
 
