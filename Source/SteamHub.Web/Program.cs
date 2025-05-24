@@ -53,11 +53,12 @@ builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IPointShopService, PointShopServiceProxy>();
 builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
 builder.Services.AddScoped<ITradeService, TradeService>();
-builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IUserService, UserServiceProxy>();
 
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();
-builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IInventoryService, InventoryServiceProxy>();
 
 //ilder.Services.AddScoped<ICartService, CartService>();
 //builder.Services.AddScoped<ICartService>(provider =>

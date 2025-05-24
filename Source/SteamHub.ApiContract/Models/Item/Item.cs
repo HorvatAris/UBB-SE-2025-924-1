@@ -21,7 +21,8 @@ namespace SteamHub.ApiContract.Models.Item
 
         private int itemId;
         private string itemName = default!;
-        private Game associatedGame = default!;
+        public Game Game { get; set; }
+        public string GameName { get; set; } = default!;
         private float price;
         private string description = default!;
         private bool isItemListed;
@@ -33,7 +34,8 @@ namespace SteamHub.ApiContract.Models.Item
             game = game ?? throw new ArgumentNullException(nameof(game));
             description = description ?? throw new ArgumentNullException(nameof(description));
             this.itemName = itemName;
-            associatedGame = game;
+             this.Game= game;
+            this.GameName = game.GameTitle;
             this.price = price;
             isItemListed = false;
             this.description = description;
@@ -57,11 +59,7 @@ namespace SteamHub.ApiContract.Models.Item
             set => itemName = value;
         }
 
-        public Game Game
-        {
-            get => associatedGame;
-            set => associatedGame = value;
-        }
+        
 
         public float Price
         {
@@ -87,7 +85,7 @@ namespace SteamHub.ApiContract.Models.Item
             set => imagePath = value;
         }
 
-        public string GameName { get; internal set; }
+        
 
         public string GetItemName()
         {
@@ -96,7 +94,7 @@ namespace SteamHub.ApiContract.Models.Item
 
         public Game GetCorrespondingGame()
         {
-            return associatedGame;
+            return this.Game;
         }
 
         public void SetItemDescription(string description)

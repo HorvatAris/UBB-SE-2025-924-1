@@ -31,6 +31,9 @@ builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailRepository
 
 builder.Services.AddScoped<IPointShopService, PointShopService>();
 builder.Services.AddScoped<IDeveloperService, DeveloperService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
