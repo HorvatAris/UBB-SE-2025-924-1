@@ -22,6 +22,7 @@ namespace SteamHub.ApiContract.Models.Item
         private int itemId;
         private string itemName = default!;
         public Game Game { get; set; }
+        public string GameName { get; set; } = default!;
         private float price;
         private string description = default!;
         private bool isItemListed;
@@ -84,7 +85,7 @@ namespace SteamHub.ApiContract.Models.Item
             set => imagePath = value;
         }
 
-        public string GameName { get; internal set; }
+        
 
         public string GetItemName()
         {

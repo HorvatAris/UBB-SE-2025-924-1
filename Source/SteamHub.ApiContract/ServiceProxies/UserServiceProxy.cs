@@ -35,7 +35,7 @@ namespace SteamHub.ApiContract.ServiceProxies
                 throw new Exception($"Failed to fetch users: {errorContent}");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<List<User>>();
+            var content = await response.Content.ReadFromJsonAsync<List<User>>(_options);
             return content!;
         }
     }
