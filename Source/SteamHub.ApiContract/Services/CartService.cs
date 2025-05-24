@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using SteamHub.ApiContract.Models.Game;
@@ -20,27 +21,20 @@ public class CartService : ICartService
 {
     private const int InitialZeroSum = 0;
     private IUsersGamesRepository userGameRepository;
-    private IUserDetails user;
     private IGameRepository gameRepository;
 
-    public CartService(IUsersGamesRepository userGameRepository, IUserDetails user, IGameRepository gameRepository)
+    public CartService(IUsersGamesRepository userGameRepository, IGameRepository gameRepository)
     {
         this.userGameRepository = userGameRepository;
         this.gameRepository = gameRepository;
-
-        this.user = user;
     }
 
-    public User GetUser()
-    {
-        return new User(this.user);
-    }
-    public async Task<List<Game>> GetCartGamesAsync()
+    public async Task<List<Game>> GetCartGamesAsync(int userId)
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine($"UserId: {this.user.UserId}");
-            var response = await this.userGameRepository.GetUserCartAsync(this.user.UserId);
+            System.Diagnostics.Debug.WriteLine($"UserId: {userId}");
+            var response = await this.userGameRepository.GetUserCartAsync(userId);
             var userGamesResponses = response.UserGames; // Access the actual list her
             System.Diagnostics.Debug.WriteLine($"UserGamesResponses: {userGamesResponses.Count}");
             var gameIds = userGamesResponses
@@ -68,12 +62,12 @@ public class CartService : ICartService
         }
     }
 
-    public async Task<List<Game>> GetAllPurchasedGamesAsync()
+    public async Task<List<Game>> GetAllPurchasedGamesAsync(int userId)
     {
         var purchasedGames = new List<Game>();
         try
         {
-            var response = await this.userGameRepository.GetUserPurchasedGamesAsync(this.user.UserId);
+            var response = await this.userGameRepository.GetUserPurchasedGamesAsync(userId);
             var userGamesResponses = response.UserGames; // Access the actual list here
             foreach (var userGame in userGamesResponses)
             {
@@ -91,11 +85,11 @@ public class CartService : ICartService
         }
     }
 
-    public async Task<List<int>> GetAllCartGamesIdsAsync()
+    public async Task<List<int>> GetAllCartGamesIdsAsync(int userId)
     {
         try
         {
-            var response = await this.userGameRepository.GetUserCartAsync(this.user.UserId);
+            var response = await this.userGameRepository.GetUserCartAsync(userId);
             var userGamesResponses = response.UserGames; // Access the actual list here
             var gameIds = userGamesResponses
         .Where(currentGame => currentGame.IsInCart)
@@ -110,17 +104,11 @@ public class CartService : ICartService
         }
     }
 
-    public async Task RemoveGameFromCartAsync(Game game)
+    public async Task RemoveGameFromCartAsync(UserGameRequest gameRequest)
     {
         try
         {
-            var request = new UserGameRequest
-            {
-                UserId = this.user.UserId,
-                GameId = game.GameId,
-            };
-
-            await this.userGameRepository.RemoveFromCartAsync(request);
+            await this.userGameRepository.RemoveFromCartAsync(gameRequest);
         }
         catch (Exception exception)
         {
@@ -128,63 +116,47 @@ public class CartService : ICartService
         }
     }
 
-    public async Task AddGameToCartAsync(Game game)
+    public async Task AddGameToCartAsync(UserGameRequest gameRequest)
     {
-        var purchasedGames = await this.GetAllPurchasedGamesAsync();
-        var cartGamesIds = await this.GetAllCartGamesIdsAsync();
+        var purchasedGames = await this.GetAllPurchasedGamesAsync(gameRequest.UserId);
+        var cartGames = await this.GetCartGamesAsync(gameRequest.UserId);
+
         foreach (var purchasedGame in purchasedGames)
         {
-            if (game.GameId == purchasedGame.GameId)
+            if (gameRequest.GameId == purchasedGame.GameId)
             {
                 // System.Diagnostics.Debug.WriteLine("The game is already purchased.");
                 throw new Exception("The game is already purchased.");
             }
         }
 
-        foreach (var gameId in cartGamesIds)
+        foreach (var cartGame in cartGames)
         {
-            if (game.GameId == gameId)
+            if (gameRequest.GameId == cartGame.GameId)
             {
                 // System.Diagnostics.Debug.WriteLine("The game is already in the cart.");
                 throw new Exception("The game is already in the cart.");
             }
         }
 
-        var request = new UserGameRequest
-        {
-            UserId = this.user.UserId,
-            GameId = game.GameId,
-        };
+        System.Diagnostics.Debug.WriteLine("user id for adding to cart" + gameRequest.UserId);
 
-        System.Diagnostics.Debug.WriteLine("user id for adding to cart" +this.user.UserId);
-
-        await this.userGameRepository.AddToCartAsync(request);
+        await this.userGameRepository.AddToCartAsync(gameRequest);
     }
 
-    public async Task RemoveGamesFromCartAsync(List<Game> games)
+    public Task RemoveGamesFromCartAsync(List<Game> games)
     {
-        foreach (var game in games)
-        {
-            await this.RemoveGameFromCartAsync(game);
-        }
+        throw new NotImplementedException();
     }
 
     public float GetUserFunds()
     {
-        return this.user.WalletBalance;
+        throw new NotImplementedException();
     }
 
     public async Task<decimal> GetTotalSumToBePaidAsync()
     {
-        decimal totalSumToBePaid = InitialZeroSum;
-        var cartGames = await this.GetCartGamesAsync();
-
-        foreach (var game in cartGames)
-        {
-            totalSumToBePaid += (decimal)game.Price;
-        }
-
-        return totalSumToBePaid;
+        throw new NotImplementedException();
     }
 
     public float GetTheTotalSumOfItemsInCart(List<Game> cartGames)
@@ -196,5 +168,9 @@ public class CartService : ICartService
         }
 
         return totalSum;
+    }
+    public User GetUser()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -17,12 +17,15 @@ using SteamHub.Pages;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.ViewModels;
 using SteamHub.ApiContract.Models.Game;
+using SteamHub.ApiContract.Models.UsersGames;
+using SteamHub.ApiContract.Models.User;
 
 public class CartViewModel : INotifyPropertyChanged
 {
     private const int ThresholdForNotEarningPoints = 0;
     private const int InitialValueForLastEarnedPoints = 0;
     private ICartService cartService;
+    private IUserDetails user;
 
     private IUserGameService userGameService;
     private ObservableCollection<Game> cartGames;
@@ -34,6 +37,7 @@ public class CartViewModel : INotifyPropertyChanged
     public CartViewModel(ICartService cartService, IUserGameService userGameService)
     {
         this.cartService = cartService;
+        this.user = this.cartService.GetUser();
         this.userGameService = userGameService;
         this.CartGames = new ObservableCollection<Game>();
         this.LastEarnedPoints = InitialValueForLastEarnedPoints;
@@ -93,7 +97,12 @@ public class CartViewModel : INotifyPropertyChanged
 
     public async void RemoveGameFromCartAsync(Game game)
     {
-        await this.cartService.RemoveGameFromCartAsync(game);
+        var gameRequest = new UserGameRequest
+        {
+            GameId = game.GameId,
+            UserId = this.user.UserId,
+        };
+        await this.cartService.RemoveGameFromCartAsync(gameRequest);
         this.CartGames.Remove(game);
         this.UpdateTotalPrice();
         this.OnPropertyChanged(nameof(this.CartGames));
@@ -104,8 +113,14 @@ public class CartViewModel : INotifyPropertyChanged
         bool isWalletPayment = false;
         if (this.SelectedPaymentMethod == PaymentMethods.SteamWalletPaymentWallet)
             isWalletPayment = true;
+        var purchaseRequest = new PurchaseGamesRequest
+        {
+            UserId = this.user.UserId,
+            Games = this.CartGames.ToList(),
+            IsWalletPayment = isWalletPayment,
+        };
 
-        await this.userGameService.PurchaseGamesAsync(this.CartGames.ToList(), isWalletPayment);
+        await this.userGameService.PurchaseGamesAsync(purchaseRequest);
 
         // Get the points earned from the user game service
         this.LastEarnedPoints = this.userGameService.LastEarnedPoints;
@@ -169,7 +184,7 @@ public class CartViewModel : INotifyPropertyChanged
 
     private async Task LoadGamesAsync()
     {
-        var games = await this.cartService.GetCartGamesAsync();
+        var games = await this.cartService.GetCartGamesAsync(this.user.UserId);
         System.Diagnostics.Debug.WriteLine($"Number of games in cart: {games.Count}");
         foreach (var game in games)
         {

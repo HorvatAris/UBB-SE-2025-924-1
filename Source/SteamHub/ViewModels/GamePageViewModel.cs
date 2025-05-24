@@ -15,6 +15,8 @@ using SteamHub.ApiContract.Models;
 using SteamHub.ApiContract.Models.Game;
 using SteamHub.Pages;
 using SteamHub.ApiContract.Services.Interfaces;
+using SteamHub.ApiContract.Models.UsersGames;
+using SteamHub.ApiContract.Models.User;
 
 public class GamePageViewModel : INotifyPropertyChanged
 {
@@ -25,6 +27,7 @@ public class GamePageViewModel : INotifyPropertyChanged
     private readonly ICartService cartService;
     private readonly IUserGameService userGameService;
     private readonly IGameService gameService;
+    private IUserDetails user;
 
     private Game game;
     private ObservableCollection<Game> similarGames;
@@ -37,6 +40,7 @@ public class GamePageViewModel : INotifyPropertyChanged
         this.cartService = cartService;
         this.userGameService = userGameService;
         this.gameService = gameService;
+        this.user = this.cartService.GetUser();
         this.SimilarGames = new ObservableCollection<Game>();
         this.GameTags = new ObservableCollection<string>();
         this.MediaLinks = new ObservableCollection<string>();
@@ -150,7 +154,12 @@ public class GamePageViewModel : INotifyPropertyChanged
         {
             try
             {
-                await this.cartService.AddGameToCartAsync(this.Game);
+                var gameRequest = new UserGameRequest
+                {
+                    UserId = this.user.UserId,
+                    GameId = this.Game.GameId
+                };
+                await this.cartService.AddGameToCartAsync(gameRequest);
             }
             catch (Exception exception)
             {
@@ -165,9 +174,14 @@ public class GamePageViewModel : INotifyPropertyChanged
     {
         if (this.Game != null && this.userGameService != null)
         {
+            var gameRequest = new UserGameRequest
+            {
+                UserId = this.user.UserId,
+                GameId = this.Game.GameId
+            };
             try
             {
-                await this.userGameService.AddGameToWishlistAsync(this.Game);
+                await this.userGameService.AddGameToWishlistAsync(gameRequest);
             }
             catch (Exception exception)
             {
@@ -205,7 +219,7 @@ public class GamePageViewModel : INotifyPropertyChanged
 
         try
         {
-            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game);
+            this.IsOwned = await this.userGameService.IsGamePurchasedAsync(this.Game, this.user.UserId);
         }
         catch (Exception)
         {

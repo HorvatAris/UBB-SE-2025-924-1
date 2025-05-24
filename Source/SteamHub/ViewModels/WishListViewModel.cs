@@ -17,7 +17,8 @@ namespace SteamHub.ViewModels
     using SteamHub.ApiContract.Models.Game;
     using SteamHub.Pages;
     using SteamHub.ApiContract.Services.Interfaces;
-
+    using SteamHub.ApiContract.Models.UsersGames;
+    using SteamHub.ApiContract.Models.User;
 
     public class WishListViewModel : INotifyPropertyChanged
     {
@@ -29,6 +30,7 @@ namespace SteamHub.ViewModels
 
         private string selectedFilter;
         private string selectedSort;
+        private IUserDetails user;
 
         public WishListViewModel(IUserGameService userGameService, IGameService gameService, ICartService cartService)
         {
@@ -36,8 +38,9 @@ namespace SteamHub.ViewModels
             this.gameService = gameService;
             this.cartService = cartService;
             this.wishListGames = new ObservableCollection<Game>();
+            this.user = this.userGameService.GetUser();
             this.RemoveFromWishlistCommand = new RelayCommand<Game>(async (game) => await this.ConfirmAndRemoveFromWishlist(game));
-            this.LoadWishListGames();
+            this.LoadWishListGames(user.UserId);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -113,7 +116,7 @@ namespace SteamHub.ViewModels
         {
             if (string.IsNullOrWhiteSpace(this.SearchText))
             {
-                this.LoadWishListGames();
+                this.LoadWishListGames(this.user.UserId);
                 return;
             }
 
@@ -159,9 +162,14 @@ namespace SteamHub.ViewModels
 
         public async Task RemoveFromWishlist(Game game)
         {
+            var gameRequest = new UserGameRequest
+            {
+                UserId = this.user.UserId,
+                GameId = game.GameId
+            };
             try
             {
-                await this.userGameService.RemoveGameFromWishlistAsync(game);
+                await this.userGameService.RemoveGameFromWishlistAsync(gameRequest);
                 this.WishListGames.Remove(game);
             }
             catch (Exception exception)
@@ -242,11 +250,11 @@ namespace SteamHub.ViewModels
             }
         }
 
-        private async Task LoadWishListGames()
+        private async Task LoadWishListGames(int userId)
         {
             try
             {
-                var games = await this.userGameService.GetWishListGamesAsync();
+                var games = await this.userGameService.GetWishListGamesAsync(userId);
                 this.WishListGames = new ObservableCollection<Game>(games);
             }
             catch (Exception exception)
