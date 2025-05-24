@@ -34,6 +34,7 @@ builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
+builder.Services.AddScoped<ITradeService, TradeService>();
 
 
 builder.Services.AddControllersWithViews()

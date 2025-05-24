@@ -16,6 +16,7 @@ namespace SteamHub.ApiContract.Services
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.ItemTrade;
     using SteamHub.ApiContract.Models.ItemTradeDetails;
+    using SteamHub.ApiContract.Models.Tag;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Models.UserInventory;
     using SteamHub.ApiContract.Proxies;
@@ -30,12 +31,10 @@ namespace SteamHub.ApiContract.Services
         private IGameRepository gameRepository;
         private IItemRepository itemRepository;
         private IUserInventoryRepository userInventoryRepository;
-        private IUserDetails currentUser;
 
-        public TradeService(IItemTradeRepository itemTradeIItemTradeRepository, IUserDetails currentUser, IItemTradeDetailRepository itemTradeDetailRepository, IUserRepository userRepository, IGameRepository gameRepository, IItemRepository itemRepository, IUserInventoryRepository userInventoryRepository)
+        public TradeService(IItemTradeRepository itemTradeIItemTradeRepository, IItemTradeDetailRepository itemTradeDetailRepository, IUserRepository userRepository, IGameRepository gameRepository, IItemRepository itemRepository, IUserInventoryRepository userInventoryRepository)
         {
             this.itemTradeRepository = itemTradeIItemTradeRepository;
-            this.currentUser = currentUser;
             this.itemTradeDetailRepository = itemTradeDetailRepository;
             this.userRepository = userRepository;
             this.gameRepository = gameRepository;
@@ -54,7 +53,7 @@ namespace SteamHub.ApiContract.Services
             await this.itemTradeRepository.UpdateItemTradeAsync(tradeId, updateRequest);
         }
 
-        public async void DeclineTradeRequest(ItemTrade trade)
+        public async Task DeclineTradeRequest(ItemTrade trade)
         {
 			trade.TradeStatus = "Declined";
 			trade.AcceptedBySourceUser = false;
@@ -71,8 +70,7 @@ namespace SteamHub.ApiContract.Services
 
         public IUserDetails GetCurrentUser()
         {
-            System.Diagnostics.Debug.WriteLine($"Current user: {this.currentUser.UserName}, ID: {this.currentUser.UserId}");
-            return this.currentUser;
+            throw new NotImplementedException();
         }
 
         public async Task UpdateItemTradeAsync(ItemTrade trade)
@@ -96,20 +94,20 @@ namespace SteamHub.ApiContract.Services
             await this.itemTradeRepository.UpdateItemTradeAsync(trade.TradeId, updateTradeRequest);
         }
 
-        public async Task TransferItemAsync(int itemId, int fromUserId, int toUserId, int gameId)
+        public async Task TransferItemAsync(TransferItemTradeRequest tradeRequest)
         {
             var removeRequest = new ItemFromInventoryRequest
             {
-                UserId = fromUserId,
-                ItemId = itemId,
-                GameId = gameId,
+                UserId = tradeRequest.SourceUserId,
+                ItemId = tradeRequest.ItemId,
+                GameId = tradeRequest.GameId,
             };
 
             var addRequest = new ItemFromInventoryRequest
             {
-                UserId = toUserId,
-                ItemId = itemId,
-                GameId = gameId,
+                UserId = tradeRequest.DestinationUserId,
+                ItemId = tradeRequest.ItemId,
+                GameId = tradeRequest.GameId,
             };
 
             try
@@ -120,12 +118,12 @@ namespace SteamHub.ApiContract.Services
                 // Add the item to the destination user
                 await this.userInventoryRepository.AddItemToUserInventoryAsync(addRequest);
 
-                System.Diagnostics.Debug.WriteLine($"Successfully transferred item {itemId} from user {fromUserId} to user {toUserId}");
+                System.Diagnostics.Debug.WriteLine($"Successfully transferred item {tradeRequest.ItemId} from user {tradeRequest.SourceUserId} to user {tradeRequest.DestinationUserId}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error transferring item {itemId}: {ex.Message}");
-                throw new Exception($"Failed to transfer item {itemId} from user {fromUserId} to user {toUserId}", ex);
+                System.Diagnostics.Debug.WriteLine($"Error transferring item {tradeRequest.ItemId}: {ex.Message}");
+                throw new Exception($"Failed to transfer item {tradeRequest.ItemId} from user {tradeRequest.SourceUserId} to user {tradeRequest.DestinationUserId}", ex);
             }
         }
 
@@ -449,15 +447,27 @@ namespace SteamHub.ApiContract.Services
             try
             {
                 // Transfer source user items to destination user
+                var tradeRequest = new TransferItemTradeRequest
+                {
+                    SourceUserId = trade.SourceUser.UserId,
+                    DestinationUserId = trade.DestinationUser.UserId,
+                    GameId = trade.GameOfTrade.GameId
+                };
+
                 foreach (var item in trade.SourceUserItems)
                 {
-                    await this.TransferItemAsync(item.ItemId, trade.SourceUser.UserId, trade.DestinationUser.UserId, trade.GameOfTrade.GameId);
+                    tradeRequest.ItemId = item.ItemId;
+                    await this.TransferItemAsync(tradeRequest);
                 }
 
+
                 // Transfer destination user items to source user
+                tradeRequest.SourceUserId = trade.DestinationUser.UserId;
+                tradeRequest.DestinationUserId = trade.SourceUser.UserId;
                 foreach (var item in trade.DestinationUserItems)
                 {
-                    await this.TransferItemAsync(item.ItemId, trade.DestinationUser.UserId, trade.SourceUser.UserId, trade.GameOfTrade.GameId);
+                    tradeRequest.ItemId = item.ItemId;
+                    await this.TransferItemAsync(tradeRequest);
                 }
 
                 trade.MarkTradeAsCompleted();

@@ -45,36 +45,17 @@ builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepositoryProx
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepositoryProxy>();
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 
+builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IGameService, GameServiceProxy>();
 builder.Services.AddScoped<IUserGameService, UserGameServiceProxy>();
 builder.Services.AddScoped<ICartService, CartServiceProxy>();
 builder.Services.AddScoped<IDeveloperService, DeveloperServiceProxy>();
-builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IPointShopService, PointShopServiceProxy>();
-builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
-builder.Services.AddScoped<ITradeService, TradeService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITradeService, TradeServiceProxy>();
 
-builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
-builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
-
-//ilder.Services.AddScoped<ICartService, CartService>();
-//builder.Services.AddScoped<ICartService>(provider =>
-//{
-//    var user = provider.GetRequiredService<User>();
-//    var userGamesRepo = provider.GetRequiredService<IUsersGamesRepository>();
-//    var gameRepo = provider.GetRequiredService<IGameRepository>();
-//    return new CartService(userGamesRepo, user, gameRepo);
-//});
-//builder.Services.AddScoped<IUserGameService>(provider =>
-//{
-//    var user = provider.GetRequiredService<User>(); // Resolve the singleton User
-//    var userGameRepository = provider.GetRequiredService<IUsersGamesRepository>();
-//    var gameRepository = provider.GetRequiredService<IGameRepository>();
-//    var tagRepository = provider.GetRequiredService<ITagRepository>();
-//    return new UserGameService(userGameRepository, gameRepository, tagRepository, user);
-//});
+builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 var apiBaseUri = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);

@@ -24,10 +24,13 @@ namespace SteamHub.ApiContract.Models.ItemTrade
 
         public int TradeId { get; set; }
 
+        public int SourceUserId { get; set; }
         public User SourceUser { get; set; }
 
+        public int DestinationUserId { get; set; }
         public User DestinationUser { get; set; }
 
+        public int GameOfTradeId { get; set; }
         public Game GameOfTrade { get; set; }
 
         public DateTime TradeDate { get; set; }

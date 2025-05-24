@@ -102,7 +102,7 @@ namespace SteamHub.ApiContract.ServiceProxies
 
         public async Task DeleteGameTagsAsync(int gameId)
         {
-           var response = await _httpClient.PatchAsync($"/api/Developer/Games/{gameId}/Tags", null);
+            var response = await _httpClient.PatchAsync($"/api/Developer/Games/{gameId}/Tags", null);
             response.EnsureSuccessStatusCode();
         }
 
@@ -287,7 +287,6 @@ namespace SteamHub.ApiContract.ServiceProxies
         {
             try
             {
-
                 var content = new StringContent(string.Empty);
                 var response = await _httpClient.PatchAsync($"/api/Developer/Reject/{game_id}", content);
                 response.EnsureSuccessStatusCode();
