@@ -46,16 +46,17 @@ builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopI
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 
 builder.Services.AddScoped<IAuthManager, AuthManager>();
+builder.Services.AddScoped<IUserService, UserServiceProxy>();
 builder.Services.AddScoped<IGameService, GameServiceProxy>();
 builder.Services.AddScoped<IUserGameService, UserGameServiceProxy>();
 builder.Services.AddScoped<ICartService, CartServiceProxy>();
 builder.Services.AddScoped<IDeveloperService, DeveloperServiceProxy>();
 builder.Services.AddScoped<IPointShopService, PointShopServiceProxy>();
+builder.Services.AddScoped<IInventoryService, InventoryServiceProxy>();
 builder.Services.AddScoped<ITradeService, TradeServiceProxy>();
 
-builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
-builder.Services.AddScoped<IUserService, UserService>();
+
 
 
 var apiBaseUri = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);

@@ -21,6 +21,7 @@ namespace SteamHub.ViewModels
 
     public class InventoryViewModel : INotifyPropertyChanged
     {
+        private IUserDetails user;
         private readonly IInventoryService inventoryService;
         private ObservableCollection<Item> inventoryItems;
         private ObservableCollection<Game> availableGames;
@@ -39,6 +40,7 @@ namespace SteamHub.ViewModels
             this.inventoryItems = new ObservableCollection<Item>();
             this.availableGames = new ObservableCollection<Game>();
             this.availableUsers = new ObservableCollection<User>();
+            this.user = this.inventoryService.GetAllUsers();
 
             // Load users and initialize data.
 
@@ -186,7 +188,7 @@ namespace SteamHub.ViewModels
 
                 // Retrieve all inventory items to rebuild the games filter.
                 var allItems = await this.inventoryService.GetUserInventoryAsync(this.SelectedUser.UserId);
-                var availableGames = await this.inventoryService.GetAvailableGamesAsync(allItems);
+                var availableGames = await this.inventoryService.GetAvailableGamesAsync(allItems,this.user.UserId);
                 this.AvailableGames.Clear();
                 foreach (var game in availableGames)
                 {

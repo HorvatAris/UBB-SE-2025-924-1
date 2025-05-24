@@ -1139,6 +1139,7 @@ namespace SteamHub.Api.Context
                     GameId = 5,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
                     IsActive = false,
+
                 },
                 new UserInventory
                 {

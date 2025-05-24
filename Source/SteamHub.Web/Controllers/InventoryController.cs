@@ -28,7 +28,7 @@ namespace SteamHub.Web.Controllers
             var currentUserId = selectedUserId ?? users.FirstOrDefault()?.UserId ?? 0;
 
             var allItems = await inventoryService.GetUserInventoryAsync(currentUserId);
-            var availableGames = await inventoryService.GetAvailableGamesAsync(allItems);
+            var availableGames = await inventoryService.GetAvailableGamesAsync(allItems,this.inventoryService.GetAllUsers().UserId);
 
             Game selectedGame = null;
             if (selectedGameId.HasValue)
