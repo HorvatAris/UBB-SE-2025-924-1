@@ -30,7 +30,7 @@ namespace SteamHub
         private DeveloperServiceProxy developerService;
         private PointShopServiceProxy pointShopService;
         private InventoryServiceProxy inventoryService;
-        private MarketplaceService marketplaceService;
+        private MarketplaceServiceProxy marketplaceService;
         private TradeServiceProxy tradeService;
         private UserServiceProxy userService;
 
@@ -106,23 +106,12 @@ namespace SteamHub
             var provider = services.BuildServiceProvider();
 
             var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
-            var pointShopRepository = new PointShopItemRepositoryProxy(httpClientFactory);
-            var userPointShopInventoryRepository = new UserPointShopItemInventoryRepositoryProxy(httpClientFactory);
-            var gameRepository = new GameRepositoryProxy(httpClientFactory);
-            var userRepository = new UserRepositoryProxy(httpClientFactory);
-            var itemRepository = new ItemRepositoryProxy(httpClientFactory);
-            var itemTradeRepository = new ItemTradeRepositoryProxy(httpClientFactory);
-            var itemTradeDetailsRepository = new ItemTradeDetailsRepositoryProxy(httpClientFactory);
-            var userInventoryRepository = new UserInventoryRepositoryProxy(httpClientFactory);
-            var tagRepository = new TagRepositoryProxy(httpClientFactory);
-            var userGamesRepository = new UserGamesRepositoryProxy(httpClientFactory);
-
 
             this.tradeService = new TradeServiceProxy(httpClientFactory, loggedInUser);
 
             this.userService = new UserServiceProxy(httpClientFactory);
 
-            this.marketplaceService = new MarketplaceService(userRepository, gameRepository, itemRepository, userInventoryRepository, loggedInUser);
+            this.marketplaceService = new MarketplaceServiceProxy(httpClientFactory, loggedInUser);
 
             this.pointShopService = new PointShopServiceProxy(httpClientFactory, loggedInUser);
 

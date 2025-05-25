@@ -37,6 +37,7 @@ builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPointShopService, PointShopService>();
 builder.Services.AddScoped<ITradeService, TradeService>();
+builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
 
 
 builder.Services.AddControllersWithViews()

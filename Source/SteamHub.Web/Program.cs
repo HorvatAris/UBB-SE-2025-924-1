@@ -19,17 +19,6 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IUserDetails, WebUserDetails>();
 
-builder.Services.AddScoped<IUserRepository, UserRepositoryProxy>();
-builder.Services.AddScoped<IGameRepository, GameRepositoryProxy>();
-builder.Services.AddScoped<IItemTradeRepository, ItemTradeRepositoryProxy>();
-builder.Services.AddScoped<IItemTradeDetailRepository, ItemTradeDetailsRepositoryProxy>();
-builder.Services.AddScoped<IUsersGamesRepository, UserGamesRepositoryProxy>();
-builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();
-builder.Services.AddScoped<ITagRepository, TagRepositoryProxy>();
-builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepositoryProxy>();
-builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepositoryProxy>();
-builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
-
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IUserService, UserServiceProxy>();
 builder.Services.AddScoped<IGameService, GameServiceProxy>();
@@ -39,8 +28,7 @@ builder.Services.AddScoped<IDeveloperService, DeveloperServiceProxy>();
 builder.Services.AddScoped<IPointShopService, PointShopServiceProxy>();
 builder.Services.AddScoped<IInventoryService, InventoryServiceProxy>();
 builder.Services.AddScoped<ITradeService, TradeServiceProxy>();
-
-builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
+builder.Services.AddScoped<IMarketplaceService, MarketplaceServiceProxy>();
 
 
 

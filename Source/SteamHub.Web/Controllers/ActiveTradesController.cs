@@ -84,7 +84,7 @@ namespace SteamHub.Web.Controllers
 				_tradeService.DeclineTradeRequest(trade); 
 			}
 
-			return RedirectToAction("Index");
+			return RedirectToAction("Index", "ActiveTrades");
 		}
 	}
 }

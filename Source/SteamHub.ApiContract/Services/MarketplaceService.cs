@@ -28,13 +28,12 @@ namespace SteamHub.ApiContract.Services
         public IUserDetails User { get; set; }
 
         public MarketplaceService(IUserRepository userRepository, IGameRepository gameRepository, IItemRepository itemRepository,
-                                  IUserInventoryRepository userInventoryRepository, IUserDetails userDetails)
+                                  IUserInventoryRepository userInventoryRepository)
         {
             this.UserRepository = userRepository;
             this.GameRepository = gameRepository;
             this.ItemRepository = itemRepository;
             this.UserInventoryRepository = userInventoryRepository;
-            this.User = userDetails;
         }
 
         public async Task<List<User>> GetAllUsersAsync()
@@ -71,6 +70,7 @@ namespace SteamHub.ApiContract.Services
                     {
                         ItemId = item.ItemId,
                         ItemName = item.ItemName,
+                        GameName = resultGame.GameTitle,
                         IsListed = item.IsListed,
                         ImagePath = item.ImagePath,
                         Description = item.Description,
@@ -84,26 +84,23 @@ namespace SteamHub.ApiContract.Services
             return result;
         }
 
-        public async Task<List<Item>> GetListingsByGameAsync(Game game, int userId)
+        public async Task<List<Item>> GetListingsByGameAsync(int gameId, int userId)
         {
-            if (game == null)
-            {
-                throw new ArgumentNullException(nameof(game));
-            }
-
+            var game = await this.GameRepository.GetGameByIdAsync(gameId);
             var result = new List<Item>();
 
             var userItems = (await this.UserInventoryRepository.GetUserInventoryAsync(userId)).Items;
             foreach (var userItem in userItems)
             {
                 var item = await this.ItemRepository.GetItemByIdAsync(userItem.ItemId);
-                if (item.IsListed && item.GameId == game.GameId)
+                if (item.IsListed && item.GameId == game.Identifier)
                 {
                     var resultGame = GameMapper.MapToGame(await this.GameRepository.GetGameByIdAsync(item.GameId));
                     var resultItem = new Item
                     {
                         ItemId = item.ItemId,
                         ItemName = item.ItemName,
+                        GameName = resultGame.GameTitle,
                         IsListed = item.IsListed,
                         ImagePath = item.ImagePath,
                         Description = item.Description,
@@ -119,26 +116,17 @@ namespace SteamHub.ApiContract.Services
 
         public async Task AddListingAsync(Game game, Item item)
         {
-            await this.SwitchListingStatusAsync(game, item);
+            await this.SwitchListingStatusAsync(game.GameId, item.ItemId);
         }
 
         public async Task RemoveListingAsync(Game game, Item item)
         {
-            await this.SwitchListingStatusAsync(game, item);
+            await this.SwitchListingStatusAsync(game.GameId, item.ItemId);
         }
 
-        public async Task UpdateListingAsync(Game game, Item item)
+        public async Task UpdateListingAsync(int gameId, int itemId)
         {
-            if (game == null)
-            {
-                throw new ArgumentNullException(nameof(game));
-            }
-
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
+            var item = await this.ItemRepository.GetItemByIdAsync(itemId);
             await this.ItemRepository.UpdateItemAsync(
                 item.ItemId,
                 new UpdateItemRequest
@@ -146,13 +134,13 @@ namespace SteamHub.ApiContract.Services
                     ItemName = item.ItemName,
                     IsListed = item.IsListed,
                     Description = item.Description,
-                    GameId = item.Game.GameId,
+                    GameId = item.GameId,
                     Price = item.Price,
                     ImagePath = item.ImagePath,
                 });
         }
 
-        public async Task<bool> BuyItemAsync(Item item, int currentUser)
+        public async Task<bool> BuyItemAsync(Item item, int currentUserId)
         {
             if (item == null)
             {
@@ -164,7 +152,7 @@ namespace SteamHub.ApiContract.Services
                 throw new InvalidOperationException("Item is not listed for sale");
             }
 
-            var entries = await this.UserInventoryRepository.GetUserInventoryAsync(this.User.UserId);
+            var entries = await this.UserInventoryRepository.GetUserInventoryAsync(currentUserId);
             foreach (var entry in entries.Items)
             {
                 if (entry.ItemId == item.ItemId)
@@ -174,7 +162,7 @@ namespace SteamHub.ApiContract.Services
                         {
                             GameId = entry.GameId,
                             ItemId = item.ItemId,
-                            UserId = this.User.UserId,
+                            UserId = currentUserId,
                         });
                 }
             }
@@ -183,7 +171,7 @@ namespace SteamHub.ApiContract.Services
                 new ItemFromInventoryRequest
                 {
                     GameId = item.Game.GameId,
-                    UserId = currentUser,
+                    UserId = currentUserId,
                     ItemId = item.ItemId,
                 });
 
@@ -202,8 +190,10 @@ namespace SteamHub.ApiContract.Services
             return true;
         }
 
-        private async Task SwitchListingStatusAsync(Game game, Item item)
+        public async Task SwitchListingStatusAsync(int gameId, int itemId)
         {
+            var game = await this.GameRepository.GetGameByIdAsync(gameId);
+            var item = await this.ItemRepository.GetItemByIdAsync(itemId);
             if (game == null)
             {
                 throw new ArgumentNullException(nameof(game));
@@ -222,7 +212,7 @@ namespace SteamHub.ApiContract.Services
                     Description = item.Description,
                     Price = item.Price,
                     IsListed = !item.IsListed,
-                    GameId = item.Game.GameId,
+                    GameId = item.GameId,
                     ImagePath = item.ImagePath,
                 });
         }
