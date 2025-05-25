@@ -16,6 +16,7 @@ public class AuthenticationController : ControllerBase
     {
         this.dataContext = dataContext;
     }
+
     [HttpPost("Login")]
     public ActionResult<LoginResponse> Login([FromBody]LoginRequest loginRequest)
     {

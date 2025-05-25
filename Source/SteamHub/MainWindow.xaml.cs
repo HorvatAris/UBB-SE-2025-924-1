@@ -31,7 +31,7 @@ namespace SteamHub
         private PointShopServiceProxy pointShopService;
         private InventoryServiceProxy inventoryService;
         private MarketplaceService marketplaceService;
-        private TradeService tradeService;
+        private TradeServiceProxy tradeService;
         private UserServiceProxy userService;
 
         public MainWindow()
@@ -118,20 +118,11 @@ namespace SteamHub
             var userGamesRepository = new UserGamesRepositoryProxy(httpClientFactory);
 
 
-            var tradeService = new TradeService(itemTradeRepository, loggedInUser, itemTradeDetailsRepository, userRepository, gameRepository, itemRepository, userInventoryRepository);
-            this.tradeService = tradeService;
+            this.tradeService = new TradeServiceProxy(httpClientFactory, loggedInUser);
 
-            var userService = new UserServiceProxy(httpClientFactory);
-            this.userService = userService;
+            this.userService = new UserServiceProxy(httpClientFactory);
 
             this.marketplaceService = new MarketplaceService(userRepository, gameRepository, itemRepository, userInventoryRepository, loggedInUser);
-
-
-            //this.pointShopService = new PointShopService(
-            //    pointShopRepository,
-            //    userPointShopInventoryRepository,
-            //    userRepository,
-            //    loggedInUser);
 
             this.pointShopService = new PointShopServiceProxy(httpClientFactory, loggedInUser);
 

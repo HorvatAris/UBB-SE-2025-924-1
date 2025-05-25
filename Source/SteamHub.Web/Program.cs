@@ -9,24 +9,9 @@ using SteamHub.Web;
 using SteamHub.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-//var devUser = new User
-//{
-//    UserId = 5,
-//    Email = "liam.garcia@example.com",
-//    PointsBalance = 7000,
-//    UserName = "LiamG",
-//    UserRole = User.Role.User,
-//    WalletBalance = 55,
-//};
-
-
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
-//builder.Services.AddSingleton(devUser);
-
-//builder.Services.AddScoped<SteamHub.ApiContract.Models.User.User>();
-
 
 
 builder.Services.AddHttpContextAccessor();
@@ -45,37 +30,18 @@ builder.Services.AddScoped<IPointShopItemRepository, PointShopItemRepositoryProx
 builder.Services.AddScoped<IUserPointShopItemInventoryRepository, UserPointShopItemInventoryRepositoryProxy>();
 builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
 
+builder.Services.AddScoped<IAuthManager, AuthManager>();
+builder.Services.AddScoped<IUserService, UserServiceProxy>();
 builder.Services.AddScoped<IGameService, GameServiceProxy>();
 builder.Services.AddScoped<IUserGameService, UserGameServiceProxy>();
 builder.Services.AddScoped<ICartService, CartServiceProxy>();
 builder.Services.AddScoped<IDeveloperService, DeveloperServiceProxy>();
-builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IPointShopService, PointShopServiceProxy>();
-builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
-builder.Services.AddScoped<ITradeService, TradeService>();
-
-builder.Services.AddScoped<IUserService, UserServiceProxy>();
-
-builder.Services.AddScoped<IUserInventoryRepository, UserInventoryRepositoryProxy>();
-builder.Services.AddScoped<IItemRepository, ItemRepositoryProxy>();
 builder.Services.AddScoped<IInventoryService, InventoryServiceProxy>();
+builder.Services.AddScoped<ITradeService, TradeServiceProxy>();
 
-//ilder.Services.AddScoped<ICartService, CartService>();
-//builder.Services.AddScoped<ICartService>(provider =>
-//{
-//    var user = provider.GetRequiredService<User>();
-//    var userGamesRepo = provider.GetRequiredService<IUsersGamesRepository>();
-//    var gameRepo = provider.GetRequiredService<IGameRepository>();
-//    return new CartService(userGamesRepo, user, gameRepo);
-//});
-//builder.Services.AddScoped<IUserGameService>(provider =>
-//{
-//    var user = provider.GetRequiredService<User>(); // Resolve the singleton User
-//    var userGameRepository = provider.GetRequiredService<IUsersGamesRepository>();
-//    var gameRepository = provider.GetRequiredService<IGameRepository>();
-//    var tagRepository = provider.GetRequiredService<ITagRepository>();
-//    return new UserGameService(userGameRepository, gameRepository, tagRepository, user);
-//});
+builder.Services.AddScoped<IMarketplaceService, MarketplaceService>();
+
 
 
 var apiBaseUri = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);

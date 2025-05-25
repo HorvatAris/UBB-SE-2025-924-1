@@ -20,6 +20,7 @@ namespace SteamHub.ApiContract.Models.ItemTrade
         {
             SourceUserItems = new List<Item>();
             DestinationUserItems = new List<Item>();
+            TradeStatus = StatusPending;
         }
 
         public int TradeId { get; set; }

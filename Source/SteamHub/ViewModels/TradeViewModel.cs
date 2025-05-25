@@ -468,7 +468,7 @@ namespace SteamHub.ViewModels
 
             if (result == ContentDialogResult.Primary)
             {
-                this.AcceptTrade(trade);
+                await this.AcceptTrade(trade);
             }
         }
 

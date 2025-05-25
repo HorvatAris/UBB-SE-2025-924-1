@@ -65,17 +65,6 @@
 							</li>
 						}
 					</ul>
-
-					<h6>Your Selected Items</h6>
-					<ul class="list-group">
-						@foreach (var item in Model.SelectedSourceItems)
-						{
-							<li class="list-group-item d-flex justify-content-between">
-								<span>@item.ItemName - @item.Price</span>
-								<button type="submit" name="removeSourceItemId" value="@item.ItemId" class="btn btn-sm btn-danger">Remove</button>
-							</li>
-						}
-					</ul>
 				</div>
 
 				<div class="col-md-5">
@@ -87,17 +76,6 @@
 								<img src="@item.ImagePath" width="50" class="me-2" />
 								<strong>@item.ItemName</strong> - @item.Price
 								<input type="checkbox" name="SelectedDestinationItemIds" value="@item.ItemId" class="float-end" />
-							</li>
-						}
-					</ul>
-
-					<h6>Their Selected Items</h6>
-					<ul class="list-group">
-						@foreach (var item in Model.SelectedDestinationItems)
-						{
-							<li class="list-group-item d-flex justify-content-between">
-								<span>@item.ItemName - @item.Price</span>
-								<button type="submit" name="removeDestinationItemId" value="@item.ItemId" class="btn btn-sm btn-danger">Remove</button>
 							</li>
 						}
 					</ul>
