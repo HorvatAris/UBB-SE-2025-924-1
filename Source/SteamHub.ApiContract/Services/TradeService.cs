@@ -253,10 +253,17 @@ namespace SteamHub.ApiContract.Services
                     var gameResponse = await this.gameRepository.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
 
-                    // itemGame.SetGameId(gameResponse.GameId);
-                    var item = new Item(itemResponseFromItemProxy.ItemName, itemGame, (float)itemResponseFromItemProxy.Price, itemResponseFromItemProxy.Description);
-                    item.SetItemId(itemResponseFromItemProxy.ItemId);
-                    item.SetIsListed(itemResponseFromItemProxy.IsListed);
+                    var item = new Item
+                    {
+                        ItemId = itemResponseFromItemProxy.ItemId,
+                        ItemName = itemResponseFromItemProxy.ItemName,
+                        Game = itemGame,
+                        GameName = itemGame.GameTitle,
+                        Price = (float)itemResponseFromItemProxy.Price,
+                        IsListed = itemResponseFromItemProxy.IsListed,
+                        Description = itemResponseFromItemProxy.Description,
+                        ImagePath = itemResponseFromItemProxy.ImagePath,
+                    };
 
                     if (detail.IsSourceUserItem)
                     {
@@ -363,9 +370,17 @@ namespace SteamHub.ApiContract.Services
                     var gameResponse = await this.gameRepository.GetGameByIdAsync(itemResponse.GameOfTradeId);
                     var itemGame = GameMapper.MapToGame(gameResponse);
 
-                    var item = new Item(itemResponseFromItemProxy.ItemName, itemGame, (float)itemResponseFromItemProxy.Price, itemResponseFromItemProxy.Description);
-                    item.SetItemId(itemResponseFromItemProxy.ItemId);
-                    item.SetIsListed(itemResponseFromItemProxy.IsListed);
+                    var item = new Item
+                    {
+                        ItemId = itemResponseFromItemProxy.ItemId,
+                        ItemName = itemResponseFromItemProxy.ItemName,
+                        Game = itemGame,
+                        GameName = itemGame.GameTitle,
+                        Price = (float)itemResponseFromItemProxy.Price,
+                        IsListed = itemResponseFromItemProxy.IsListed,
+                        Description = itemResponseFromItemProxy.Description,
+                        ImagePath = itemResponseFromItemProxy.ImagePath,
+                    };
 
                     if (detail.IsSourceUserItem)
                     {
@@ -488,13 +503,24 @@ namespace SteamHub.ApiContract.Services
             var allGames = allGamesResponse.Select(GameMapper.MapToGame).ToList();
             foreach (var inventoryItem in inventoryResponse.Items)
             {
-                var matchingGame = allGames.FirstOrDefault(game =>
-
-                string.Equals(game.GameTitle, inventoryItem.GameName, StringComparison.OrdinalIgnoreCase));
-                var item = new Item(inventoryItem.ItemName, matchingGame, (float)inventoryItem.Price, inventoryItem.Description);
-                item.SetItemId(inventoryItem.ItemId);
-                item.SetIsListed(inventoryItem.IsListed);
-                result.Add(item);
+                var matchingGame = allGames
+                    .FirstOrDefault(game => string.Equals(game.GameTitle, inventoryItem.GameName, StringComparison.OrdinalIgnoreCase));
+                
+                if(matchingGame != null)
+                {
+                    var item = new Item
+                    {
+                        ItemId = inventoryItem.ItemId,
+                        ItemName = inventoryItem.ItemName,
+                        Game = matchingGame,
+                        GameName = matchingGame.GameTitle,
+                        Price = inventoryItem.Price,
+                        IsListed = inventoryItem.IsListed,
+                        Description = inventoryItem.Description,
+                        ImagePath = inventoryItem.ImagePath,
+                    };
+                    result.Add(item);
+                }
             }
 
             return result;

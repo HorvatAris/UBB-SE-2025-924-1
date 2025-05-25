@@ -9,24 +9,9 @@ using SteamHub.Web;
 using SteamHub.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-//var devUser = new User
-//{
-//    UserId = 5,
-//    Email = "liam.garcia@example.com",
-//    PointsBalance = 7000,
-//    UserName = "LiamG",
-//    UserRole = User.Role.User,
-//    WalletBalance = 55,
-//};
-
-
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
-//builder.Services.AddSingleton(devUser);
-
-//builder.Services.AddScoped<SteamHub.ApiContract.Models.User.User>();
-
 
 
 builder.Services.AddHttpContextAccessor();

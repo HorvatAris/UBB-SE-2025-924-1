@@ -69,17 +69,11 @@ namespace SteamHub.ApiContract.ServiceProxies
             if (trade == null)
                 throw new ArgumentNullException(nameof(trade));
 
-            // Validate required fields
             if (trade.SourceUser == null || trade.DestinationUser == null)
                 throw new ArgumentException("Source and destination users must be specified");
             
             if (trade.GameOfTrade == null)
                 throw new ArgumentException("Game must be specified");
-
-            // Ensure foreign key IDs are set
-            trade.SourceUserId = trade.SourceUser.UserId;
-            trade.DestinationUserId = trade.DestinationUser.UserId;
-            trade.GameOfTradeId = trade.GameOfTrade.GameId;
 
             // Ensure trade has initial status
             if (string.IsNullOrEmpty(trade.TradeStatus))

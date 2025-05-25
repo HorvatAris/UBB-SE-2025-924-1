@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SteamHub.ApiContract.Models.ItemTrade;
+using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Services.Interfaces;
 using SteamHub.Web.ViewModels;
 
@@ -71,17 +72,42 @@ namespace SteamHub.Web.Controllers
 			var selectedSourceItems = sourceItems.Where(item => model.SelectedSourceItemIds.Contains(item.ItemId)).ToList();
 			var selectedDestinationItems = destinationItems.Where(item => model.SelectedDestinationItemIds.Contains(item.ItemId)).ToList();
 
-			var trade = new ItemTrade
+			var sourceUser = new User
 			{
-				SourceUser = new() { UserId = currentUser.UserId },
-				DestinationUser = new() { UserId = model.SelectedUserId.Value },
-				GameOfTrade = new() { GameId = model.SelectedGameId ?? 0 },
+				UserId = currentUser.UserId,
+				UserName = currentUser.UserName,
+				Email = currentUser.Email,
+				UserRole = currentUser.UserRole,
+				PointsBalance = currentUser.PointsBalance,
+				WalletBalance = currentUser.WalletBalance
+			};
+
+			var allUsers = await _userService.GetAllUsersAsync();
+            var destinationUser = allUsers.FirstOrDefault(user => user.UserId == model.SelectedUserId.Value);
+			if(destinationUser == null)
+			{
+                model.ErrorMessage = "Not a valid user.";
+                return View("Index", await RebuildModel(model));
+            }
+
+            var gameOfTrade = await _gameService.GetGameByIdAsync(model.SelectedGameId ?? 0);
+            if (gameOfTrade == null)
+            {
+                model.ErrorMessage = "Not a valid game.";
+                return View("Index", await RebuildModel(model));
+            }
+
+            var trade = new ItemTrade
+			{
+				SourceUser = sourceUser,
+				DestinationUser = destinationUser,
+				GameOfTrade = gameOfTrade,
 				TradeDescription = model.TradeDescription,
 				TradeDate = DateTime.UtcNow,
 				TradeStatus = "Pending",
 				SourceUserItems = selectedSourceItems,
 				DestinationUserItems = selectedDestinationItems,
-				AcceptedBySourceUser = false,
+				AcceptedBySourceUser = true,
 				AcceptedByDestinationUser = false
 			};
 
