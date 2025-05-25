@@ -22,10 +22,12 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<List<User>> GetAllUsersAsync();
 
-        Task<List<Item>> GetListingsByGameAsync(Game game, int userId);
+        Task<List<Item>> GetListingsByGameAsync(int gameId, int userId);
 
         Task RemoveListingAsync(Game game, Item item);
 
-        Task UpdateListingAsync(Game game, Item item);
+        Task UpdateListingAsync(int gameId, int itemId);
+
+        Task SwitchListingStatusAsync(int gameId, int itemId);
     }
 }

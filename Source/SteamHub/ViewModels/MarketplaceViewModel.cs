@@ -185,6 +185,7 @@ namespace SteamHub.ViewModels
 
             try
             {
+
                 bool success = await this.marketplaceService.BuyItemAsync(this.SelectedItem, this.CurrentUser.UserId);
                 if (success)
                 {

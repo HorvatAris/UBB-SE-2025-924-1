@@ -70,7 +70,7 @@ namespace SteamHub.Web.Controllers
             }
             else
             {
-                return RedirectToAction("AccessDenied", "Authentication");
+                return RedirectToAction("Index", "HomePage");
             }
         }
     }

@@ -50,6 +50,9 @@ namespace SteamHub.ApiContract.Services
                 .Select(item => new Item
                 {
                     ItemId = item.ItemId,
+                    GameName = item.GameName,
+                    ImagePath = item.ImagePath,
+                    Game = game,
                     ItemName = item.ItemName,
                     Price = item.Price,
                     Description = item.Description,
@@ -63,14 +66,16 @@ namespace SteamHub.ApiContract.Services
         public async Task<List<Item>> GetAllItemsFromInventoryAsync(int userId)
         {
             // Validate the user.
-            //this.inventoryValidator.ValidateUser(this.user);
+            var games = await this.gameRepository.GetGamesAsync(new GetGamesRequest());
 
-            
             var userInventoryResponse = await this.userRepository.GetUserInventoryAsync(userId);
             var filteredItems = userInventoryResponse.Items
                 .Select(item => new Item
                 {
                     ItemId = item.ItemId,
+                    ImagePath = item.ImagePath,
+                    GameName = item.GameName,
+                    Game = GameMapper.MapToGame(games.FirstOrDefault(game => game.Name == item.GameName)),
                     ItemName = item.ItemName,
                     Price = item.Price,
                     Description = item.Description,
@@ -109,10 +114,6 @@ namespace SteamHub.ApiContract.Services
                 .Select(item => new Item
                 {
                     ItemId = item.ItemId,
-                    // Replace the following line:
-                   
-
-                    // With this corrected line:
                     Game = GameMapper.MapToGame(allGames.FirstOrDefault(game => game.Name == item.GameName)),
                     ItemName = item.ItemName,
                     Price = item.Price,
