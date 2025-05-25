@@ -26,7 +26,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task AddGameToWishlistAsync(UserGameRequest gameRequest);
 
-        Task PurchaseGamesAsync(PurchaseGamesRequest request);
+        Task<int> PurchaseGamesAsync(PurchaseGamesRequest request);
 
         Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags, int userId);
 

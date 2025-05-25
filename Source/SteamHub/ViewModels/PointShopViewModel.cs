@@ -419,6 +419,8 @@ namespace SteamHub.ViewModels
                     user.UserId);
                 this.TransactionHistory.Add(transaction);
 
+                this.user.PointsBalance -= (float)this.SelectedItem.PointPrice;
+
                 // Point balance is updated in the repository
                 this.OnPropertyChanged(nameof(this.UserPointBalance));
                 this.OnPropertyChanged(nameof(this.CanPurchase));
