@@ -209,7 +209,7 @@ namespace SteamHub.ViewModels
 
         public async Task<bool> SellItemAsync(Item selectedItem)
         {
-            return await this.inventoryService.SellItemAsync(selectedItem);
+            return await this.inventoryService.SellItemAsync(selectedItem, this.user.UserId);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

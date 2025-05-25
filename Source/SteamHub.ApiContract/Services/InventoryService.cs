@@ -24,14 +24,16 @@ namespace SteamHub.ApiContract.Services
     {
         private readonly InventoryValidator inventoryValidator;
 
-        private readonly IUserInventoryRepository userRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IUserInventoryRepository userInventoryRepository;
         private readonly IItemRepository itemRepository;
         private readonly IGameRepository gameRepository;
         
 
-        public InventoryService(IUserInventoryRepository userRepository, IItemRepository itemRepository, IGameRepository gameRepository)
+        public InventoryService(IUserRepository userRepository, IUserInventoryRepository userInventoryRepository, IItemRepository itemRepository, IGameRepository gameRepository)
         {
             this.userRepository = userRepository;
+            this.userInventoryRepository = userInventoryRepository;
             this.itemRepository = itemRepository;
             this.gameRepository = gameRepository;
 
@@ -44,7 +46,7 @@ namespace SteamHub.ApiContract.Services
         {
             // Validate the game.
             this.inventoryValidator.ValidateGame(game);
-            var userInventoryResponse = await this.userRepository.GetUserInventoryAsync(userId);
+            var userInventoryResponse = await this.userInventoryRepository.GetUserInventoryAsync(userId);
             var filteredItems = userInventoryResponse.Items
                 .Where(item => item.GameName == game.GameTitle)
                 .Select(item => new Item
@@ -68,7 +70,7 @@ namespace SteamHub.ApiContract.Services
             // Validate the user.
             var games = await this.gameRepository.GetGamesAsync(new GetGamesRequest());
 
-            var userInventoryResponse = await this.userRepository.GetUserInventoryAsync(userId);
+            var userInventoryResponse = await this.userInventoryRepository.GetUserInventoryAsync(userId);
             var filteredItems = userInventoryResponse.Items
                 .Select(item => new Item
                 {
@@ -97,7 +99,7 @@ namespace SteamHub.ApiContract.Services
                 ItemId = item.ItemId,
                 GameId = game.GameId,
             };
-            await this.userRepository.AddItemToUserInventoryAsync(itemFromInventoryRequest);
+            await this.userInventoryRepository.AddItemToUserInventoryAsync(itemFromInventoryRequest);
         }
 
         public async Task<List<Item>> GetUserInventoryAsync(int userId)
@@ -107,7 +109,7 @@ namespace SteamHub.ApiContract.Services
                 throw new ArgumentException("UserId must be positive.", nameof(userId));
             }
 
-            var userInventoryResponse = await this.userRepository.GetUserInventoryAsync(userId);
+            var userInventoryResponse = await this.userInventoryRepository.GetUserInventoryAsync(userId);
             var allGames = await this.gameRepository.GetGamesAsync(new GetGamesRequest());
 
             var filteredItems = userInventoryResponse.Items
@@ -139,7 +141,7 @@ namespace SteamHub.ApiContract.Services
         }
 
 
-        public async Task<bool> SellItemAsync(Item item)
+        public async Task<bool> SellItemAsync(Item item, int userId)
         {
             // Validate that the item is sellable.
             this.inventoryValidator.ValidateSellableItem(item);
@@ -156,9 +158,10 @@ namespace SteamHub.ApiContract.Services
             }
 
             var foundItemGameId = allItems.FirstOrDefault(currentItem => currentItem.ItemId == item.ItemId).GameId;
+            var user = await this.userRepository.GetUserByIdAsync(userId);
 
             // Create a request object for the item.
-            var itemFromInventoryRequest = new UpdateItemRequest
+            var itemUpdateRequest = new UpdateItemRequest
             {
                 ItemName = foundItem.ItemName,
                 GameId = foundItemGameId,
@@ -168,10 +171,28 @@ namespace SteamHub.ApiContract.Services
                 ImagePath = foundItem.ImagePath,
             };
 
+            var itemFromInventoryRequest = new ItemFromInventoryRequest
+            {
+                UserId = userId,
+                ItemId = item.ItemId,
+                GameId = foundItemGameId,
+            };
+
+            var userUpdateRequest = new UpdateUserRequest
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Role = user.Role,
+                WalletBalance = user.WalletBalance + item.Price,
+                PointsBalance = user.PointsBalance,
+            };
+
             // Call the repository method to sell the item.
             try
             {
-                await this.itemRepository.UpdateItemAsync(item.ItemId, itemFromInventoryRequest);
+                await this.itemRepository.UpdateItemAsync(item.ItemId, itemUpdateRequest);
+                await this.userInventoryRepository.RemoveItemFromUserInventoryAsync(itemFromInventoryRequest);
+                await this.userRepository.UpdateUserAsync(userId, userUpdateRequest);
             }
             catch (Exception exception)
             {
@@ -233,7 +254,7 @@ namespace SteamHub.ApiContract.Services
             };
 
             // Create a list to hold the available games.
-            var userItems = await this.userRepository.GetUserInventoryAsync(userId);
+            var userItems = await this.userInventoryRepository.GetUserInventoryAsync(userId);
             List<string> gameNames = userItems.Items
                 .Where(item => item.GameName != null)
                 .Select(item => item.GameName)

@@ -12,6 +12,7 @@ using SteamHub.ApiContract.Models.User;
 using SteamHub.ApiContract.Utils;
 using SteamHub.ApiContract.Models.ItemTrade;
 using System.Net.Http.Json;
+using SteamHub.ApiContract.Models.UserInventory;
 
 namespace SteamHub.ApiContract.ServiceProxies
 {
@@ -165,12 +166,12 @@ namespace SteamHub.ApiContract.ServiceProxies
         }
 
 
-        public async Task<bool> SellItemAsync(Item item)
+        public async Task<bool> SellItemAsync(Item item, int userId)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
 
-            var response = await _httpClient.PatchAsJsonAsync("/api/Inventory/SellItem", item);
+            var response = await _httpClient.PatchAsJsonAsync($"/api/Inventory/SellItem/{userId}", item);
 
             if (response.IsSuccessStatusCode)
             {

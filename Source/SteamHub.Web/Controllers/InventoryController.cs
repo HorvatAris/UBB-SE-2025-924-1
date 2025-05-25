@@ -66,7 +66,7 @@ namespace SteamHub.Web.Controllers
                     .FirstOrDefault(i => i.ItemId == itemId);
 
                 if (item != null && !item.IsListed)
-                    await inventoryService.SellItemAsync(item);
+                    await inventoryService.SellItemAsync(item, selectedUserId);
 
                 TempData["StatusMessage"] = item != null
                     ? $"Item '{item.ItemName}' was successfully listed for sale."
