@@ -48,6 +48,7 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
         [HttpPost("AvailableGames/{userId}")]
         public async Task<IActionResult> GetAvailableGames([FromRoute] int userId, [FromBody] List<Item> items)
         {
@@ -98,8 +99,8 @@ namespace SteamHub.Api.Controllers
             }
         }
 
-        [HttpPatch("SellItem")]
-        public async Task<IActionResult> SellItem([FromBody] Item item)
+        [HttpPatch("SellItem/{userId}")]
+        public async Task<IActionResult> SellItem([FromRoute] int userId, [FromBody] Item item)
         {
             if (item == null)
             {
@@ -108,7 +109,7 @@ namespace SteamHub.Api.Controllers
 
             try
             {
-                bool success = await this.inventoryService.SellItemAsync(item);
+                bool success = await this.inventoryService.SellItemAsync(item, userId);
                 if (success)
                     return Ok(new { message = "Item listed for sale successfully." });
                 else
@@ -119,8 +120,5 @@ namespace SteamHub.Api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-
-
-
     }
 }

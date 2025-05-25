@@ -27,7 +27,7 @@ namespace SteamHub.ApiContract.Services.Interfaces
 
         Task<IUserDetails> GetAllUsersAsync();
 
-        Task<bool> SellItemAsync(Item item);
+        Task<bool> SellItemAsync(Item item, int userId);
 
         List<Item> FilterInventoryItems(List<Item> items, Game selectedGame, string searchText);
 

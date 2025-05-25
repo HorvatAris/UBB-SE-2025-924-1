@@ -34,7 +34,7 @@
             <ComboBox x:Name="UserComboBox" 
                  Width="200"
                  ItemsSource="{Binding AvailableUsers}"
-                 SelectedItem="{Binding CurrentUser, Mode=TwoWay}"
+                 SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
                  DisplayMemberPath="UserName"/>
         </StackPanel>
 

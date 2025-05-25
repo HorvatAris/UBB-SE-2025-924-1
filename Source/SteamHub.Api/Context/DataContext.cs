@@ -636,7 +636,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 3,
                     Price = 29.99f,
                     Description = "A sleek and aggressive finish for your AK-47.",
-                    IsListed = false,
+                    IsListed = true,
                     ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak47_cobra_light_large.7494bfdf4855fd4e6a2dbd983ed0a243c80ef830.png"
                 },
                 new Item
@@ -646,7 +646,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 3,
                     Price = 34.99f,
                     Description = "Legendary pistol skin with a fiery design.",
-                    IsListed = false,
+                    IsListed = true,
                     ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_aa_flames_light_large.dd140c3b359c16ccd8e918ca6ad0b2628151fe1c.png"
                 },
 
@@ -658,7 +658,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 4,
                     Price = 49.99f,
                     Description = "Iconic weapon that manipulates objects with physics.",
-                    IsListed = false,
+                    IsListed = true,
                     ImagePath = "https://www.toyark.com/wp-content/uploads/2013/05/Half-Life-2-Gravity-Gun-007.jpg"
                 },
                 new Item
@@ -668,7 +668,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 4,
                     Price = 19.99f,
                     Description = "Protective gloves from the HEV suit worn by Gordon Freeman.",
-                    IsListed = false,
+                    IsListed = true,
                     ImagePath = "https://preview.redd.it/hl2-revision-update-the-grabbity-gloves-v0-ftz143vjmqcb1.jpg?width=640&crop=smart&auto=webp&s=9b3738a0f4bce98cc6a38b34e6ec319d03c05dd0"
                 },
 
@@ -747,7 +747,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 19,
                     Price = 34.99f,
                     Description = "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.",
-                    IsListed = false,
+                    IsListed = true,
                     ImagePath = "https://static.wikia.nocookie.net/shop-heroes/images/4/4a/Gauntlets_Cybernetic_Gauntlets_Blueprint.png/revision/latest?cb=20200724020856"
                 },
                 new Item
@@ -779,7 +779,7 @@ namespace SteamHub.Api.Context
                     CorrespondingGameId = 20,
                     Price = 34.99f,
                     Description = "A robust shield forged for the bravest of fighters in Shadow of Valhalla.",
-                    IsListed = false,
+                    IsListed = true,
                     ImagePath = "https://www.vikingsroar.com/cdn/shop/products/d7f00df1f2c5a9059ec5dd319139da24.webp?v=1652049514"
                 }
             };
@@ -1139,7 +1139,14 @@ namespace SteamHub.Api.Context
                     GameId = 5,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
                     IsActive = false,
-
+                },
+                new UserInventory
+                {
+                    UserId = 4,
+                    ItemId = 7,
+                    GameId = 6,
+                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
+                    IsActive = false,
                 },
                 new UserInventory
                 {
@@ -1151,9 +1158,9 @@ namespace SteamHub.Api.Context
                 },
                 new UserInventory
                 {
-                    UserId = 5,
-                    ItemId = 7,
-                    GameId = 6,
+                    UserId = 4,
+                    ItemId = 10,
+                    GameId = 15,
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
                     IsActive = false,
                 },
@@ -1189,14 +1196,6 @@ namespace SteamHub.Api.Context
                     AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
                     IsActive = false,
                 },
-                new UserInventory
-                {
-                    UserId = 4,
-                    ItemId = 10,
-                    GameId = 15,
-                    AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0),
-                    IsActive = false,
-                },
             };
 
             // have the delete cascaded only for games
@@ -1224,10 +1223,10 @@ namespace SteamHub.Api.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             var itemTradeDetailsSeed = new List<ItemTradeDetail>
-            { 
+            {
                 new ItemTradeDetail { TradeId = 1, ItemId = 7, IsSourceUserItem = true },
                 new ItemTradeDetail { TradeId = 2, ItemId = 12, IsSourceUserItem = true },
-                new ItemTradeDetail { TradeId = 3, ItemId = 13, IsSourceUserItem = true},
+                new ItemTradeDetail { TradeId = 3, ItemId = 13, IsSourceUserItem = false},
             };
 
             builder.Entity<ItemTradeDetail>().HasData(itemTradeDetailsSeed);

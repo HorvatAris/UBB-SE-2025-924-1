@@ -710,7 +710,7 @@ namespace SteamHub.Api.Migrations
                             CorrespondingGameId = 3,
                             Description = "A sleek and aggressive finish for your AK-47.",
                             ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak47_cobra_light_large.7494bfdf4855fd4e6a2dbd983ed0a243c80ef830.png",
-                            IsListed = false,
+                            IsListed = true,
                             ItemName = "AK-47 | Redline Skin",
                             Price = 29.99f
                         },
@@ -720,7 +720,7 @@ namespace SteamHub.Api.Migrations
                             CorrespondingGameId = 3,
                             Description = "Legendary pistol skin with a fiery design.",
                             ImagePath = "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_aa_flames_light_large.dd140c3b359c16ccd8e918ca6ad0b2628151fe1c.png",
-                            IsListed = false,
+                            IsListed = true,
                             ItemName = "Desert Eagle | Blaze Skin",
                             Price = 34.99f
                         },
@@ -730,7 +730,7 @@ namespace SteamHub.Api.Migrations
                             CorrespondingGameId = 4,
                             Description = "Iconic weapon that manipulates objects with physics.",
                             ImagePath = "https://www.toyark.com/wp-content/uploads/2013/05/Half-Life-2-Gravity-Gun-007.jpg",
-                            IsListed = false,
+                            IsListed = true,
                             ItemName = "Gravity Gun Replica",
                             Price = 49.99f
                         },
@@ -740,7 +740,7 @@ namespace SteamHub.Api.Migrations
                             CorrespondingGameId = 4,
                             Description = "Protective gloves from the HEV suit worn by Gordon Freeman.",
                             ImagePath = "https://preview.redd.it/hl2-revision-update-the-grabbity-gloves-v0-ftz143vjmqcb1.jpg?width=640&crop=smart&auto=webp&s=9b3738a0f4bce98cc6a38b34e6ec319d03c05dd0",
-                            IsListed = false,
+                            IsListed = true,
                             ItemName = "HEV Suit Gloves",
                             Price = 19.99f
                         },
@@ -810,7 +810,7 @@ namespace SteamHub.Api.Migrations
                             CorrespondingGameId = 19,
                             Description = "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.",
                             ImagePath = "https://static.wikia.nocookie.net/shop-heroes/images/4/4a/Gauntlets_Cybernetic_Gauntlets_Blueprint.png/revision/latest?cb=20200724020856",
-                            IsListed = false,
+                            IsListed = true,
                             ItemName = "Cybernetic Gauntlet",
                             Price = 34.99f
                         },
@@ -840,7 +840,7 @@ namespace SteamHub.Api.Migrations
                             CorrespondingGameId = 20,
                             Description = "A robust shield forged for the bravest of fighters in Shadow of Valhalla.",
                             ImagePath = "https://www.vikingsroar.com/cdn/shop/products/d7f00df1f2c5a9059ec5dd319139da24.webp?v=1652049514",
-                            IsListed = false,
+                            IsListed = true,
                             ItemName = "Valhalla Shield",
                             Price = 34.99f
                         });
@@ -962,7 +962,7 @@ namespace SteamHub.Api.Migrations
                         {
                             TradeId = 3,
                             ItemId = 13,
-                            IsSourceUserItem = true
+                            IsSourceUserItem = false
                         });
                 });
 
@@ -1422,6 +1422,14 @@ namespace SteamHub.Api.Migrations
                         new
                         {
                             UserId = 4,
+                            ItemId = 7,
+                            GameId = 6,
+                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = false
+                        },
+                        new
+                        {
+                            UserId = 4,
                             ItemId = 9,
                             GameId = 15,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
@@ -1429,9 +1437,9 @@ namespace SteamHub.Api.Migrations
                         },
                         new
                         {
-                            UserId = 5,
-                            ItemId = 7,
-                            GameId = 6,
+                            UserId = 4,
+                            ItemId = 10,
+                            GameId = 15,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         },
@@ -1464,14 +1472,6 @@ namespace SteamHub.Api.Migrations
                             UserId = 6,
                             ItemId = 13,
                             GameId = 20,
-                            AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false
-                        },
-                        new
-                        {
-                            UserId = 4,
-                            ItemId = 10,
-                            GameId = 15,
                             AcquiredDate = new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             IsActive = false
                         });

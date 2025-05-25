@@ -15,6 +15,7 @@ namespace SteamHub.ViewModels
     using SteamHub.ApiContract.Models.Item;
     using SteamHub.ApiContract.Models.User;
     using SteamHub.ApiContract.Services.Interfaces;
+    using Windows.UI.WebUI;
 
     /// <summary>
     /// Viewmodel for the Marketplace Page.
@@ -30,6 +31,7 @@ namespace SteamHub.ViewModels
         private List<Item> allCurrentItems;
         private Item selectedItem;
         private IUserDetails currentUser;
+        private User selectedUser;
         private ObservableCollection<User> availableUsers;
         private ObservableCollection<string> availableGames;
         private ObservableCollection<string> availableTypes;
@@ -164,6 +166,20 @@ namespace SteamHub.ViewModels
             }
         }
 
+        public User SelectedUser
+        {
+            get => this.selectedUser;
+            set
+            {
+                if (this.selectedUser != value)
+                {
+                    this.selectedUser = value;
+                    this.OnPropertyChanged();
+                    this.OnPropertyChanged(nameof(this.CanBuyItem));
+                }
+            }
+        }
+
         public ObservableCollection<User> AvailableUsers
         {
             get => this.availableUsers;
@@ -218,9 +234,11 @@ namespace SteamHub.ViewModels
 
         private async Task LoadUsersAsync()
         {
-            var users = await this.marketplaceService.GetAllUsersAsync();
-            this.AvailableUsers = new ObservableCollection<User>(users);
             this.CurrentUser = this.marketplaceService.User;
+            var user = new User(this.CurrentUser);
+
+            this.AvailableUsers = new ObservableCollection<User> { user };
+            this.SelectedUser = user;
         }
 
         private async Task LoadItemsAsync()
@@ -233,12 +251,28 @@ namespace SteamHub.ViewModels
         private void InitializeCollections()
         {
             var allItems = this.Items.ToList();
-            this.AvailableGames =
-                new ObservableCollection<string>(allItems.Select(item => item.Game.GameTitle).Distinct());
-            this.AvailableTypes = new ObservableCollection<string>(
-                allItems.Select(item => item.ItemName.Split('|').First().Trim()).Distinct());
-            this.AvailableRarities =
-                new ObservableCollection<string>(new[] { "Common", "Uncommon", "Rare", "Epic", "Legendary" });
+
+            var allGames = allItems
+                .Select(item => item.Game.GameTitle)
+                .Distinct()
+                .OrderBy(title => title)
+                .ToList();
+            allGames.Insert(0, "All Games");
+
+            var allTypes = allItems
+                .Select(item => item.ItemName.Split('|').First().Trim())
+                .Distinct()
+                .OrderBy(type => type)
+                .ToList();
+            allTypes.Insert(0, "All Types");
+
+            this.AvailableGames = new ObservableCollection<string>(allGames);
+            this.AvailableTypes = new ObservableCollection<string>(allTypes);
+            this.AvailableRarities = new ObservableCollection<string>(new[] {"All Rarities", "Common", "Uncommon", "Rare", "Epic", "Legendary"});
+
+            this.SelectedGame = this.AvailableGames.First();
+            this.SelectedType = this.AvailableTypes.First();
+            this.SelectedRarity = this.AvailableRarities.First();
         }
 
         private void FilterItems()
@@ -254,12 +288,12 @@ namespace SteamHub.ViewModels
                         item.Description.ToLower().Contains(searchTextLower));
             }
 
-            if (!string.IsNullOrEmpty(this.SelectedGame))
+            if (!string.IsNullOrEmpty(this.SelectedGame) && this.SelectedGame != "All Games")
             {
                 filteredItems = filteredItems.Where(item => item.Game.GameTitle == this.SelectedGame);
             }
 
-            if (!string.IsNullOrEmpty(this.SelectedType))
+            if (!string.IsNullOrEmpty(this.SelectedType) && this.SelectedType != "All Types")
             {
                 filteredItems = filteredItems.Where(
                     item =>

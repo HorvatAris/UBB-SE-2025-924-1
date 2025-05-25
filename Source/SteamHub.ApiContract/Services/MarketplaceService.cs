@@ -152,20 +152,7 @@ namespace SteamHub.ApiContract.Services
                 throw new InvalidOperationException("Item is not listed for sale");
             }
 
-            var entries = await this.UserInventoryRepository.GetUserInventoryAsync(currentUserId);
-            foreach (var entry in entries.Items)
-            {
-                if (entry.ItemId == item.ItemId)
-                {
-                    await this.UserInventoryRepository.RemoveItemFromUserInventoryAsync(
-                        new ItemFromInventoryRequest
-                        {
-                            GameId = entry.GameId,
-                            ItemId = item.ItemId,
-                            UserId = currentUserId,
-                        });
-                }
-            }
+            var currentUser = await this.UserRepository.GetUserByIdAsync(currentUserId);
 
             await this.UserInventoryRepository.AddItemToUserInventoryAsync(
                 new ItemFromInventoryRequest
@@ -185,6 +172,17 @@ namespace SteamHub.ApiContract.Services
                     ImagePath = item.ImagePath,
                     IsListed = false,
                     ItemName = item.ItemName,
+                });
+
+            await this.UserRepository.UpdateUserAsync(
+                currentUserId,
+                new UpdateUserRequest
+                {
+                    UserName = currentUser.UserName,
+                    Email = currentUser.Email,
+                    WalletBalance = currentUser.WalletBalance - item.Price,
+                    PointsBalance = currentUser.PointsBalance,
+                    Role = currentUser.Role,
                 });
 
             return true;
