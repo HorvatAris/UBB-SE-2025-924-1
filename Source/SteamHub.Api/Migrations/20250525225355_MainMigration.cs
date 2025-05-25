@@ -529,20 +529,20 @@ namespace SteamHub.Api.Migrations
                 columns: new[] { "ItemId", "CorrespondingGameId", "Description", "ImagePath", "IsListed", "ItemName", "Price" },
                 values: new object[,]
                 {
-                    { 1, 3, "A sleek and aggressive finish for your AK-47.", "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak47_cobra_light_large.7494bfdf4855fd4e6a2dbd983ed0a243c80ef830.png", false, "AK-47 | Redline Skin", 29.99f },
-                    { 2, 3, "Legendary pistol skin with a fiery design.", "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_aa_flames_light_large.dd140c3b359c16ccd8e918ca6ad0b2628151fe1c.png", false, "Desert Eagle | Blaze Skin", 34.99f },
-                    { 3, 4, "Iconic weapon that manipulates objects with physics.", "https://www.toyark.com/wp-content/uploads/2013/05/Half-Life-2-Gravity-Gun-007.jpg", false, "Gravity Gun Replica", 49.99f },
-                    { 4, 4, "Protective gloves from the HEV suit worn by Gordon Freeman.", "https://preview.redd.it/hl2-revision-update-the-grabbity-gloves-v0-ftz143vjmqcb1.jpg?width=640&crop=smart&auto=webp&s=9b3738a0f4bce98cc6a38b34e6ec319d03c05dd0", false, "HEV Suit Gloves", 19.99f },
+                    { 1, 3, "A sleek and aggressive finish for your AK-47.", "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak47_cobra_light_large.7494bfdf4855fd4e6a2dbd983ed0a243c80ef830.png", true, "AK-47 | Redline Skin", 29.99f },
+                    { 2, 3, "Legendary pistol skin with a fiery design.", "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_aa_flames_light_large.dd140c3b359c16ccd8e918ca6ad0b2628151fe1c.png", true, "Desert Eagle | Blaze Skin", 34.99f },
+                    { 3, 4, "Iconic weapon that manipulates objects with physics.", "https://www.toyark.com/wp-content/uploads/2013/05/Half-Life-2-Gravity-Gun-007.jpg", true, "Gravity Gun Replica", 49.99f },
+                    { 4, 4, "Protective gloves from the HEV suit worn by Gordon Freeman.", "https://preview.redd.it/hl2-revision-update-the-grabbity-gloves-v0-ftz143vjmqcb1.jpg?width=640&crop=smart&auto=webp&s=9b3738a0f4bce98cc6a38b34e6ec319d03c05dd0", true, "HEV Suit Gloves", 19.99f },
                     { 5, 5, "A soft collectible version of the iconic power-up.", "https://mario.wiki.gallery/images/thumb/7/7e/New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png/1200px-New_Super_Mario_Bros._U_Deluxe_Fire_Flower.png", false, "Fire Flower", 14.99f },
                     { 6, 5, "The classic red cap worn by Mario himself.", "https://static.wikia.nocookie.net/mario/images/c/cd/Mario_Cap.png/revision/latest?cb=20180310022043", false, "Mario Cap", 24.99f },
                     { 7, 6, "Faithful replica of Link's legendary blade.", "https://upload.wikimedia.org/wikipedia/en/f/f9/Master_Sword_Lead.png", false, "Master Sword Replica", 69.99f },
                     { 8, 6, "Sturdy shield bearing the crest of Hyrule.", "https://theswordstall.co.uk/cdn/shop/files/Legend-Of-Zelda-Deluxe-Hylian-Shield-Full-Metal-3.jpg?v=1723552799&width=750", false, "Hylian Shield", 59.99f },
                     { 9, 15, "Miniature version of the famous mining tool.", "https://static.posters.cz/image/1300/merch/replica-minecraft-diamond-pickaxe-i94007.jpg", false, "Diamond Pickaxe", 9.99f },
                     { 10, 15, "Soft plush of the infamous explosive mob.", "https://feltright.com/cdn/shop/files/minecraft-creeper.jpg?v=1720033057&width=800", false, "Creeper Plush", 19.99f },
-                    { 11, 19, "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.", "https://static.wikia.nocookie.net/shop-heroes/images/4/4a/Gauntlets_Cybernetic_Gauntlets_Blueprint.png/revision/latest?cb=20200724020856", false, "Cybernetic Gauntlet", 34.99f },
+                    { 11, 19, "A high-tech gauntlet to hack and crush foes in Cyberstrike 2077.", "https://static.wikia.nocookie.net/shop-heroes/images/4/4a/Gauntlets_Cybernetic_Gauntlets_Blueprint.png/revision/latest?cb=20200724020856", true, "Cybernetic Gauntlet", 34.99f },
                     { 12, 19, "A visor that enhances your vision in the neon-lit battles of Cyberstrike 2077.", "https://www.motocentral.co.uk/cdn/shop/files/Ruroc-EOX-Cyberstrike_-From-Moto-Central-_-Fast-Free-UK-Delivery-257043288_1024x.jpg?v=1744036882", false, "Neon Visor", 24.99f },
                     { 13, 20, "A mighty axe for the warriors of Shadow of Valhalla.", "https://valhalla-vikings.co.uk/cdn/shop/products/il_fullxfull.3370240260_td4v.jpg?v=1679150085&width=1080", false, "Viking Axe", 44.99f },
-                    { 14, 20, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://www.vikingsroar.com/cdn/shop/products/d7f00df1f2c5a9059ec5dd319139da24.webp?v=1652049514", false, "Valhalla Shield", 34.99f }
+                    { 14, 20, "A robust shield forged for the bravest of fighters in Shadow of Valhalla.", "https://www.vikingsroar.com/cdn/shop/products/d7f00df1f2c5a9059ec5dd319139da24.webp?v=1652049514", true, "Valhalla Shield", 34.99f }
                 });
 
             migrationBuilder.InsertData(
@@ -579,7 +579,7 @@ namespace SteamHub.Api.Migrations
                 {
                     { 7, 1, true },
                     { 12, 2, true },
-                    { 13, 3, true }
+                    { 13, 3, false }
                 });
 
             migrationBuilder.InsertData(
@@ -588,10 +588,10 @@ namespace SteamHub.Api.Migrations
                 values: new object[,]
                 {
                     { 5, 5, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
+                    { 6, 7, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 15, 9, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 15, 10, 4, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 5, 6, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
-                    { 6, 7, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 6, 8, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 19, 12, 5, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false },
                     { 20, 13, 6, new DateTime(2025, 4, 27, 14, 30, 0, 0, DateTimeKind.Unspecified), false }
