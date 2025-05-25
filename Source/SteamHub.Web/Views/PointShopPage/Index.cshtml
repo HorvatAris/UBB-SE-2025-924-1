@@ -15,7 +15,7 @@
         </div>
         <div class="col-md-2 text-end">
             <i class="bi bi-coin text-primary"></i>
-            <span class="text-primary fw-bold">@Model.UserPointBalance</span> Points
+            <span id="userPointsDisplay" class="text-primary fw-bold">@Model.UserPointBalance</span> Points
         </div>
     </div>
 
@@ -241,6 +241,14 @@
                 });
         }
 
+        function refreshUserPoints() {
+            fetch('/PointShopPage/GetUserPoints')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('userPointsDisplay').innerText = data.points;
+                });
+        }
+
         function purchaseItem(itemId) {
             fetch(`/PointShopPage/PurchaseItem?itemId=${itemId}`, { method: 'POST' })
                 .then(response => response.json())
@@ -250,6 +258,7 @@
                         refreshInventory();
                         applyFilters();
                         refreshTransactionHistory();
+                        refreshUserPoints();
                     } else {
                         alert('Failed to purchase item: ' + data.message);
                     }

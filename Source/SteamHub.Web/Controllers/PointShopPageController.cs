@@ -37,6 +37,13 @@ namespace SteamHub.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public IActionResult GetUserPoints()
+        {
+            var user = _pointShopService.GetCurrentUser();
+            return Json(new { points = user.PointsBalance });
+        }
+
         [HttpPost]
         public async Task<IActionResult> PurchaseItem([FromQuery]int itemId)
         {
@@ -65,6 +72,7 @@ namespace SteamHub.Web.Controllers
                     selectedItem.ItemType,
                     user.UserId
                 );
+                user.PointsBalance -= (float)selectedItem.PointPrice;
                 transactionHistory.Add(newTransaction);
                 Console.WriteLine($"[DEBUG] Transaction added: {newTransaction.ItemName}, PointsSpent: {newTransaction.PointsSpent}");
                 return Json(new { success = true, message = $"Successfully purchased {selectedItem.Name}." });

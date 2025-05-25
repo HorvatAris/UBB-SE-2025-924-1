@@ -257,13 +257,22 @@ namespace SteamHub.ApiContract.ServiceProxies
             }
         }
 
-        public Task PurchaseGamesAsync(PurchaseGamesRequest request)
+        public async Task<int> PurchaseGamesAsync(PurchaseGamesRequest request)
         {
             try
             {
-                var response = _httpClient.PostAsJsonAsync("/api/UserGame/Purchase", request);
-                response.Result.EnsureSuccessStatusCode(); // Ensure successful status code
-                return Task.CompletedTask;
+                var response = await _httpClient.PostAsJsonAsync("/api/UserGame/Purchase", request);
+                response.EnsureSuccessStatusCode();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<PurchaseResponse>(responseContent, _options);
+                if (result != null)
+                {
+                    LastEarnedPoints = result.PointsEarned;
+                    User.PointsBalance += result.PointsEarned;
+                }
+
+                return result?.PointsEarned ?? InitialValueForLastEarnedPoints;
             }
             catch (Exception exception)
             {
