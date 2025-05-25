@@ -131,7 +131,7 @@ public class UserGameService : IUserGameService
         }
     }
 
-    public async Task PurchaseGamesAsync(PurchaseGamesRequest purchaseRequest)
+    public async Task<int> PurchaseGamesAsync(PurchaseGamesRequest purchaseRequest)
     {
         // Reset points counter
         this.LastEarnedPoints = InitialValueForLastEarnedPoints;
@@ -155,6 +155,10 @@ public class UserGameService : IUserGameService
             // await this.UserGameServiceProxy.RemoveFromWishlistAsync(request);
         }
 
+        decimal totalSpent = purchaseRequest.Games.Sum(g => g.Price);
+        int pointsToAward = (int)(totalSpent * 121);
+        user.PointsBalance += pointsToAward;
+
         // Calculate earned points by comparing balances
         float pointsBalanceAfter = user.PointsBalance;
         this.LastEarnedPoints = (int)(pointsBalanceAfter - pointsBalanceBefore);
@@ -168,6 +172,7 @@ public class UserGameService : IUserGameService
         };
 
         await this.UserRepository.UpdateUserAsync(user.UserId, updateUserRequest);
+        return pointsToAward;
     }
 
     public async Task ComputeNoOfUserGamesForEachTagAsync(Collection<Tag> all_tags, int userId)

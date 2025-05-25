@@ -75,14 +75,20 @@ namespace SteamHub.Api.Controllers
         {
             try
             {
-                await _userGameService.PurchaseGamesAsync(request);
+                int earnedPoints = await _userGameService.PurchaseGamesAsync(request);
+
+                var response = new PurchaseResponse
+                {
+                    PointsEarned = earnedPoints
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred: {ex.Message}");
             }
-            return NoContent();
         }
+
 
         [HttpGet("Tags/{userId}")]
         public async Task<IActionResult> GetFavoriteUserTags([FromRoute] int userId)
